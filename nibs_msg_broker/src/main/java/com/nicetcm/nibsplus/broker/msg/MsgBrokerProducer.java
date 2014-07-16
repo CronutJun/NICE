@@ -1,0 +1,98 @@
+package com.nicetcm.nibsplus.broker.msg;
+
+import java.util.*;
+
+import javax.jms.BytesMessage;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Session;
+import javax.jms.StreamMessage;
+import javax.jms.TextMessage;
+ 
+
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+ 
+public class MsgBrokerProducer {
+    
+    private static final Logger logger = LoggerFactory.getLogger(MsgBrokerProducer.class);
+    
+    public static final Map<String, MsgBrokerProducer> producers = new HashMap<String, MsgBrokerProducer>();
+    
+    private ConnectionFactory factory;
+    private Connection connection;
+    private Session session;
+    private Destination destination;
+    private MessageProducer producer;
+ 
+    private String broker;
+    private String queue;
+ 
+    public void setBroker(String broker) {
+        this.broker = broker;
+    }
+ 
+    public void setQueue(String queue) {
+        this.queue = queue;
+    }
+ 
+    public MsgBrokerProducer(String broker, String queue) throws JMSException {
+        this.broker = broker;
+        this.queue = queue;
+ 
+        init();
+    }
+ 
+    public void init() throws JMSException {
+        factory = new ActiveMQConnectionFactory(broker);
+ 
+        connection = factory.createConnection();
+        connection.start();
+ 
+        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+ 
+        destination = session.createQueue(queue);
+ 
+        producer = session.createProducer(destination);
+    }
+ 
+    public BytesMessage getBytesMessage() throws JMSException {
+        return session.createBytesMessage();
+    }
+ 
+    public MapMessage getMapMessage() throws JMSException {
+        return session.createMapMessage();
+    }
+ 
+    public Message getMessage() throws JMSException {
+        return session.createMessage();
+    }
+ 
+    public ObjectMessage getObjectMessage() throws JMSException {
+        return session.createObjectMessage();
+    }
+ 
+    public StreamMessage getStreamMessage() throws JMSException {
+        return session.createStreamMessage();
+    }
+ 
+    public TextMessage getTextMessage() throws JMSException {
+        return session.createTextMessage();
+    }
+ 
+    public void produce(Message message) throws JMSException {
+        producer.send(message);
+    }
+ 
+    public void close() throws JMSException {
+        connection.close();
+    }
+    
+}

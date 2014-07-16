@@ -1,0 +1,20 @@
+{
+   "name" : "02001330",                    "kname" : "기기 설치/철수 결과",
+   "response" : { "code" : "02001330",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "work_seq",               "kname" : "작업일련번호",           "type" : "AN",  "length"  : 10  },
+      { "name" : "mac_seq_no",             "kname" : "기기일련번호",           "type" : "AN",  "length"  : 2   },
+      { "name" : "result_type",            "kname" : "결과전문구분",           "type" : "AN",  "length"  : 1   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "org_site_cd",            "kname" : "기관코너코드",           "type" : "AN",  "length"  : 6   },
+      { "name" : "made_com_cd",            "kname" : "기기업체코드",           "type" : "AN",  "length"  : 4   },
+      { "name" : "mac_model",              "kname" : "기종코드",               "type" : "AN",  "length"  : 4   },
+      { "name" : "mac_serial_no",          "kname" : "기기제조번호",           "type" : "AN",  "length"  : 20  },
+      { "name" : "result_yn",              "kname" : "작업완료여부",           "type" : "AN",  "length"  : 1   },
+      { "name" : "result_date",            "kname" : "작업완료일",             "type" : "N",   "length"  : 8   },
+      { "name" : "result_msg",             "kname" : "특이사항",               "type" : "AN",  "length"  : 200 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 146 }
+   ]
+}

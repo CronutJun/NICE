@@ -1,0 +1,66 @@
+package com.nicetcm.nibsplus.broker.ams;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.buffer.ByteBuf;
+
+import java.nio.ByteBuffer;
+import java.io.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.nicetcm.nibsplus.broker.common.*;
+import com.nicetcm.nibsplus.broker.ams.services.InMsgHandler;
+
+public class AMSBrokerBizHandler {
+    
+    private static final Logger logger = LoggerFactory.getLogger(AMSBrokerBizHandler.class);
+    private boolean befBeContinue = false;
+    private FileOutputStream fOut = null;
+    
+    public void classifyMessage(ChannelHandlerContext ctx, Object msg, MsgParser parsed, byte[] remain, boolean beContinue) throws Exception {
+        
+        //ctx.write(msg)
+        logger.debug("remain bytes = " + remain.length + ", befBeContinue = " + befBeContinue + ", beContinue = " + beContinue);
+        String fileName = "tmp_" + Thread.currentThread().getId() + "_in";
+        if( (!befBeContinue) && (beContinue) ) {
+            logger.debug("file open");
+            fOut = new FileOutputStream(fileName);
+            
+        }
+        if( remain.length > 0 ) {
+            fOut.write(remain);
+            logger.debug("file write length : " + remain.length);
+        }
+        
+        if( (befBeContinue) && (!beContinue) ) {
+            fOut.flush();
+            fOut.close();
+            fOut = null;
+            logger.debug("file close");
+        }
+        if( !beContinue ) {
+            try {
+                File tg = new File(fileName);
+                if( tg.exists() && tg.length() == 0) fileName = "";
+                if( !tg.exists() ) fileName = "";
+                InMsgHandler bizBranch = (InMsgHandler)AMSBrokerSpringMain
+                    .sprCtx.getBean("in" + parsed.getString("CM._AOCMsgCode") + parsed.getString("CM._AOCServiceCode"));
+                MsgParser respMsg = bizBranch.inMsgHandle(parsed, fileName);
+                if( tg.exists() ) {
+                    if( tg.delete() )
+                        logger.debug("Successful delete temporary file");
+                    else
+                        logger.debug("Failed delete temporary file");
+                }
+            }
+            finally {
+                parsed.clearMessage();
+            }
+        }
+        
+        befBeContinue = beContinue;
+    }
+
+}

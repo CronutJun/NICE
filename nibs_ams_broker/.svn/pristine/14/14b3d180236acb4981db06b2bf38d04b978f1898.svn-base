@@ -1,0 +1,2 @@
+schema_path=msg_schema/
+read_buf_size=262144
