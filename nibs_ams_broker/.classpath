@@ -28,9 +28,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Libraries"/>
-	<classpathentry kind="lib" path="D:/CronutWorks/eclipsePrjs/nibs_msg_broker/target/classes"/>
 	<classpathentry kind="lib" path="D:/CronutWorks/eclipseLibs/db2jcc.jar"/>
 	<classpathentry kind="lib" path="D:/CronutWorks/eclipseLibs/db2jcc_license_cu.jar"/>
-	<classpathentry kind="lib" path="D:/CronutWorks/eclipseLibs/mybatis-spring-1.2.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/KDJ/git/NICE/nibs_msg_broker/target/classes"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
