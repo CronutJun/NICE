@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration >
+  <context id="context1" >
+    <jdbcConnection driverClass="com.ibm.db2.jcc.DB2Driver" connectionURL="jdbc:db2://10.3.28.63:4892/infodb" userId="nadm" password="nadm" />
+    <javaModelGenerator targetPackage="com.nicetcm.nibsplus.broker.model" targetProject="nibs_ams_broker" />
+    <sqlMapGenerator targetPackage="com.nicetcm.nibsplus.broker.mapper" targetProject="nibs_ams_broker" />
+    <javaClientGenerator targetPackage="com.nicetcm.nibsplus.broker.mapper" targetProject="nibs_ams_broker" type="ANNOTATEDMAPPER" />
+    <table schema="in" tableName="t_jn_tran" >
+      <!-- <columnOverride column="as_seq" property="AsSeq" /> -->
+    </table>
+  </context>
+</generatorConfiguration>
