@@ -20,7 +20,7 @@ public class ActiveMQTest {
          //mq.close();
          //}
          
-         ActiveMQ mq = new ActiveMQ("tcp://localhost:61616", "0100.0130", null);
+         ActiveMQ mq = new ActiveMQ("tcp://10.3.28.62:61616", "0100.0130", null);
          BytesMessage b = mq.getBytesMessage();
          b.writeBytes("020B    HOST   0590201405090000239296180         EM01000130          205099296180         20140509000023201405082359410   23594120186   98          01    107     3   1   WR901_G2     자동출동:오만원부족(현금출금부)                                                                                                                                                                                               0011                                                                                                                     02                                                                                                                                                        ".getBytes());
          mq.produce(b);

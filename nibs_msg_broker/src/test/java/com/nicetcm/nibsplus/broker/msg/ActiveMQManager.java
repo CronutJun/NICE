@@ -44,7 +44,7 @@ public class ActiveMQManager /* extends TestCase */{
     private static final Logger logger = LoggerFactory.getLogger(ActiveMQManager.class);
 
  
-    public String amqJmxUrl = "service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi";
+    public String amqJmxUrl = "service:jmx:rmi:///jndi/rmi://10.3.28.62:1099/jmxrmi";
  
     /**
      * Create the test case
