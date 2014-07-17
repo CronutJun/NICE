@@ -16,4 +16,5 @@ public interface CommonPack {
     public void getMacNoIntoSite( TMacInfo MacInfo ) throws Exception;
     public void getMacInfo( TMacInfo MacInfo ) throws Exception;
     public void insertErrMng( TCtErrorMng ErrMng, TMacInfo MacInfo, String PartMngYn ) throws Exception;
+    public byte[] getCurrentErrorState( ErrorState ErrorState ) throws Exception;
 }

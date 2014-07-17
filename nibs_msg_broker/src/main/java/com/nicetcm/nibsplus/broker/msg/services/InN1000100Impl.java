@@ -11,7 +11,6 @@ package com.nicetcm.nibsplus.broker.msg.services;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
-import java.util.List;
 
 import javax.jms.BytesMessage;
 
@@ -35,7 +34,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 
 @Service("inN1000100")
-public class InN1000100Impl implements InMsgHandler {
+public class InN1000100Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(InN1000100Impl.class);
     
@@ -50,11 +49,6 @@ public class InN1000100Impl implements InMsgHandler {
     @Autowired private TFnNiceTranCuponMapper fnNiceTranCuponMap;
     @Autowired private TFnNiceTranGiftMapper fnNiceTranGiftMap;
     @Autowired private TFnMacMapper fnMacMap;
-    
-    private String sSysDate;
-    private String sNSysDate;
-    private String sSysTime;
-    private Date   dSysDate;
     
     private enum HW_MODULE_ERR {
         HW_LINE_ERR,        /* 0 - 통신장애         */
@@ -81,109 +75,93 @@ public class InN1000100Impl implements InMsgHandler {
     }
     
     @Override
-    public void inMsgHandle(MsgParser parsed) throws Exception {
-        TransactionStatus status = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
-        try {
-            sSysDate  = MsgBrokerLib.SysDate();
-            sNSysDate = MsgBrokerLib.SysDate(1);
-            sSysTime  = MsgBrokerLib.SysTime();
-            dSysDate  = MsgBrokerLib.SysDateD(0);
-            
-            /*
-             * 20110719 러시앤캐시 관련 추가
-             * 러시앤캐시 대출상담대기 거래는 t_fn_nice_tran에 넣지 않고 다른테이블에 넣은 후 return
-             */
-            if( parsed.getString("deal_type").equals("36000") ) {
-                insertUpdateRCInfo( parsed );
-                return;
-            }
-            /*
-             * 20120116 온누리 상품건 관련 거래는 별도의 테이블에 저장후 TRAN 데이터 처리
-             * 기업은행 온누리 상품권의 경우 나이스 기기로 등록하여야만
-             * HOST에서 기기 개시 및 이체 처리가 가능하므로 나이스 기기로 등록 하지만
-             * 자금 웹 화면에서는 일괄 처럼 처리 해야 하므로 기기등록을 096과 0KK 두개로 등록 하도록 함.
-             * (송호석,정희성,이재원,방혜진 협의 완료 2012.02.14)
-             * 또한 이기기의 거래는 이체만 트란에 쌓아두고 별도 테이블에 이체및 입,출금 데이터를 저장 후
-             * '0KK'로 잔액 계산을 하도록 한다.
-             * 20120323 정희성,이재원협의 -> 온누리상품권 관련 모든 데이터 트란에 넣도록 수정
-             */
-            else if( parsed.getString("deal_type").equals("55500")
-                  ||  parsed.getString("deal_type").equals("40001") ) {
-                try {
-                    insertUpdateCuponTran( parsed );
-                }
-                catch ( Exception e ) {
-                    logger.info("insertUpdateCuponTran error {}", e.getMessage() );
-                }
-                try {
-                    updateFNMacProc( parsed, "", 0, 1);
-                }
-                catch ( Exception e ) {
-                    logger.info("MacProc Error.>> 1 <<" );
-                }
-            }
-            
-            /*
-             * 전자상품권관련 거래 일 경우 별도의 테이블에 저장 후 트란에 저장
-             * 지류상품권관련 거래 일경우도 같은 테이블에 저장
-             */
-            if( parsed.getString("st_org_cd").equals(MsgBrokerConst.GV_CODE)
-            ||  parsed.getString("deal_type").equals("55810") ) {
-                try {
-                    insertUpdateGiftCardTran( parsed );
-                }
-                catch ( Exception e ) {
-                    logger.info("insertUpdateGiftCardTran error {}", e.getMessage() );
-                }
-            }
-            NiceTranReturn ntRet = new NiceTranReturn();
-            try {
-                insertUpdateNiceTran( parsed, ntRet );
-            }
-            catch ( MsgBrokerException me ) {
-                if( me.getErrorCode() == -999 || me.getErrorCode() == -998 )
-                    return;
-                logger.info("NiceTranProc Error.");
-                throw new Exception("NiceTranProc Error.");
-            }
-            
-            /*
-             * t_fn_mac 에 데이터 수정 중 error 에 대해서는 host에 정상응답으로 처리해 준다
-             * 잔액조회도 실거래로 인식하도록(무거래에 포함되지 않도록) 한다. 2008.06.23 김희천 대리 요청
-             */
-            if( parsed.getString("deal_type").equals("01001") 
-            ||  parsed.getString("deal_type").substring(0, 1).equals("1")
-            /*
-             * 잔액조회
-             */
-            ||  parsed.getString("deal_type").equals("31005") ) {
-                logger.info("deal_type : {}", parsed.getString("deal_type") );
-                try {
-                    updateFNMacProc( parsed, ntRet.prevDealStatus, ntRet.UpInFlag, 0 );
-                }
-                catch ( Exception e ) {
-                    logger.info("MacProc Error.>> 1 <<" );
-                }
-            }
-            /*
-             * 농협 ORG_RESPONSE_CD가 A6, A7일 경우, 담당자에게 즉시 문자통보 20121018->20140422
-             * 입금거래 일 경우만 적용
-             */
-            if( (parsed.getString("st_org_cd").equals("017") || parsed.getString("st_org_cd").equals("018"))
-            &&  parsed.getString("deal_type").substring(0,1).equals("1") ) {
-                if( parsed.getString("org_response_cd").equals("A6")
-                ||  parsed.getString("org_response_cd").equals("A7") ) {
-                    
-                }
-            }
-            
-            msgTX.commit(status);
+    public void inMsgBizProc(MsgParser parsed) throws Exception {
+        /*
+         * 20110719 러시앤캐시 관련 추가
+         * 러시앤캐시 대출상담대기 거래는 t_fn_nice_tran에 넣지 않고 다른테이블에 넣은 후 return
+         */
+        if( parsed.getString("deal_type").equals("36000") ) {
+            insertUpdateRCInfo( parsed );
+            return;
         }
-        catch( Exception e ) {
-            e.printStackTrace();
-            logger.error(e.getMessage());
-            msgTX.rollback(status);
-            throw e;
+        /*
+         * 20120116 온누리 상품건 관련 거래는 별도의 테이블에 저장후 TRAN 데이터 처리
+         * 기업은행 온누리 상품권의 경우 나이스 기기로 등록하여야만
+         * HOST에서 기기 개시 및 이체 처리가 가능하므로 나이스 기기로 등록 하지만
+         * 자금 웹 화면에서는 일괄 처럼 처리 해야 하므로 기기등록을 096과 0KK 두개로 등록 하도록 함.
+         * (송호석,정희성,이재원,방혜진 협의 완료 2012.02.14)
+         * 또한 이기기의 거래는 이체만 트란에 쌓아두고 별도 테이블에 이체및 입,출금 데이터를 저장 후
+         * '0KK'로 잔액 계산을 하도록 한다.
+         * 20120323 정희성,이재원협의 -> 온누리상품권 관련 모든 데이터 트란에 넣도록 수정
+         */
+        else if( parsed.getString("deal_type").equals("55500")
+              ||  parsed.getString("deal_type").equals("40001") ) {
+            try {
+                insertUpdateCuponTran( parsed );
+            }
+            catch ( Exception e ) {
+                logger.info("insertUpdateCuponTran error {}", e.getMessage() );
+            }
+            try {
+                updateFNMacProc( parsed, "", 0, 1);
+            }
+            catch ( Exception e ) {
+                logger.info("MacProc Error.>> 1 <<" );
+            }
+        }
+        
+        /*
+         * 전자상품권관련 거래 일 경우 별도의 테이블에 저장 후 트란에 저장
+         * 지류상품권관련 거래 일경우도 같은 테이블에 저장
+         */
+        if( parsed.getString("st_org_cd").equals(MsgBrokerConst.GV_CODE)
+        ||  parsed.getString("deal_type").equals("55810") ) {
+            try {
+                insertUpdateGiftCardTran( parsed );
+            }
+            catch ( Exception e ) {
+                logger.info("insertUpdateGiftCardTran error {}", e.getMessage() );
+            }
+        }
+        NiceTranReturn ntRet = new NiceTranReturn();
+        try {
+            insertUpdateNiceTran( parsed, ntRet );
+        }
+        catch ( MsgBrokerException me ) {
+            if( me.getErrorCode() == -999 || me.getErrorCode() == -998 )
+                return;
+            logger.info("NiceTranProc Error.");
+            throw new Exception("NiceTranProc Error.");
+        }
+        
+        /*
+         * t_fn_mac 에 데이터 수정 중 error 에 대해서는 host에 정상응답으로 처리해 준다
+         * 잔액조회도 실거래로 인식하도록(무거래에 포함되지 않도록) 한다. 2008.06.23 김희천 대리 요청
+         */
+        if( parsed.getString("deal_type").equals("01001") 
+        ||  parsed.getString("deal_type").substring(0, 1).equals("1")
+        /*
+         * 잔액조회
+         */
+        ||  parsed.getString("deal_type").equals("31005") ) {
+            logger.info("deal_type : {}", parsed.getString("deal_type") );
+            try {
+                updateFNMacProc( parsed, ntRet.prevDealStatus, ntRet.UpInFlag, 0 );
+            }
+            catch ( Exception e ) {
+                logger.info("MacProc Error.>> 1 <<" );
+            }
+        }
+        /*
+         * 농협 ORG_RESPONSE_CD가 A6, A7일 경우, 담당자에게 즉시 문자통보 20121018->20140422
+         * 입금거래 일 경우만 적용
+         */
+        if( (parsed.getString("st_org_cd").equals("017") || parsed.getString("st_org_cd").equals("018"))
+        &&  parsed.getString("deal_type").substring(0,1).equals("1") ) {
+            if( parsed.getString("org_response_cd").equals("A6")
+            ||  parsed.getString("org_response_cd").equals("A7") ) {
+                
+            }
         }
     }
 

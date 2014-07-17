@@ -1351,4 +1351,44 @@ public class CommonPackImpl implements CommonPack {
         return 1;
         
     }
+    
+    /**
+     * 해당 기기의 현재 발생되어있는 상태장애 목록을 얻는다.
+     * 
+     * @author KDJ, originated by 방혜진
+     * @param ErrorState 에러 상태 확인을 위한 대상 기기 정보
+     * @throws Exception
+     */
+    public byte[] getCurrentErrorState( ErrorState ErrorState ) throws Exception {
+        
+        ErrorState retErrState = null;
+        try {
+            if( ErrorState.getMacType() == MsgBrokerConst.CURERR_NICE ) {
+                retErrState = unfinishMap.selectByCond4( ErrorState );
+            }
+            else if( ErrorState.getMacType() == MsgBrokerConst.CURERR_CALC ) {
+                retErrState = unfinishMap.selectByCond5( ErrorState );
+            }
+            else {
+                /*
+                 * 삼성생명으로 인해 f_get... function을 호출함에 따른 부하때문에 임시 분리 20090330 by BHJ 
+                 */
+                if( ErrorState.getOrgCd().equals(MsgBrokerConst.SL_CODE) ) {
+                    retErrState = unfinishMap.selectByCond6( ErrorState );
+                }
+                else {
+                    retErrState = unfinishMap.selectByCond7( ErrorState );
+                }
+            }
+            if( retErrState == null ) {
+                retErrState = new ErrorState();
+                retErrState.setErrorStates("000000000000000000000000000000000000000000000000000000000000000000000000");
+            }    
+        }
+        catch (Exception e) {
+            retErrState = new ErrorState();
+            retErrState.setErrorStates("000000000000000000000000000000000000000000000000000000000000000000000000");
+        }
+        return retErrState.getErrorStates().getBytes();
+    }
 }

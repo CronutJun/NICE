@@ -385,5 +385,203 @@ public class MsgBrokerConst {
     public static final int    TRAN_UPDATE_STATE      = 0;
     public static final int    TRAN_INSERT_STATE      = 1;
 
+    public static final int    CURERR_ATM             = 0;     /* 일괄기기 (ATM관리기기)   */
+    public static final int    CURERR_NICE            = 1;     /* 나이스기기 (CD_VAN)      */
+    public static final int    CURERR_CALC            = 2;     /* 정산기                   */
 
+    public static final String  HWERR_CLEAR           = "0";    /* 복구   */
+    public static final String  HWERR_ERROR           = "1";    /* 장애   */
+    public static final String  HWERR_OPEN            = "2";    /* 개국   */
+    public static final String  HWERR_CLOSE           = "3";    /* 폐국   */
+
+    public static String CD_ERROR_STATE_NEAR          = "NE1"; /* 예보상태 */
+    public static String CD_ERROR_STATE_END           = "NE2"; /* 장애상태 */
+                                                    
+    /*
+     *  ATM 상태 구분 
+     */                             
+    public static String CD_ERROR_CASH                = "00";  /* 만원 부족        */
+    public static String CD_ERROR_CHECK               = "01";  /* 수표 부족        */
+    public static String CD_ERROR_SPECS               = "02";  /* 전표 부족        */
+    public static String CD_ERROR_CASHBOX             = "03";  /* 현금 입금함 참     */
+    public static String CD_ERROR_CHECKBOX            = "04";  /* 수표 입금함 참     */
+    public static String CD_ERROR_RETURNBOX           = "05";  /* 지폐 회수함 참     */
+    public static String CD_ERROR_BOOKBOX             = "06";  /* 통장 회수함 참     */
+    public static String CD_ERROR_CARDBOX             = "07";  /* 카드 회수함 참     */
+    public static String CD_ERROR_SPECSBOX            = "08";  /* 전표 회수함 참     */
+    public static String CD_ERROR_JNRBOX              = "09";  /* 저널 회수함 참     */
+    public static String  CD_ERROR_SEND_RECV          = "10";  /* 송수신 장애        */
+    public static String  CD_ERROR_LINE_ERR           = "11";  /* 회선 장애        */
+    public static String  CD_ERROR_POWER_OFF          = "12";  /* 전원 OFF 장애      */
+    public static String  CD_ERROR_JNRLACK            = "13";  /* 저널부족         */
+    public static String  CD_ERROR_INPUTSTOP          = "14";  /* 입금부미가동       */
+    public static String  CD_ERROR_TIELACK            = "15";  /* 지폐입금부 묶음띠 부족 */
+    public static String  CD_ERROR_COINBOX            = "16";  /* 동전 입금함 참     */
+    public static String CD_ERROR_5000                = "17";  /* 오천원 부족        */
+    public static String CD_ERROR_1000                = "18";  /* 천원 부족        */
+    public static String CD_ERROR_500                 = "19";  /* 오백원권 부족      */
+    public static String CD_ERROR_100                 = "20";  /* 백원권 부족        */
+    public static String CD_ERROR_50                  = "21";  /* 오십원권 부족      */
+    public static String CD_ERROR_10                  = "22";  /* 십원권 부족        */
+    public static String CD_ERROR_50000               = "23";  /* 오만원권 부족      */
+    public static String CD_ERROR_100000              = "24";  /* 십만원권 부족      */
+    public static String CD_ERROR_CASHBOX_50000       = "25";  /* 오만원권 입금함 참   */
+    public static String CD_ERROR_CASHBOX_100000      = "26";  /* 십만원권 입금함 참   */
+    public static String CD_ERROR_CASHBOX_5000        = "42";  /* 5천원권 입금함 참    */
+    public static String CD_ERROR_CASHBOX_1000        = "43";  /* 1천원권 입금함 참    */
+    public static String CD_ERROR_CASHBOX_500         = "44";  /* 5백원권 입금함 참    */
+    public static String CD_ERROR_CASHBOX_100         = "45";  /* 1백원권 입금함 참    */
+    public static String CD_ERROR_CASHBOX_50          = "46";  /* 5십원권 입금함 참    */
+    public static String CD_ERROR_CASHBOX_10          = "47";  /* 1십원권 입금함 참    */
+    public static String CD_ERROR_INBOX               = "48";  /* 봉투 입금함 참     */
+    public static String CD_ERROR_TIC_A               = "75";  /* 상품권출금부A 부족   */
+    public static String CD_ERROR_TIC_B               = "76";  /* 상품권출금부B 부족   */
+    public static String CD_ERROR_TIC_C               = "77";  /* 상품권출금부C 부족   */
+    public static String CD_ERROR_TIC_D               = "78";  /* 상품권출금부D 부족   */
+
+    /*
+     * ==> 예보없이 장애만 있는 항목 0:정상, 1: 비정상
+     */
+    public static String CD_ERROR_STATE_OUTCASH       = "50";  /* 현금출금부가동상태   */
+    public static String CD_ERROR_STATE_OUTCHECK      = "51";  /* 수표출금부가동     */
+    public static String CD_ERROR_STATE_INCASH        = "52";  /* 현금입금부 가동상태    */
+    public static String CD_ERROR_STATE_INCHECK       = "53";  /* 수표입금부 가동상태    */
+    public static String CD_ERROR_STATE_BOOK          = "54";  /* 통장정리부 가동상태    */
+    public static String CD_ERROR_STATE_DOWN          = "55";  /* 기기다운         */
+    public static String CD_ERROR_STATE_RETURNBOX     = "56";  /* 회수함상태       */
+    public static String CD_ERROR_STATE_PRINTER       = "57";  /* A4프린터상태       */
+    public static String CD_ERROR_STATE_DOOR          = "58";  /* 본체문상태       */
+    public static String CD_ERROR_STATE_AGENT         = "59";  /* 자동기에이전트상태     */
+    public static String CD_ERROR_STATE_HOSTSESSION   = "60";  /* 호스트세션상태     */
+    public static String CD_ERROR_STATE_ATMSESSION    = "61";  /* 자동기세션상태     */
+
+    public static String CD_ERROR_STATE_JIRO          = "66";  /* 지로부상태       */
+    public static String CD_ERROR_STATE_CARD          = "67";  /* 카드부상태       */
+                                                    
+    public static String  CD_ERROR_STATE_COIN_IN      = "32";  /* 동전입금부상태     */
+    public static String  CD_ERROR_STATE_SPECS        = "33";  /* 명세표부 상태      */
+    public static String  CD_ERROR_STATE_BOX_IN       = "34";  /* 봉투입금부 상태      */
+    public static String  CD_ERROR_STATE_COIN_OUT     = "35";  /* 동전출금부 상태      */
+    public static String CD_ERROR_STATE_CAM           = "36";  /* 카메라부 상태      */
+    public static String CD_ERROR_STATE_PPAD          = "37";  /* 핀패드 상태        */
+    public static String CD_ERROR_STATE_FCD           = "38";  /* FCD보드 상태       */
+    public static String CD_ERROR_STATE_INSHEET       = "39";  /* 낱장입금부 상태      */
+                                                    
+    public static String CD_ERROR_HANG_BILL           = "62";  /* 명세표걸림       */
+    public static String CD_ERROR_REM_IN_COIN         = "63";  /* 입금동전잔류       */
+    public static String CD_ERROR_REM_OUT_CASH        = "64";  /* 출금지폐잔류       */
+    public static String CD_ERROR_REM_OUT_COIN        = "65";  /* 출금동전잔류       */
+                                                    
+    public static String CD_ERROR_STATE_TIC_A         = "70";  /* 상품권출금부 상태A   */
+    public static String CD_ERROR_STATE_TIC_B         = "71";  /* 상품권출금부 상태B   */
+    public static String CD_ERROR_STATE_TIC_C         = "72";  /* 상품권출금부 상태C   */
+    public static String CD_ERROR_STATE_TIC_D         = "73";  /* 상품권출금부 상태D   */
+                                                    
+                                                    
+    public static String CD_CALC_MAC_SUPERVISOR       = "40";  /* 정산기 슈퍼바이저장애  */
+    public static String CD_CALC_MAC_WATCH_ERR        = "41";  /* 정산기 금고침투 */
+    
+    public enum  EnumOrgErrorState {
+        
+        IDX_ST_CASH          ("현금부족",           CD_ERROR_CASH             ),
+        IDX_ST_CHECK         ("수표부족",           CD_ERROR_CHECK            ),
+        IDX_ST_SPECS         ("전표부족",           CD_ERROR_SPECS            ),
+        IDX_ST_CASHBOX       ("현금입금함참",       CD_ERROR_CASHBOX          ),
+        IDX_ST_CHECKBOX      ("수표입금함참",       CD_ERROR_CHECKBOX         ),
+        IDX_ST_RETURNBOX     ("지폐회수함참",       CD_ERROR_RETURNBOX        ),
+        IDX_ST_BOOKBOX       ("통장회수함참",       CD_ERROR_BOOKBOX          ),
+        IDX_ST_CARDBOX       ("카드회수함참",       CD_ERROR_CARDBOX          ),
+        IDX_ST_SPECSBOX      ("명세표회수함참",     CD_ERROR_SPECSBOX         ),
+        IDX_ST_JNRBOX        ("저널회수함참",       CD_ERROR_JNRBOX           ),
+        IDX_ST_SEND_RECV     ("송수신장애",         CD_ERROR_SEND_RECV        ),
+        IDX_ST_LINE_ERR      ("회선장애",           CD_ERROR_LINE_ERR         ),
+        IDX_ST_POWER_OFF     ("전원OFF장애",        CD_ERROR_POWER_OFF        ),
+        IDX_ST_JNRLACK       ("저널부족",           CD_ERROR_JNRLACK          ),
+        IDX_ST_INPUTSTOP     ("입금부미가동",       CD_ERROR_INPUTSTOP        ),
+        IDX_ST_5000          ("오천원권부족",       CD_ERROR_5000             ),
+        IDX_ST_1000          ("천원권부족",         CD_ERROR_1000             ),
+        IDX_ST_500           ("오백원권부족",       CD_ERROR_500              ),
+        IDX_ST_100           ("백원권부족",         CD_ERROR_100              ),
+        IDX_ST_50            ("오십권부족",         CD_ERROR_50               ),
+        IDX_ST_10            ("십원권부족",         CD_ERROR_10               ),
+        IDX_ST_50000         ("오만권부족",         CD_ERROR_50000            ),
+        IDX_ST_100000        ("십만원권부족",       CD_ERROR_100000           ),
+        IDX_ST_CASHBOX_50000 ("오만원권입금함참",   CD_ERROR_CASHBOX_50000    ),
+        IDX_ST_CASHBOX_100000("십만원건입금함참",   CD_ERROR_CASHBOX_100000   ),
+        IDX_ST_STATE1        ("현금출금부가동상태", CD_ERROR_STATE_OUTCASH    ),
+        IDX_ST_STATE2        ("수표출금부가동상태", CD_ERROR_STATE_OUTCHECK   ),
+        IDX_ST_STATE3        ("현금입금부가동상태", CD_ERROR_STATE_INCASH     ),
+        IDX_ST_STATE4        ("수표입금부가동상태", CD_ERROR_STATE_INCHECK    ),
+        IDX_ST_STATE5        ("통장정리부가동상태", CD_ERROR_STATE_BOOK       ),
+        IDX_ST_STATE6        ("기기다운상태",       CD_ERROR_STATE_DOWN       ),
+        IDX_ST_STATE7        ("회수함상태",         CD_ERROR_STATE_RETURNBOX  ),
+        IDX_ST_STATE8        ("A4프린터상태",       CD_ERROR_STATE_PRINTER    ),
+        IDX_ST_STATE9        ("본체문상태",         CD_ERROR_STATE_DOOR       ),
+        IDX_ST_STATE10       ("자동기에이전트상태", CD_ERROR_STATE_AGENT      ),
+        IDX_ST_STATE11       ("호스트세션상태",     CD_ERROR_STATE_HOSTSESSION),
+        IDX_ST_STATE12       ("자동기세션상태",     CD_ERROR_STATE_ATMSESSION ),
+        IDX_ST_STATE_JIRO    ("지로부상태",         CD_ERROR_STATE_JIRO       ),
+        IDX_ST_STATE_CARD    ("카드부상태",         CD_ERROR_STATE_CARD       );
+        
+        private String errorName;
+        private String errorCd;
+        
+        EnumOrgErrorState(String errorName, String errorCd) {
+            this.errorName = errorName;
+            this.errorCd = errorCd;
+        }
+        
+        public String getErrorName() {
+            return errorName;
+        }
+        
+        public String getErrorCd() {
+            return errorCd;
+        }
+        
+    }
+
+    public enum EnumStateSkipYN {
+        ORG_020("101111111011100000000000000000000000000", "우리"),
+        ORG_023("000000000000000000000000000000000000000", "제일"),
+        ORG_081("111110010100000000000101000000000000000", "하나"),
+        ORG_003("001000000000010000000000000000000000000", "기업"),
+        ORG_004("101100101100011000000101000000000000000", "국민"),
+        ORG_034("111101011000000000000000000000000000000", "광주"),
+        ORG_027("000000000000000000000000000000000000000", "한미"),
+        ORG_005("000000000000000000000000000000000000000", "외환"),
+        ORG_039("101100000000000000000000000000000000000", "경남"),
+        ORG_011("000000000000000000000000000000000000000", "농협"),
+        ORG_031("111110000000000000000000000000000000000", "대구은행"),
+        ORG_045("111110000000000000000000000000000000011", "새마을금고"),
+        ORG_T20("111111001100010000000101000000000000000", "우리ATMS"),
+        ORG_T39("111111001100010000000101000000000000000", "경남ATMS"),
+        ORG_088("110000000000000000000100000000000000000", "신한은행"),
+        ORG_D32("111111010000000000000000000000000000000", "부산은행"),
+        ORG_0SL("111110000000000011101100000000000000000", "삼성생명"),
+        ORG_0DJ("111110010000010000000101011111111111100", "동양종금"),
+        ORG_0HD("111110010000010000000000011111101000000", "현대증권"),
+        ORG_0KI("111001110100000000000000000000000000000", "KIBank"),
+        ORG_035("111110010000010000000000011111101000000", "제주"),
+        ORG_032("000000000000000000000000000000000000000", "부산은행 ATMS"),
+        ORG_0WC("111110010000010000000000000000000000000", "우체국"),
+        ORG_0TR("101000000000000111100100011001001000011", "KTIS(KTTR"),
+        ORG_DFT("000000000000000000000000000000000000000", "Default");
+        
+        private String errStates;
+        private String bankName;
+        
+        EnumStateSkipYN(String errStates, String bankName) {
+            this.errStates = errStates;
+            this.bankName = bankName;
+        }
+        
+        public String getErrStates() {
+            return errStates;
+        }
+        
+        public String getBankName() {
+            return bankName;
+        }
+    }
 }
