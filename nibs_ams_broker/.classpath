@@ -27,7 +27,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Libraries"/>
 	<classpathentry kind="lib" path="D:/CronutWorks/eclipseLibs/db2jcc.jar"/>
 	<classpathentry kind="lib" path="D:/CronutWorks/eclipseLibs/db2jcc_license_cu.jar"/>
 	<classpathentry kind="lib" path="C:/Users/KDJ/git/NICE/nibs_msg_broker/target/classes"/>
