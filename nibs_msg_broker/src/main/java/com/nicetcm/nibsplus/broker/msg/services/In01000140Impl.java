@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 
@@ -25,7 +26,7 @@ public class In01000140Impl implements InMsgHandler {
     
 
     @Override
-    public void inMsgHandle(MsgParser parsed) throws Exception {
+    public void inMsgHandle( MsgBrokerData safeData, MsgParser parsed) throws Exception {
         TransactionStatus status = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
         try {
             logger.debug("Msg Received");

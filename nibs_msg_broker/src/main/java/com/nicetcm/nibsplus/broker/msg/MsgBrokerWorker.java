@@ -19,6 +19,7 @@ public class MsgBrokerWorker implements Runnable {
     private byte[] msg;
     private ByteBuffer buf;
     private MsgParser msgPsr;
+    private MsgBrokerData msgThrdSafeData;
     
     public MsgBrokerWorker( byte[] msg ) {
         this.msg = msg;
@@ -49,6 +50,7 @@ public class MsgBrokerWorker implements Runnable {
             
             msgPsr = MsgParser.getInstance(inQNm).parseMessage(buf);
             logger.debug("Parse OK");
+            msgThrdSafeData = new MsgBrokerData();
             try {
                 try {
                     /*
@@ -56,7 +58,7 @@ public class MsgBrokerWorker implements Runnable {
                      */
                     InMsgHandler bizBranch = (InMsgHandler)MsgBrokerSpringMain
                             .sprCtx.getBean("in" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
-                    bizBranch.inMsgHandle( msgPsr );
+                    bizBranch.inMsgHandle( msgThrdSafeData, msgPsr );
                     
                     /*
                      * 요청전문에 대해서만 Ack/Nak 전송
@@ -67,7 +69,7 @@ public class MsgBrokerWorker implements Runnable {
                          */
                         RespAckNakHandler resp = (RespAckNakHandler)MsgBrokerSpringMain
                                 .sprCtx.getBean("respAckNak");
-                        resp.procAckNak( msgPsr, 0 );
+                        resp.procAckNak( msgThrdSafeData, msgPsr, 0 );
                     
                         MsgBrokerProducer prd = MsgBrokerProducer.producers.get( "ATMS." + msgPsr.getString( "CM.org_cd" ) + ".H.Q" );
                         BytesMessage respData = prd.getBytesMessage();
@@ -90,7 +92,7 @@ public class MsgBrokerWorker implements Runnable {
                          */
                         RespAckNakHandler resp = (RespAckNakHandler)MsgBrokerSpringMain
                             .sprCtx.getBean("respAckNak");
-                        resp.procAckNak( msgPsr, me.getErrorCode() );
+                        resp.procAckNak( msgThrdSafeData, msgPsr, me.getErrorCode() );
                     
                         MsgBrokerProducer prd = MsgBrokerProducer.producers.get( "ATMS." + msgPsr.getString( "CM.org_cd" ) + ".H.Q" );
                         BytesMessage respData = prd.getBytesMessage();

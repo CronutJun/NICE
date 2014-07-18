@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
@@ -41,7 +42,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
     @Autowired private TMiscMapper tMiscMapper;
 
     @Override
-    public void inMsgBizProc(MsgParser parsed) throws Exception {
+    public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
 
         /* 총지급액이 있으면 총지급액 그대로, 총지급액이 없으면 현금 지급 + 수표 지급 */
@@ -173,7 +174,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
         } else {
             /* 기업은행 첫 마감조회시 정상응답일 경우 현재시재를 자동으로 요청하도록 한다. */
             if( MsgBrokerConst.KIUP_CODE.equals(parsed.getString("CM.org_cd")) && ifCashInsert.getvFirstInqYN() == 1) {
-                this.sendKiupMsg(parsed);
+                this.sendKiupMsg(safeData, parsed);
             } else if(MsgBrokerConst.NONGH_CODE.equals(parsed.getString("CM.org_cd"))) {
 
                 /* 농협일 경우 정희성 요청에 의해 T_CM_CASH에 쌓은 후 별도의 프로시져 호출 하도록 함. 20100920 */
@@ -187,9 +188,9 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 logger.info("[sp_fn_macClose_nh] 프로시져 결과: {}", fnMacClose.getvResult());
 
                 if("OK".equals(fnMacClose.getvResult())) {
-                    msgTX.rollback(status);
+                    msgTX.rollback(safeData.getTXS());
                 } else {
-                    msgTX.commit(status);
+                    msgTX.commit(safeData.getTXS());
                 }
 
             } else if( MsgBrokerConst.SHATMS_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("close_type").equals("2") ) {
@@ -203,7 +204,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 ifCashInsert2.setpMacNo            (parsed.getString("mac_no"));
                 ifCashInsert2.setpCashType         ("1");
                 ifCashInsert2.setpCashDate         (parsed.getString("inq_date"));
-                ifCashInsert2.setpCashTime         (sSysTime);
+                ifCashInsert2.setpCashTime         (safeData.getSysTime());
                 ifCashInsert2.setpChargeAmt        (hpreAmt);
                 ifCashInsert2.setpTotInAmt         (0);
                 ifCashInsert2.setpTotOutAmt        (0);
@@ -243,10 +244,10 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
                 if(ifCashInsert.getvResult() != 0) {
                     logger.info( "[MngCM_AP_SaveCurrentAmt] 프로시져 오류 3: %s", ifCashInsert2.getvResultMsg() );
-                    msgTX.rollback(status);
+                    msgTX.rollback(safeData.getTXS());
 
                 } else {
-                    msgTX.commit(status);
+                    msgTX.commit(safeData.getTXS());
 
                 }
 
@@ -271,7 +272,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
      *
      * @param parsed
      */
-    private void sendKiupMsg(MsgParser parsed) {
+    private void sendKiupMsg(MsgBrokerData safeData, MsgParser parsed) {
 
         /*
          * 거래 금액의 변화가 있을 경우 나이스 발생 장애 복구 시킴
@@ -289,8 +290,8 @@ public class In03101130Impl extends InMsgHandlerImpl {
                   .setString( "CM.ret_cd_src", "S" )
                   .setString( "CM.msg_id", "MngAuto" )
                   .setInt   ( "CM.body_len", msgPsr.getMessageLength() - MsgBrokerConst.HEADER_LEN )
-                  .setString( "CM.trans_date", sSysDate )
-                  .setString( "CM.trans_time", sSysTime )
+                  .setString( "CM.trans_date", safeData.getSysDate() )
+                  .setString( "CM.trans_time", safeData.getSysTime() )
                   .setString( "CM.format_type", "CM" )
                   .setString( "CM.msg_type", MsgBrokerConst.CM_REQ )
                   .setString( "CM.work_type", "1110" )

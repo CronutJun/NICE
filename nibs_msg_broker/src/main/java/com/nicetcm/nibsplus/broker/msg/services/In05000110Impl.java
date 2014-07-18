@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
@@ -39,7 +40,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
     @Autowired private StoredProcMapper splMap;
     
     @Override
-    public void inMsgBizProc(MsgParser parsed) throws Exception {
+    public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         
         TMacInfo macInfo = new TMacInfo();
         TCtErrorMng errMng = new TCtErrorMng();
@@ -119,14 +120,14 @@ public class In05000110Impl extends InMsgHandlerImpl {
              */
             errMng.setOrgMsgNo( parsed.getString("create_time") );
             
-            errMng.setCreateDate( Integer.parseInt(sSysDate) );
-            errMng.setCreateTime( sSysTime );
+            errMng.setCreateDate( Integer.parseInt(safeData.getSysDate()) );
+            errMng.setCreateTime( safeData.getSysTime() );
             
             /*
              * 전문 응답은 수신 전문에서 보내므로 발생과 복구 시간을 위해 suBody.create_time을 현재시간으로 바꿔준다 
              */
-            parsed.setString("create_date", sSysDate );
-            parsed.setString("create_time", sSysTime );
+            parsed.setString("create_date", safeData.getSysDate() );
+            parsed.setString("create_time", safeData.getSysTime() );
         }
         else {
             /*

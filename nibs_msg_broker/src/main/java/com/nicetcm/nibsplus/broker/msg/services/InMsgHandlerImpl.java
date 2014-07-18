@@ -1,15 +1,13 @@
 package com.nicetcm.nibsplus.broker.msg.services;
 
-import java.util.Date;
-
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 
 public abstract class InMsgHandlerImpl implements InMsgHandler {
 
@@ -18,31 +16,25 @@ public abstract class InMsgHandlerImpl implements InMsgHandler {
     
     @Autowired protected CommonPack comPack;
     
-    protected String sSysDate;
-    protected String sNSysDate;
-    protected String sSysTime;
-    protected Date   dSysDate;
-    protected TransactionStatus status;
-    
     @Override
-    public final void inMsgHandle(MsgParser parsed) throws Exception {
-        status = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
+    public final void inMsgHandle(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+        safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
         try {
-            sSysDate  = MsgBrokerLib.SysDate();
-            sNSysDate = MsgBrokerLib.SysDate(1);
-            sSysTime  = MsgBrokerLib.SysTime();
-            dSysDate  = MsgBrokerLib.SysDateD(0);
+            safeData.setSysDate(MsgBrokerLib.SysDate());
+            safeData.setNSysDate(MsgBrokerLib.SysDate(1));
+            safeData.setSysTime(MsgBrokerLib.SysTime());
+            safeData.setDSysDate(MsgBrokerLib.SysDateD(0));
             
-            inMsgBizProc( parsed );
-            msgTX.commit(status);
+            inMsgBizProc( safeData, parsed );
+            msgTX.commit(safeData.getTXS());
         }
         catch( Exception e ) {
-            msgTX.rollback(status);
+            msgTX.rollback(safeData.getTXS());
             throw e;
         }
     }
     
-    public void inMsgBizProc(MsgParser parsed) throws Exception {
+    public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         
     }
 

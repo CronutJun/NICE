@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
@@ -36,7 +37,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
     @Autowired private TMiscMapper tMiscMapper;
 
     @Override
-    public void inMsgBizProc(MsgParser parsed) throws Exception {
+    public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
         logger.debug("Msg Received");
         logger.debug(parsed.getString("CM.work_type"));
@@ -50,8 +51,8 @@ public class In03101110Impl extends InMsgHandlerImpl {
          농협atms는 조회일자 조회시간이 전문상에 없으므로 현재 시간을 세팅하도록 한다.
         ***************************************************************************************************/
 
-        parsed.setString("inq_date", sSysDate);
-        parsed.setString("inq_time", sSysTime);
+        parsed.setString("inq_date", safeData.getSysDate());
+        parsed.setString("inq_time", safeData.getSysTime());
 
         /**
          * 지점코드, 기번 길이 검증

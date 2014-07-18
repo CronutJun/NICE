@@ -17,6 +17,7 @@ import javax.jms.BytesMessage;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
@@ -75,13 +76,13 @@ public class InN1000100Impl extends InMsgHandlerImpl {
     }
     
     @Override
-    public void inMsgBizProc(MsgParser parsed) throws Exception {
+    public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         /*
          * 20110719 러시앤캐시 관련 추가
          * 러시앤캐시 대출상담대기 거래는 t_fn_nice_tran에 넣지 않고 다른테이블에 넣은 후 return
          */
         if( parsed.getString("deal_type").equals("36000") ) {
-            insertUpdateRCInfo( parsed );
+            insertUpdateRCInfo( safeData, parsed );
             return;
         }
         /*
@@ -97,13 +98,13 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         else if( parsed.getString("deal_type").equals("55500")
               ||  parsed.getString("deal_type").equals("40001") ) {
             try {
-                insertUpdateCuponTran( parsed );
+                insertUpdateCuponTran( safeData, parsed );
             }
             catch ( Exception e ) {
                 logger.info("insertUpdateCuponTran error {}", e.getMessage() );
             }
             try {
-                updateFNMacProc( parsed, "", 0, 1);
+                updateFNMacProc( safeData, parsed, "", 0, 1);
             }
             catch ( Exception e ) {
                 logger.info("MacProc Error.>> 1 <<" );
@@ -117,7 +118,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         if( parsed.getString("st_org_cd").equals(MsgBrokerConst.GV_CODE)
         ||  parsed.getString("deal_type").equals("55810") ) {
             try {
-                insertUpdateGiftCardTran( parsed );
+                insertUpdateGiftCardTran( safeData, parsed );
             }
             catch ( Exception e ) {
                 logger.info("insertUpdateGiftCardTran error {}", e.getMessage() );
@@ -125,7 +126,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         }
         NiceTranReturn ntRet = new NiceTranReturn();
         try {
-            insertUpdateNiceTran( parsed, ntRet );
+            insertUpdateNiceTran( safeData, parsed, ntRet );
         }
         catch ( MsgBrokerException me ) {
             if( me.getErrorCode() == -999 || me.getErrorCode() == -998 )
@@ -146,7 +147,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         ||  parsed.getString("deal_type").equals("31005") ) {
             logger.info("deal_type : {}", parsed.getString("deal_type") );
             try {
-                updateFNMacProc( parsed, ntRet.prevDealStatus, ntRet.UpInFlag, 0 );
+                updateFNMacProc( safeData, parsed, ntRet.prevDealStatus, ntRet.UpInFlag, 0 );
             }
             catch ( Exception e ) {
                 logger.info("MacProc Error.>> 1 <<" );
@@ -173,7 +174,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
      * @param parsed  파싱된 전문
      * @throws Exception
      */
-    private void insertUpdateRCInfo( MsgParser parsed ) throws Exception {
+    private void insertUpdateRCInfo( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
         
         TFnRcInfo fnRcInfoRec = new TFnRcInfo();
         
@@ -185,8 +186,8 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnRcInfoRec.setDealClass( parsed.getString("deal_type").substring(1) );
         fnRcInfoRec.setCompGb( MsgBrokerLib.lpad( parsed.getString("inst_org_cd"), 4, "0") );
         fnRcInfoRec.setHpNo( parsed.getString("account_no") );
-        fnRcInfoRec.setInsertDate( dSysDate );
-        fnRcInfoRec.setUpdateDate( dSysDate );
+        fnRcInfoRec.setInsertDate( safeData.getDSysDate() );
+        fnRcInfoRec.setUpdateDate( safeData.getDSysDate() );
         try {
             fnRCInfoMap.insert( fnRcInfoRec );
         }
@@ -214,7 +215,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
      * @param parsed
      * @throws Exception
      */
-    private void insertUpdateCuponTran( MsgParser parsed ) throws Exception {
+    private void insertUpdateCuponTran( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
         
         TFnNiceTranCupon  fnNTCRec =  new TFnNiceTranCupon();
         
@@ -249,7 +250,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNTCRec.setDealOutAmtCw12( parsed.getLong("out_cnt_100") );
         fnNTCRec.setDealOutAmtCw51( parsed.getLong("out_cnt_50") );
         fnNTCRec.setDealOutAmtCw11( parsed.getLong("out_cnt_10") );
-        fnNTCRec.setInsertDate( dSysDate );
+        fnNTCRec.setInsertDate( safeData.getDSysDate() );
         try {
             fnNiceTranCuponMap.insert( fnNTCRec );
         }
@@ -272,7 +273,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
     /*
      * 전자상품권  테이블 저장처리
      */
-    private void insertUpdateGiftCardTran( MsgParser parsed ) throws Exception {
+    private void insertUpdateGiftCardTran( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
         
         TFnNiceTranGift fnNTGRec = new TFnNiceTranGift();
         
@@ -308,8 +309,8 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNTGRec.setDealAmtCw15( parsed.getLong("cash_cnt_100000") * 100000);
         fnNTGRec.setDealAmtCw13( parsed.getLong("cash_cnt_1000") * 1000);
         fnNTGRec.setDealAmtCw53( parsed.getLong("cash_cnt_5000") * 5000);
-        fnNTGRec.setInsertDate( dSysDate );
-        fnNTGRec.setUpdateDate( dSysDate );
+        fnNTGRec.setInsertDate( safeData.getDSysDate() );
+        fnNTGRec.setUpdateDate( safeData.getDSysDate() );
         fnNTGRec.setBrandOrgCd( parsed.getString("brand_org_cd") );
         fnNTGRec.setUserTelNo( parsed.getString("user_tel_no") );
         fnNTGRec.setGiftInitial( parsed.getString("gift_initial") );
@@ -348,7 +349,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
     
     }
     
-    public void insertUpdateNiceTran( MsgParser parsed, NiceTranReturn ret ) throws Exception {
+    public void insertUpdateNiceTran( MsgBrokerData safeData, MsgParser parsed, NiceTranReturn ret ) throws Exception {
         
         TFnNiceTran fnNiceTranRec = new TFnNiceTran();
         
@@ -386,8 +387,8 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNiceTranRec.setErrorStatus( parsed.getString("error_status") );
         fnNiceTranRec.setDealTimeType( parsed.getString("deal_time_type") );
         fnNiceTranRec.setJoinOrgDealNo( parsed.getString("join_org_deal_no") );
-        fnNiceTranRec.setInsertDate( dSysDate );
-        fnNiceTranRec.setUpdateDate( dSysDate );
+        fnNiceTranRec.setInsertDate( safeData.getDSysDate() );
+        fnNiceTranRec.setUpdateDate( safeData.getDSysDate() );
         fnNiceTranRec.setNetOrgCd( parsed.getString("net_org_cd") );
         fnNiceTranRec.setDealAmt10000( parsed.getLong("cash_cnt_10000") * 10000);
         fnNiceTranRec.setDealAmt50000( parsed.getLong("cash_cnt_50000") * 50000);
@@ -436,7 +437,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         }
     }
 
-    private void updateFNMacProc( MsgParser parsed, String prevDealStatus, int upInFlag, int n0KKyn ) throws Exception {
+    private void updateFNMacProc( MsgBrokerData safeData, MsgParser parsed, String prevDealStatus, int upInFlag, int n0KKyn ) throws Exception {
         
         TFnMacKey fnMacKey = new TFnMacKey();
         TFnMac fnMac, fnMacUpd;
@@ -486,7 +487,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
             if( fnMac.getLastDealTime().compareTo(dtLastDealTime) < 0 )
                 fnMacUpd.setLastDealTime( dtLastDealTime );
             fnMacUpd.setUpdateUid( "TRANmng");
-            fnMacUpd.setUpdateDate( dSysDate );
+            fnMacUpd.setUpdateDate( safeData.getDSysDate() );
             try {
                 fnMacMap.updateByPrimaryKeySelective( fnMacUpd );
             }
@@ -495,9 +496,9 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                         fnMacUpd.getLastDealTime(), e.getMessage() );
                 throw e;
             }
-            sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "4", null );
-            sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "7", null );
-            sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "8", null );
+            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "4", null );
+            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "7", null );
+            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "8", null );
             
             byte[] byteAtmHwError = new byte[HW_MODULE_ERR.values().length * 4];
             /*
@@ -510,7 +511,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 else
                     System.arraycopy( new byte[]{'9','\0','\0','\0'}, 0, byteAtmHwError, enumAtmHwError.ordinal() * 4, 4 );
             }
-            sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "", byteAtmHwError );
+            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "", byteAtmHwError );
         }
         
         /*
@@ -529,7 +530,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
             if( fnMac.getLastDealTime().compareTo(dtLastDealTime) < 0 )
                 fnMacUpd.setLastDealTime( dtLastDealTime );
             fnMacUpd.setUpdateUid( "TRANmng");
-            fnMacUpd.setUpdateDate( dSysDate );
+            fnMacUpd.setUpdateDate( safeData.getDSysDate() );
             try {
                 fnMacMap.updateByPrimaryKeySelective( fnMacUpd );
             }
@@ -605,7 +606,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnMacUpd.setAtmDealNo( parsed.getString("atm_deal_no") );
         fnMacUpd.setLastDealTime( dtLastDealTime );
         fnMacUpd.setUpdateUid( "TRANmng");
-        fnMacUpd.setUpdateDate( dSysDate );
+        fnMacUpd.setUpdateDate( safeData.getDSysDate() );
         if( fnMac.getFirstDealDate() == null || fnMac.getFirstDealDate().length() == 0)
             fnMacUpd.setFirstDealDate( parsed.getString("deal_date") );
         if( fnMac.getFirstAtmDealNo() == null || fnMac.getFirstAtmDealNo().length() == 0)
@@ -644,9 +645,9 @@ public class InN1000100Impl extends InMsgHandlerImpl {
          * 실제 장애가 복구 처리될 수 있다 따라서 복구 시키지 않음 20090330   
          */
         if( lInMacAmt < 0 ) {
-            sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "5", null );
-            sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "6", null );
-            sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "b", null );
+            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "5", null );
+            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "6", null );
+            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "b", null );
         }
         
         /*
@@ -662,21 +663,21 @@ public class InN1000100Impl extends InMsgHandlerImpl {
             logger.info("OLD_IN_MAC_AMT[{}], IN_MAC_AMT[{}], SHORT_CASH_NOTICE[{}], SHORT_CASH[{}]",
                     fnMac.getInMacAmt(), lInMacAmt, fnMac.getShortCashNotice(), fnMac.getShortCash() );
             if( fnMac.getInMacAmt() + lInMacAmt > fnMac.getShortCashNotice() ) {
-                sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "c", null ); /*현금부족 (기준금액)     */
-                sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "e", null ); /*현금부족 예보 (기준금액)*/
+                sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "c", null ); /*현금부족 (기준금액)     */
+                sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "e", null ); /*현금부족 예보 (기준금액)*/
             }
             /*
              * 잔액이 현금부족 기준금액 보다 많아 진다면
              * 현금부족(기준금액)(NI912) 복구 
              */
             else if( fnMac.getInMacAmt() + lInMacAmt > fnMac.getShortCash() ) {
-                sendNICERepairMsg( fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "c", null ); /*현금부족 (기준금액)     */
+                sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "c", null ); /*현금부족 (기준금액)     */
             }
         }
     }
         
     
-    private void sendNICERepairMsg( String branchCd, String macNo, String userMadeErr, byte[] errState ) {
+    private void sendNICERepairMsg( MsgBrokerData safeData, String branchCd, String macNo, String userMadeErr, byte[] errState ) {
         
         /*
          * 거래 금액의 변화가 있을 경우 나이스 발생 장애 복구 시킴
@@ -694,14 +695,14 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                   .setString( "CM.ret_cd_src", "S" )
                   .setString( "CM.msg_id", "TRANRPR" )
                   .setInt   ( "CM.body_len", msgPsr.getMessageLength() - MsgBrokerConst.HEADER_LEN )
-                  .setString( "CM.trans_date", sSysDate )
-                  .setString( "CM.trans_time", sSysTime )
+                  .setString( "CM.trans_date", safeData.getSysDate() )
+                  .setString( "CM.trans_time", safeData.getSysTime() )
                   .setString( "CM.format_type", MsgBrokerConst.NS_CODE )
                   .setString( "CM.msg_type", MsgBrokerConst.NS_REQ )
                   .setString( "CM.work_type", MsgBrokerConst.NS_ERR_STATE )
                   .setString( "network_info", MsgBrokerConst.NICE_USER_ERR_REPAIR )
-                  .setString( "create_date", sSysDate )
-                  .setString( "create_time", sSysTime )
+                  .setString( "create_date", safeData.getSysDate() )
+                  .setString( "create_time", safeData.getSysTime() )
                   .setString( "brch_cd", branchCd )
                   .setString( "mac_no", macNo )
                   .setString( "user_made_err", userMadeErr );

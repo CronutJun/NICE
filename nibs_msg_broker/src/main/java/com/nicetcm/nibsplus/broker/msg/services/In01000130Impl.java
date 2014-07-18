@@ -17,6 +17,7 @@ import java.util.List;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.mapper.*;
 import com.nicetcm.nibsplus.broker.msg.model.*;
@@ -43,7 +44,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
     @Autowired private TCtErrorMngMadeComMapper errMngMadeComMap;
     
     @Override
-    public void inMsgBizProc( MsgParser parsed ) throws Exception {
+    public void inMsgBizProc( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
 
         logger.debug("Msg Received");
         logger.debug(parsed.getString("CM.work_type"));

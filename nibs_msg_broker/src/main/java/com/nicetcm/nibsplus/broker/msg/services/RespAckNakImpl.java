@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 
 @Service("respAckNak")
 public class RespAckNakImpl implements RespAckNakHandler {
@@ -13,7 +14,7 @@ public class RespAckNakImpl implements RespAckNakHandler {
     private static final Logger logger = LoggerFactory.getLogger(RespAckNakImpl.class);
     
     @Override
-    public void procAckNak(MsgParser parsed, int errorCode) throws Exception {
+    public void procAckNak(MsgBrokerData safeData, MsgParser parsed, int errorCode) throws Exception {
         
         String sMsgType = parsed.getString("CM.msg_type");
         

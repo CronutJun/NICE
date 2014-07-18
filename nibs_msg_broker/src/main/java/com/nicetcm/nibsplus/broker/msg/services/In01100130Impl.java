@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
@@ -46,7 +47,7 @@ public class In01100130Impl implements InMsgHandler {
     @Autowired private TCtErrorMngGuardMapper errMngGuardMap;
 
     @Override
-    public void inMsgHandle(MsgParser parsed) throws Exception {
+    public void inMsgHandle(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         
         TransactionStatus status = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
         try {
