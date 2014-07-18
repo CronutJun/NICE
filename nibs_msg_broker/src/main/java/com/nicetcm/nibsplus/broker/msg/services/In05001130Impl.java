@@ -18,6 +18,6 @@ public class In05001130Impl extends InMsgHandlerImpl {
     
     @Override
     public void inMsgBizProc(MsgParser parsed) throws Exception {
-    	/* Update #1 */
+    	/* Update #1 Good */
     }
 }
