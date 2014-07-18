@@ -10,6 +10,8 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
+import com.nicetcm.nibsplus.broker.msg.model.IfCashInsert;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
@@ -24,16 +26,14 @@ import com.nicetcm.nibsplus.broker.msg.model.TMisc;
  * @version 1.0
  * @see
  */
-@Service("in03001110")
-public class In03001110Impl extends InMsgHandlerImpl {
+@Service("in03101110")
+public class In03101110Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(In03001110Impl.class);
-
-    @Autowired private StoredProcMapper splMap;
+    private static final Logger logger = LoggerFactory.getLogger(In03101110Impl.class);
 
     @Autowired private StoredProcMapper storedProcMapper;
 
-
+    @Autowired private TMiscMapper tMiscMapper;
 
     @Override
     public void inMsgBizProc(MsgParser parsed) throws Exception {
@@ -41,25 +41,26 @@ public class In03001110Impl extends InMsgHandlerImpl {
         logger.debug("Msg Received");
         logger.debug(parsed.getString("CM.work_type"));
 
-        TMacInfo macInfo = new TMacInfo();
-        macInfo.setOrgCd( parsed.getString("CM.org_cd") );
-        macInfo.setBranchCd( parsed.getString("brch_cd") );
-        macInfo.setMacNo( parsed.getString("mac_no") );
+        TMacInfo tMacInfo = new TMacInfo();
+        tMacInfo.setOrgCd( parsed.getString("CM.org_cd") );
+        tMacInfo.setBranchCd( parsed.getString("brch_cd") );
+        tMacInfo.setMacNo( parsed.getString("mac_no") );
 
         /**************************************************************************************************
          농협atms는 조회일자 조회시간이 전문상에 없으므로 현재 시간을 세팅하도록 한다.
         ***************************************************************************************************/
-        final String inqDate = MsgBrokerLib.SysDate();
-        final String inqTime = MsgBrokerLib.SysTime();
+
+        parsed.setString("inq_date", sSysDate);
+        parsed.setString("inq_time", sSysTime);
 
         /**
          * 지점코드, 기번 길이 검증
          */
-        comPack.checkBranchMacLength( macInfo );
+        comPack.checkBranchMacLength( tMacInfo );
 
         TMisc tMisc = new TMisc();
         tMisc.sethCashType("1");
-        tMisc.setInqDate(inqDate);
+        tMisc.setInqDate(parsed.getString("inq_date"));
         tMisc.setOrgCd(parsed.getString("CM.org_cd"));
         tMisc.setBranchCd(parsed.getString("brch_cd"));
         tMisc.setMacNo(parsed.getString("mac_no"));
@@ -101,38 +102,39 @@ public class In03001110Impl extends InMsgHandlerImpl {
         ***************************************************************************************************/
         if(MsgBrokerConst.EMART_CODE.equals(parsed.getLong("CM.org_cd"))) {
 
-            IfCashinsertEmart ifCashinsertEmart = new IfCashinsertEmart();
-            ifCashinsertEmart.setnUpdateCheckYN   (0);
-            ifCashinsertEmart.setpOrgCd           (parsed.getString("CM.org_cd"));
-            ifCashinsertEmart.setpJijumCd         (parsed.getString("brch_cd"));
-            ifCashinsertEmart.setpMacNo           (parsed.getString("mac_no"));
-            ifCashinsertEmart.setpCashType        (tMisc.gethCashType());
-            ifCashinsertEmart.setpCashDate        (inqDate);
-            ifCashinsertEmart.setpCashTime        (inqTime);
+            IfCashInsertEmart ifCashInsertEmart = new IfCashInsertEmart();
+            ifCashInsertEmart.setnUpdateCheckYN   (0);
+            ifCashInsertEmart.setpOrgCd           (parsed.getString("CM.org_cd"));
+            ifCashInsertEmart.setpJijumCd         (parsed.getString("brch_cd"));
+            ifCashInsertEmart.setpMacNo           (parsed.getString("mac_no"));
+            ifCashInsertEmart.setpCashType        (tMisc.gethCashType());
+            ifCashInsertEmart.setpCashDate        (parsed.getString("inq_date"));
+            ifCashInsertEmart.setpCashTime        (parsed.getString("inq_time"));
 
-            ifCashinsertEmart.setpRemIn10Amt      (hRemain10Amt        );
-            ifCashinsertEmart.setpRemIn50Amt      (hRemain50Amt        );
-            ifCashinsertEmart.setpRemIn100Amt     (hRemain100Amt       );
-            ifCashinsertEmart.setpRemIn500Amt     (hRemain500Amt       );
-            ifCashinsertEmart.setpRemIn1000Amt    (hRemain1000Amt      );
-            ifCashinsertEmart.setpRemIn5000Amt    (hRemain5000Amt      );
-            ifCashinsertEmart.setpRemIn10000Amt   (hRemain10000Amt     );
-            ifCashinsertEmart.setpRemIn50000Amt   (hRemain50000Amt     );
-            ifCashinsertEmart.setpRemOut10Amt     (hRemIn10Amt         );
-            ifCashinsertEmart.setpRemOut50Amt     (hRemIn50Amt         );
-            ifCashinsertEmart.setpRemOut100Amt    (hRemIn100Amt        );
-            ifCashinsertEmart.setpRemOut500Amt    (hRemIn500Amt        );
-            ifCashinsertEmart.setpRemOut1000Amt   (hRemIn1000Amt       );
-            ifCashinsertEmart.setpRemOut5000Amt   (hRemIn5000Amt       );
-            ifCashinsertEmart.setpRemOut10000Amt  (hRemIn10000Amt      );
-            ifCashinsertEmart.setpRemOut50000Amt  (hRemIn50000Amt      );
+            ifCashInsertEmart.setpRemIn10Amt      (hRemain10Amt        );
+            ifCashInsertEmart.setpRemIn50Amt      (hRemain50Amt        );
+            ifCashInsertEmart.setpRemIn100Amt     (hRemain100Amt       );
+            ifCashInsertEmart.setpRemIn500Amt     (hRemain500Amt       );
+            ifCashInsertEmart.setpRemIn1000Amt    (hRemain1000Amt      );
+            ifCashInsertEmart.setpRemIn5000Amt    (hRemain5000Amt      );
+            ifCashInsertEmart.setpRemIn10000Amt   (hRemain10000Amt     );
+            ifCashInsertEmart.setpRemIn50000Amt   (hRemain50000Amt     );
+            ifCashInsertEmart.setpRemOut10Amt     (hRemIn10Amt         );
+            ifCashInsertEmart.setpRemOut50Amt     (hRemIn50Amt         );
+            ifCashInsertEmart.setpRemOut100Amt    (hRemIn100Amt        );
+            ifCashInsertEmart.setpRemOut500Amt    (hRemIn500Amt        );
+            ifCashInsertEmart.setpRemOut1000Amt   (hRemIn1000Amt       );
+            ifCashInsertEmart.setpRemOut5000Amt   (hRemIn5000Amt       );
+            ifCashInsertEmart.setpRemOut10000Amt  (hRemIn10000Amt      );
+            ifCashInsertEmart.setpRemOut50000Amt  (hRemIn50000Amt      );
 
-            ifCashinsertEmart.setvFirstInqYN      (0);
-            ifCashinsertEmart.setvResult          (-1);
-            //ifCashinsertEmart.setvResultMsg       ();
+            ifCashInsertEmart.setvFirstInqYN      (0);
+            ifCashInsertEmart.setvResult          (-1);
 
-            if(ifCashinsertEmart.getvResult() != 0) {
-                throw new MsgBrokerException(String.format("[sp_if_CashInsert_EMART] 프로시져 오류 2: %s ", ifCashinsertEmart.getvResultMsg()), -99);
+            storedProcMapper.spIfCashinsertEmart(ifCashInsertEmart);
+
+            if(ifCashInsertEmart.getvResult() != 0) {
+                throw new MsgBrokerException(String.format("[sp_if_CashInsert_EMART] 프로시져 오류 2: %s ", ifCashInsertEmart.getvResultMsg()), -99);
             }
         }
         /***************************************************************************************************
@@ -154,6 +156,7 @@ public class In03001110Impl extends InMsgHandlerImpl {
                MsgBrokerConst.DGB_CODE.equals(parsed.getString("CM.org_cd")) ||
             (  MsgBrokerConst.KNATMS_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("inq_source").equals("1") )) {
 
+                parsed.setLong("cash_remain_amt", 0);
                 /**************************************************************************************************
                  주기현송에 따른 잔액 계산법 변경 20111103. 정희성 요청
                  정규현송이 있다면 기존과 동일 (현금잔액 = 장전(직전)금액 + 현금입금액 - 현금지급액)
@@ -161,74 +164,189 @@ public class In03001110Impl extends InMsgHandlerImpl {
                         마감기기 라면  (현금잔액 =장전(직전)금액 - 마감지급 + 마감입금 + 현금입금액 - 현금지급액)
                         미마감기기라면 기존과 동일 (현금잔액 = 장전(직전)금액 + 현금입금액 - 현금지급액)
                 ***************************************************************************************************/
-                /*
-                  memset( suBody.cash_remain_amt,   0x00, sizeof(suBody.cash_remain_amt) );
 
-                                EXEC SQL    SELECT (CASH.TOT_IN_AMT - CASH.CHECK_IN_AMT) AS CLOSE_IN_AMT,
-                                (CASH.TOT_OUT_AMT - CASH.CHECK_OUT_AMT ) AS CLOSE_OUT_AMT
-                         INTO    :hCloseInAmt,
-                                 :hCloseOutAmt
-                         FROM T_CM_CASH CASH,
-                             (
-                                 SELECT  ORG_CD, jijum_cd,
-                                         mac_no
-                                 FROM    T_CM_MAC
-                                 WHERE   org_cd = :suHead.org_cd
-                                 AND     JIJUM_CD    =:suBody.jijum_cd
-                                 AND     MAC_NO     = :suBody.mac_no
-                                 MINUS
-                                 SELECT  ORG_CD,
-                                         jijum_cd,
-                                         mac_no
-                                 FROM    T_FN_SEND
-                                 WHERE   SEND_DATE(+) = TO_CHAR(SYSDATE, 'YYYYMMDD')
-                                 AND     SEND_TYPE = '1'
-                                 AND     ORG_CD = :suHead.org_cd
-                                 AND     JIJUM_CD    =:suBody.jijum_cd
-                                 AND     MAC_NO     = :suBody.mac_no
-                             ) BB
-                         WHERE   CASH.CASH_DATE  = TO_CHAR(SYSDATE, 'YYYYMMDD')
-                         AND     CASH.CASH_TYPE  = '2'
-                         AND     CASH.ORG_CD     = :suHead.org_cd
-                         AND     CASH.JIJUM_CD   =:suBody.jijum_cd
-                         AND     CASH.MAC_NO     = :suBody.mac_no
-                         AND     CASH.ORG_CD     = BB.ORG_CD
-                         AND     CASH.JIJUM_CD   = BB.JIJUM_CD
-                         AND     CASH.MAC_NO     = BB.MAC_NO;;
+                CloseAmt closeAmt;
 
-                    if(sqlca.sqlcode == DB_NO_DATA)
-                    {
-                        /**************************************************************************************************
-                         미현송 미마감기기 혹은 정규현송 기기의 경우 기존 식 따름
-                        ***************************************************************************************************
-                        hCloseInAmt = 0;
-                        hCloseOutAmt = 0;
-                    }
-                    else if(sqlca.sqlcode)
-                    {
-                        logger(">>> [T_CM_CASH] ERROR [%.200s]\n", SqlErrMsg);
-                        return -1;
-                    }
-                */
+                try
+                {
+                    closeAmt = tMiscMapper.selectCloseAmt(tMacInfo);
+                } catch (Exception e)
+                {
+                    logger.info(">>> [T_CM_CASH] ERROR");
+                    throw e;
+                }
+
+                if(closeAmt == null)
+                {
+                    /**************************************************************************************************
+                     미현송 미마감기기 혹은 정규현송 기기의 경우 기존 식 따름
+                    ***************************************************************************************************/
+                    closeAmt = new CloseAmt();
+                }
+
 
                 /**************************************************************************************************
                  현금잔액 = 장전(직전)금액 + 현금입금액 - 현금지급액
-                ***************************************************************************************************
-                sprintf(suBody.cash_remain_amt, "%ld",
-                            hPRE_AMT + atol(suBody.cash_in_amt) - atol(suBody.cash_out_amt) - hCloseOutAmt + hCloseInAmt
-                            );
-                */
+                ***************************************************************************************************/
+                parsed.setLong("cash_remain_amt", tMisc.gethPreAmt() + parsed.getLong("cash_in_amt") - parsed.getLong("cash_out_amt") - closeAmt.getCloseOutAmt() + closeAmt.getCloseInAmt());
 
+            }//endif
 
+            IfCashInsert ifCashInsert = new IfCashInsert();
+
+            ifCashInsert.setnUpdateCheckYN    (0);
+            ifCashInsert.setpOrgCd            (parsed.getString("CM.org_cd"));
+            ifCashInsert.setpJijumCd          (parsed.getString("brch_cd"));
+            ifCashInsert.setpMacNo            (parsed.getString("mac_no"));
+            ifCashInsert.setpCashType         (tMisc.gethCashType());
+            ifCashInsert.setpCashDate         (parsed.getString("inq_date"));
+            ifCashInsert.setpCashTime         (parsed.getString("inq_time"));
+            ifCashInsert.setpChargeAmt        (tMisc.gethPreAmt());
+            ifCashInsert.setpTotInAmt         (0);
+            ifCashInsert.setpTotOutAmt        (parsed.getLong("total_out_amt"));
+            ifCashInsert.setpMoneyInAmt       (parsed.getLong("cash_in_amt"));
+            ifCashInsert.setpMoneyOutAmt      (parsed.getLong("cash_out_amt"));
+            ifCashInsert.setpCheckInAmt       (parsed.getLong("check_in_amt"));
+            ifCashInsert.setpCheckOutAmt      (parsed.getLong("check_out_amt"));
+            ifCashInsert.setpRemainAmt        (parsed.getLong("cash_remain_amt"));
+            ifCashInsert.setpInCnt            (0);
+            ifCashInsert.setpOutCnt           (0);
+            ifCashInsert.setpChkInCnt         (parsed.getLong("check_in_cnt"));
+            ifCashInsert.setpChkOutCnt        (parsed.getLong("check_out_amt"));
+            ifCashInsert.setpAddAmt           (0);
+            ifCashInsert.setpCollectAmt       (0);
+            ifCashInsert.setpRemainCheckAmt   (parsed.getLong("check_amt"));
+            ifCashInsert.setpRemain10Amt      (hRemain10Amt);
+            ifCashInsert.setpRemain50Amt      (hRemain50Amt);
+            ifCashInsert.setpRemain100Amt     (hRemain100Amt);
+            ifCashInsert.setpRemain500Amt     (hRemain500Amt);
+            ifCashInsert.setpRemain1000Amt    (hRemain1000Amt);
+            ifCashInsert.setpRemain5000Amt    (hRemain5000Amt);
+            ifCashInsert.setpRemain10000Amt   (hRemain10000Amt);
+            ifCashInsert.setpRemain50000Amt   (hRemain50000Amt);
+            ifCashInsert.setpMoneyIn50000Amt  (0);
+            ifCashInsert.setpMoneyOut50000Amt (0);
+            ifCashInsert.setpMoneyIn5000Amt   (0);
+            ifCashInsert.setpMoneyIn1000Amt   (0);
+            ifCashInsert.setpTodayChargeAmt   (0);
+            ifCashInsert.setpPreChargeAmt     (0);
+            ifCashInsert.setpPreAddAmt        (0);
+            ifCashInsert.setpHolyAddAmt       (0);
+            ifCashInsert.setpTodayAddAmt      (0);
+            ifCashInsert.setpSafeNo           ("");
+            ifCashInsert.setvFirstInqYN       (0);
+            ifCashInsert.setvResult           (-1);
+
+            storedProcMapper.spIfCashinsert(ifCashInsert);
+
+            if(ifCashInsert.getvResult() != 0) {
+                throw new MsgBrokerException(String.format("[MngCM_AP_SaveCurrentAmt] 프로시져 오류 2: %s ", ifCashInsert.getvResultMsg()), -99);
             }
 
-        }
+            /**************************************************************************************************
+             현재시재의 마감조회 구분이 "1" 이라면 수표 잔액을 마감시재에 저장해 주고
+             마감조회 후 자동 전송 건이므로 AP로 응답전송하지 않는다.
+            ***************************************************************************************************/
+
+            if(parsed.getString("inq_close_yn").equals("1")) {
+                String hCASH_TYPE = "2";
+
+                IfCashInsert ifCashInsert2 = new IfCashInsert();
+
+                ifCashInsert2.setnUpdateCheckYN    (1);
+                ifCashInsert2.setpOrgCd            (parsed.getString("CM.org_cd"));
+                ifCashInsert2.setpJijumCd          (parsed.getString("brch_cd"));
+                ifCashInsert2.setpMacNo            (parsed.getString("mac_no"));
+                ifCashInsert2.setpCashType         (tMisc.gethCashType());
+                ifCashInsert2.setpCashDate         (parsed.getString("inq_date"));
+                ifCashInsert2.setpCashTime         (parsed.getString("inq_time"));
+                ifCashInsert2.setpChargeAmt        (tMisc.gethPreAmt());
+                ifCashInsert2.setpTotInAmt         (0);
+                ifCashInsert2.setpTotOutAmt        (parsed.getLong("total_out_amt"));
+                ifCashInsert2.setpMoneyInAmt       (parsed.getLong("cash_in_amt"));
+                ifCashInsert2.setpMoneyOutAmt      (parsed.getLong("cash_out_amt"));
+                ifCashInsert2.setpCheckInAmt       (parsed.getLong("check_in_amt"));
+                ifCashInsert2.setpCheckOutAmt      (parsed.getLong("check_out_amt"));
+                ifCashInsert2.setpRemainAmt        (parsed.getLong("cash_remain_amt"));
+                ifCashInsert2.setpInCnt            (0);
+                ifCashInsert2.setpOutCnt           (0);
+                ifCashInsert2.setpChkInCnt         (0);
+                ifCashInsert2.setpChkOutCnt        (0);
+                ifCashInsert2.setpAddAmt           (0);
+                ifCashInsert2.setpCollectAmt       (0);
+                ifCashInsert2.setpRemainCheckAmt   (parsed.getLong("check_amt"));
+                ifCashInsert2.setpRemain10Amt      (0);
+                ifCashInsert2.setpRemain50Amt      (0);
+                ifCashInsert2.setpRemain100Amt     (0);
+                ifCashInsert2.setpRemain500Amt     (0);
+                ifCashInsert2.setpRemain1000Amt    (0);
+                ifCashInsert2.setpRemain5000Amt    (0);
+                ifCashInsert2.setpRemain10000Amt   (0);
+                ifCashInsert2.setpRemain50000Amt   (0);
+                ifCashInsert2.setpMoneyIn50000Amt  (0);
+                ifCashInsert2.setpMoneyOut50000Amt (0);
+                ifCashInsert2.setpMoneyIn5000Amt   (0);
+                ifCashInsert2.setpMoneyIn1000Amt   (0);
+                ifCashInsert2.setpTodayChargeAmt   (0);
+                ifCashInsert2.setpPreChargeAmt     (0);
+                ifCashInsert2.setpPreAddAmt        (0);
+                ifCashInsert2.setpHolyAddAmt       (0);
+                ifCashInsert2.setpTodayAddAmt      (0);
+                ifCashInsert2.setpSafeNo           ("");
+                ifCashInsert2.setvFirstInqYN       (0);
+                ifCashInsert2.setvResult           (-1);
+
+                storedProcMapper.spIfCashinsert(ifCashInsert2);
+
+                if(ifCashInsert2.getvResult() != 0) {
+                    throw new MsgBrokerException(String.format("[MngCM_AP_SaveCurrentAmt] 프로시져 오류 3: %s ", ifCashInsert2.getvResultMsg()), -99);
+                }
+            }//endif
+
+        }//endif
 
 
     }//end method
 
-    public class IfCashinsertEmart {
-/*
+    public class CloseAmt {
+
+        private long closeInAmt;
+        private long closeOutAmt;
+
+        /**
+         * @return the closeInAmt
+         */
+        public long getCloseInAmt()
+        {
+            return closeInAmt;
+        }
+        /**
+         * @param closeInAmt the closeInAmt to set
+         */
+        public void setCloseInAmt(long closeInAmt)
+        {
+            this.closeInAmt = closeInAmt;
+        }
+        /**
+         * @return the closeOutAmt
+         */
+        public long getCloseOutAmt()
+        {
+            return closeOutAmt;
+        }
+        /**
+         * @param closeOutAmt the closeOutAmt to set
+         */
+        public void setCloseOutAmt(long closeOutAmt)
+        {
+            this.closeOutAmt = closeOutAmt;
+        }
+    }
+
+
+
+    public class IfCashInsertEmart {
+        /*
         nUpdateCheckYN      IN        NUMBER,
         pOrgCd              IN        t_cm_cash_emart.org_cd%TYPE,
         pJijumCd            IN        t_cm_cash_emart.jijum_cd%TYPE,
@@ -255,7 +373,7 @@ public class In03001110Impl extends InMsgHandlerImpl {
         vFirstInqYN         OUT       NUMBER,
         vResult             OUT       NUMBER,
         vResultMsg          OUT       VARCHAR2
-*/
+         */
 
         private int nUpdateCheckYN = 0    ;
         private String pOrgCd              ;

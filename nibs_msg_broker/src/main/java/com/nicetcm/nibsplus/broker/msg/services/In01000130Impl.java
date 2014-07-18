@@ -87,7 +87,11 @@ public class In01000130Impl extends InMsgHandlerImpl {
         
         TCtErrorMng errMng = new TCtErrorMng();
         TCtErrorMngMadeCom errMngMadeCom = new TCtErrorMngMadeCom();
-        
+        TCtErrorRcpt errRcpt = new TCtErrorRcpt();
+        TCtErrorNoti errNoti = new TCtErrorNoti();
+        TCtErrorCall errCall = new TCtErrorCall();
+        TCtErrorTxn  errTxn  = new TCtErrorTxn();
+       
         /**
          *  macInfo의 값을 errMng로 일괄 복사
          */
@@ -242,7 +246,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
             errMng.setFormatType("11");
         }
         
-        comPack.insertErrMng( errMng, macInfo, parsed.getString("part_mng_yn") );
+        comPack.insertErrMng( errMng, errRcpt, errNoti, errCall, errTxn, macInfo, parsed.getString("part_mng_yn") );
     }
     
     private void insertErrMngMadeCom( TCtErrorMng errMng, TCtErrorMngMadeCom errMngMadeCom ) throws Exception {

@@ -37,8 +37,8 @@ public class MsgBrokerAppConfig {
         ds.setUrl(MsgCommon.msgProps.getProperty("db_url"));
         ds.setUsername(MsgCommon.msgProps.getProperty("db_user"));
         ds.setPassword(MsgCommon.msgProps.getProperty("db_pass"));
-        ds.setInitialSize(2);
-        ds.setMaxActive(5);
+        ds.setInitialSize(Integer.parseInt(MsgCommon.msgProps.getProperty("db_init_conn")));
+        ds.setMaxActive(Integer.parseInt(MsgCommon.msgProps.getProperty("db_max_conn")));
         
         this.ds = ds;
         

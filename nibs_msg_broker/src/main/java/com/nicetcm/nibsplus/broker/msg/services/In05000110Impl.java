@@ -23,6 +23,10 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorRcpt;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
@@ -39,6 +43,10 @@ public class In05000110Impl extends InMsgHandlerImpl {
         
         TMacInfo macInfo = new TMacInfo();
         TCtErrorMng errMng = new TCtErrorMng();
+        TCtErrorRcpt errRcpt = new TCtErrorRcpt();
+        TCtErrorNoti errNoti = new TCtErrorNoti();
+        TCtErrorCall errCall = new TCtErrorCall();
+        TCtErrorTxn  errTxn  = new TCtErrorTxn();
         
         macInfo.setOrgCd( parsed.getString("CM.org_cd") );
         macInfo.setBranchCd( parsed.getString("brch_cd") );
@@ -220,7 +228,259 @@ public class In05000110Impl extends InMsgHandlerImpl {
                 /*
                  * 예보 및 장애 
                  */
+                if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_NEAR
+                ||  parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_END ) {
+                    /*
+                     * 하나은행 경우 장애는 발생시키지 않는다. 
+                     */
+                    if( macInfo.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) ) {
+                        if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_NEAR )
+                            comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                    }
+                    else {
+                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                    }
+                }
+                /*
+                 * 복구 
+                 */
+                else if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_CLEAR ) {
+                    /*
+                     *  1. 복구일자(발생일자)
+                     */
+                    errTxn.setRepairDate( parsed.getString("create_date") );
+                    /*
+                     *  2. 복구시간(발생시간)
+                     */
+                    errTxn.setRepairTime( parsed.getString("create_time") );
+ 
+                    /*
+                     * 복구 일때는 예보와 장애 모두를 복구 시킨다. 
+                     */
+                    errMng.setErrorCd( String.format("NE%1%02s", e.getErrorCd()) );
+                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errMng, errRcpt, errNoti, errCall,
+                            errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    errMng.setErrorCd( String.format("NE%2%02s", e.getErrorCd()) );
+                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errMng, errRcpt, errNoti, errCall,
+                            errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    /*
+                     * 20100225 양유석주임요청 하나은행의 경우 현금부족이나 수표부족 상태 복구시
+                     * 출동요청으로 들어온 현금부족(HN90B)와 수표부족(HN90E)도 복구 
+                     */
+                    if( macInfo.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) ) {
+                        errMng.setErrorCd("");
+                        if( e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CASH ) {
+                            errMng.setErrorCd("HN90B");
+                            comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errMng, errRcpt, errNoti, errCall,
+                                    errTxn, macInfo, errState.getErrorStates().getBytes() );
+                        }
+                        else if( e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CHECK ) {
+                            errMng.setErrorCd("HN90E");
+                            comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errMng, errRcpt, errNoti, errCall,
+                                    errTxn, macInfo, errState.getErrorStates().getBytes() );
+                        }
+                    }
+                }
+                else if ( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP1
+                      ||   parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP2
+                      ||   parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP3 ) {
+                /*
+                logger.info(">>> [SaveErrState] 상태무시");
+                */
+                }
+                else {
+                    logger.info(String.format(">>> [SaveErrState] 잘못된 상태코드 수신 %s-코드(%c) - ex)복구:0,예보:1,장애:2, 무시:' ' or 9",
+                            e.getErrorName(), parsed.getBytes("atm_state")[e.ordinal()]) );
+                }
+            }
+        }
+        
+        /*
+         *  하나은행 일 경우
+         */
+        if( macInfo.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) ) {
+            /*
+             * 개시전문
+             */
+            if( parsed.getString("error_hw_yn").equals(MsgBrokerConst.HWERR_OPEN) ) {
+                /*
+                 * 장애내용 관련 모든 H/W Error 복구( 상태 장애 제외 ) 
+                 */
+                /*
+                 *  1. 복구일자(발생일자)
+                 */
+                errTxn.setRepairDate( parsed.getString("create_date") );
+                /*
+                 *  2. 복구시간(발생시간)
+                 */
+                errTxn.setRepairTime( parsed.getString("create_time") );
+                comPack.insertUpdateMacOpen( macInfo, errMng );
+                comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
+                        errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+               
+            }
+        }
+        else {
+            /*
+             * 개국 
+             */
+            if( parsed.getString("error_hw_yn").equals(MsgBrokerConst.HWERR_OPEN) ) {
+                /*
+                 * 장애내용 관련 모든 H/W Error 복구( 상태 장애 제외 ) 
+                 */
+                /*
+                 *  1. 복구일자(발생일자)
+                 */
+                errTxn.setRepairDate( parsed.getString("create_date") );
+                /*
+                 *  2. 복구시간(발생시간)
+                 */
+                errTxn.setRepairTime( parsed.getString("create_time") );
+                comPack.insertUpdateMacOpen( macInfo, errMng );
+                comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
+                        errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+            }
+            /*
+             * 장애 
+             */
+            else if( parsed.getString("error_hw_yn").equals(MsgBrokerConst.HWERR_ERROR) ) {
+                errMng.setErrorCd( parsed.getString("error_cd") );
+                errMng.setMadeErrCd( parsed.getString("error_mtc_cd") );
+                /*
+                 * 하나은행(구) 일 경우 정액수표부족(67) 일경우 수표 취급 여부를 체크하여 발생시킨다. 
+                 */
+                if( macInfo.getOrgCd().equals(MsgBrokerConst.HANA_CODE) 
+                &&  errMng.getErrorCd().equals("67")
+                && (macInfo.getCheckYn() == null 
+                 || macInfo.getCheckYn().equals("0")
+                 || macInfo.getCheckYn().length() == 0) ) {
+                    logger.info(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
+                    return;
+                }
+                comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
 
+                /*
+                 * ERRMon 에서 만든 user 정의 장애( 나이스 발생 장애 ) 라면 응답 송신하지 않는다. 
+                 */
+                if( errMng.getErrorCd().equals("NE999")
+                ||  errMng.getErrorCd().equals("USR01") ) {
+                    throw new MsgBrokerException("", -99);
+                }
+            }
+            /*
+             * 폐국 
+             */
+            else if( parsed.getString("error_hw_yn").equals(MsgBrokerConst.HWERR_CLOSE) ) {
+                logger.info(">>> [SaveErrState] 폐국거래 수신 ... 무시...");
+            }
+            /*
+             *  H/W 장애 복구 
+             */
+            else if( parsed.getString("error_hw_yn").equals(MsgBrokerConst.HWERR_CLEAR) ) {
+                /*
+                 *  1. 복구일자(발생일자)
+                 */
+                errTxn.setRepairDate( parsed.getString("create_date") );
+                /*
+                 *  2. 복구시간(발생시간)
+                 */
+                errTxn.setRepairTime( parsed.getString("create_time") );
+
+                errMng.setErrorCd( parsed.getString("error_cd") );
+                
+                /*
+                 * 출동알림 모니터 장애의 경우 H/W장애 '0'에 뒷부분 상태가 따로 들어온다. 20110502' 
+                 */
+                if( parsed.getString("CM.msg_id").equals("ALARM") ) {
+                    
+                    if( parsed.getString("agency_off").equals("1") ) {
+                        errTxn.setRepairDate(null);
+                        errTxn.setRepairTime(null);
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_AGENCY_OFF );
+                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                    }
+                    else if( parsed.getString("agency_off").equals("0") ) {
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_AGENCY_OFF );
+                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    }
+                    if( parsed.getString("player_off").equals("1") ) {
+                        errTxn.setRepairDate(null);
+                        errTxn.setRepairTime(null);
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_PLAYER_OFF );
+                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                    }
+                    else if( parsed.getString("player_off").equals("0") ) {
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_PLAYER_OFF );
+                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    }
+                    if( parsed.getString("settop_off").equals("1") ) {
+                        errTxn.setRepairDate(null);
+                        errTxn.setRepairTime(null);
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_SETTOP_OFF );
+                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                    }
+                    else if( parsed.getString("settop_off").equals("0") ) {
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_SETTOP_OFF );
+                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    }
+                    if( parsed.getString("non_schdule").equals("1") ) {
+                        errTxn.setRepairDate(null);
+                        errTxn.setRepairTime(null);
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_NON_SCHDULE );
+                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                    }
+                    else if( parsed.getString("non_schdule").equals("0") ) {
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_NON_SCHDULE );
+                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    }
+                    if( parsed.getString("non_file").equals("1") ) {
+                        errTxn.setRepairDate(null);
+                        errTxn.setRepairTime(null);
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_NON_FILE );
+                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                    }
+                    else if( parsed.getString("non_file").equals("0") ) {
+                        errMng.setErrorCd( MsgBrokerConst.ALARM_NON_FILE );
+                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    }
+                    /*
+                     * 출동알림 상태는 응답송신 하지않는다. 
+                     */
+                    throw new MsgBrokerException("", -99);
+                }
+                if( errMng.getOrgCallCnt().equals(MsgBrokerConst.KBST_CODE) 
+                 && parsed.getString("error_cd").equals("00000") ) {
+                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
+                            errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                }
+                else if( (errMng.getOrgCallCnt().equals(MsgBrokerConst.KJB_CODE)
+                        || errMng.getOrgCallCnt().equals(MsgBrokerConst.WRATMS_CODE)
+                        || errMng.getOrgCallCnt().equals(MsgBrokerConst.KNATMS_CODE))
+                      &&  parsed.getString("error_cd").length() == 0 ) {
+                    /*
+                     * hw장애 복구 일 경우 
+                     */
+                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
+                            errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                }
+                else  {
+                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                            errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                }
+                /*
+                 * ERRMon 에서 만든 user 정의 장애( 나이스 발생 장애 ) 라면 응답 송신하지 않는다. 
+                 */
+                if( errMng.getErrorCd().equals("NE999") ) {
+                    throw new MsgBrokerException("", -99);
+                }
+            }
+            else {
+                logger.info(">>> [SaveErrState] 잘못된 HW 장애 여부 코드 수신 코드(%c)", parsed.getBytes("error_hw_yn")[0] );
             }
         }
     }

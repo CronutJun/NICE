@@ -22,10 +22,11 @@ public abstract class InMsgHandlerImpl implements InMsgHandler {
     protected String sNSysDate;
     protected String sSysTime;
     protected Date   dSysDate;
+    protected TransactionStatus status;
     
     @Override
     public final void inMsgHandle(MsgParser parsed) throws Exception {
-        TransactionStatus status = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
+        status = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
         try {
             sSysDate  = MsgBrokerLib.SysDate();
             sNSysDate = MsgBrokerLib.SysDate(1);

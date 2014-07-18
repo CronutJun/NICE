@@ -234,7 +234,8 @@ public class CommonPackImpl implements CommonPack {
      * @throws Exception
      * @see TCtErrorMng
      */
-    public void insertErrMng( TCtErrorMng ErrMng, TMacInfo MacInfo, String PartMngYn ) throws Exception {
+    public void insertErrMng( TCtErrorMng ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
+            TCtErrorTxn ErrTxn, TMacInfo MacInfo, String PartMngYn ) throws Exception {
         
         int iAutoSMS;
         String sSendTypeDetail = "";
@@ -244,22 +245,17 @@ public class CommonPackImpl implements CommonPack {
         String sSysTime = MsgBrokerLib.SysTime();
         Date   dSysDate = MsgBrokerLib.SysDateD(0);
         
-        TCtErrorRcpt errRcpt = new TCtErrorRcpt();
-        TCtErrorNoti errNoti = new TCtErrorNoti();
-        TCtErrorCall errCall = new TCtErrorCall();
-        TCtErrorTxn  errTxn  = new TCtErrorTxn();
-        
         /*
          * 현재시간을 얻는다.
          */
-        errRcpt.setAcceptDate( sSysDate );
-        errRcpt.setAcceptTime( sSysTime );
+        ErrRcpt.setAcceptDate( sSysDate );
+        ErrRcpt.setAcceptTime( sSysTime );
         
         /*
          * 장애관리, 개시관리 관련 변수 대입 
          */
-        errRcpt.setAcceptNm("online");
-        errRcpt.setAcceptUid("online");
+        ErrRcpt.setAcceptNm("online");
+        ErrRcpt.setAcceptUid("online");
         
         /*
          * 장애발생전문 - 장애 관리 테이블에 처리 
@@ -303,10 +299,10 @@ public class CommonPackImpl implements CommonPack {
              *  중복 장애가 있으면
              */
             if( getDupError( ErrMng ) == 1 ) {
-                errNoti.setSendCheckYn("Y");
+                ErrNoti.setSendCheckYn("Y");
             }
             else {
-                errNoti.setSendCheckYn("N");
+                ErrNoti.setSendCheckYn("N");
             }
         }
         
@@ -318,7 +314,7 @@ public class CommonPackImpl implements CommonPack {
              * 자동통보이면서 Wait 시간이 0일경우 자동통보한다. 0이 아닐경우는 batch 작업에 의해서 체크한다. 
              */
             logger.info("   SMS 자동 통보건 입니다");
-            errNoti.setSendStatus("1");
+            ErrNoti.setSendStatus("1");
             /*
              * 즉시 통보 건
              */
@@ -327,30 +323,30 @@ public class CommonPackImpl implements CommonPack {
                  * 외주 자동 통보
                  */
                 if( retASI.guardSite == 1 )
-                    errNoti.setSendType("5");
+                    ErrNoti.setSendType("5");
                 /*
                  * NICE 자동 통보
                  */
                 else
-                    errNoti.setSendType("0");
+                    ErrNoti.setSendType("0");
                 sSendTypeDetail = "5";
             }
             /*
              *  수분 후 자동 통보
              */
             else {
-                errNoti.setSendStatus("0");
+                ErrNoti.setSendStatus("0");
                 /*
                  * 외주 수분 후 자동 통보
                  */
                 if( retASI.guardSite == 1 ) {
-                    errNoti.setSendType("6");
+                    ErrNoti.setSendType("6");
                 }
                 /*
                  * NICE 수분 후 자동 통보
                  */
                 else {
-                    errNoti.setSendType("1");
+                    ErrNoti.setSendType("1");
                 }
                 sSendTypeDetail = "1";
             }
@@ -359,21 +355,21 @@ public class CommonPackImpl implements CommonPack {
              * 나이스 장애중 22시 이후 오전 8시 이전 데이타는 대기후 자동통보로 변경한다.
              */
             if( ErrMng.getOrgCd().equals( MsgBrokerConst.NICE_CODE )
-            &&  ( errRcpt.getAcceptTime().compareTo("220000") >= 0 
-              ||  errRcpt.getAcceptTime().compareTo("080000") < 0 )) {
-                errNoti.setSendStatus("0");
+            &&  ( ErrRcpt.getAcceptTime().compareTo("220000") >= 0 
+              ||  ErrRcpt.getAcceptTime().compareTo("080000") < 0 )) {
+                ErrNoti.setSendStatus("0");
                 /*
                  * 외주 자동 통보
                  */
                 if( retASI.guardSite == 1 )
-                    errNoti.setSendType("6");
+                    ErrNoti.setSendType("6");
                 else
-                    errNoti.setSendType("1");
+                    ErrNoti.setSendType("1");
                 
                 /*
                  * 나이스이고 22시 이후
                  */
-                if( errRcpt.getAcceptTime().compareTo("220000") >= 0 ) {
+                if( ErrRcpt.getAcceptTime().compareTo("220000") >= 0 ) {
                     sSendTypeDetail = "2";
                 }
                 /*
@@ -388,10 +384,10 @@ public class CommonPackImpl implements CommonPack {
          * 자동완료
          */
         else if( iAutoSMS == MsgBrokerConst.AUTO_FINISH ) {
-            errNoti.setSendStatus( "0" );
-            errNoti.setSendType("2");
-            errTxn.setFinishDate( errRcpt.getAcceptDate() );
-            errTxn.setFinishTime( errRcpt.getAcceptTime() );
+            ErrNoti.setSendStatus( "0" );
+            ErrNoti.setSendType("2");
+            ErrTxn.setFinishDate( ErrRcpt.getAcceptDate() );
+            ErrTxn.setFinishTime( ErrRcpt.getAcceptTime() );
             /* 처리완료 */
             ErrMng.setErrorStatus("7000");
         }
@@ -399,17 +395,17 @@ public class CommonPackImpl implements CommonPack {
          * 수동통보
          */
         else if( iAutoSMS == MsgBrokerConst.AUTO_SEND_FALSE ) {
-            errNoti.setSendStatus("0");
+            ErrNoti.setSendStatus("0");
             /*
              * 외주 수동 통보
              */
             if( retASI.guardSite == 1 )
-                errNoti.setSendType("7");
+                ErrNoti.setSendType("7");
             /*
              * NICE 수동 통보
              */
             else
-                errNoti.setSendType("2");
+                ErrNoti.setSendType("2");
             logger.info(" SMS 수동 혹은 자동중 Wait시간이 있는 통보건 [ORG_CD = '{}', BRANCH_CD = '{}', MAC_NO = '{}', TRANS_DATE = '{}', ORG_MSG_NO = '{}'",
                     ErrMng.getOrgCd(), ErrMng.getBranchCd(), ErrMng.getMacNo(), ErrMng.getTransDate(), ErrMng.getOrgMsgNo());
         }
@@ -456,123 +452,152 @@ public class CommonPackImpl implements CommonPack {
             throw e;
         }
         ErrMng.setRegDt( dSysDate );
-        ErrMng.setRegId( errRcpt.getAcceptUid() );
-        errRcpt.setErrorNo( ErrMng.getErrorNo() );
-        errRcpt.setCreateDate( ErrMng.getCreateDate() );
-        errRcpt.setCreateTime( ErrMng.getCreateTime() );
-        errRcpt.setRegDt( ErrMng.getRegDt() );
-        errRcpt.setRegId( ErrMng.getRegId() );
-        errNoti.setErrorNo( ErrMng.getErrorNo() );
-        errNoti.setCreateDate( ErrMng.getCreateDate() );
-        errNoti.setCreateTime( ErrMng.getCreateTime() );
-        errNoti.setRegDt( ErrMng.getRegDt() );
-        errNoti.setRegId( ErrMng.getRegId() );
-        errCall.setErrorNo( ErrMng.getErrorNo() );
-        errCall.setCreateDate( ErrMng.getCreateDate() );
-        errCall.setCreateTime( ErrMng.getCreateTime() );
-        errCall.setRegDt( ErrMng.getRegDt() );
-        errCall.setRegId( ErrMng.getRegId() );
-        errTxn.setErrorNo( ErrMng.getErrorNo() );
-        errTxn.setCreateDate( ErrMng.getCreateDate() );
-        errTxn.setCreateTime( ErrMng.getCreateTime() );
-        errTxn.setRegDt( ErrMng.getRegDt() );
-        errTxn.setRegId( ErrMng.getRegId() );
+        ErrMng.setRegId( ErrRcpt.getAcceptUid() );
+        ErrRcpt.setErrorNo( ErrMng.getErrorNo() );
+        ErrRcpt.setCreateDate( ErrMng.getCreateDate() );
+        ErrRcpt.setCreateTime( ErrMng.getCreateTime() );
+        ErrRcpt.setRegDt( ErrMng.getRegDt() );
+        ErrRcpt.setRegId( ErrMng.getRegId() );
+        ErrNoti.setErrorNo( ErrMng.getErrorNo() );
+        ErrNoti.setCreateDate( ErrMng.getCreateDate() );
+        ErrNoti.setCreateTime( ErrMng.getCreateTime() );
+        ErrNoti.setRegDt( ErrMng.getRegDt() );
+        ErrNoti.setRegId( ErrMng.getRegId() );
+        ErrCall.setErrorNo( ErrMng.getErrorNo() );
+        ErrCall.setCreateDate( ErrMng.getCreateDate() );
+        ErrCall.setCreateTime( ErrMng.getCreateTime() );
+        ErrCall.setRegDt( ErrMng.getRegDt() );
+        ErrCall.setRegId( ErrMng.getRegId() );
+        ErrTxn.setErrorNo( ErrMng.getErrorNo() );
+        ErrTxn.setCreateDate( ErrMng.getCreateDate() );
+        ErrTxn.setCreateTime( ErrMng.getCreateTime() );
+        ErrTxn.setRegDt( ErrMng.getRegDt() );
+        ErrTxn.setRegId( ErrMng.getRegId() );
         
         if( ErrMng.getCreateTime().length() == 0 )
-            ErrMng.setCreateTime( errRcpt.getAcceptTime() );
+            ErrMng.setCreateTime( ErrRcpt.getAcceptTime() );
         
         if( sSendTypeDetail.equals("0") ) {
-            errNoti.setSendDate( errRcpt.getAcceptDate() );
-            errNoti.setSendTime( errRcpt.getAcceptTime() );
-            errNoti.setSendNm( errRcpt.getAcceptNm() );
-            errNoti.setSendUid( errRcpt.getAcceptUid() );
+            ErrNoti.setSendDate( ErrRcpt.getAcceptDate() );
+            ErrNoti.setSendTime( ErrRcpt.getAcceptTime() );
+            ErrNoti.setSendNm( ErrRcpt.getAcceptNm() );
+            ErrNoti.setSendUid( ErrRcpt.getAcceptUid() );
         }
         else {
-            errNoti.setSendDate( "" );
-            errNoti.setSendTime( "" );
-            errNoti.setSendNm( "" );
-            errNoti.setSendUid( "" );
+            ErrNoti.setSendDate( "" );
+            ErrNoti.setSendTime( "" );
+            ErrNoti.setSendNm( "" );
+            ErrNoti.setSendUid( "" );
         }
         if( sSendTypeDetail.equals("0") ) {
-            errNoti.setSendCheckDatetime( dSysDate );
-            errNoti.setSendPlanDatetime( dSysDate );
+            ErrNoti.setSendCheckDatetime( dSysDate );
+            ErrNoti.setSendPlanDatetime( dSysDate );
         }
         else if( sSendTypeDetail.equals("1") ) {
-            errNoti.setSendCheckDatetime( DateUtils.addDays( dSysDate,  (1 / (24*60)) * (retASI.waitTime - 1) ));
-            errNoti.setSendPlanDatetime( DateUtils.addDays( dSysDate,  (1 / (24*60)) * retASI.waitTime ));
+            ErrNoti.setSendCheckDatetime( DateUtils.addDays( dSysDate,  (1 / (24*60)) * (retASI.waitTime - 1) ));
+            ErrNoti.setSendPlanDatetime( DateUtils.addDays( dSysDate,  (1 / (24*60)) * retASI.waitTime ));
         }
         else if( sSendTypeDetail.equals("2") ) {
-            errNoti.setSendCheckDatetime(DateUtils.parseDate( sNSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
-            errNoti.setSendPlanDatetime(DateUtils.parseDate( sNSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
+            ErrNoti.setSendCheckDatetime(DateUtils.parseDate( sNSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
+            ErrNoti.setSendPlanDatetime(DateUtils.parseDate( sNSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
         }
         else if( sSendTypeDetail.equals("3") ) {
-            errNoti.setSendCheckDatetime(DateUtils.parseDate( sSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
-            errNoti.setSendPlanDatetime(DateUtils.parseDate( sSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
+            ErrNoti.setSendCheckDatetime(DateUtils.parseDate( sSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
+            ErrNoti.setSendPlanDatetime(DateUtils.parseDate( sSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
         }
         else {
-            errNoti.setSendCheckDatetime( null );
-            errNoti.setSendPlanDatetime( null );
+            ErrNoti.setSendCheckDatetime( null );
+            ErrNoti.setSendPlanDatetime( null );
         }
-        errNoti.setSendPlanNm( errRcpt.getAcceptNm() );
-        errNoti.setSendUid( errRcpt.getAcceptUid() );
+        ErrNoti.setSendPlanNm( ErrRcpt.getAcceptNm() );
+        ErrNoti.setSendUid( ErrRcpt.getAcceptUid() );
         if( sSendTypeDetail.equals("0") || sSendTypeDetail.equals("1") ) {
             if( retASI.guardSite == 1 )
-                errNoti.setSendTool("TEL");
+                ErrNoti.setSendTool("TEL");
             else
-                errNoti.setSendTool("SMS");
+                ErrNoti.setSendTool("SMS");
         }
         else
-            errNoti.setSendTool( null );
+            ErrNoti.setSendTool( null );
         
         if( sSendTypeDetail.equals("0") ) {
-            errNoti.setSendSmsStatus( "6020" );
+            ErrNoti.setSendSmsStatus( "6020" );
             if( retASI.guardSite == 1 ) {
-                errNoti.setRecvPlace( retASI.outCd.trim() );
-                errNoti.setRecvUserUid( "9999999" );
-                errNoti.setRecvUserNm( null );
-                errNoti.setRecvTeleNo( null );
+                ErrNoti.setRecvPlace( retASI.outCd.trim() );
+                ErrNoti.setRecvUserUid( "9999999" );
+                ErrNoti.setRecvUserNm( null );
+                ErrNoti.setRecvTeleNo( null );
                 
             }
             else {
-                errNoti.setRecvPlace( "NICE" );
-                errNoti.setRecvUserUid( retASI.memberId.trim() );
-                errNoti.setRecvUserNm( retASI.memberNm.trim() );
-                errNoti.setRecvTeleNo( retASI.memberTel.trim() );
+                ErrNoti.setRecvPlace( "NICE" );
+                ErrNoti.setRecvUserUid( retASI.memberId.trim() );
+                ErrNoti.setRecvUserNm( retASI.memberNm.trim() );
+                ErrNoti.setRecvTeleNo( retASI.memberTel.trim() );
             }
         }
         else { 
-            errNoti.setSendSmsStatus( null );
-            errNoti.setRecvPlace( null );
-            errNoti.setRecvUserUid( null );
-            errNoti.setRecvUserNm( null );
-            errNoti.setRecvTeleNo( null );
+            ErrNoti.setSendSmsStatus( null );
+            ErrNoti.setRecvPlace( null );
+            ErrNoti.setRecvUserUid( null );
+            ErrNoti.setRecvUserNm( null );
+            ErrNoti.setRecvTeleNo( null );
         }
         
-        errNoti.setOrgUserNm( errRcpt.getAcceptNm() );
-        errNoti.setOrgUserType( "0" );
+        ErrNoti.setOrgUserNm( ErrRcpt.getAcceptNm() );
+        ErrNoti.setOrgUserType( "0" );
         
         ErrMng.setUpdateDate( dSysDate );
-        ErrMng.setUpdateUid( errRcpt.getAcceptUid() );
+        ErrMng.setUpdateUid( ErrRcpt.getAcceptUid() );
         
         ErrMng.setDeptCd( MacInfo.getDeptCd() );
         ErrMng.setOfficeCd( MacInfo.getOfficeCd() );
         ErrMng.setTeamCd( MacInfo.getTeamCd() );
         ErrMng.setRegDt( dSysDate );
-        ErrMng.setRegId( errRcpt.getAcceptNm() );
+        ErrMng.setRegId( ErrRcpt.getAcceptNm() );
         
         try {
             errMngMap.insert( ErrMng );
-            errRcptMap.insert( errRcpt );
-            errNotiMap.insert( errNoti );
-            errTxnMap.insert( errTxn );
-            errCallMap.insert( errCall );
+            errRcptMap.insert( ErrRcpt );
+            errNotiMap.insert( ErrNoti );
+            errTxnMap.insert( ErrTxn );
+            errCallMap.insert( ErrCall );
         }
         catch ( Exception e ) {
             logger.info( "Insert ErrorMng error = {}", e.getMessage() );
             throw e;
         }
     }
-    
+
+    /**
+     *
+     * 공통사용 장애원장 갱신
+     * 
+     * @author KDJ
+     * @param WorkType 작업유형 (상태/취소)
+     * @param ErrMng T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
+     * @throws Exception
+     * @see TCtErrorMng
+     */
+    public void updateErrMng( int WorkType, String DbMode, TCtErrorMng ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
+            TCtErrorTxn ErrTxn, TMacInfo MacInfo, byte[] curMacStateError ) throws Exception {
+        
+    }
+
+   /**
+    *
+    * 기기 개시관리
+    * 
+    * @author KDJ
+    * @param MacInfo TMacInfo테이블 모델 클래스의 인스턴스 (기기정보)
+    * @param ErrMng T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
+    * @throws Exception
+    * @see TMacInfo
+    * @see TCtErrorMng
+    */
+    public void insertUpdateMacOpen( TMacInfo MacInfo, TCtErrorMng ErrMng ) throws Exception {
+        
+    }
     /**
      * 
      * 같은 전문추적 번호가 있는지 검사한다.

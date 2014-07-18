@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 
-@Service("in03001230")
-public class In03001230Impl extends InMsgHandlerImpl {
+@Service("in03101112")
+public class In03101112Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(In03001230Impl.class);
-    
+    private static final Logger logger = LoggerFactory.getLogger(In03101112Impl.class);
+
     @Autowired private StoredProcMapper splMap;
-    
+
     @Override
     public void inMsgBizProc(MsgParser parsed) throws Exception {
 

@@ -14,7 +14,7 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 
 @RunWith(Suite.class)
 @SuiteClasses({  })
-public class CmAllTests
+public class CmAllTestSuite
 {
 
     protected String getMsg() {return (String)null;};

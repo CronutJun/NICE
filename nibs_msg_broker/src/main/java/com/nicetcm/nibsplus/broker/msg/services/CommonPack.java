@@ -15,6 +15,10 @@ public interface CommonPack {
     public void checkBranchMacLength( TMacInfo MacInfo ) throws Exception;
     public void getMacNoIntoSite( TMacInfo MacInfo ) throws Exception;
     public void getMacInfo( TMacInfo MacInfo ) throws Exception;
-    public void insertErrMng( TCtErrorMng ErrMng, TMacInfo MacInfo, String PartMngYn ) throws Exception;
+    public void insertErrMng( TCtErrorMng ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
+            TCtErrorTxn ErrTxn, TMacInfo MacInfo, String PartMngYn ) throws Exception;
+    public void updateErrMng( int WorkType, String DbMode, TCtErrorMng ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
+            TCtErrorTxn ErrTxn, TMacInfo MacInfo, byte[] curMacStateError ) throws Exception;
+    public void insertUpdateMacOpen( TMacInfo MacInfo, TCtErrorMng ErrMng ) throws Exception;
     public byte[] getCurrentErrorState( ErrorState ErrorState ) throws Exception;
 }

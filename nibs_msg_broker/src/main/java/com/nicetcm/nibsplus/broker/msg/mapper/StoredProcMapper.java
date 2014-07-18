@@ -1,12 +1,14 @@
 package com.nicetcm.nibsplus.broker.msg.mapper;
 
-import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.mapping.StatementType;
 
+import com.nicetcm.nibsplus.broker.msg.model.IfCashInsert;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
-import com.nicetcm.nibsplus.broker.msg.services.In03001110Impl.IfCashinsertEmart;
+import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.IfCashInsertEmart;
+import com.nicetcm.nibsplus.broker.msg.services.In03101130Impl.FnMacClose;
 
 public interface StoredProcMapper {
 
@@ -25,8 +27,9 @@ public interface StoredProcMapper {
     void test(TMacInfo cond);
 
 
+
     @Select({
-        "CALL op.TEST_SP_IF_GetPreAmt( #{hCashType, mode=IN ,  jdbcType=VARCHAR},",
+        "CALL op.SP_IF_GetPreAmt( #{hCashType, mode=IN ,  jdbcType=VARCHAR},",
                                       "#{inqDate  , mode=IN ,  jdbcType=VARCHAR},",
                                       "#{orgCd    , mode=IN ,  jdbcType=VARCHAR},",
                                       "#{branchCd , mode=IN ,  jdbcType=VARCHAR},",
@@ -39,6 +42,15 @@ public interface StoredProcMapper {
     @Options(statementType=StatementType.CALLABLE)
     void spIfGetpreamt(TMisc tMisc);
 
+    /**
+     *
+     * sp_if_CashInsert_EMART
+     * <pre>
+     * 이마트일경우 다른 테이블 이용
+     * </pre>
+     *
+     * @param ifCashinsertEmart
+     */
     @Select({
         "CALL op.sp_if_CashInsert_EMART( ",
             "#{nUpdateCheckYN   , mode=IN, jdbcType=VARCHAR},",
@@ -70,5 +82,79 @@ public interface StoredProcMapper {
         ")"
     })
     @Options(statementType=StatementType.CALLABLE)
-    void spIfCashinsertEmart(IfCashinsertEmart ifCashinsertEmart);
+    void spIfCashinsertEmart(IfCashInsertEmart ifCashInsertEmart);
+
+    /**
+     *
+     * sp_if_CashInsert
+     * <pre>
+     * 현재시재의 마감조회 구분이 "1" 이라면 수표 잔액을 마감시재에 저장해 주고
+     * 마감조회 후 자동 전송 건이므로 AP로 응답전송하지 않는다.
+     * </pre>
+     *
+     * @param ifCashInsert
+     */
+    @Select({
+        "CALL op.sp_if_CashInsert( ",
+            "#{nUpdateCheckYN   ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pOrgCd           ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pJijumCd         ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pMacNo           ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pCashType        ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pCashDate        ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pCashTime        ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pChargeAmt       ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pTotInAmt        ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pTotOutAmt       ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pMoneyInAmt      ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pMoneyOutAmt     ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pCheckInAmt      ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pCheckOutAmt     ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemainAmt       ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pInCnt           ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pOutCnt          ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pChkInCnt        ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pChkOutCnt       ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pAddAmt          ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pCollectAmt      ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemainCheckAmt  ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemain10Amt     ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemain50Amt     ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemain100Amt    ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemain500Amt    ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemain1000Amt   ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemain5000Amt   ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemain10000Amt  ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pRemain50000Amt  ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pMoneyIn50000Amt ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pMoneyOut50000Amt,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pMoneyIn5000Amt  ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pMoneyIn1000Amt  ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pTodayChargeAmt  ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pPreChargeAmt    ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pPreAddAmt       ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pHolyAddAmt      ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pTodayAddAmt     ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pSafeNo          ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{vFirstInqYN      ,   mode=OUT       , jdbcType=VARCHAR},",
+            "#{vResult          ,   mode=OUT       , jdbcType=VARCHAR},",
+            "#{vResultMsg       ,   mode=OUT       , jdbcType=VARCHAR} ",
+        ")"
+    })
+    @Options(statementType=StatementType.CALLABLE)
+    void spIfCashinsert(IfCashInsert ifCashInsert);
+
+    @Select({
+        "CALL op.sp_fn_macClose_nh( ",
+            "#{pCloseDate   , IN    , mode=IN,  jdbcType=VARCHAR},",
+            "#{pOrgCode     , IN    , mode=IN,  jdbcType=VARCHAR},",
+            "#{pJijumCode   , IN    , mode=IN,  jdbcType=VARCHAR},",
+            "#{pMacNo       , IN    , mode=IN,  jdbcType=VARCHAR},",
+            "#{pUserId      , IN    , mode=IN,  jdbcType=VARCHAR},",
+            "#{vResult      , OUT   , mode=OUT, jdbcType=VARCHAR} ",
+        ")"
+    })
+    @Options(statementType=StatementType.CALLABLE)
+    void sp_fn_macClose_nh(FnMacClose fnMacClose);
+
 }
