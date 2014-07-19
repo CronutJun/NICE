@@ -690,35 +690,40 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                              + MsgBrokerConst.NS_Q_NAME.replace(".", "" ) + ".json");
             ByteBuffer msg = ByteBuffer.allocateDirect( msgPsr.getSchemaLength() );
             msgPsr.newMessage( msg );
-            msg.position(0);
-            msgPsr.setString( "CM.org_cd", MsgBrokerConst.NICE_CODE )
-                  .setString( "CM.ret_cd_src", "S" )
-                  .setString( "CM.msg_id", "TRANRPR" )
-                  .setInt   ( "CM.body_len", msgPsr.getMessageLength() - MsgBrokerConst.HEADER_LEN )
-                  .setString( "CM.trans_date", safeData.getSysDate() )
-                  .setString( "CM.trans_time", safeData.getSysTime() )
-                  .setString( "CM.format_type", MsgBrokerConst.NS_CODE )
-                  .setString( "CM.msg_type", MsgBrokerConst.NS_REQ )
-                  .setString( "CM.work_type", MsgBrokerConst.NS_ERR_STATE )
-                  .setString( "network_info", MsgBrokerConst.NICE_USER_ERR_REPAIR )
-                  .setString( "create_date", safeData.getSysDate() )
-                  .setString( "create_time", safeData.getSysTime() )
-                  .setString( "brch_cd", branchCd )
-                  .setString( "mac_no", macNo )
-                  .setString( "user_made_err", userMadeErr );
+            try {
+                msg.position(0);
+                msgPsr.setString( "CM.org_cd", MsgBrokerConst.NICE_CODE )
+                      .setString( "CM.ret_cd_src", "S" )
+                      .setString( "CM.msg_id", "TRANRPR" )
+                      .setInt   ( "CM.body_len", msgPsr.getMessageLength() - MsgBrokerConst.HEADER_LEN )
+                      .setString( "CM.trans_date", safeData.getSysDate() )
+                      .setString( "CM.trans_time", safeData.getSysTime() )
+                      .setString( "CM.format_type", MsgBrokerConst.NS_CODE )
+                      .setString( "CM.msg_type", MsgBrokerConst.NS_REQ )
+                      .setString( "CM.work_type", MsgBrokerConst.NS_ERR_STATE )
+                      .setString( "network_info", MsgBrokerConst.NICE_USER_ERR_REPAIR )
+                      .setString( "create_date", safeData.getSysDate() )
+                      .setString( "create_time", safeData.getSysTime() )
+                      .setString( "brch_cd", branchCd )
+                      .setString( "mac_no", macNo )
+                      .setString( "user_made_err", userMadeErr );
             
-            if( errState != null )
-                msgPsr.setBytes( "atm_hw_error", errState );
+                if( errState != null )
+                    msgPsr.setBytes( "atm_hw_error", errState );
             
-            MsgBrokerProducer prd = MsgBrokerProducer.producers.get( MsgBrokerConst.NS_Q_NAME );
-            BytesMessage nsData = prd.getBytesMessage();
+                MsgBrokerProducer prd = MsgBrokerProducer.producers.get( MsgBrokerConst.NS_Q_NAME );
+                BytesMessage nsData = prd.getBytesMessage();
 
-            byte[] read = new byte[msg.limit()];
-            msg.position(0);
-            msg.get(read);
-            logger.info("NS State Data = {}", new String(read) );
-            nsData.writeBytes(read);
-            prd.produce( nsData );
+                byte[] read = new byte[msg.limit()];
+                msg.position(0);
+                msg.get(read);
+                logger.info("NS State Data = {}", new String(read) );
+                nsData.writeBytes(read);
+                prd.produce( nsData );
+            }
+            finally {
+                msgPsr.clearMessage();
+            }
 
         }
         catch ( Exception e ) {

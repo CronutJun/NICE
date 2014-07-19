@@ -163,6 +163,22 @@ public class MsgParser {
         return this;
     }
     
+    public MsgParser parseMessage( ThrData td ) throws Exception {
+        
+        logger.debug("Thr Id = " + java.lang.Thread.currentThread().getId() );
+        td.pos = 0;
+        td.isLive = true;
+        td.msg.position(0);
+        td.msgDatMap.clear();
+        td.messageLength = 0;
+        
+        parseSubMessage( td, msgFmtMap, td.msgDatMap );
+        
+        td.msg.position(0);
+        
+        return this;
+    }
+    
     private MsgParser parseSubMessage( ThrData td, Map<String, MsgFmtRec> msgMap, Map<String, MsgData> dataMap ) throws Exception {
         
         byte[] buf;
@@ -302,7 +318,7 @@ public class MsgParser {
         }
     }
     
-    public synchronized MsgParser newMessage( ByteBuffer msg ) throws Exception {
+    public  MsgParser newMessage( ByteBuffer msg ) throws Exception {
         
         ThrData td;
         
@@ -325,6 +341,21 @@ public class MsgParser {
         
             td.msg.position(0);
         }
+        return this;
+    }
+    
+    public  MsgParser newMessage( ThrData td ) throws Exception {
+        
+        td.pos = 0;
+        td.isLive = false;
+        td.msg.position(0);
+        td.msgDatMap.clear();
+        td.messageLength = 0;
+
+        parseSubMessage( td, msgFmtMap, td.msgDatMap );
+        
+        td.msg.position(0);
+        
         return this;
     }
     
@@ -376,6 +407,11 @@ public class MsgParser {
         logger.debug("Thr Id = " + java.lang.Thread.currentThread().getId());
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
         
+        return getBytes(td, name);
+    }
+    
+    public byte[] getBytes(ThrData td, String name) throws Exception {
+        
         MsgData md = getField(td.msgDatMap, name);
         
         if( td.isLive ) {
@@ -390,10 +426,16 @@ public class MsgParser {
             return md.getBytes();
         }
     }
-    
+        
     public MsgParser setBytes(String name, byte[] value) throws Exception {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+        
+        return setBytes(td, name, value);
+        
+    }
+    
+    public MsgParser setBytes(ThrData td, String name, byte[] value) throws Exception {
         
         MsgData md = getField(td.msgDatMap, name);
         
@@ -421,6 +463,11 @@ public class MsgParser {
         logger.debug("Thr Id = " + java.lang.Thread.currentThread().getId());
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
         
+        return getString(td, name);
+    }
+    
+    public String getString(ThrData td, String name) throws Exception {
+        
         MsgData md = getField(td.msgDatMap, name);
         
         if( td.isLive ) {
@@ -439,6 +486,11 @@ public class MsgParser {
     public MsgParser setString(String name, String value) throws Exception {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+        
+        return setString(td, name, value);
+    }
+    
+    public MsgParser setString(ThrData td, String name, String value) throws Exception {
         
         MsgData md = getField(td.msgDatMap, name);
         
@@ -465,6 +517,11 @@ public class MsgParser {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
         
+        return getShort(td, name);
+    }
+    
+    public short getShort(ThrData td, String name) throws Exception {
+        
         MsgData md = getField(td.msgDatMap, name);
         
         if( td.isLive ) {
@@ -484,6 +541,11 @@ public class MsgParser {
     public MsgParser setShort(String name, short value) throws Exception {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+        
+        return setShort(td, name, value);
+    }
+    
+    public MsgParser setShort(ThrData td, String name, short value) throws Exception {
         
         MsgData md = getField(td.msgDatMap, name);
         
@@ -506,6 +568,11 @@ public class MsgParser {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
         
+        return getInt(td, name);
+    }
+    
+    public int getInt(ThrData td, String name) throws Exception {
+        
         MsgData md = getField(td.msgDatMap, name);
         
         if( td.isLive ) {
@@ -525,6 +592,11 @@ public class MsgParser {
     public MsgParser setInt(String name, int value) throws Exception {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+        
+        return setInt(td, name, value);
+    }
+    
+    public MsgParser setInt(ThrData td, String name, int value) throws Exception {
         
         MsgData md = getField(td.msgDatMap, name);
         
@@ -547,6 +619,11 @@ public class MsgParser {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
         
+        return getLong(td, name);
+    }
+    
+    public long getLong(ThrData td, String name) throws Exception {
+        
         MsgData md = getField(td.msgDatMap, name);
         
         if( td.isLive ) {
@@ -566,6 +643,11 @@ public class MsgParser {
     public MsgParser setLong(String name, long value) throws Exception {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+        
+        return setLong(td, name, value);
+    }
+    
+    public MsgParser setLong(ThrData td, String name, long value) throws Exception {
         
         MsgData md = getField(td.msgDatMap, name);
         
@@ -588,6 +670,11 @@ public class MsgParser {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
         
+        return addRow(td, name);
+    }
+    
+    public MsgParser addRow(ThrData td, String name) throws Exception {
+        
         MsgData md = getField(td.msgDatMap, name);
         
         if( td.isLive )
@@ -602,6 +689,12 @@ public class MsgParser {
     public MsgParser syncMessage() throws Exception {
         
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+        
+        return syncMessage(td);
+    }
+    
+    public MsgParser syncMessage(ThrData td) throws Exception {
+        
         td.pos = 0;
         td.msg.position(0);
         td.messageLength = 0;
@@ -697,6 +790,11 @@ public class MsgParser {
     
     public int lastPosition() throws Exception {
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+        
+        return lastPosition(td);
+    }
+    
+    public int lastPosition(ThrData td) throws Exception {
         return td.pos;
     }
     

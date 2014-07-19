@@ -5,9 +5,28 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ThrData {
-    int                          pos;
-    boolean                      isLive;
-    int                          messageLength;
+    
+    public int                   pos;
+    public boolean              isLive;
+    public int                   messageLength;
     public ByteBuffer            msg;
-    public Map<String, MsgData>  msgDatMap = new LinkedHashMap<String, MsgData>();
+    public Map<String, MsgData>  msgDatMap; 
+    
+    public ThrData() {
+        pos = 0;
+        isLive = false;
+        messageLength = 0;
+        msg = null;
+        msgDatMap = new LinkedHashMap<String, MsgData>();
+    }
+    
+    public ThrData(ByteBuffer msg) {
+        pos = 0;
+        isLive = false;
+        messageLength = 0;
+        this.msg = msg;
+        this.msg.position(0);
+        msgDatMap = new LinkedHashMap<String, MsgData>();
+        msgDatMap.clear();
+    }
 }
