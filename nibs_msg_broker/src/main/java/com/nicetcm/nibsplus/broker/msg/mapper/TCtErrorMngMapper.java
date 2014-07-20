@@ -491,4 +491,18 @@ public interface TCtErrorMngMapper {
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR)
     })
     TCtErrorMng selectByCond3( TCtErrorMng cond );
+
+    /**
+     * CommonPackImpl.updateErrMng 에서 호출
+     *
+     * @author KDJ, on Sun Jul 20 22:13:31 KST 2014
+     */
+    @SelectProvider(type=TCtErrorMngMiscProvider.class, method="selectByCond4")
+    @Results({
+        @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
+        @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true)
+    })
+    List<TCtErrorMng> selectByCond4( TCtErrorMng cond );
+
 }
