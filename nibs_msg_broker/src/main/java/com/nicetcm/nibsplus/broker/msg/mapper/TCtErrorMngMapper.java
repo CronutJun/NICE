@@ -4,6 +4,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtError;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngKey;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;
@@ -16,6 +17,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.One;
 import org.apache.ibatis.type.JdbcType;
 
 public interface TCtErrorMngMapper {
@@ -501,8 +503,9 @@ public interface TCtErrorMngMapper {
     @Results({
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
-        @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true)
+        @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="REPAIR_DATE", property="repairDate", javaType=TCtErrorTxn.class, one=@One)
     })
-    List<TCtErrorMng> selectByCond4( TCtErrorMng cond );
+    List<TCtErrorMng> selectByCond4( @Param("mng") TCtErrorMng mng, @Param("txn") TCtErrorTxn txn );
 
 }

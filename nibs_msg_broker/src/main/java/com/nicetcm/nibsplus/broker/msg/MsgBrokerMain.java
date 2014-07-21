@@ -20,7 +20,7 @@ public class MsgBrokerMain {
              */
             logger.debug("Going to scanning");
             MsgBrokerSpringMain.sprCtx.register(MsgBrokerAppConfig.class);
-            MsgBrokerSpringMain.sprCtx.scan("com.nicetcm.nibsplus.broker.msg.services");
+            //MsgBrokerSpringMain.sprCtx.scan("com.nicetcm.nibsplus.broker.msg.services"); @ComponentScan으로 대체
             MsgBrokerSpringMain.sprCtx.refresh();
             
             

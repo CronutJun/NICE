@@ -1346,4 +1346,19 @@ public class TCtErrorMng extends TCtErrorMngKey {
     public void setCrtNo(String crtNo) {
         this.crtNo = crtNo;
     }
+    
+    /**
+     * 추가 필드
+     * @author KDJ
+     * @since  2014/07/21
+     */
+    private TCtErrorTxn txn;
+    
+    public TCtErrorTxn getTxn() {
+        return txn;
+    }
+    
+    public void setTxn(TCtErrorTxn txn) {
+        this.txn = txn;
+    }
 }

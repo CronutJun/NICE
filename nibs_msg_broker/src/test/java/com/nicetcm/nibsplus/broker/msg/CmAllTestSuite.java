@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -17,27 +16,7 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 public class CmAllTestSuite
 {
 
-    protected String getMsg() {return (String)null;};
-
-    @Before
-    public void test() {
-        InputStream is = MsgBrokerMain.class.getResourceAsStream("/msg.properties");
-        try
-        {
-            MsgCommon.msgProps.load(is);
-        } catch (IOException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        /*
-         * Spring Component 초기화
-         */
-        MsgBrokerSpringMain.sprCtx.register(MsgBrokerAppConfig.class);
-        MsgBrokerSpringMain.sprCtx.scan("com.nicetcm.nibsplus.broker.msg.services");
-        MsgBrokerSpringMain.sprCtx.refresh();
-    }
+    protected String getMsg() {return (String)null;}
 
     public MsgParser getMsgParser(String testMsg) throws Exception {
 

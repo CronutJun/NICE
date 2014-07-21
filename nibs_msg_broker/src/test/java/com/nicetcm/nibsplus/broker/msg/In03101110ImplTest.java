@@ -1,5 +1,9 @@
 package com.nicetcm.nibsplus.broker.msg;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
