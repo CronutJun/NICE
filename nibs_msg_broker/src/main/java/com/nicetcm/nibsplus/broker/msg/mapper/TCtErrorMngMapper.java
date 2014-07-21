@@ -504,7 +504,7 @@ public interface TCtErrorMngMapper {
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
         @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true),
-        @Result(column="REPAIR_DATE", property="repairDate", javaType=TCtErrorTxn.class, one=@One)
+        @Result(column="ERROR_NO", property="txn", javaType=TCtErrorTxn.class)
     })
     List<TCtErrorMng> selectByCond4( @Param("mng") TCtErrorMng mng, @Param("txn") TCtErrorTxn txn );
 
