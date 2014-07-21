@@ -24,9 +24,10 @@ public class In03101110ImplTest extends CmAllTestSuite
         final String testMsg = "020B00  HOST   0422201405090626344167064         CM03101110                               20001   64          20140509 062634               4200000        4200000        1515000        0000000000000000              0                                                                                                                                                                                                                                                                                                        ";
 
         MsgParser msgPsr = getMsgParser(testMsg);
+        MsgBrokerData msgData = new MsgBrokerData();
 
         InMsgHandler inMsgHandler = (InMsgHandler)MsgBrokerSpringMain.sprCtx.getBean("in03101110");
-        inMsgHandler.inMsgHandle(msgPsr);
+        inMsgHandler.inMsgHandle(msgData, msgPsr);
     }
 
 
