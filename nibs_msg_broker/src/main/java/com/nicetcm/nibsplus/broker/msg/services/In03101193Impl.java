@@ -9,6 +9,17 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 
+/**
+ *
+ * 1193 브랜드제휴 운영자금통보
+ * <pre>
+ * MngCM_AP_BrandOperFunds( pRecvData, nLen );
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 @Service("in03101193")
 public class In03101193Impl extends InMsgHandlerImpl {
 

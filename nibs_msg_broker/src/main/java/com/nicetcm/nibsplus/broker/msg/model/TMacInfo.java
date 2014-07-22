@@ -1,37 +1,37 @@
 package com.nicetcm.nibsplus.broker.msg.model;
 
 public class TMacInfo {
-    
+
     /**
      *  기관코드
      */
     private String orgCd;
-    
+
     /**
      *  지점코드
      */
     private String branchCd;
-    
+
     /**
      *  사이트코드
      */
     private String siteCd;
-    
+
     /**
      * 원기관코드
      */
     private String orgSiteCd;
-    
+
     /**
      *  기번
      */
     private String macNo;
-    
+
     /**
      *  기기명
      */
     private String macNm;
-    
+
     /**
      *  기종
      */
@@ -41,67 +41,67 @@ public class TMacInfo {
      *  기기제조사
      */
     private String madeComCd;
-    
+
     /**
      *  부서코드
      */
     private String deptCd;
-    
+
     /**
      *  사무소코드
      */
     private String officeCd;
-    
+
     /**
      *  지소코드
      */
     private String teamCd;
-    
+
     /**
      *  자금부서코드
      */
     private String fdeptCd;
-    
+
     /**
      *  자금사무소코드
      */
     private String fofficeCd;
-    
+
     /**
      * 사이트명
      */
     private String siteNm;
-    
+
     /**
-     *  프로그램 버전 
+     *  프로그램 버전
      */
     private String macVer;
-    
+
     /**
      *  시리얼 번호
      */
     private String serialNo;
-    
+
     /**
      *  수표취급여부
      */
     private String checkYn;
-    
+
     /**
-     *  AS접수여부 접수날자로 수정20090708 
+     *  AS접수여부 접수날자로 수정20090708
      */
     private String asAcptYn;
-    
+
     /**
      *  오픈일
      */
     private String openDate;
-    
+
     /**
      *  종료일
      */
     private String closeDate;
-    
+
     /**
      *  기기등급
      */
@@ -116,13 +116,16 @@ public class TMacInfo {
      *  RPC모듈 장착여부
      */
     private String rpcYn;
-    
+
     /**
      *  모뎀릴레이 모듈 장착여부
      */
     private String modelRelayYn;
-    
-    
+
+    private String tradeDate;
+
+    private String reqDate;
+
     public String getOrgCd() {
         return orgCd;
     }
@@ -314,5 +317,37 @@ public class TMacInfo {
     public void setModelRelayYn(String modelRelayYn) {
         this.modelRelayYn = modelRelayYn;
     }
-    
+
+    /**
+     * @return the tradeDate
+     */
+    public String getTradeDate()
+    {
+        return tradeDate;
+    }
+
+    /**
+     * @param tradeDate the tradeDate to set
+     */
+    public void setTradeDate(String tradeDate)
+    {
+        this.tradeDate = tradeDate;
+    }
+
+    /**
+     * @return the reqDate
+     */
+    public String getReqDate()
+    {
+        return reqDate;
+    }
+
+    /**
+     * @param reqDate the reqDate to set
+     */
+    public void setReqDate(String reqDate)
+    {
+        this.reqDate = reqDate;
+    }
+
 }

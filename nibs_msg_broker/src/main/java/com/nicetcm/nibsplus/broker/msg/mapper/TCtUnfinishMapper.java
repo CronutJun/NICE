@@ -3,7 +3,7 @@ package com.nicetcm.nibsplus.broker.msg.mapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCtUnfinish;
 import com.nicetcm.nibsplus.broker.msg.model.TCtUnfinishKey;
 import com.nicetcm.nibsplus.broker.msg.model.TCtUnfinishSpec;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
@@ -244,7 +244,7 @@ public interface TCtUnfinishMapper {
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="ORG_MSG", property="orgMsg", jdbcType=JdbcType.VARCHAR)
     })
-    TCtUnfinish selectByCond1(TCtErrorMng record);
+    TCtUnfinish selectByCond1(TCtErrorBasic record);
     
     
     /**
@@ -267,7 +267,7 @@ public interface TCtUnfinishMapper {
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="ORG_MSG", property="orgMsg", jdbcType=JdbcType.VARCHAR)
     })
-    TCtUnfinish selectByCond2(TCtErrorMng record);
+    TCtUnfinish selectByCond2(TCtErrorBasic record);
     
     
     /**
@@ -287,7 +287,7 @@ public interface TCtUnfinishMapper {
     @Results({
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true)
     })
-    TCtUnfinish selectByCond3(TCtErrorMng record);
+    TCtUnfinish selectByCond3(TCtErrorBasic record);
     
     /**
      * CommonPack.getCurrentErrorState 메소드에서 호출 됨 (나이스)

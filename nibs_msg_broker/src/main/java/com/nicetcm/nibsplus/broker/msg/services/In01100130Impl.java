@@ -41,7 +41,7 @@ public class In01100130Impl implements InMsgHandler {
     @Autowired private CommonPack comPack;
     @Autowired private StoredProcMapper splMap;
 
-    @Autowired private TCtErrorMngMapper errMngMap;
+    @Autowired private TCtErrorBasicMapper errBasicMap;
     @Autowired private TCtErrorMngMadeComMapper errMngMadeComMap;
     @Autowired private TCtErrorNotiMapper errNotiMap;
     @Autowired private TCtErrorMngGuardMapper errMngGuardMap;
@@ -56,7 +56,7 @@ public class In01100130Impl implements InMsgHandler {
             String sSysTime = MsgBrokerLib.SysTime();
             Date   dSysDate = MsgBrokerLib.SysDateD(0);
             
-            TCtErrorMng errMng = new TCtErrorMng();
+            TCtErrorBasic errBasic = new TCtErrorBasic();
             TCtErrorNoti errNoti = new TCtErrorNoti();
             TCtErrorMngMadeCom errMngMadeCom = new TCtErrorMngMadeCom();
             TCtErrorMngGuard errMngGuard = new TCtErrorMngGuard();
@@ -64,18 +64,18 @@ public class In01100130Impl implements InMsgHandler {
             if( parsed.getString("CM.ret_cd").equals("0000") 
             || ( parsed.getString("CM.org_cd").equals(MsgBrokerConst.TAXRF_CODE) 
               && parsed.getString("CM.ret_cd").equals("00") )) {
-                errMng.setSendYn("Y");
-                errMng.setWorkStatus("6040");
+                errBasic.setSendYn("Y");
+                errBasic.setWorkStatus("6040");
                 errNoti.setSendStatus("2");
                 errNoti.setSendSmsStatus("6040");
                 errNoti.setSendTool("COM");
             }
             else {
                 if( parsed.getString("CM.ret_cd_src").equals("B") )
-                    errMng.setSendYn("B");
+                    errBasic.setSendYn("B");
                 else
-                    errMng.setSendYn("H");
-                errMng.setWorkStatus("6030");
+                    errBasic.setSendYn("H");
+                errBasic.setWorkStatus("6030");
                 errNoti.setSendStatus("3");
                 errNoti.setSendSmsStatus("6030");
             }
@@ -105,18 +105,18 @@ public class In01100130Impl implements InMsgHandler {
                     errMngMadeComMap.updateBySpecSelective( errMngMadeCom, errMngMadeComSpec );
                 }
                 else {
-                    TCtErrorMngSpec errMngSpec = new TCtErrorMngSpec();
-                    errMngSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
+                    TCtErrorBasicSpec errBasicSpec = new TCtErrorBasicSpec();
+                    errBasicSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
                                                .andErrorNoEqualTo( parsed.getString("trans1_seq") );
                     TCtErrorNotiSpec errNotiSpec = new TCtErrorNotiSpec();
                     errNotiSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
                                                 .andErrorNoEqualTo( parsed.getString("trans1_seq") );
-                    errMng.setUpdateDate( dSysDate );
-                    errMng.setUpdateUid( "APmngEM" );
+                    errBasic.setUpdateDate( dSysDate );
+                    errBasic.setUpdateUid( "APmngEM" );
                     errNoti.setUpdateDate( dSysDate );
                     errNoti.setUpdateUid( "APmngEM" );
                     
-                    errMngMap.updateBySpecSelective( errMng, errMngSpec );
+                    errBasicMap.updateBySpecSelective( errBasic, errBasicSpec );
                     errNotiMap.updateBySpecSelective( errNoti, errNotiSpec );
                 }
                 /*
@@ -129,13 +129,13 @@ public class In01100130Impl implements InMsgHandler {
                                                 .andErrorNoEqualTo( parsed.getString("trans1_seq") );
                 List<TCtErrorMngGuard> ret = errMngGuardMap.selectBySpec( errMngGuardSpec );
                 if( ret.size() > 0 ) {
-                    if( errMng.getSendYn().equals("Y") )
+                    if( errBasic.getSendYn().equals("Y") )
                         if( ret.get(0).getGuardSendYn().equals("E") )
                             errMngGuard.setGuardSendYn("C");
                         else
                             errMngGuard.setGuardSendYn("Y");
                     else
-                        errMngGuard.setGuardSendYn(errMng.getSendYn());
+                        errMngGuard.setGuardSendYn(errBasic.getSendYn());
                     errMngGuard.setUpdateDate( dSysDate );
                     errMngGuard.setUpdateUid( "APmngEM" );
                     

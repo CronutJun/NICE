@@ -36,7 +36,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
     @Autowired private StoredProcMapper splMap;
     
     @Autowired private TCmCommonMapper cmCommonMap;
-    @Autowired private TCtErrorMngMapper errMngMap;
+    @Autowired private TCtErrorBasicMapper errBasicMap;
     @Autowired private TCtErrorRcptMapper errRcptMap;
     @Autowired private TCtErrorNotiMapper errNotiMap;
     @Autowired private TCtErrorCallMapper errCallMap;
@@ -86,7 +86,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(),
                     macInfo.getMacNm(), macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
         
-        TCtErrorMng errMng = new TCtErrorMng();
+        TCtErrorBasic errBasic = new TCtErrorBasic();
         TCtErrorMngMadeCom errMngMadeCom = new TCtErrorMngMadeCom();
         TCtErrorRcpt errRcpt = new TCtErrorRcpt();
         TCtErrorNoti errNoti = new TCtErrorNoti();
@@ -96,14 +96,14 @@ public class In01000130Impl extends InMsgHandlerImpl {
         /**
          *  macInfo의 값을 errMng로 일괄 복사
          */
-        BeanUtils.copyProperties( errMng, macInfo );
+        BeanUtils.copyProperties( errBasic, macInfo );
         BeanUtils.copyProperties( errMngMadeCom, macInfo );
         
-        errMng.setCreateDate( parsed.getInt("call_date") );
-        errMng.setCreateTime( parsed.getString("call_time") );
-        errMng.setOrgMsgNo( parsed.getString("trans1_seq") );
-        errMng.setTransDate( parsed.getString("trans1_date") );
-        errMng.setOrgMsg( parsed.getString("memo") );
+        errBasic.setCreateDate( parsed.getInt("call_date") );
+        errBasic.setCreateTime( parsed.getString("call_time") );
+        errBasic.setOrgMsgNo( parsed.getString("trans1_seq") );
+        errBasic.setTransDate( parsed.getString("trans1_date") );
+        errBasic.setOrgMsg( parsed.getString("memo") );
         
         errMngMadeCom.setMadeComCd( parsed.getString("mac_model_com_cd") );
         errMngMadeCom.setMacModel( parsed.getString("mac_model") );
@@ -111,25 +111,25 @@ public class In01000130Impl extends InMsgHandlerImpl {
         errMngMadeCom.setCallType( parsed.getString("call_type") );
         errMngMadeCom.setCallCntType( parsed.getString("call_cnt_type") );
         
-        errMng.setGroupErrorCd( parsed.getString("group_error_cd") );
-        errMng.setMidErrorCd( parsed.getString("mid_error_cd") );
-        errMng.setMadeErrCd( parsed.getString("error_mtc_cd") );
-        errMng.setCrtNo( parsed.getString("crt_no") );
-        errMng.setOrgCallCnt( Double.parseDouble(Integer.toString(parsed.getInt("org_call_cnt"))) );
+        errBasic.setGroupErrorCd( parsed.getString("group_error_cd") );
+        errBasic.setMidErrorCd( parsed.getString("mid_error_cd") );
+        errBasic.setMadeErrCd( parsed.getString("error_mtc_cd") );
+        errBasic.setCrtNo( parsed.getString("crt_no") );
+        errBasic.setOrgCallCnt( Double.parseDouble(Integer.toString(parsed.getInt("org_call_cnt"))) );
         
         errMngMadeCom.setOrgCallCnt( Short.parseShort(Integer.toString(parsed.getInt("org_call_cnt"))) );
-        errMngMadeCom.setMtcCd( errMng.getCrtNo() );
+        errMngMadeCom.setMtcCd( errBasic.getCrtNo() );
         
         /**
          * 2일전 전문은 취소요청 응답 전송.
          */
-        if( String.valueOf(errMng.getCreateDate()).compareTo(MsgBrokerLib.SysDate(-2)) <= 0 ) {
+        if( String.valueOf(errBasic.getCreateDate()).compareTo(MsgBrokerLib.SysDate(-2)) <= 0 ) {
             logger.debug( ">>> [SaveErrCall] 재수신 전문 삭제요청 응답");
             throw new MsgBrokerException(">>> [SaveErrCall] 재수신 전문 삭제요청 응답", -8 );
         }
         
         if( parsed.getString("wait_cust_cnt").equals("1")) {
-            errMng.setOrgCustRecvYn("Y");
+            errBasic.setOrgCustRecvYn("Y");
         }
         
         /**
@@ -141,90 +141,90 @@ public class In01000130Impl extends InMsgHandlerImpl {
         if( macInfo.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE) 
         &&  errMngMadeCom.getCallCntType().equals("2")
         &&  !errMngMadeCom.getCallType().equals("3") ) {
-            insertErrMngMadeCom( errMng, errMngMadeCom );
+            insertErrMngMadeCom( errBasic, errMngMadeCom );
         }
         
         /**
          * 신한은행 ATMS의 경우 출동요청 차수를 기관 메모에 보여주도록 한다. 
          */
-        //if( errMng.getOrgCallCnt() > 0 ) {
-        //    errMng.setOrgMsg( errMng.getOrgMsg() + String.format("요청차수[%s]", errMng.getOrgCallCnt()) );
+        //if( errBasic.getOrgCallCnt() > 0 ) {
+        //    errBasic.setOrgMsg( errBasic.getOrgMsg() + String.format("요청차수[%s]", errBasic.getOrgCallCnt()) );
         //}
         
         if( parsed.getString("req_visit_date").trim().length() > 0 ) {
-            errMng.setOrgMsg(  errMng.getOrgMsg() + String.format("방문요청일시[%s-", parsed.getString("req_visit_date")) );
+            errBasic.setOrgMsg(  errBasic.getOrgMsg() + String.format("방문요청일시[%s-", parsed.getString("req_visit_date")) );
         }
         if( parsed.getString("req_visit_time").trim().length() > 0 ) {
-            errMng.setOrgMsg(  errMng.getOrgMsg() + String.format("%s]", parsed.getString("req_visit_time")) );
+            errBasic.setOrgMsg(  errBasic.getOrgMsg() + String.format("%s]", parsed.getString("req_visit_time")) );
         }
         if( parsed.getInt("fac_yn") == 2 ) {
-            errMng.setOrgMsg(  errMng.getOrgMsg() + "[시설물관련]" );
+            errBasic.setOrgMsg(  errBasic.getOrgMsg() + "[시설물관련]" );
         }
         if( parsed.getInt("urgency_yn") == 1 ) {
-            errMng.setOrgMsg(  errMng.getOrgMsg() + "긴급건 " );
+            errBasic.setOrgMsg(  errBasic.getOrgMsg() + "긴급건 " );
         }
         
-        errMng.setOrgSendYn("0");
-        errMng.setSec( parsed.getString("call_class").trim() + parsed.getString("call_type").trim() + parsed.getString("call_cnt_type").trim() );
-        errMng.setErrorCd( parsed.getString("error_cd") );
-        errMng.setMadeErrCd( parsed.getString("error_mtc_cd") );
-        if( errMng.getOrgCd().equals(MsgBrokerConst.KBST_CODE)
-        ||  errMng.getOrgCd().equals(MsgBrokerConst.KIUP_CODE)
-        ||  errMng.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE)   /* HANA ATMS */
-        ||  errMng.getOrgCd().equals(MsgBrokerConst.KNB_CODE)
-        ||  errMng.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE)     /* 신한 ATMS */
-        ||  errMng.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE)     /* 우리 ATMS */
-        ||  errMng.getOrgCd().equals(MsgBrokerConst.KNATMS_CODE) ) { /* 경남 ATMS */
+        errBasic.setOrgSendYn("0");
+        errBasic.setSec( parsed.getString("call_class").trim() + parsed.getString("call_type").trim() + parsed.getString("call_cnt_type").trim() );
+        errBasic.setErrorCd( parsed.getString("error_cd") );
+        errBasic.setMadeErrCd( parsed.getString("error_mtc_cd") );
+        if( errBasic.getOrgCd().equals(MsgBrokerConst.KBST_CODE)
+        ||  errBasic.getOrgCd().equals(MsgBrokerConst.KIUP_CODE)
+        ||  errBasic.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE)   /* HANA ATMS */
+        ||  errBasic.getOrgCd().equals(MsgBrokerConst.KNB_CODE)
+        ||  errBasic.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE)     /* 신한 ATMS */
+        ||  errBasic.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE)     /* 우리 ATMS */
+        ||  errBasic.getOrgCd().equals(MsgBrokerConst.KNATMS_CODE) ) { /* 경남 ATMS */
             /**
              *  HOST에서 출동요청구분이 수동, 자동일경우는 '9' 민원일경우는 '3' 그이외에는 '1'을 설정하여 준다 
              *  예)국민은행 출동요청구분이 수동일경우 KB9+출동요청사유(2)+_LC코드
              */
-            if( errMng.getErrorCd().substring(2, 3).equals(MsgBrokerConst.CALL_TYPE_AUTO) ) {
+            if( errBasic.getErrorCd().substring(2, 3).equals(MsgBrokerConst.CALL_TYPE_AUTO) ) {
                 /** 
                  * 업무구분 '21'-자동,수동출동요청전문
                  */
-                errMng.setFormatType("21");
+                errBasic.setFormatType("21");
             }
-            else if( errMng.getErrorCd().substring(2, 3).equals(MsgBrokerConst.CALL_TYPE_TEL) ) {
+            else if( errBasic.getErrorCd().substring(2, 3).equals(MsgBrokerConst.CALL_TYPE_TEL) ) {
                 /**
                  * 업무구분 '31'-민원출동요청전문
                  */
-                errMng.setFormatType("31");
+                errBasic.setFormatType("31");
             }
             else  {
                 /**
                  * 업무구분 '11'-일반출동요청전문
                  */
-                errMng.setFormatType("11");
+                errBasic.setFormatType("11");
             }
         }
-        else if( errMng.getOrgCd().equals(MsgBrokerConst.KEB_CODE)
-              ||  errMng.getOrgCd().equals(MsgBrokerConst.SHB_CODE)
-              ||  errMng.getOrgCd().equals(MsgBrokerConst.BU_CODE)
-              ||  errMng.getOrgCd().equals(MsgBrokerConst.NONGH_CODE)
-              ||  errMng.getOrgCd().equals(MsgBrokerConst.BUATMS_CODE) ) {
+        else if( errBasic.getOrgCd().equals(MsgBrokerConst.KEB_CODE)
+              ||  errBasic.getOrgCd().equals(MsgBrokerConst.SHB_CODE)
+              ||  errBasic.getOrgCd().equals(MsgBrokerConst.BU_CODE)
+              ||  errBasic.getOrgCd().equals(MsgBrokerConst.NONGH_CODE)
+              ||  errBasic.getOrgCd().equals(MsgBrokerConst.BUATMS_CODE) ) {
             /** 
              * 업무구분 '21'-자동,수동출동요청전문
              */
-            errMng.setFormatType("21");
+            errBasic.setFormatType("21");
         }
-        else if ( errMng.getOrgCd().equals(MsgBrokerConst.DGB_CODE) ) {
+        else if ( errBasic.getOrgCd().equals(MsgBrokerConst.DGB_CODE) ) {
             TCtError ctErr;
             try {
-                ctErr = errMngMap.getErrGroupCd( errMng );
+                ctErr = errBasicMap.getErrGroupCd( errBasic );
             }
             catch ( Exception e ) {
                 logger.info("대구은행 비교대상 접수장애 조회실패[{}]", e.getMessage());
                 ctErr = new TCtError();
             }
             TCmCommonSpec cmCommonSpc = new TCmCommonSpec();
-            cmCommonSpc.createCriteria().andCdNm3EqualTo( errMng.getOrgCd() )
-                                        .andCdNm2EqualTo( errMng.getErrorCd() );
+            cmCommonSpc.createCriteria().andCdNm3EqualTo( errBasic.getOrgCd() )
+                                        .andCdNm2EqualTo( errBasic.getErrorCd() );
             try {
                 List<TCmCommon> cmCommons = cmCommonMap.selectBySpec( cmCommonSpc );
                 if( cmCommons.size() == 0 ) {
                     logger.info("대구은행 그룹장애코드 맵핑 정보 없음 [{}-{}][{}]",
-                            errMng.getBranchCd(), errMng.getMacNo(), errMng.getErrorCd() );
+                            errBasic.getBranchCd(), errBasic.getMacNo(), errBasic.getErrorCd() );
                 }
                 else {
                     for( TCmCommon cmCommon : cmCommons ) {
@@ -236,7 +236,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
             }
             catch ( Exception e ) {
                 logger.info("대구은행 그룹장애코드 맵핑 Error[{}-{}][{}][{}]",
-                        errMng.getBranchCd(), errMng.getMacNo(), errMng.getErrorCd(), e.getMessage() );
+                        errBasic.getBranchCd(), errBasic.getMacNo(), errBasic.getErrorCd(), e.getMessage() );
             }
             
         }
@@ -244,18 +244,18 @@ public class In01000130Impl extends InMsgHandlerImpl {
             /**
              * 업무구분 '11'-일반출동요청전문
              */
-            errMng.setFormatType("11");
+            errBasic.setFormatType("11");
         }
         
-        comPack.insertErrMng( errMng, errRcpt, errNoti, errCall, errTxn, macInfo, parsed.getString("part_mng_yn") );
+        comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, parsed.getString("part_mng_yn") );
     }
     
-    private void insertErrMngMadeCom( TCtErrorMng errMng, TCtErrorMngMadeCom errMngMadeCom ) throws Exception {
-        TCtErrorMng rsltErrMng = errMngMap.selectByCond1( errMng );
+    private void insertErrMngMadeCom( TCtErrorBasic errBasic, TCtErrorMngMadeCom errMngMadeCom ) throws Exception {
+        TCtErrorBasic rsltErrBasic = errBasicMap.selectByCond1( errBasic );
         
-        if( rsltErrMng == null ) {
+        if( rsltErrBasic == null ) {
             logger.info("[insertErrMngMadeCom]해당 장애 없음 trans_date[{}] org_msg_no[{}] org_call_cnt[{}]\n",
-                    errMng.getTransDate(), errMng.getOrgMsgNo(), errMngMadeCom.getOrgCallCnt() );
+                    errBasic.getTransDate(), errBasic.getOrgMsgNo(), errMngMadeCom.getOrgCallCnt() );
         }
         
         errMngMadeComMap.insert( errMngMadeCom );

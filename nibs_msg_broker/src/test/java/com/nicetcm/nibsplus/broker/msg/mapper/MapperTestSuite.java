@@ -36,15 +36,6 @@ public class MapperTestSuite
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
-        /*
-         * Spring Component 초기화
-         */
-        MsgBrokerSpringMain.sprCtx.register(MsgBrokerAppConfig.class);
-        //MsgBrokerSpringMain.sprCtx.scan("com.nicetcm.nibsplus.broker.msg.services");
-        MsgBrokerSpringMain.sprCtx.refresh();
-
-        this.tMiscMapper = MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
     }
 
     protected TMacInfo getTMacInfo() {

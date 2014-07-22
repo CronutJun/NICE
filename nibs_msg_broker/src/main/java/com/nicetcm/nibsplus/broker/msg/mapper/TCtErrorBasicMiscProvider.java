@@ -6,36 +6,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
-import com.nicetcm.nibsplus.broker.msg.services.In03000131Impl;
 
-public class TCtErrorMngMiscProvider {
+public class TCtErrorBasicMiscProvider {
 
-    private static final Logger logger = LoggerFactory.getLogger(TCtErrorMngMiscProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(TCtErrorBasicMiscProvider.class);
     
     public String selectByCond4( Map<String, Object> parameter ) {
-        TCtErrorMng mng = (TCtErrorMng) parameter.get("mng");
+        TCtErrorBasic basic = (TCtErrorBasic) parameter.get("basic");
         TCtErrorTxn txn = (TCtErrorTxn) parameter.get("txn");
         
         logger.debug("selectByCond4");
-        logger.debug("OrgCd = {}", mng.getOrgCd());
+        logger.debug("OrgCd = {}", basic.getOrgCd());
         String sql = "";
-        sql  = "SELECT MNG.*, TXN.REPAIR_DATE, TXN.REPAIR_TIME   \n"
-             + "FROM   OP.T_CT_ERROR_MNG MNG                     \n"
-             + "       LEFT JOIN OP.T_CT_ERROR_TXN TXN ON        \n"
-             + "       MNG.ERROR_NO = TXN.ERROR_NO AND           \n"
-             + "       MNG.CREATE_DATE = TXN.CREATE_DATE         \n"      
-             + "WHERE  ORG_CD   = #{mng.orgCd, jdbcType=VARCHAR} \n";
+        sql  = "SELECT BASIC.*, TXN.REPAIR_DATE, TXN.REPAIR_TIME,        \n"
+             + "       TXN.FINISH_DATE, TXN.FINISH_TIME, TXN.FINISH_UID, \n"
+             + "       NOTI.SEND_STATUS                                  \n"
+             + "FROM   OP.T_CT_ERROR_BASIC BASIC                         \n"
+             + "       LEFT JOIN OP.T_CT_ERROR_TXN TXN ON                \n"
+             + "       BASIC.ERROR_NO = TXN.ERROR_NO AND                 \n"
+             + "       BASIC.CREATE_DATE = TXN.CREATE_DATE               \n"      
+             + "       LEFT JOIN OP.T_CT_ERROR_NOTI NOTI ON              \n"
+             + "       BASIC.ERROR_NO = NOTI.ERROR_NO AND                \n"
+             + "       BASIC.CREATE_DATE = NOTI.CREATE_DATE              \n"      
+             + "WHERE  ORG_CD   = #{basic.orgCd, jdbcType=VARCHAR}       \n";
         
-        if( mng.getOrgCd().equals(MsgBrokerConst.SL_CODE) ) 
-             sql += "AND    BRANCH_CD = OP.F_GET_NICE_BRANCH_CD( #{mng.orgCd, jdbcType=VARCHAR}, \n"
-                  + "  #{mng.branchCd, jdbcType=VARCHAR}, '', #{mng.macNo, jdbcType=VARCHAR} ) \n";
+        if( basic.getOrgCd().equals(MsgBrokerConst.SL_CODE) ) 
+             sql += "AND    BRANCH_CD = OP.F_GET_NICE_BRANCH_CD( #{basic.orgCd, jdbcType=VARCHAR}, \n"
+                  + "  #{basic.branchCd, jdbcType=VARCHAR}, '', #{basic.macNo, jdbcType=VARCHAR} ) \n";
         else
-             sql += "AND    BRANCH_CD = #{mng.branchCd, jdbcType=VARCHAR} \n";
-        sql += "AND    MAC_NO   = #{mng.macNo, jdbcType=VARCHAR}  \n";
-        if( mng.getOrgCd().equals(MsgBrokerConst.KBST_CODE) )
+             sql += "AND    BRANCH_CD = #{basic.branchCd, jdbcType=VARCHAR} \n";
+        sql += "AND    MAC_NO   = #{basic.macNo, jdbcType=VARCHAR}  \n";
+        if( basic.getOrgCd().equals(MsgBrokerConst.KBST_CODE) )
             /*
              *  상태장애 (현금부족 등 ) 을 제외한 HW 장애만 CELAR 하도록
              * 단 이상개국을 제외한  출동요청 장애는 Clear 하지 않는다.
@@ -59,7 +62,7 @@ public class TCtErrorMngMiscProvider {
                  + "          ARRIVAL_TIME IS NOT NULL )                    \n"
                  + "      OR (ERROR_CD IN ('KB906', 'KB90A', 'KB90B') )     \n"
                  + "     )                                                  \n";
-        else if( mng.getOrgCd().equals(MsgBrokerConst.KIUP_CODE) )
+        else if( basic.getOrgCd().equals(MsgBrokerConst.KIUP_CODE) )
             /*
              *  상태장애 (현금부족 등 ) 을 제외한 HW 장애만 CELAR 하도록
              * 출동요청 장애는 Clear 하지 않는다.
@@ -74,8 +77,8 @@ public class TCtErrorMngMiscProvider {
                  + "        (SUBSTR(ERROR_CD, 1, 2) = 'NE' AND              \n"
                  + "         SUBSTR(ERROR_CD, 4, 2) IN ('10', '11', '12'))  \n"
                  + "     OR (ERROR_CD = 'KI909')                            \n"
-                 + "    )   AND ERROR_CD != 'AFTMNG'                        \n";   /* 미완료고객장애 제외 */
-        else if( mng.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE) )
+                 + "    )   AND ERROR_CD != 'AFTBASIC'                        \n";   /* 미완료고객장애 제외 */
+        else if( basic.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE) )
             /*
              *  상태장애 (현금부족 등 ) 을 제외한 HW 장애만 CELAR 하도록
              * 출동요청 장애는 Clear 하지 않는다.
@@ -88,8 +91,8 @@ public class TCtErrorMngMiscProvider {
                  + "         SUBSTR(ERROR_CD, 4, 2) IN ('10', '11', '12'))  \n"
                  + "    )                                                   \n"
                  + "AND     SUBSTR(ERROR_CD, 1, 2) != 'SH'                  \n"
-                 + "AND     ERROR_CD != 'AFTMNG'                            \n";
-        else if( mng.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) )
+                 + "AND     ERROR_CD != 'AFTBASIC'                            \n";
+        else if( basic.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) )
             /*
              *  하나은행의 경우
              * 상태장애 (현금부족 등 ) 을 제외한 HW 장애만 CELAR 하도록
@@ -105,7 +108,7 @@ public class TCtErrorMngMiscProvider {
                  + "            '57', '58', '59', '60', '61') )             \n"
                  + "    )                                                   \n"
                  + "AND      ERROR_CD NOT IN ('HN90B', 'HN90E')             \n";
-        else if( mng.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE) )
+        else if( basic.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE) )
             /*
              *  상태장애 (현금부족 등 ) 을 제외한 HW 장애만 CELAR 하도록
              * 출동요청 장애는 Clear 하지 않는다.
@@ -134,9 +137,10 @@ public class TCtErrorMngMiscProvider {
             
         sql += "AND    ERROR_CD <> 'ERR02'                                             \n"
              + "AND    TXN.REPAIR_TIME = '999999'                                      \n"
-             + "AND    MNG.CREATE_DATE || MNG.CREATE_TIME <=                           \n"
+             + "AND    BASIC.CREATE_DATE || BASIC.CREATE_TIME <=                           \n"
              + "                      RTRIM(#{txn.repairDate, jdbcType=VARCHAR})||RTRIM(#{txn.repairTime, jdbcType=VARCHAR}) \n"
-             + "AND    MNG.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))  ";
+//             + "AND    BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-20, 'YYYYMMDD' ))  ";
+             + "AND    BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))  ";
 //             + "FOR UPDATE OF ERROR_NO, CREATE_DATE, CREATE_TIME ";
         
         logger.debug("SQL = {}", sql );

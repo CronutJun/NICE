@@ -29,7 +29,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorRcpt;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
 
 @Service("in05000110")
@@ -43,7 +43,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         
         TMacInfo macInfo = new TMacInfo();
-        TCtErrorMng errMng = new TCtErrorMng();
+        TCtErrorBasic errBasic = new TCtErrorBasic();
         TCtErrorRcpt errRcpt = new TCtErrorRcpt();
         TCtErrorNoti errNoti = new TCtErrorNoti();
         TCtErrorCall errCall = new TCtErrorCall();
@@ -92,11 +92,11 @@ public class In05000110Impl extends InMsgHandlerImpl {
         /**
          *  macInfo의 값을 errMng로 일괄 복사
          */
-        BeanUtils.copyProperties( errMng, macInfo );
-        errMng.setCreateDate( parsed.getInt("create_date") );
-        errMng.setCreateTime( parsed.getString("create_time") );
-        errMng.setAtmState( parsed.getString("atm_mode") );
-        errMng.setOrgMsg( parsed.getString("memo") );
+        BeanUtils.copyProperties( errBasic, macInfo );
+        errBasic.setCreateDate( parsed.getInt("create_date") );
+        errBasic.setCreateTime( parsed.getString("create_time") );
+        errBasic.setAtmState( parsed.getString("atm_mode") );
+        errBasic.setOrgMsg( parsed.getString("memo") );
 
         /*
          * 상태전문에 대한 응답을 보내지 않는 기관
@@ -114,14 +114,14 @@ public class In05000110Impl extends InMsgHandlerImpl {
             /*
              * 10. 전문추적번호
              */
-            errMng.setTransDate( parsed.getString("create_date") );
+            errBasic.setTransDate( parsed.getString("create_date") );
             /*
              * 송신(거래)일자
              */
-            errMng.setOrgMsgNo( parsed.getString("create_time") );
+            errBasic.setOrgMsgNo( parsed.getString("create_time") );
             
-            errMng.setCreateDate( Integer.parseInt(safeData.getSysDate()) );
-            errMng.setCreateTime( safeData.getSysTime() );
+            errBasic.setCreateDate( Integer.parseInt(safeData.getSysDate()) );
+            errBasic.setCreateTime( safeData.getSysTime() );
             
             /*
              * 전문 응답은 수신 전문에서 보내므로 발생과 복구 시간을 위해 suBody.create_time을 현재시간으로 바꿔준다 
@@ -133,16 +133,16 @@ public class In05000110Impl extends InMsgHandlerImpl {
             /*
              * 송신(거래)일자
              */
-            errMng.setTransDate( parsed.getString("CM.trans_date") );
+            errBasic.setTransDate( parsed.getString("CM.trans_date") );
             /*
              * 10. 전문추적번호
              */
-            errMng.setOrgMsgNo( parsed.getString("CM.org_msg_no") );
+            errBasic.setOrgMsgNo( parsed.getString("CM.org_msg_no") );
         }
         /*
          * 업무구분 '11'-장애관리전문
          */
-        errMng.setFormatType( "11" );
+        errBasic.setFormatType( "11" );
 
         MsgBrokerConst.EnumStateSkipYN enumStateSkip = MsgBrokerConst.EnumStateSkipYN.ORG_DFT;
         
@@ -157,9 +157,9 @@ public class In05000110Impl extends InMsgHandlerImpl {
         
         ErrorState errState = new ErrorState();
         errState.setMacType( MsgBrokerConst.CURERR_ATM );
-        errState.setOrgCd( errMng.getOrgCd() );
-        errState.setBranchCd( errMng.getBranchCd() );
-        errState.setMacNo( errMng.getMacNo() );
+        errState.setOrgCd( errBasic.getOrgCd() );
+        errState.setBranchCd( errBasic.getBranchCd() );
+        errState.setMacNo( errBasic.getMacNo() );
         byte[] retErrStates = comPack.getCurrentErrorState( errState );
         logger.info("CUR_ERROR_LIST[{}]", new String(retErrStates) );
         
@@ -224,7 +224,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                 /*
                  * 복구일 경우는 NE0**, 예보일 경우는 NE1**, 장애일 경우는 NE2** 
                  */
-                errMng.setErrorCd( String.format("NE%c%02s", parsed.getBytes("atm_state")[e.ordinal()], e.getErrorCd()) );
+                errBasic.setErrorCd( String.format("NE%c%02s", parsed.getBytes("atm_state")[e.ordinal()], e.getErrorCd()) );
                 
                 /*
                  * 예보 및 장애 
@@ -236,10 +236,10 @@ public class In05000110Impl extends InMsgHandlerImpl {
                      */
                     if( macInfo.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) ) {
                         if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_NEAR )
-                            comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                            comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else {
-                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                 }
                 /*
@@ -258,26 +258,26 @@ public class In05000110Impl extends InMsgHandlerImpl {
                     /*
                      * 복구 일때는 예보와 장애 모두를 복구 시킨다. 
                      */
-                    errMng.setErrorCd( String.format("NE%1%02s", e.getErrorCd()) );
-                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errMng, errRcpt, errNoti, errCall,
+                    errBasic.setErrorCd( String.format("NE%1%02s", e.getErrorCd()) );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt, errNoti, errCall,
                             errTxn, macInfo, errState.getErrorStates().getBytes() );
-                    errMng.setErrorCd( String.format("NE%2%02s", e.getErrorCd()) );
-                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errMng, errRcpt, errNoti, errCall,
+                    errBasic.setErrorCd( String.format("NE%2%02s", e.getErrorCd()) );
+                    comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt, errNoti, errCall,
                             errTxn, macInfo, errState.getErrorStates().getBytes() );
                     /*
                      * 20100225 양유석주임요청 하나은행의 경우 현금부족이나 수표부족 상태 복구시
                      * 출동요청으로 들어온 현금부족(HN90B)와 수표부족(HN90E)도 복구 
                      */
                     if( macInfo.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) ) {
-                        errMng.setErrorCd("");
+                        errBasic.setErrorCd("");
                         if( e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CASH ) {
-                            errMng.setErrorCd("HN90B");
-                            comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errMng, errRcpt, errNoti, errCall,
+                            errBasic.setErrorCd("HN90B");
+                            comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt, errNoti, errCall,
                                     errTxn, macInfo, errState.getErrorStates().getBytes() );
                         }
                         else if( e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CHECK ) {
-                            errMng.setErrorCd("HN90E");
-                            comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errMng, errRcpt, errNoti, errCall,
+                            errBasic.setErrorCd("HN90E");
+                            comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt, errNoti, errCall,
                                     errTxn, macInfo, errState.getErrorStates().getBytes() );
                         }
                     }
@@ -315,9 +315,9 @@ public class In05000110Impl extends InMsgHandlerImpl {
                  *  2. 복구시간(발생시간)
                  */
                 errTxn.setRepairTime( parsed.getString("create_time") );
-                comPack.insertUpdateMacOpen( macInfo, errMng );
-                comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
-                        errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                comPack.insertUpdateMacOpen( macInfo, errBasic );
+                comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
+                        errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                
             }
         }
@@ -337,34 +337,34 @@ public class In05000110Impl extends InMsgHandlerImpl {
                  *  2. 복구시간(발생시간)
                  */
                 errTxn.setRepairTime( parsed.getString("create_time") );
-                comPack.insertUpdateMacOpen( macInfo, errMng );
-                comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
-                        errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                comPack.insertUpdateMacOpen( macInfo, errBasic );
+                comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
+                        errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
             }
             /*
              * 장애 
              */
             else if( parsed.getString("error_hw_yn").equals(MsgBrokerConst.HWERR_ERROR) ) {
-                errMng.setErrorCd( parsed.getString("error_cd") );
-                errMng.setMadeErrCd( parsed.getString("error_mtc_cd") );
+                errBasic.setErrorCd( parsed.getString("error_cd") );
+                errBasic.setMadeErrCd( parsed.getString("error_mtc_cd") );
                 /*
                  * 하나은행(구) 일 경우 정액수표부족(67) 일경우 수표 취급 여부를 체크하여 발생시킨다. 
                  */
                 if( macInfo.getOrgCd().equals(MsgBrokerConst.HANA_CODE) 
-                &&  errMng.getErrorCd().equals("67")
+                &&  errBasic.getErrorCd().equals("67")
                 && (macInfo.getCheckYn() == null 
                  || macInfo.getCheckYn().equals("0")
                  || macInfo.getCheckYn().length() == 0) ) {
                     logger.info(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
                     return;
                 }
-                comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
 
                 /*
                  * ERRMon 에서 만든 user 정의 장애( 나이스 발생 장애 ) 라면 응답 송신하지 않는다. 
                  */
-                if( errMng.getErrorCd().equals("NE999")
-                ||  errMng.getErrorCd().equals("USR01") ) {
+                if( errBasic.getErrorCd().equals("NE999")
+                ||  errBasic.getErrorCd().equals("USR01") ) {
                     throw new MsgBrokerException("", -99);
                 }
             }
@@ -387,7 +387,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                  */
                 errTxn.setRepairTime( parsed.getString("create_time") );
 
-                errMng.setErrorCd( parsed.getString("error_cd") );
+                errBasic.setErrorCd( parsed.getString("error_cd") );
                 
                 /*
                  * 출동알림 모니터 장애의 경우 H/W장애 '0'에 뒷부분 상태가 따로 들어온다. 20110502' 
@@ -397,86 +397,86 @@ public class In05000110Impl extends InMsgHandlerImpl {
                     if( parsed.getString("agency_off").equals("1") ) {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_AGENCY_OFF );
-                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_AGENCY_OFF );
+                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("agency_off").equals("0") ) {
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_AGENCY_OFF );
-                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
-                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_AGENCY_OFF );
+                        comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                     }
                     if( parsed.getString("player_off").equals("1") ) {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_PLAYER_OFF );
-                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_PLAYER_OFF );
+                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("player_off").equals("0") ) {
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_PLAYER_OFF );
-                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
-                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_PLAYER_OFF );
+                        comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                     }
                     if( parsed.getString("settop_off").equals("1") ) {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_SETTOP_OFF );
-                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_SETTOP_OFF );
+                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("settop_off").equals("0") ) {
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_SETTOP_OFF );
-                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
-                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_SETTOP_OFF );
+                        comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                     }
                     if( parsed.getString("non_schdule").equals("1") ) {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_NON_SCHDULE );
-                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_NON_SCHDULE );
+                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("non_schdule").equals("0") ) {
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_NON_SCHDULE );
-                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
-                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_NON_SCHDULE );
+                        comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                     }
                     if( parsed.getString("non_file").equals("1") ) {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_NON_FILE );
-                        comPack.insertErrMng( errMng,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_NON_FILE );
+                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("non_file").equals("0") ) {
-                        errMng.setErrorCd( MsgBrokerConst.ALARM_NON_FILE );
-                        comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
-                                errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                        errBasic.setErrorCd( MsgBrokerConst.ALARM_NON_FILE );
+                        comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                                errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                     }
                     /*
                      * 출동알림 상태는 응답송신 하지않는다. 
                      */
                     throw new MsgBrokerException("", -99);
                 }
-                if( errMng.getOrgCallCnt().equals(MsgBrokerConst.KBST_CODE) 
+                if( errBasic.getOrgCallCnt().equals(MsgBrokerConst.KBST_CODE) 
                  && parsed.getString("error_cd").equals("00000") ) {
-                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
-                            errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
+                            errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                 }
-                else if( (errMng.getOrgCallCnt().equals(MsgBrokerConst.KJB_CODE)
-                        || errMng.getOrgCallCnt().equals(MsgBrokerConst.WRATMS_CODE)
-                        || errMng.getOrgCallCnt().equals(MsgBrokerConst.KNATMS_CODE))
+                else if( (errBasic.getOrgCallCnt().equals(MsgBrokerConst.KJB_CODE)
+                        || errBasic.getOrgCallCnt().equals(MsgBrokerConst.WRATMS_CODE)
+                        || errBasic.getOrgCallCnt().equals(MsgBrokerConst.KNATMS_CODE))
                       &&  parsed.getString("error_cd").length() == 0 ) {
                     /*
                      * hw장애 복구 일 경우 
                      */
-                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
-                            errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
+                            errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                 }
                 else  {
-                    comPack.updateErrMng( MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
-                            errMng, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
+                    comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, 
+                            errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                 }
                 /*
                  * ERRMon 에서 만든 user 정의 장애( 나이스 발생 장애 ) 라면 응답 송신하지 않는다. 
                  */
-                if( errMng.getErrorCd().equals("NE999") ) {
+                if( errBasic.getErrorCd().equals("NE999") ) {
                     throw new MsgBrokerException("", -99);
                 }
             }

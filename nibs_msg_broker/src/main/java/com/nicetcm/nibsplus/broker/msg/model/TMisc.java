@@ -37,6 +37,10 @@ public class TMisc {
 
     private String macNo;
 
+    private String orgSendConfirmYn;
+
+    private String cashDate;
+
     public String getHoliday() {
         return holiday;
     }
@@ -171,6 +175,38 @@ public class TMisc {
     public void setMacNo(String macNo)
     {
         this.macNo = macNo;
+    }
+
+    /**
+     * @return the orgSendConfirmYn
+     */
+    public String getOrgSendConfirmYn()
+    {
+        return orgSendConfirmYn;
+    }
+
+    /**
+     * @param orgSendConfirmYn the orgSendConfirmYn to set
+     */
+    public void setOrgSendConfirmYn(String orgSendConfirmYn)
+    {
+        this.orgSendConfirmYn = orgSendConfirmYn;
+    }
+
+    /**
+     * @return the cashDate
+     */
+    public String getCashDate()
+    {
+        return cashDate;
+    }
+
+    /**
+     * @param cashDate the cashDate to set
+     */
+    public void setCashDate(String cashDate)
+    {
+        this.cashDate = cashDate;
     }
 
 }

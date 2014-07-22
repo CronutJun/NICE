@@ -19,8 +19,11 @@ import java.util.GregorianCalendar;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.ibatis.session.SqlSession;
 
+import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.*;
 import com.nicetcm.nibsplus.broker.msg.model.*;
 
@@ -28,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 
 @Component
@@ -35,8 +39,7 @@ public class CommonPackImpl implements CommonPack {
     
     private static final Logger logger = LoggerFactory.getLogger(CommonPackImpl.class);
     
-    @Autowired
-    private SqlSession sqlSession;
+    @Autowired protected DataSourceTransactionManager msgTX;
     
     @Autowired private TCmCommonMapper     cmMap;
     @Autowired private TCmMacMapper        cmMacMap;
@@ -46,7 +49,7 @@ public class CommonPackImpl implements CommonPack {
     @Autowired private TCmMemberMapper     cmMemberMap;
     
     @Autowired private TCtErrorMapper      errMap;
-    @Autowired private TCtErrorMngMapper   errMngMap;
+    @Autowired private TCtErrorBasicMapper errBasicMap;
     @Autowired private TCtErrorRcptMapper  errRcptMap;
     @Autowired private TCtErrorNotiMapper  errNotiMap;
     @Autowired private TCtErrorCallMapper  errCallMap;
@@ -110,6 +113,33 @@ public class CommonPackImpl implements CommonPack {
         
     }
     
+    /**
+     *
+     * 점번 기번 확인 및 변경
+     * <pre>
+     *  기관마다 점번과 기번을 전문에 다르게 표시
+     *  따라서 나이스 점기번에 맞춰 재 저장 해야 한다.
+     *    ex)제일은행 전문상 점/기번 : 0123/0012 로 들어오지만
+     *    나이스에 맞게 [123 /12  ]로 바꿔 주어야 한다.
+     * </pre>
+     *
+     * @param parsed
+     * @throws Exception
+     */
+    @Override
+    public void checkBranchMacLength( MsgParser parsed ) throws Exception {
+        TMacInfo tMacInfo = new TMacInfo();
+        tMacInfo.setOrgCd(parsed.getString("CM.org_cd"));
+        tMacInfo.setBranchCd(parsed.getString("brch_cd"));
+        tMacInfo.setMacNo(parsed.getString("mac_no"));
+
+        checkBranchMacLength(tMacInfo);
+
+        parsed.setString("CM.org_cd", tMacInfo.getOrgCd());
+        parsed.setString("brch_cd", tMacInfo.getBranchCd());
+        parsed.setString("mac_no", tMacInfo.getMacNo());
+    }
+
     /**
      * 
      *  기관 사이트 코드로 해당 코너 대표 기번을 가져온다.
@@ -230,11 +260,11 @@ public class CommonPackImpl implements CommonPack {
      * 공통사용 DB insert, update 관련
      * 
      * @author KDJ
-     * @param ErrMng T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
+     * @param ErrBasic T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
      * @throws Exception
-     * @see TCtErrorMng
+     * @see TCtErrorBasic
      */
-    public void insertErrMng( TCtErrorMng ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
+    public void insertErrBasic( TCtErrorBasic ErrBasic, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, String PartMngYn ) throws Exception {
         
         int iAutoSMS;
@@ -263,23 +293,23 @@ public class CommonPackImpl implements CommonPack {
          * 국민, 기업, 외환 같이  기관에서 1차통지 전문 일련번호를 관리 할 경우 1차통지 전문 일련번호로 중복 체크 
          * 그 이외에는 같은 기기의 장애 코드로 만 체크 단 신한은 발생 시간으로 일련번호를 대신하므로 추가
          */
-        if( (ErrMng.getOrgCd().equals(MsgBrokerConst.KBST_CODE)
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.KIUP_CODE)
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.KEB_CODE)
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE)      /* HANA ATMS  */
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE)        /* 신한ATMS   */
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.KNB_CODE)           /* 경남ATMS   */
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.NONGH_CODE)         /* 농협 ATMS  */
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.BU_CODE)            /* 부산은행   */
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE)
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.KNATMS_CODE)
-          || ErrMng.getOrgCd().equals(MsgBrokerConst.BUATMS_CODE))
-        &&   ErrMng.getSec().length() > 0 ) {                           /* 출동요청 전문 일경우 */
-            if( getDupErrorMng(ErrMng, 0) )
+        if( (ErrBasic.getOrgCd().equals(MsgBrokerConst.KBST_CODE)
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.KIUP_CODE)
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.KEB_CODE)
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE)      /* HANA ATMS  */
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE)        /* 신한ATMS   */
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.KNB_CODE)           /* 경남ATMS   */
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.NONGH_CODE)         /* 농협 ATMS  */
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.BU_CODE)            /* 부산은행   */
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE)
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.KNATMS_CODE)
+          || ErrBasic.getOrgCd().equals(MsgBrokerConst.BUATMS_CODE))
+        &&   ErrBasic.getSec().length() > 0 ) {                           /* 출동요청 전문 일경우 */
+            if( getDupErrorMng(ErrBasic, 0) )
                 return;
         }
         else {
-            if( insertCheckErrorMng(ErrMng) )
+            if( insertCheckErrorMng(ErrBasic) )
                 return;
         }
         /*
@@ -288,17 +318,17 @@ public class CommonPackImpl implements CommonPack {
         AutoSendInfoReturn retASI = new AutoSendInfoReturn();
         if( PartMngYn.equals("1") ){
             iAutoSMS = MsgBrokerConst.AUTO_FINISH;
-            ErrMng.setOrgMsg(ErrMng.getOrgMsg().trim() + "==>부분관리 자동완료처리");
+            ErrBasic.setOrgMsg(ErrBasic.getOrgMsg().trim() + "==>부분관리 자동완료처리");
         }
         else {
             /*
              * 자동 SMS 전송 정보관련
              */
-            iAutoSMS = getAutoSendInfo( ErrMng, MacInfo, retASI );
+            iAutoSMS = getAutoSendInfo( ErrBasic, MacInfo, retASI );
             /**
              *  중복 장애가 있으면
              */
-            if( getDupError( ErrMng ) == 1 ) {
+            if( getDupError( ErrBasic ) == 1 ) {
                 ErrNoti.setSendCheckYn("Y");
             }
             else {
@@ -354,7 +384,7 @@ public class CommonPackImpl implements CommonPack {
             /*
              * 나이스 장애중 22시 이후 오전 8시 이전 데이타는 대기후 자동통보로 변경한다.
              */
-            if( ErrMng.getOrgCd().equals( MsgBrokerConst.NICE_CODE )
+            if( ErrBasic.getOrgCd().equals( MsgBrokerConst.NICE_CODE )
             &&  ( ErrRcpt.getAcceptTime().compareTo("220000") >= 0 
               ||  ErrRcpt.getAcceptTime().compareTo("080000") < 0 )) {
                 ErrNoti.setSendStatus("0");
@@ -389,7 +419,7 @@ public class CommonPackImpl implements CommonPack {
             ErrTxn.setFinishDate( ErrRcpt.getAcceptDate() );
             ErrTxn.setFinishTime( ErrRcpt.getAcceptTime() );
             /* 처리완료 */
-            ErrMng.setErrorStatus("7000");
+            ErrBasic.setErrorStatus("7000");
         }
         /*
          * 수동통보
@@ -407,7 +437,7 @@ public class CommonPackImpl implements CommonPack {
             else
                 ErrNoti.setSendType("2");
             logger.info(" SMS 수동 혹은 자동중 Wait시간이 있는 통보건 [ORG_CD = '{}', BRANCH_CD = '{}', MAC_NO = '{}', TRANS_DATE = '{}', ORG_MSG_NO = '{}'",
-                    ErrMng.getOrgCd(), ErrMng.getBranchCd(), ErrMng.getMacNo(), ErrMng.getTransDate(), ErrMng.getOrgMsgNo());
+                    ErrBasic.getOrgCd(), ErrBasic.getBranchCd(), ErrBasic.getMacNo(), ErrBasic.getTransDate(), ErrBasic.getOrgMsgNo());
         }
         /*
          * 장애가 아님
@@ -425,9 +455,9 @@ public class CommonPackImpl implements CommonPack {
         
         TMisc miscRec;
         try {
-            miscRec = miscMap.getNiceBranchCd( ErrMng );
+            miscRec = miscMap.getNiceBranchCd( ErrBasic );
             if( miscRec != null ) {
-                ErrMng.setBranchCd(miscRec.getBranchCd() );
+                ErrBasic.setBranchCd(miscRec.getBranchCd() );
             }
         }
         catch ( Exception e ){
@@ -441,7 +471,7 @@ public class CommonPackImpl implements CommonPack {
         try {
             miscRec = miscMap.generateErrorNo();
             if( miscRec != null ) {
-                ErrMng.setErrorNo( miscRec.getErrorNo() );
+                ErrBasic.setErrorNo( miscRec.getErrorNo() );
             }
             else {
                 throw new Exception("ERROR_NO Generate error.");
@@ -451,31 +481,31 @@ public class CommonPackImpl implements CommonPack {
             logger.info("F_GET_NICE_BRANCH_CD Call Error [{}]", e.getMessage() );
             throw e;
         }
-        ErrMng.setRegDt( dSysDate );
-        ErrMng.setRegId( ErrRcpt.getAcceptUid() );
-        ErrRcpt.setErrorNo( ErrMng.getErrorNo() );
-        ErrRcpt.setCreateDate( ErrMng.getCreateDate() );
-        ErrRcpt.setCreateTime( ErrMng.getCreateTime() );
-        ErrRcpt.setRegDt( ErrMng.getRegDt() );
-        ErrRcpt.setRegId( ErrMng.getRegId() );
-        ErrNoti.setErrorNo( ErrMng.getErrorNo() );
-        ErrNoti.setCreateDate( ErrMng.getCreateDate() );
-        ErrNoti.setCreateTime( ErrMng.getCreateTime() );
-        ErrNoti.setRegDt( ErrMng.getRegDt() );
-        ErrNoti.setRegId( ErrMng.getRegId() );
-        ErrCall.setErrorNo( ErrMng.getErrorNo() );
-        ErrCall.setCreateDate( ErrMng.getCreateDate() );
-        ErrCall.setCreateTime( ErrMng.getCreateTime() );
-        ErrCall.setRegDt( ErrMng.getRegDt() );
-        ErrCall.setRegId( ErrMng.getRegId() );
-        ErrTxn.setErrorNo( ErrMng.getErrorNo() );
-        ErrTxn.setCreateDate( ErrMng.getCreateDate() );
-        ErrTxn.setCreateTime( ErrMng.getCreateTime() );
-        ErrTxn.setRegDt( ErrMng.getRegDt() );
-        ErrTxn.setRegId( ErrMng.getRegId() );
+        ErrBasic.setRegDt( dSysDate );
+        ErrBasic.setRegId( ErrRcpt.getAcceptUid() );
+        ErrRcpt.setErrorNo( ErrBasic.getErrorNo() );
+        ErrRcpt.setCreateDate( ErrBasic.getCreateDate() );
+        ErrRcpt.setCreateTime( ErrBasic.getCreateTime() );
+        ErrRcpt.setRegDt( ErrBasic.getRegDt() );
+        ErrRcpt.setRegId( ErrBasic.getRegId() );
+        ErrNoti.setErrorNo( ErrBasic.getErrorNo() );
+        ErrNoti.setCreateDate( ErrBasic.getCreateDate() );
+        ErrNoti.setCreateTime( ErrBasic.getCreateTime() );
+        ErrNoti.setRegDt( ErrBasic.getRegDt() );
+        ErrNoti.setRegId( ErrBasic.getRegId() );
+        ErrCall.setErrorNo( ErrBasic.getErrorNo() );
+        ErrCall.setCreateDate( ErrBasic.getCreateDate() );
+        ErrCall.setCreateTime( ErrBasic.getCreateTime() );
+        ErrCall.setRegDt( ErrBasic.getRegDt() );
+        ErrCall.setRegId( ErrBasic.getRegId() );
+        ErrTxn.setErrorNo( ErrBasic.getErrorNo() );
+        ErrTxn.setCreateDate( ErrBasic.getCreateDate() );
+        ErrTxn.setCreateTime( ErrBasic.getCreateTime() );
+        ErrTxn.setRegDt( ErrBasic.getRegDt() );
+        ErrTxn.setRegId( ErrBasic.getRegId() );
         
-        if( ErrMng.getCreateTime().length() == 0 )
-            ErrMng.setCreateTime( ErrRcpt.getAcceptTime() );
+        if( ErrBasic.getCreateTime().length() == 0 )
+            ErrBasic.setCreateTime( ErrRcpt.getAcceptTime() );
         
         if( sSendTypeDetail.equals("0") ) {
             ErrNoti.setSendDate( ErrRcpt.getAcceptDate() );
@@ -547,17 +577,17 @@ public class CommonPackImpl implements CommonPack {
         ErrNoti.setOrgUserNm( ErrRcpt.getAcceptNm() );
         ErrNoti.setOrgUserType( "0" );
         
-        ErrMng.setUpdateDate( dSysDate );
-        ErrMng.setUpdateUid( ErrRcpt.getAcceptUid() );
+        ErrBasic.setUpdateDate( dSysDate );
+        ErrBasic.setUpdateUid( ErrRcpt.getAcceptUid() );
         
-        ErrMng.setDeptCd( MacInfo.getDeptCd() );
-        ErrMng.setOfficeCd( MacInfo.getOfficeCd() );
-        ErrMng.setTeamCd( MacInfo.getTeamCd() );
-        ErrMng.setRegDt( dSysDate );
-        ErrMng.setRegId( ErrRcpt.getAcceptNm() );
+        ErrBasic.setDeptCd( MacInfo.getDeptCd() );
+        ErrBasic.setOfficeCd( MacInfo.getOfficeCd() );
+        ErrBasic.setTeamCd( MacInfo.getTeamCd() );
+        ErrBasic.setRegDt( dSysDate );
+        ErrBasic.setRegId( ErrRcpt.getAcceptNm() );
         
         try {
-            errMngMap.insert( ErrMng );
+            errBasicMap.insert( ErrBasic );
             errRcptMap.insert( ErrRcpt );
             errNotiMap.insert( ErrNoti );
             errTxnMap.insert( ErrTxn );
@@ -575,13 +605,150 @@ public class CommonPackImpl implements CommonPack {
      * 
      * @author KDJ
      * @param WorkType 작업유형 (상태/취소)
-     * @param ErrMng T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
+     * @param ErrBasic T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
      * @throws Exception
-     * @see TCtErrorMng
+     * @see TCtErrorBasic
      */
-    public void updateErrMng( int WorkType, String DbMode, TCtErrorMng ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
+    public void updateErrBasic( MsgBrokerData safeData, int WorkType, String DbMode, TCtErrorBasic ErrBasic, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, byte[] curMacStateError ) throws Exception {
-        
+        String[] saNiceErrorList = {
+                "NI101",
+                "NI110",
+                "NI111",
+                "NI112",
+                "NI113",
+                "NI114",
+                "NI120",
+                "NI121",
+                "NI122",
+                "NI123",
+                "NI124",
+                "NI125",
+                "NI126",
+                "NI128",
+                "NI129",
+                "NI131",
+                "NI133",
+                "NI134",
+                "NI135",
+                "NI136",
+                "NI137",
+                "NI138",
+                "NI139",
+                "NI140",
+                "NI141",
+                "NI142",
+                "NI143",
+                "NI144",
+                "NI902",
+                "NI903",
+                "NI904",
+                "NI905",
+                "NI906",
+                "NI907",
+                "NI908",
+                "NI909",
+                "NI911",
+                "NI912",
+                "NI913",
+                "NI914",
+                "NI915",
+                "NI102",
+                ""
+            };
+        /*
+         *  상태전문 - 개국, 장애복구전문 처리
+         */
+        if( WorkType == MsgBrokerConst.DB_UPDATE_ERROR_MNG ) {
+            if( DbMode.equals(MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR) ) {
+                try {
+                    List<TCtErrorBasicJoin> rslt = errBasicMap.selectByCond4( ErrBasic, ErrTxn );
+                    if( rslt.size() == 0 ) {
+                        logger.info("[DBInsertUpdate] 장애복구건 없음");
+                        msgTX.rollback(safeData.getTXS());
+                        safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
+                        return;
+                    }
+                    for( TCtErrorBasicJoin errBasicJoin: rslt ) {
+                        TCtErrorBasic updErrBasic = new TCtErrorBasic();
+                        TCtErrorNoti updErrNoti = new TCtErrorNoti();
+                        TCtErrorTxn updErrTxn = new TCtErrorTxn();
+                        if( errBasicJoin.getRepairDate() == null )
+                            updErrTxn.setRepairDate( ErrTxn.getRepairDate() );
+                        if( errBasicJoin.getRepairTime().equals("999999") )
+                            updErrTxn.setRepairTime( ErrTxn.getRepairTime() );
+                        if( errBasicJoin.getFinishDate() == null )
+                            updErrTxn.setFinishDate( ErrTxn.getRepairDate() );
+                        if( errBasicJoin.getFinishTime() == null )
+                            updErrTxn.setFinishTime( ErrTxn.getRepairTime() );
+                        if( errBasicJoin.getFinishUid() == null )
+                            errBasicJoin.setFinishUid("online");
+                        if( errBasicJoin.getSendStatus().equals("0") )
+                            updErrNoti.setSendStatus("1");
+                        updErrBasic.setErrorStatus("7000");
+                        updErrBasic.setUpdateDate( safeData.getDSysDate() );
+                        updErrBasic.setUpdateUid("online");
+                        updErrBasic.setErrorNo( errBasicJoin.getErrorNo() );
+                        updErrBasic.setCreateDate( errBasicJoin.getCreateDate() );
+                        updErrBasic.setCreateTime( errBasicJoin.getCreateTime() );
+                        updErrTxn.setUpdateDate( safeData.getDSysDate() );
+                        updErrTxn.setUpdateUid("online");;;
+                        updErrTxn.setErrorNo( errBasicJoin.getErrorNo() );
+                        updErrTxn.setCreateDate( errBasicJoin.getCreateDate() );
+                        updErrTxn.setCreateTime( errBasicJoin.getCreateTime() );
+                        updErrNoti.setUpdateDate( safeData.getDSysDate() );
+                        updErrNoti.setUpdateUid("online");;;
+                        updErrNoti.setErrorNo( errBasicJoin.getErrorNo() );
+                        updErrNoti.setCreateDate( errBasicJoin.getCreateDate() );
+                        updErrNoti.setCreateTime( errBasicJoin.getCreateTime() );
+                        /*
+                         * Update
+                         */
+                        errBasicMap.updateByPrimaryKeySelective( updErrBasic );
+                        errNotiMap.updateByPrimaryKeySelective( updErrNoti );
+                        errTxnMap.updateByPrimaryKeySelective( updErrTxn );
+                        
+                        /*
+                         * Update Trigger
+                         */
+                    }
+                }
+                catch ( Exception e ) {
+                    logger.info( ">>> [DBInsertUpdate] (T_CT_ERROR_BASIC)UPDATE ERROR [{}-{}][{}]",
+                            ErrBasic.getCreateDate(), ErrBasic.getErrorNo(), e.getLocalizedMessage());
+                    throw e;
+                }
+            }
+        }
+        else {
+            /*
+             *  해당 장애만 Clear
+             */
+            if( ErrBasic.getOrgCd().equals(MsgBrokerConst.NICE_CODE) )  {
+                int i = 0;
+                for( i = 0; i < saNiceErrorList.length; i++ ) {
+                    if( ErrBasic.getErrorCd().equals(saNiceErrorList[i]) ) {
+                        if( curMacStateError[i] == '1' )
+                            break;
+                        else {
+                            /* 완료를 먼저 찍고 복구가 나중에 들어온 경우 unfinish에서 빠지게 됨으로 
+                             * 복구시간이 넣어지지 않음에 따라 나이스 인 경우에만 .szCurErrList 이외에
+                             * 완료후복구 장애를 체크하여 복구 시간을 update 하도록 수정 2014.01.23
+                             */
+                            try {
+                                if( errBasicMap.countByCond1( ErrBasic ) == 0 )
+                                    return;
+                            }
+                            catch ( Exception e ) {
+                                return;
+                            }
+                            break;
+                        }
+                    }
+                }
+                if( i >= saNiceErrorList.length) return;
+            }
+        }
     }
 
    /**
@@ -590,12 +757,12 @@ public class CommonPackImpl implements CommonPack {
     * 
     * @author KDJ
     * @param MacInfo TMacInfo테이블 모델 클래스의 인스턴스 (기기정보)
-    * @param ErrMng T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
+    * @param ErrBasic T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
     * @throws Exception
     * @see TMacInfo
-    * @see TCtErrorMng
+    * @see TCtErrorBasic
     */
-    public void insertUpdateMacOpen( TMacInfo MacInfo, TCtErrorMng ErrMng ) throws Exception {
+    public void insertUpdateMacOpen( TMacInfo MacInfo, TCtErrorBasic ErrBasic ) throws Exception {
         
     }
     /**
@@ -604,21 +771,21 @@ public class CommonPackImpl implements CommonPack {
      * 기업 ATMS 1차통지 전문번호가 같은것이 있는지 Check
      * 
      * @author KDJ, originated by 방혜진 (005/07/01)
-     * @param ErrMng    T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
+     * @param ErrBasic    T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
      * @param CancelYN  장애출동 취소여부 1 - 취소, 0 - 정상
      * @throws Exception
-     * @see TCtErrorMng
+     * @see TCtErrorBasic
      * 
      */
-    private boolean getDupErrorMng( TCtErrorMng ErrMng, int CancelYN ) throws Exception {
+    private boolean getDupErrorMng( TCtErrorBasic ErrBasic, int CancelYN ) throws Exception {
         
         TCtUnfinish unfinish;
         
         if( CancelYN == 0 ) {
-            unfinish = unfinishMap.selectByCond1(ErrMng);
+            unfinish = unfinishMap.selectByCond1(ErrBasic);
         }
         else {
-            unfinish = unfinishMap.selectByCond2(ErrMng);
+            unfinish = unfinishMap.selectByCond2(ErrBasic);
         }
         
         if( unfinish == null ) {
@@ -635,8 +802,8 @@ public class CommonPackImpl implements CommonPack {
         if( unfinish.getOrgCd().equals(MsgBrokerConst.KNATMS_CODE)
         &&  CancelYN == 0
         && ( unfinish.getOrgMsg().length()  == 0
-          || !unfinish.getOrgMsg().equals(ErrMng.getOrgMsg()) ) ) {
-            errMngMap.updateByCond1( ErrMng );
+          || !unfinish.getOrgMsg().equals(ErrBasic.getOrgMsg()) ) ) {
+            errBasicMap.updateByCond1( ErrBasic );
         }
         return true;
     }
@@ -646,26 +813,26 @@ public class CommonPackImpl implements CommonPack {
      * T_CT_ERROR_MNG에 insert 가능여부 확인한다.
      * 
      * @author KDJ
-     * @param ErrMng    T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
+     * @param ErrBasic    T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
      * @throws Exception
-     * @see TCtErrorMng
+     * @see TCtErrorBasic
      * 
      */
-    private boolean insertCheckErrorMng( TCtErrorMng ErrMng ) throws Exception {
+    private boolean insertCheckErrorMng( TCtErrorBasic ErrBasic ) throws Exception {
         
         /* 
          * 후처리 장애는 중복 체크하지 않고 모두 장애 발생 시킨다. 20111101 
          */
-        if( ErrMng.getErrorCd().equals("AFTMNG") )
+        if( ErrBasic.getErrorCd().equals("AFTMNG") )
             return false;
         
-        TCtUnfinish unfinish = unfinishMap.selectByCond3(ErrMng);
+        TCtUnfinish unfinish = unfinishMap.selectByCond3(ErrBasic);
         if( unfinish == null ) {
             logger.info("!!!장애 발생함!!!");
             return false;
         }
         
-        logger.info("... 기존 장애 발생껀[{}]...", ErrMng.getErrorCd() );
+        logger.info("... 기존 장애 발생껀[{}]...", ErrBasic.getErrorCd() );
         return true;
     }
     
@@ -684,13 +851,13 @@ public class CommonPackImpl implements CommonPack {
      * 자동통보 Wait시간을 얻는다.
      * 
      * @author KDJ, originated by 허훈 (2007/11/12)
-     * @param ErrMng  T_CT_ERROR_MNG 테이블 모델 클래스의 인스턴스
+     * @param ErrBasic  T_CT_ERROR_MNG 테이블 모델 클래스의 인스턴스
      * @param MacInfo  기기정보 모델 클래스의 인스턴스
      * @param RetASI  함수의 반환값 처리 클래스의 인스턴스
      * @return int    AutoSMS flag
      * @throws Exception
      */
-    private int getAutoSendInfo( TCtErrorMng ErrMng, TMacInfo MacInfo, AutoSendInfoReturn RetASI ) throws Exception {
+    private int getAutoSendInfo( TCtErrorBasic ErrBasic, TMacInfo MacInfo, AutoSendInfoReturn RetASI ) throws Exception {
         
         String sDayOfWeek;
         TCmSiteCond cmSiteCond = new TCmSiteCond();
@@ -698,7 +865,6 @@ public class CommonPackImpl implements CommonPack {
         TCtNiceMac niceMac = new TCtNiceMac(); 
         TCmSite cmSite = new TCmSite();
         TMisc miscHoli = new TMisc();
-
 
         /* 
          * Initialize
@@ -711,7 +877,7 @@ public class CommonPackImpl implements CommonPack {
         /*
          *[기업은행] 장애코드 예외처리사항                             
          */
-        if( ErrMng.getOrgCd().equals(MsgBrokerConst.KIUP_CODE) ) {
+        if( ErrBasic.getOrgCd().equals(MsgBrokerConst.KIUP_CODE) ) {
             /*
              * 현금부족 5만원,1만원이 같은 코드로 들어온다.
              * ex) ORG_MSG : [만:정상,오만:부족] 자동출동:현금부족(현금출금부) 요청차수[01]/
@@ -719,30 +885,29 @@ public class CommonPackImpl implements CommonPack {
              * 1만원 정상일 경우(5만원만 부족 또는 기타)일 경우는 별도코드로 강제수정한다.
              * 
              */
-            if( ErrMng.getErrorCd().equals("KI901_73") ) {
-                if( ErrMng.getOrgMsg().indexOf("[만:정상") >= 0 ) {
-                    ErrMng.setErrorCd("KI901Z73");
-                    logger.info(" 기업은행 ORG_MSG[{}] -> 장애코드[{}]으로 강제수정", ErrMng.getOrgMsg(), ErrMng.getErrorCd());
+            if( ErrBasic.getErrorCd().equals("KI901_73") ) {
+                if( ErrBasic.getOrgMsg().indexOf("[만:정상") >= 0 ) {
+                    ErrBasic.setErrorCd("KI901Z73");
+                    logger.info(" 기업은행 ORG_MSG[{}] -> 장애코드[{}]으로 강제수정", ErrBasic.getOrgMsg(), ErrBasic.getErrorCd());
                 }
             }
-            
         }
         
         /*
          * 나이스 장애중 마사회장애는 금요일 토요일 일요일에만 장애 발생하고 그외에는 완료처리한다.
          */
-        if( ErrMng.getOrgCd().equals(MsgBrokerConst.NICE_CODE) ) {
+        if( ErrBasic.getOrgCd().equals(MsgBrokerConst.NICE_CODE) ) {
             TCmSiteKey cmSiteKey = new TCmSiteKey();
-            cmSiteKey.setOrgCd( ErrMng.getOrgCd() );
-            cmSiteKey.setBranchCd( ErrMng.getBranchCd() );
-            cmSiteKey.setSiteCd( ErrMng.getSiteCd() );
+            cmSiteKey.setOrgCd( ErrBasic.getOrgCd() );
+            cmSiteKey.setBranchCd( ErrBasic.getBranchCd() );
+            cmSiteKey.setSiteCd( ErrBasic.getSiteCd() );
             try {
                 cmSite = cmSiteMap.selectByPrimaryKey( cmSiteKey );
                 if( cmSite == null ) {
                     cmSite = new TCmSite();
                     logger.info(">>> [getAutoSendInfo] AUTO SEND INFO NOT FOUND");
                     logger.info(">>>             기관코드 ORG_CD   [{}]\n", cmSiteKey.getOrgCd());
-                    logger.info(">>>             에러코드 ERROR_CD [{}]\n", ErrMng.getErrorCd());
+                    logger.info(">>>             에러코드 ERROR_CD [{}]\n", ErrBasic.getErrorCd());
                     cmSite.setOrgCd( cmSiteKey.getOrgCd() );
                     cmSite.setBranchCd( cmSiteKey.getBranchCd() );
                     cmSite.setSiteCd( cmSiteKey.getSiteCd() );
@@ -784,12 +949,12 @@ public class CommonPackImpl implements CommonPack {
             /*
              * 나이스 장애중 22시 이후 오전 8시 이전 데이타는 대기후 자동통보로 변경한다.
              */
-            if( ErrMng.getCreateTime().compareTo("220000") >= 0 
-            ||  ErrMng.getCreateTime().compareTo("080000") < 0 ) {
+            if( ErrBasic.getCreateTime().compareTo("220000") >= 0 
+            ||  ErrBasic.getCreateTime().compareTo("080000") < 0 ) {
                 /*
                  * 나이스이고 22시 이후
                  */
-                if( ErrMng.getCreateTime().compareTo("080000") < 0 ) {
+                if( ErrBasic.getCreateTime().compareTo("080000") < 0 ) {
                     /*
                      * 익일 08:00분 통보
                      */
@@ -813,9 +978,9 @@ public class CommonPackImpl implements CommonPack {
              * 나이스 기기중 브랜드 제휴 기관일 경우 기관코드를 가져 온다
              */
             TCtNiceMacKey niceMacKey = new TCtNiceMacKey();
-            niceMacKey.setOrgCd( ErrMng.getOrgCd() );
-            niceMacKey.setBranchCd( ErrMng.getBranchCd() );
-            niceMacKey.setMacNo( ErrMng.getMacNo() );
+            niceMacKey.setOrgCd( ErrBasic.getOrgCd() );
+            niceMacKey.setBranchCd( ErrBasic.getBranchCd() );
+            niceMacKey.setMacNo( ErrBasic.getMacNo() );
             
             try {
                 niceMac = niceMacMap.selectByCond1( niceMacKey );
@@ -833,8 +998,8 @@ public class CommonPackImpl implements CommonPack {
          * 현금부족 장애가 아닐 경우 경비사를 체크한다. 수표부족도 제외, 경비사 처리불가 장애도 제외 2008.09.19
          */
         TCtErrorKey errKey = new TCtErrorKey();
-        errKey.setOrgCd( ErrMng.getOrgCd() );
-        errKey.setErrorCd( ErrMng.getErrorCd() );
+        errKey.setOrgCd( ErrBasic.getOrgCd() );
+        errKey.setErrorCd( ErrBasic.getErrorCd() );
         TCtError errRec;
         try {
             errRec = errMap.selectByPrimaryKey( errKey );
@@ -843,10 +1008,10 @@ public class CommonPackImpl implements CommonPack {
                 errRec.setGroupErrorCd("");
                 errRec.setGuardYn("");
                 logger.info(">>> [getAutoSendInfo] 그룹에러코드 찾기 실패[NO_DATA_FOUND]");
-                logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate() );
-                logger.info(">>>             기관 [{}]", ErrMng.getOrgCd() );
-                logger.info(">>>             지점 [{}]", ErrMng.getBranchCd() );
-                logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd() );
+                logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate() );
+                logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd() );
+                logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd() );
+                logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd() );
             }
         }
         catch ( Exception e ) {
@@ -866,12 +1031,12 @@ public class CommonPackImpl implements CommonPack {
              * 긴급 : 삼성생명은 제외한다.
              */
             TCmSite cmSiteRec;
-            cmSiteCond.setOrgCd( ErrMng.getOrgCd() );
-            cmSiteCond.setBranchCd( ErrMng.getBranchCd() );
-            cmSiteCond.setSiteCd( ErrMng.getSiteCd() );
-            cmSiteCond.setMacNo( ErrMng.getMacNo() );
+            cmSiteCond.setOrgCd( ErrBasic.getOrgCd() );
+            cmSiteCond.setBranchCd( ErrBasic.getBranchCd() );
+            cmSiteCond.setSiteCd( ErrBasic.getSiteCd() );
+            cmSiteCond.setMacNo( ErrBasic.getMacNo() );
             try {
-                if( ErrMng.getOrgCd().equals(MsgBrokerConst.SL_CODE)) {
+                if( ErrBasic.getOrgCd().equals(MsgBrokerConst.SL_CODE)) {
                     cmSiteRec = cmSiteMap.selectByCond1( cmSiteCond );
                 }
                 else {
@@ -881,18 +1046,18 @@ public class CommonPackImpl implements CommonPack {
             catch ( Exception e ) {
                 cmSiteRec = new TCmSite();
                 logger.info(">>> [getAutoSendInfo] 외주타입 찾기 실패[{}]", e.getMessage());
-                logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
             }
             if( cmSiteRec == null ) {
                 cmSiteRec = new TCmSite();
                 logger.info(">>> [getAutoSendInfo] 외주타입 찾기 실패[NO_DATA_FOUND]");
-                logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
             }
             /*
              * 전체외주일 경우 수동통보
@@ -918,19 +1083,19 @@ public class CommonPackImpl implements CommonPack {
                 catch ( Exception e ) {
                     miscHoli = new TMisc();
                     logger.info(">>> [getAutoSendInfo] 주말인지 찾기 실패 에러-> 정상처리한다.[{}]", e.getMessage());
-                    logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                    logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                    logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                    logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                    logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                    logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                    logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                    logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
                     miscHoli.setHoliday("0");
                 }
                 if( miscHoli == null ) {
                     miscHoli = new TMisc();
                     logger.info(">>> [getAutoSendInfo] 주말인지 찾기 실패 에러-> 정상처리한다.[NO_DATA_FOUND]");
-                    logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                    logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                    logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                    logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                    logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                    logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                    logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                    logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
                     miscHoli.setHoliday("0");
                 }
                 /*
@@ -939,17 +1104,17 @@ public class CommonPackImpl implements CommonPack {
                  */
                 try {
                     if( miscHoli.getHoliday().compareTo("0") > 0 ) {
-                        cmSite01Cond.setOrgCd( ErrMng.getOrgCd() );
-                        cmSite01Cond.setBranchCd( ErrMng.getBranchCd() );
-                        cmSite01Cond.setSiteCd( ErrMng.getSiteCd() );
-                        cmSite01Cond.setMacNo( ErrMng.getMacNo() );
+                        cmSite01Cond.setOrgCd( ErrBasic.getOrgCd() );
+                        cmSite01Cond.setBranchCd( ErrBasic.getBranchCd() );
+                        cmSite01Cond.setSiteCd( ErrBasic.getSiteCd() );
+                        cmSite01Cond.setMacNo( ErrBasic.getMacNo() );
                         TCmSite01 retSite01Rec = cmSite01Map.selectByCond1( cmSite01Cond );
                         if( retSite01Rec == null ) {
                             logger.info(">>> [getAutoSendInfo] 나이스 시간내 인지 찾기 실패 -> 부분 외주");
-                            logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                            logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                            logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                            logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                            logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                            logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                            logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                            logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
                             /*
                              * 외주일경우 값을 1로 넘겨줌
                              */
@@ -961,10 +1126,10 @@ public class CommonPackImpl implements CommonPack {
                         TCmSite retSiteRec = cmSiteMap.selectByCond3( cmSiteCond );
                         if( retSiteRec == null ) {
                             logger.info(">>> [getAutoSendInfo] 나이스 시간내 인지 찾기 실패 -> 부분 외주");
-                            logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                            logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                            logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                            logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                            logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                            logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                            logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                            logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
                             /*
                              * 외주일경우 값을 1로 넘겨줌
                              */
@@ -975,10 +1140,10 @@ public class CommonPackImpl implements CommonPack {
                 }
                 catch ( Exception e ) {
                     logger.info(">>> [getAutoSendInfo] 나이스 시간내 인지 찾기 실패 에러-> 정상처리한다.[{}]\n", e.getMessage());
-                    logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                    logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                    logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                    logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                    logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                    logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                    logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                    logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
                 }
             }
         }
@@ -988,19 +1153,19 @@ public class CommonPackImpl implements CommonPack {
          * CD_VAN 명세표부족/예보의 경우 명세표부 사용여부에 따라 장애 발생 여부 설정
          * 2012.07.10 명세표부 설정이 잘못된 경우가 있어 입금설정이 '0'(입금가능)으로 되어 있는 경우도 추가 
          */
-        if( ErrMng.getOrgCd().equals(MsgBrokerConst.NICE_CODE)
-        &&  (ErrMng.getErrorCd().equals("NI112")
-          || ErrMng.getErrorCd().equals("NI123")) ) {
+        if( ErrBasic.getOrgCd().equals(MsgBrokerConst.NICE_CODE)
+        &&  (ErrBasic.getErrorCd().equals("NI112")
+          || ErrBasic.getErrorCd().equals("NI123")) ) {
             TCtNiceMacKey niceMacKey = new TCtNiceMacKey();
-            niceMacKey.setOrgCd( ErrMng.getOrgCd() );
-            niceMacKey.setBranchCd( ErrMng.getBranchCd() );
-            niceMacKey.setMacNo( ErrMng.getMacNo() );
+            niceMacKey.setOrgCd( ErrBasic.getOrgCd() );
+            niceMacKey.setBranchCd( ErrBasic.getBranchCd() );
+            niceMacKey.setMacNo( ErrBasic.getMacNo() );
             
             TCtNiceMac niceMacRec;
             try {
                 niceMacRec = niceMacMap.selectByPrimaryKey( niceMacKey );
                 if( niceMacRec ==  null ) {
-                    logger.info(">>> [getAutoSendInfo] gubun : 1  org_cd : {}, error_cd : NI112,NI123 Error [NO_DATA_FOUND]", ErrMng.getOrgCd());
+                    logger.info(">>> [getAutoSendInfo] gubun : 1  org_cd : {}, error_cd : NI112,NI123 Error [NO_DATA_FOUND]", ErrBasic.getOrgCd());
                     return  MsgBrokerConst.AUTO_NOT_CREATE;
                 }
                 /*
@@ -1035,8 +1200,8 @@ public class CommonPackImpl implements CommonPack {
              * 회선장애 이면서 'A'등급이라면 20분 나머지는 'T_CT_ERROR_BRAND' 에 정의된데로
              * 20120119 CD-VAN 기업은행 브랜드 제휴 중 KT공중전화 설치 기기의 회선 장애는 즉시 통보 하도록 한다. 운총 최시명 요청
              */
-            errCond.setOrgCd( ErrMng.getOrgCd() );
-            errCond.setErrorCd( ErrMng.getErrorCd() );
+            errCond.setOrgCd( ErrBasic.getOrgCd() );
+            errCond.setErrorCd( ErrBasic.getErrorCd() );
             errCond.setMacGrade( MacInfo.getMacGrade() );
             errCond.setBrandOrgCd( niceMac.getJoinCd() );
             
@@ -1044,8 +1209,8 @@ public class CommonPackImpl implements CommonPack {
                 errQryRec = errMap.selectByJoin1( errCond );
                 if( errQryRec == null ) {
                     logger.info(">>> [getAutoSendInfo] AUTO SEND INFO FIND ERROR [NO_DATA_FOUND]\n");
-                    logger.info(">>>             기관코드 ORG_CD   [{}]\n", ErrMng.getOrgCd());
-                    logger.info(">>>             에러코드 ERROR_CD [{}]\n", ErrMng.getErrorCd());
+                    logger.info(">>>             기관코드 ORG_CD   [{}]\n", ErrBasic.getOrgCd());
+                    logger.info(">>>             에러코드 ERROR_CD [{}]\n", ErrBasic.getErrorCd());
                     return MsgBrokerConst.AUTO_SEND_FALSE;
                 }
             }
@@ -1053,7 +1218,7 @@ public class CommonPackImpl implements CommonPack {
                 logger.info( ">>> [gGetAutSendInfo] Error [{}]\n", e.getMessage());
                 return MsgBrokerConst.AUTO_SEND_FALSE;
             }
-            if( ErrMng.getErrorCd().equals("NI101")
+            if( ErrBasic.getErrorCd().equals("NI101")
             &&  cmSite.getPlaceType().equals("0084")
             &&  niceMac.getJoinCd().equals("003") ) {
                 logger.info( "기업은행 브랜드 제휴-KT공중전화 설치 사이트 AutoYn[{}] WaitTime[{}] - 즉시통보 대상 기기",
@@ -1062,8 +1227,8 @@ public class CommonPackImpl implements CommonPack {
 
         }
         else {
-            errCond.setOrgCd( ErrMng.getOrgCd() );
-            errCond.setErrorCd( ErrMng.getErrorCd() );
+            errCond.setOrgCd( ErrBasic.getOrgCd() );
+            errCond.setErrorCd( ErrBasic.getErrorCd() );
             errCond.setMacGrade( MacInfo.getMacGrade() );
             errCond.setBrandOrgCd( niceMac.getJoinCd() );
             
@@ -1071,8 +1236,8 @@ public class CommonPackImpl implements CommonPack {
                 errQryRec = errMap.selectByCond1( errCond );
                 if( errQryRec == null ) {
                     logger.info(">>> [getAutoSendInfo] AUTO SEND INFO FIND ERROR [NO_DATA_FOUND]\n");
-                    logger.info(">>>             기관코드 ORG_CD   [{}]\n", ErrMng.getOrgCd());
-                    logger.info(">>>             에러코드 ERROR_CD [{}]\n", ErrMng.getErrorCd());
+                    logger.info(">>>             기관코드 ORG_CD   [{}]\n", ErrBasic.getOrgCd());
+                    logger.info(">>>             에러코드 ERROR_CD [{}]\n", ErrBasic.getErrorCd());
                     return MsgBrokerConst.AUTO_SEND_FALSE;
                 }
             }
@@ -1100,8 +1265,8 @@ public class CommonPackImpl implements CommonPack {
          */
         if( (MsgBrokerLib.SysTime().compareTo("220000") >= 0 
           || MsgBrokerLib.SysTime().compareTo("080000") <= 0)
-         && ErrMng.getOrgCd().equals(MsgBrokerConst.KBST_CODE) 
-         && ErrMng.getErrorCd().equals("NI141") ) {
+         && ErrBasic.getOrgCd().equals(MsgBrokerConst.KBST_CODE) 
+         && ErrBasic.getErrorCd().equals("NI141") ) {
             return MsgBrokerConst.AUTO_FINISH;
         }
         TMisc misc;
@@ -1111,19 +1276,19 @@ public class CommonPackImpl implements CommonPack {
         catch ( Exception e ) {
             misc = new TMisc();
             logger.info(">>> [getAutoSendInfo] 주말인지 찾기 실패 에러-> 정상처리한다.[{}]", e.getMessage());
-            logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-            logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-            logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-            logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+            logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+            logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+            logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+            logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
             misc.setHoliday("0");
         }
         if( misc == null ) {
             misc = new TMisc();
             logger.info(">>> [getAutoSendInfo] 주말인지 찾기 실패 에러-> 정상처리한다.[NO_DATA_FOUND]");
-            logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-            logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-            logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-            logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+            logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+            logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+            logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+            logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
             misc.setHoliday("0");
         }
 
@@ -1133,13 +1298,13 @@ public class CommonPackImpl implements CommonPack {
          */
         TCmSite retRec;
         try {
-            if( ErrMng.getErrorCd().equals(MsgBrokerConst.NICE_ERROR_USER_N04) ) {
-                cmSiteCond.setOrgCd( ErrMng.getOrgCd() );
-                cmSiteCond.setBranchCd( ErrMng.getBranchCd() );
-                cmSiteCond.setSiteCd( ErrMng.getSiteCd() );
-                cmSiteCond.setMacNo( ErrMng.getMacNo() );
-                cmSiteCond.setCreateDate( String.valueOf(ErrMng.getCreateDate()) );
-                cmSiteCond.setCreateTime( ErrMng.getCreateTime() );
+            if( ErrBasic.getErrorCd().equals(MsgBrokerConst.NICE_ERROR_USER_N04) ) {
+                cmSiteCond.setOrgCd( ErrBasic.getOrgCd() );
+                cmSiteCond.setBranchCd( ErrBasic.getBranchCd() );
+                cmSiteCond.setSiteCd( ErrBasic.getSiteCd() );
+                cmSiteCond.setMacNo( ErrBasic.getMacNo() );
+                cmSiteCond.setCreateDate( String.valueOf(ErrBasic.getCreateDate()) );
+                cmSiteCond.setCreateTime( ErrBasic.getCreateTime() );
                 cmSiteCond.setWaitTime(errQryRec.getWaitTime1());
                 
                 retRec = cmSiteMap.selectByJoin1( cmSiteCond );
@@ -1149,12 +1314,12 @@ public class CommonPackImpl implements CommonPack {
                  * 평일일 경우
                  */
                 if( miscHoli.getHoliday().equals("0") ) {
-                    cmSiteCond.setOrgCd( ErrMng.getOrgCd() );
-                    cmSiteCond.setBranchCd( ErrMng.getBranchCd() );
-                    cmSiteCond.setSiteCd( ErrMng.getSiteCd() );
-                    cmSiteCond.setMacNo( ErrMng.getMacNo() );
-                    cmSiteCond.setCreateDate( String.valueOf(ErrMng.getCreateDate()) );
-                    cmSiteCond.setCreateTime( ErrMng.getCreateTime() );
+                    cmSiteCond.setOrgCd( ErrBasic.getOrgCd() );
+                    cmSiteCond.setBranchCd( ErrBasic.getBranchCd() );
+                    cmSiteCond.setSiteCd( ErrBasic.getSiteCd() );
+                    cmSiteCond.setMacNo( ErrBasic.getMacNo() );
+                    cmSiteCond.setCreateDate( String.valueOf(ErrBasic.getCreateDate()) );
+                    cmSiteCond.setCreateTime( ErrBasic.getCreateTime() );
                     cmSiteCond.setWaitTime(errQryRec.getWaitTime1());
                 
                     retRec = cmSiteMap.selectByCond4( cmSiteCond );
@@ -1167,9 +1332,9 @@ public class CommonPackImpl implements CommonPack {
                      * 20090730 시간내기기 휴일 자동통보 방지 요청에 따라 수정 요청자 김희천
                      */
                     TCmSiteKey cmSiteKey = new TCmSiteKey();
-                    cmSiteKey.setOrgCd( ErrMng.getOrgCd() );
-                    cmSiteKey.setBranchCd( ErrMng.getBranchCd() );
-                    cmSiteKey.setSiteCd( ErrMng.getSiteCd() );
+                    cmSiteKey.setOrgCd( ErrBasic.getOrgCd() );
+                    cmSiteKey.setBranchCd( ErrBasic.getBranchCd() );
+                    cmSiteKey.setSiteCd( ErrBasic.getSiteCd() );
                     try {
                         cmSite = cmSiteMap.selectByPrimaryKey( cmSiteKey );
                         if( cmSite == null ) {
@@ -1189,12 +1354,12 @@ public class CommonPackImpl implements CommonPack {
                         logger.info( ">>> 시간내 기기의 휴일 장애 발생 수동처리" );
                         return MsgBrokerConst.AUTO_SEND_FALSE;
                     }
-                    cmSiteCond.setOrgCd( ErrMng.getOrgCd() );
-                    cmSiteCond.setBranchCd( ErrMng.getBranchCd() );
-                    cmSiteCond.setSiteCd( ErrMng.getSiteCd() );
-                    cmSiteCond.setMacNo( ErrMng.getMacNo() );
-                    cmSiteCond.setCreateDate( String.valueOf(ErrMng.getCreateDate()) );
-                    cmSiteCond.setCreateTime( ErrMng.getCreateTime() );
+                    cmSiteCond.setOrgCd( ErrBasic.getOrgCd() );
+                    cmSiteCond.setBranchCd( ErrBasic.getBranchCd() );
+                    cmSiteCond.setSiteCd( ErrBasic.getSiteCd() );
+                    cmSiteCond.setMacNo( ErrBasic.getMacNo() );
+                    cmSiteCond.setCreateDate( String.valueOf(ErrBasic.getCreateDate()) );
+                    cmSiteCond.setCreateTime( ErrBasic.getCreateTime() );
                     cmSiteCond.setWaitTime(errQryRec.getWaitTime1());
                 
                     retRec = cmSiteMap.selectByJoin2( cmSiteCond );
@@ -1202,15 +1367,15 @@ public class CommonPackImpl implements CommonPack {
             }
             if( retRec == null ) {
                 logger.info(">>> [getAutoSendInfo] 운영시간 외 장애 발생 [NO_DATA_FOUND]");
-                logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                logger.info(">>>             발생시간 [{}]", ErrMng.getCreateTime());
+                logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                logger.info(">>>             발생시간 [{}]", ErrBasic.getCreateTime());
                 return MsgBrokerConst.AUTO_SEND_FALSE;
             }
         }
         catch( Exception e ) {
             logger.info(">>> [getAutoSendInfo] 운영시간 외 장애 발생 [{}]", e.getMessage());
-            logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-            logger.info(">>>             발생시간 [{}]", ErrMng.getCreateTime());
+            logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+            logger.info(">>>             발생시간 [{}]", ErrBasic.getCreateTime());
             return MsgBrokerConst.AUTO_SEND_FALSE;
             
         }
@@ -1219,9 +1384,9 @@ public class CommonPackImpl implements CommonPack {
          * 나이스 장애 중 카드판독기이상
          * 장애수신시 카드판독기이상일시에 MADE_ERROR_CD=400,420은 즉시통보, 그렇지 않다면 수동통보
          */
-        if( ErrMng.getOrgCd().equals(MsgBrokerConst.NICE_CODE)
-        &&  ErrMng.getErrorCd().equals("NI122") ) {
-            if( ErrMng.getMadeErrCd().equals("400") || ErrMng.getMadeErrCd().equals("420") ) {
+        if( ErrBasic.getOrgCd().equals(MsgBrokerConst.NICE_CODE)
+        &&  ErrBasic.getErrorCd().equals("NI122") ) {
+            if( ErrBasic.getMadeErrCd().equals("400") || ErrBasic.getMadeErrCd().equals("420") ) {
                 return MsgBrokerConst.AUTO_SEND_FALSE;
             }
         }
@@ -1232,18 +1397,18 @@ public class CommonPackImpl implements CommonPack {
         if( errQryRec.getGroupErrorCd().equals("1100") ) {
             TFnSendReport     fnSRpt;
             TFnSendReportCond fnSRptCond = new TFnSendReportCond();
-            fnSRptCond.setOrgCd( ErrMng.getOrgCd() );
-            fnSRptCond.setBranchCd( ErrMng.getBranchCd() );
-            fnSRptCond.setSiteCd( ErrMng.getSiteCd() );
-            fnSRptCond.setMacNo( ErrMng.getMacNo() );
+            fnSRptCond.setOrgCd( ErrBasic.getOrgCd() );
+            fnSRptCond.setBranchCd( ErrBasic.getBranchCd() );
+            fnSRptCond.setSiteCd( ErrBasic.getSiteCd() );
+            fnSRptCond.setMacNo( ErrBasic.getMacNo() );
             try {
                 fnSRpt = fnSRptMap.selectByCond1( fnSRptCond );
                 if( fnSRpt == null ) {
                     logger.info(">>> [getAutoSendInfo] 현금부족 장애시 해당 싸이트에 대한 도착보고 없음");
-                    logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                    logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                    logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                    logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                    logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                    logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                    logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                    logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
                 }
                 else {
                     logger.info("AUTO_SEND_FALSE : 현송 중 수동통보");
@@ -1252,10 +1417,10 @@ public class CommonPackImpl implements CommonPack {
             }
             catch ( Exception e ) {
                 logger.info(">>> [getAutoSendInfo] 현금부족 장애시 해당 싸이트에 대한 도착보고 찾기 실패[{}]", e.getMessage());
-                logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
             }
         }
         RetASI.waitTime = cmSiteCond.getWaitTime();
@@ -1274,8 +1439,8 @@ public class CommonPackImpl implements CommonPack {
         /*
          * 우리은행 미개국 출동요청 'WR409'의 경우 철수기기(임시철수기기)의 경우 수동통보 처리 BY BHJ 20120103
          */
-        if( ErrMng.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE) 
-        &&  ErrMng.getErrorCd().equals("WR409")
+        if( ErrBasic.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE) 
+        &&  ErrBasic.getErrorCd().equals("WR409")
         && ( MacInfo.getOpenDate().length() == 0 
           || MacInfo.getOpenDate().compareTo(MsgBrokerLib.SysDate()) > 0 
           || ( MacInfo.getCloseDate().length() > 0 && MacInfo.getCloseDate().compareTo(MsgBrokerLib.SysDate()) <= 0) )) {
@@ -1300,19 +1465,19 @@ public class CommonPackImpl implements CommonPack {
             RetASI.guardSite = 0;
             TCmMember retMemberRec;
             TCmMemberCond cmMemberCond = new TCmMemberCond();
-            cmMemberCond.setOrgCd( ErrMng.getOrgCd() );
-            cmMemberCond.setBranchCd( ErrMng.getBranchCd() );
-            cmMemberCond.setSiteCd( ErrMng.getSiteCd() );
-            cmMemberCond.setMacNo( ErrMng.getMacNo() );
+            cmMemberCond.setOrgCd( ErrBasic.getOrgCd() );
+            cmMemberCond.setBranchCd( ErrBasic.getBranchCd() );
+            cmMemberCond.setSiteCd( ErrBasic.getSiteCd() );
+            cmMemberCond.setMacNo( ErrBasic.getMacNo() );
             try {
                 retMemberRec = cmMemberMap.selectByJoin1( cmMemberCond );
                 if( retMemberRec == null ) {
                     logger.info(">>> [getAutoSendInfo] AUTO SEND INFO MEMBER FIND ERROR");
-                    logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                    logger.info(">>>             에러코드 [{}]", ErrMng.getErrorCd());
-                    logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                    logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                    logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                    logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                    logger.info(">>>             에러코드 [{}]", ErrBasic.getErrorCd());
+                    logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                    logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                    logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
                     return MsgBrokerConst.AUTO_SEND_FALSE;
                 }
                 RetASI.memberId = retMemberRec.getMemberId();
@@ -1321,11 +1486,11 @@ public class CommonPackImpl implements CommonPack {
             }
             catch ( Exception e ) {
                 logger.info(">>> [getAutoSendInfo] Error [{}]\n", e.getMessage());
-                logger.info(">>>             발생일자 [{}]", ErrMng.getCreateDate());
-                logger.info(">>>             에러코드 [{}]", ErrMng.getErrorCd());
-                logger.info(">>>             기관 [{}]", ErrMng.getOrgCd());
-                logger.info(">>>             지점 [{}]", ErrMng.getBranchCd());
-                logger.info(">>>             사이트 [{}]", ErrMng.getSiteCd());
+                logger.info(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
+                logger.info(">>>             에러코드 [{}]", ErrBasic.getErrorCd());
+                logger.info(">>>             기관 [{}]", ErrBasic.getOrgCd());
+                logger.info(">>>             지점 [{}]", ErrBasic.getBranchCd());
+                logger.info(">>>             사이트 [{}]", ErrBasic.getSiteCd());
                 return MsgBrokerConst.AUTO_SEND_FALSE;
             }
             if( retMemberRec.getNiceHp().substring(0, 4).equals("010") ) {
@@ -1347,23 +1512,23 @@ public class CommonPackImpl implements CommonPack {
      * 기타장애가 아닌 경우 후발생 장애를 중복장애로 본다.
      * 
      * @author KDJ, originated by 방혜진 (005/07/01)
-     * @param ErrMng    T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
+     * @param ErrBasic    T_CT_ERROR_MNG테이블 모델 클래스의 인스턴스
      * @throws Exception
      */
-    private int getDupError( TCtErrorMng ErrMng ) throws Exception {
-        TCtErrorMng retErrorMng;
+    private int getDupError( TCtErrorBasic ErrBasic ) throws Exception {
+        TCtErrorBasic retErrorMng;
         
         try {
-            if( ErrMng.getOrgCd().equals(MsgBrokerConst.SL_CODE) ) {
-                retErrorMng = errMngMap.selectByCond2( ErrMng );
+            if( ErrBasic.getOrgCd().equals(MsgBrokerConst.SL_CODE) ) {
+                retErrorMng = errBasicMap.selectByCond2( ErrBasic );
             }
             else {
-                retErrorMng = errMngMap.selectByCond3( ErrMng );
+                retErrorMng = errBasicMap.selectByCond3( ErrBasic );
                 
             }
             if( retErrorMng == null ) {
                 logger.info(">>> [getDupError] org_cd[{}], branch_cd[{}], mac_no[{}], error_cd[{}] 해당 기기 중복장애건 없음", 
-                        ErrMng.getOrgCd(), ErrMng.getBranchCd(), ErrMng.getMacNo(), ErrMng.getErrorCd());
+                        ErrBasic.getOrgCd(), ErrBasic.getBranchCd(), ErrBasic.getMacNo(), ErrBasic.getErrorCd());
                 return 0;
             }
         }
@@ -1372,7 +1537,7 @@ public class CommonPackImpl implements CommonPack {
             return -1;            
         }
         logger.info(">>> [getDupError] org_cd[{}], branch_cd[{}], mac_no[{}], error_cd[{}], error_no[{}] 해당 기기 중복장애건 있음", 
-                ErrMng.getOrgCd(), ErrMng.getBranchCd(), ErrMng.getMacNo(), ErrMng.getErrorCd(), ErrMng.getErrorNo());
+                ErrBasic.getOrgCd(), ErrBasic.getBranchCd(), ErrBasic.getMacNo(), ErrBasic.getErrorCd(), ErrBasic.getErrorNo());
         return 1;
         
     }

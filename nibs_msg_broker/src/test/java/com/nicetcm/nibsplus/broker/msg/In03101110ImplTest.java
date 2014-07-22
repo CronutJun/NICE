@@ -1,9 +1,7 @@
 package com.nicetcm.nibsplus.broker.msg;
 
-import java.io.IOException;
-import java.io.InputStream;
+import javax.annotation.Resource;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -22,16 +20,14 @@ public class In03101110ImplTest extends CmAllTestSuite
 {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Resource(name="in03101110")
+    InMsgHandler inMsgHandler;
+
     @Test
     public void testCase1() throws Exception {
 
         final String testMsg = "020B00  HOST   0422201405090626344167064         CM03101110                               20001   64          20140509 062634               4200000        4200000        1515000        0000000000000000              0                                                                                                                                                                                                                                                                                                        ";
-
-        MsgParser msgPsr = getMsgParser(testMsg);
-        MsgBrokerData msgData = new MsgBrokerData();
-
-        InMsgHandler inMsgHandler = (InMsgHandler)MsgBrokerSpringMain.sprCtx.getBean("in03101110");
-        inMsgHandler.inMsgHandle(msgData, msgPsr);
+        inMsgHandler.inMsgHandle(new MsgBrokerData(), getMsgParser(testMsg));
     }
 
 

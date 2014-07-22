@@ -24,7 +24,7 @@ public class sqlQueryTest extends CmAllTestSuite {
 
     @Autowired protected DataSourceTransactionManager msgTX;
     @Autowired private StoredProcMapper splMap;
-    @Autowired private TCtErrorMngMapper ctErrMngMap;
+    @Autowired private TCtErrorBasicMapper ctErrBasicMap;
     
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -35,14 +35,32 @@ public class sqlQueryTest extends CmAllTestSuite {
         
         safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
         try {
-            TCtErrorMng cond = new TCtErrorMng();
+            TCtErrorBasic cond = new TCtErrorBasic();
             TCtErrorTxn txn = new TCtErrorTxn();
-            cond.setOrgCd("020");
-            cond.setBranchCd("0900");
-            cond.setMacNo("1111");
-            txn.setRepairDate("20120721");
+            cond.setOrgCd("096");
+            cond.setBranchCd("9600");
+            cond.setMacNo("2884");
+            cond.setErrorCd("ERR17");
+            txn.setRepairDate("20140721");
             txn.setRepairTime("080000");
-            List<TCtErrorMng> rsltErrMng = ctErrMngMap.selectByCond4(cond, txn);
+            List<TCtErrorBasicJoin> rsltErrMng = ctErrBasicMap.selectByCond4(cond, txn);
+            logger.debug("result:  size = {}", rsltErrMng.size());
+            for( TCtErrorBasicJoin rslt: rsltErrMng) {
+                logger.debug("          error_no = {}",    rslt.getErrorNo());
+                logger.debug("          repair_date = {}", rslt.getRepairDate());
+                logger.debug("          repair_time = {}", rslt.getRepairTime());
+            }
+            msgTX.rollback(safeData.getTXS());
+            safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
+            rsltErrMng = ctErrBasicMap.selectByCond4(cond, txn);
+            logger.debug("result:  size = {}", rsltErrMng.size());
+            for( TCtErrorBasicJoin rslt: rsltErrMng) {
+                logger.debug("          error_no = {}",    rslt.getErrorNo());
+                logger.debug("          repair_date = {}", rslt.getRepairDate());
+                logger.debug("          repair_time = {}", rslt.getRepairTime());
+            }
+            logger.debug("Count = {}", ctErrBasicMap.countByCond1(cond));
+            msgTX.commit(safeData.getTXS());
         }
         catch( Exception e ) {
             msgTX.rollback(safeData.getTXS());

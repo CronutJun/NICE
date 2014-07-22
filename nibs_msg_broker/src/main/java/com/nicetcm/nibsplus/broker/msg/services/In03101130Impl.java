@@ -17,8 +17,8 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
+import com.nicetcm.nibsplus.broker.msg.model.FnMacClose;
 import com.nicetcm.nibsplus.broker.msg.model.IfCashInsert;
-import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
 /**
@@ -85,7 +85,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
         }
 
         //변경해야함 (AS-IS에서는 해당 전문을 직접 수정함
-        comPack.checkBranchMacLength(new TMacInfo());
+        comPack.checkBranchMacLength(parsed);
 
 
         long hpreAmt = 0;
@@ -179,18 +179,20 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
                 /* 농협일 경우 정희성 요청에 의해 T_CM_CASH에 쌓은 후 별도의 프로시져 호출 하도록 함. 20100920 */
                 FnMacClose fnMacClose = new FnMacClose();
-                fnMacClose.setpCloseDate(parsed.getString("close_date"));
-                fnMacClose.setpOrgCode  (parsed.getString("CM.org_cd"));
-                fnMacClose.setpJijumCode(parsed.getString("jijum_cd"));
-                fnMacClose.setpMacNo    (parsed.getString("mac_no"));
-                fnMacClose.setpUserId   (parsed.getString("CM.msg_id"));
+                fnMacClose.setCloseDate(parsed.getString("close_date"));
+                fnMacClose.setOrgCode  (parsed.getString("CM.org_cd"));
+                fnMacClose.setJijumCode(parsed.getString("brch_cd"));
+                fnMacClose.setMacNo    (parsed.getString("mac_no"));
+                fnMacClose.setUserId   (parsed.getString("CM.msg_id"));
 
-                logger.info("[sp_fn_macClose_nh] 프로시져 결과: {}", fnMacClose.getvResult());
+                storedProcMapper.spFnMacCloseNh(fnMacClose);
 
-                if("OK".equals(fnMacClose.getvResult())) {
-                    msgTX.rollback(safeData.getTXS());
-                } else {
+                logger.info("[sp_fn_macClose_nh] 프로시져 결과: {}", fnMacClose.getResult());
+
+                if("OK".equals(fnMacClose.getResult())) {
                     msgTX.commit(safeData.getTXS());
+                } else {
+                    msgTX.rollback(safeData.getTXS());
                 }
 
             } else if( MsgBrokerConst.SHATMS_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("close_type").equals("2") ) {
@@ -242,6 +244,8 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 ifCashInsert2.setvFirstInqYN       (0);
                 ifCashInsert2.setvResult           (-1);
 
+                storedProcMapper.spIfCashinsert(ifCashInsert2);
+
                 if(ifCashInsert.getvResult() != 0) {
                     logger.info( "[MngCM_AP_SaveCurrentAmt] 프로시져 오류 3: %s", ifCashInsert2.getvResultMsg() );
                     msgTX.rollback(safeData.getTXS());
@@ -253,13 +257,97 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
                 /* 20110831 정희성 요청 계리마감 시 마감조회 (2) 가 없으면 계리마감 데이터로 마감데이터 같이 넣어주도록 */
                 int hIS_CLOSE;
+                CmCash paramCmCash = new CmCash();
+                paramCmCash.setInqDate(parsed.getString("inq_date"));
+                paramCmCash.setOrgCd(parsed.getString("CM.org_cd"));
+                paramCmCash.setBranchCd(parsed.getString("brch_cd"));
+                paramCmCash.setMacNo(parsed.getString("mac_no"));
 
+                CmCash resultCmCash = tMiscMapper.selectCountCmCash(paramCmCash);
 
+                if(resultCmCash.getHisClose() == 0) {
+                    IfCashInsert ifCashInsert3 = new IfCashInsert();
 
+                    ifCashInsert3.setnUpdateCheckYN    (0);
+                    ifCashInsert3.setpOrgCd            (parsed.getString("CM.org_cd"));
+                    ifCashInsert3.setpJijumCd          (parsed.getString("brch_cd"));
+                    ifCashInsert3.setpMacNo            (parsed.getString("mac_no"));
+                    ifCashInsert3.setpCashType         ("2");
+                    ifCashInsert3.setpCashDate         (parsed.getString("close_date"));
+                    ifCashInsert3.setpCashTime         (parsed.getString("close_time"));
+                    ifCashInsert3.setpChargeAmt        (hpreAmt);
+                    ifCashInsert3.setpTotInAmt         (parsed.getLong("total_in_amt"));
+                    ifCashInsert3.setpTotOutAmt        (parsed.getLong("total_out_amt"));
+                    ifCashInsert3.setpMoneyInAmt       (parsed.getLong("cash_in_amt"));
+                    ifCashInsert3.setpMoneyOutAmt      (parsed.getLong("cash_out_amt"));
+                    ifCashInsert3.setpCheckInAmt       (parsed.getLong("check_in_amt"));
+                    ifCashInsert3.setpCheckOutAmt      (parsed.getLong("check_out_amt"));
+                    ifCashInsert3.setpRemainAmt        (parsed.getLong("cur_rem_amt"));
+                    ifCashInsert3.setpInCnt            (hremAmt);
+                    ifCashInsert3.setpOutCnt           (0);
+                    ifCashInsert3.setpChkInCnt         (0);
+                    ifCashInsert3.setpChkOutCnt        (0);
+                    ifCashInsert3.setpAddAmt           (0);
+                    ifCashInsert3.setpCollectAmt       (parsed.getLong("collect_amt"));
+                    ifCashInsert3.setpRemainCheckAmt   (0);
+                    ifCashInsert3.setpRemain10Amt      (0);
+                    ifCashInsert3.setpRemain50Amt      (0);
+                    ifCashInsert3.setpRemain100Amt     (0);
+                    ifCashInsert3.setpRemain500Amt     (0);
+                    ifCashInsert3.setpRemain1000Amt    (0);
+                    ifCashInsert3.setpRemain5000Amt    (0);
+                    ifCashInsert3.setpRemain10000Amt   (0);
+
+                    ifCashInsert3.setpRemain50000Amt   (parsed.getLong("cur_rem_50000_amt"));
+                    ifCashInsert3.setpMoneyIn50000Amt  (parsed.getLong("in_50000_cnt")  * 50000);
+                    ifCashInsert3.setpMoneyOut50000Amt (parsed.getLong("out_50000_cnt") * 50000);
+                    ifCashInsert3.setpMoneyIn5000Amt   (parsed.getLong("in_5000_cnt")   * 5000);
+                    ifCashInsert3.setpMoneyIn1000Amt   (parsed.getLong("in_1000_cnt")   * 1000);
+                    ifCashInsert3.setpTodayChargeAmt   (parsed.getLong("today_charge_amt"));
+                    ifCashInsert3.setpPreChargeAmt     (parsed.getLong("pre_charge_amt"));
+                    ifCashInsert3.setpPreAddAmt        (parsed.getLong("pre_add_amt"));
+                    ifCashInsert3.setpHolyAddAmt       (parsed.getLong("holy_add_amt"));
+                    ifCashInsert3.setpTodayAddAmt      (parsed.getLong("today_add_amt"));
+                    ifCashInsert3.setpSafeNo           (parsed.getString("safe_no"));
+
+                    ifCashInsert3.setvFirstInqYN       (0);
+                    ifCashInsert3.setvResult           (-1);
+
+                    storedProcMapper.spIfCashinsert(ifCashInsert3);
+
+                    if(ifCashInsert3.getvResult() != 0) {
+                        logger.info( "[MngCM_AP_SaveCurrentAmt] 프로시져 오류 2: %s", ifCashInsert3.getvResultMsg() );
+                        msgTX.rollback(safeData.getTXS());
+                    } else {
+                        msgTX.commit(safeData.getTXS());
+                    }
+
+                }
             }
 
 
         }//endif
+
+        if(MsgBrokerConst.EMART_CODE.equals(parsed.getString("CM.org_cd"))) {
+
+            FnMacClose fnMacClose = new FnMacClose();
+            fnMacClose.setCloseDate(parsed.getString("close_date"));
+            fnMacClose.setOrgCode  (parsed.getString("CM.org_cd"));
+            fnMacClose.setJijumCode(parsed.getString("brch_cd"));
+            fnMacClose.setMacNo    (parsed.getString("mac_no"));
+            fnMacClose.setCloseTime(parsed.getString("close_time"));
+            fnMacClose.setUserId   (parsed.getString("CM.msg_id"));
+
+            storedProcMapper.spFnMacCloseEmart(fnMacClose);
+
+            if("OK".equals(fnMacClose.getResult())) {
+                msgTX.commit(safeData.getTXS());
+            } else {
+                logger.info("sp_fn_macClose_emart procedure Error. {}", fnMacClose.getResult());
+                msgTX.rollback(safeData.getTXS());
+            }
+
+        }
 
     }//end method
 
@@ -319,10 +407,10 @@ public class In03101130Impl extends InMsgHandlerImpl {
         }
     }//end method
 
-    public class CmCash {
+    public static class CmCash {
         private String inqDate;
         private String orgCd;
-        private String jijumCd;
+        private String branchCd;
         private String macNo;
 
         private long hisClose;
@@ -358,16 +446,16 @@ public class In03101130Impl extends InMsgHandlerImpl {
         /**
          * @return the jijumCd
          */
-        public String getJijumCd()
+        public String getBranchCd()
         {
-            return jijumCd;
+            return branchCd;
         }
         /**
          * @param jijumCd the jijumCd to set
          */
-        public void setJijumCd(String jijumCd)
+        public void setBranchCd(String branchCd)
         {
-            this.jijumCd = jijumCd;
+            this.branchCd = branchCd;
         }
         /**
          * @return the macNo
@@ -400,117 +488,5 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
     }
 
-    /**
-     *
-     * FnMacClose
-     * <pre>
-     * sp_fn_macClose_nh call input VO
-     * </pre>
-     *
-     * @author s7760ker@gmail.com
-     * @version 1.0
-     * @see
-     */
-    public class FnMacClose {
-        /*
-        pCloseDate      IN        t_fn_close.close_date%TYPE,
-        pOrgCode        IN        t_fn_close.org_cd%TYPE,
-        pJijumCode      IN        t_fn_close.jijum_cd%TYPE,
-        pMacNo          IN        t_fn_close.mac_no%TYPE,
-        pUserId         IN        t_fn_close.insert_uid%TYPE,
-        vResult         OUT       VARCHAR2
-        */
 
-        private String pCloseDate   ;
-        private String pOrgCode     ;
-        private String pJijumCode   ;
-        private String pMacNo       ;
-        private String pUserId      ;
-        private String vResult      ;
-        /**
-         * @return the pCloseDate
-         */
-        public String getpCloseDate()
-        {
-            return pCloseDate;
-        }
-        /**
-         * @param pCloseDate the pCloseDate to set
-         */
-        public void setpCloseDate(String pCloseDate)
-        {
-            this.pCloseDate = pCloseDate;
-        }
-        /**
-         * @return the pOrgCode
-         */
-        public String getpOrgCode()
-        {
-            return pOrgCode;
-        }
-        /**
-         * @param pOrgCode the pOrgCode to set
-         */
-        public void setpOrgCode(String pOrgCode)
-        {
-            this.pOrgCode = pOrgCode;
-        }
-        /**
-         * @return the pJijumCode
-         */
-        public String getpJijumCode()
-        {
-            return pJijumCode;
-        }
-        /**
-         * @param pJijumCode the pJijumCode to set
-         */
-        public void setpJijumCode(String pJijumCode)
-        {
-            this.pJijumCode = pJijumCode;
-        }
-        /**
-         * @return the pMacNo
-         */
-        public String getpMacNo()
-        {
-            return pMacNo;
-        }
-        /**
-         * @param pMacNo the pMacNo to set
-         */
-        public void setpMacNo(String pMacNo)
-        {
-            this.pMacNo = pMacNo;
-        }
-        /**
-         * @return the pUserId
-         */
-        public String getpUserId()
-        {
-            return pUserId;
-        }
-        /**
-         * @param pUserId the pUserId to set
-         */
-        public void setpUserId(String pUserId)
-        {
-            this.pUserId = pUserId;
-        }
-        /**
-         * @return the vResult
-         */
-        public String getvResult()
-        {
-            return vResult;
-        }
-        /**
-         * @param vResult the vResult to set
-         */
-        public void setvResult(String vResult)
-        {
-            this.vResult = vResult;
-        }
-
-    }
 }

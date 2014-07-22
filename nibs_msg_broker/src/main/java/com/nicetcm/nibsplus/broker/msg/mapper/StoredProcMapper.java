@@ -4,11 +4,11 @@ import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.mapping.StatementType;
 
+import com.nicetcm.nibsplus.broker.msg.model.FnMacClose;
 import com.nicetcm.nibsplus.broker.msg.model.IfCashInsert;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.IfCashInsertEmart;
-import com.nicetcm.nibsplus.broker.msg.services.In03101130Impl.FnMacClose;
 
 public interface StoredProcMapper {
 
@@ -146,15 +146,28 @@ public interface StoredProcMapper {
 
     @Select({
         "CALL op.sp_fn_macClose_nh( ",
-            "#{pCloseDate   , IN    , mode=IN,  jdbcType=VARCHAR},",
-            "#{pOrgCode     , IN    , mode=IN,  jdbcType=VARCHAR},",
-            "#{pJijumCode   , IN    , mode=IN,  jdbcType=VARCHAR},",
-            "#{pMacNo       , IN    , mode=IN,  jdbcType=VARCHAR},",
-            "#{pUserId      , IN    , mode=IN,  jdbcType=VARCHAR},",
-            "#{vResult      , OUT   , mode=OUT, jdbcType=VARCHAR} ",
+            "#{closeDate   , mode=IN,  jdbcType=VARCHAR},",
+            "#{orgCode     , mode=IN,  jdbcType=VARCHAR},",
+            "#{jijumCode   , mode=IN,  jdbcType=VARCHAR},",
+            "#{macNo       , mode=IN,  jdbcType=VARCHAR},",
+            "#{userId      , mode=IN,  jdbcType=VARCHAR},",
+            "#{result      , mode=OUT, jdbcType=VARCHAR} ",
         ")"
     })
     @Options(statementType=StatementType.CALLABLE)
-    void sp_fn_macClose_nh(FnMacClose fnMacClose);
+    void spFnMacCloseNh(FnMacClose fnMacClose);
 
+    @Select({
+        "CALL op.sp_fn_macClose_emart( ",
+            "#{closeDate   , mode=IN,  jdbcType=VARCHAR},",
+            "#{orgCode     , mode=IN,  jdbcType=VARCHAR},",
+            "#{jijumCode   , mode=IN,  jdbcType=VARCHAR},",
+            "#{macNo       , mode=IN,  jdbcType=VARCHAR},",
+            "#{closeTime   , mode=IN,  jdbcType=VARCHAR},",
+            "#{userId      , mode=IN,  jdbcType=VARCHAR},",
+            "#{result      , mode=OUT, jdbcType=VARCHAR} ",
+        ")"
+    })
+    @Options(statementType=StatementType.CALLABLE)
+    void spFnMacCloseEmart(FnMacClose fnMacClose);
 }

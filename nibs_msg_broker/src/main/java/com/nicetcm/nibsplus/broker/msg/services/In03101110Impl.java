@@ -42,10 +42,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
         logger.debug("Msg Received");
         logger.debug(parsed.getString("CM.work_type"));
 
-        TMacInfo tMacInfo = new TMacInfo();
-        tMacInfo.setOrgCd( parsed.getString("CM.org_cd") );
-        tMacInfo.setBranchCd( parsed.getString("brch_cd") );
-        tMacInfo.setMacNo( parsed.getString("mac_no") );
+
 
         /**************************************************************************************************
          농협atms는 조회일자 조회시간이 전문상에 없으므로 현재 시간을 세팅하도록 한다.
@@ -57,7 +54,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
         /**
          * 지점코드, 기번 길이 검증
          */
-        comPack.checkBranchMacLength( tMacInfo );
+        comPack.checkBranchMacLength( parsed );
 
         TMisc tMisc = new TMisc();
         tMisc.sethCashType("1");
@@ -170,6 +167,10 @@ public class In03101110Impl extends InMsgHandlerImpl {
 
                 try
                 {
+                    TMacInfo tMacInfo = new TMacInfo();
+                    tMacInfo.setOrgCd( parsed.getString("CM.org_cd") );
+                    tMacInfo.setBranchCd( parsed.getString("brch_cd") );
+                    tMacInfo.setMacNo( parsed.getString("mac_no") );
                     closeAmt = tMiscMapper.selectCloseAmt(tMacInfo);
                 } catch (Exception e)
                 {
