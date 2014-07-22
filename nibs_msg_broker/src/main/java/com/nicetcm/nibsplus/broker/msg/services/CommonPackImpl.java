@@ -656,13 +656,163 @@ public class CommonPackImpl implements CommonPack {
                 "NI102",
                 ""
             };
+        String[] saAtmErrorList = {
+                "NE100",
+                "NE101",
+                "NE102",
+                "NE103",
+                "NE104",
+                "NE105",
+                "NE106",
+                "NE107",
+                "NE108",
+                "NE109",
+                "NE110",
+                "NE111",
+                "NE112",
+                "NE113",
+                "NE115",
+                "NE116",
+                "NE117",
+                "NE118",
+                "NE119",
+                "NE120",
+                "NE121",
+                "NE122",
+                "NE123",
+                "NE124",
+                "NE125",
+                "NE126",
+                "NE200",
+                "NE201",
+                "NE202",
+                "NE203",
+                "NE204",
+                "NE205",
+                "NE206",
+                "NE207",
+                "NE208",
+                "NE209",
+                "NE210",
+                "NE211",
+                "NE212",
+                "NE213",
+                "NE214",
+                "NE215",
+                "NE216",
+                "NE217",
+                "NE218",
+                "NE219",
+                "NE220",
+                "NE221",
+                "NE222",
+                "NE223",
+                "NE224",
+                "NE225",
+                "NE226",
+                "NE250",
+                "NE251",
+                "NE252",
+                "NE253",
+                "NE254",
+                "NE255",
+                "NE256",
+                "NE257",
+                "NE258",
+                "NE259",
+                "NE260",
+                "NE261",
+                "NE230",
+                "NE231",
+                "NE232",
+                "NE233",
+                "NE240",
+                "NE241",
+                "NE270",
+                "NE271",
+                "NE272",
+                "NE273",
+                "NE275",
+                "NE276",
+                "NE277",
+                "NE278",
+                "NE170",
+                "NE171",
+                "NE172",
+                "NE173",
+                ""
+            };
+
+        String[] saCalcErrorList = {
+                "NE102",
+                "NE115",
+                "NE124",
+                "NE123",
+                "NE100",
+                "NE117",
+                "NE118",
+                "NE119",
+                "NE120",
+                "NE121",
+                "NE122",
+                "NE104",
+                "NE148",
+                "NE126",
+                "NE125",
+                "NE103",
+                "NE142",
+                "NE143",
+                "NE144",
+                "NE145",
+                "NE146",
+                "NE147",
+                "NE211",
+                "NE202",
+                "NE215",
+                "NE224",
+                "NE223",
+                "NE200",
+                "NE217",
+                "NE218",
+                "NE219",
+                "NE220",
+                "NE221",
+                "NE222",
+                "NE204",
+                "NE248",
+                "NE226",
+                "NE225",
+                "NE203",
+                "NE242",
+                "NE243",
+                "NE244",
+                "NE245",
+                "NE246",
+                "NE247",
+                "NE262",
+                "NE263",
+                "NE264",
+                "NE265",
+                "NE253",
+                "NE252",
+                "NE232",
+                "NE233",
+                "NE234",
+                "NE250",
+                "NE235",
+                "NE236",
+                "NE237",
+                "NE238",
+                "NE239",
+                ""
+            };
         /*
          *  상태전문 - 개국, 장애복구전문 처리
          */
         if( WorkType == MsgBrokerConst.DB_UPDATE_ERROR_MNG ) {
             if( DbMode.equals(MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR) ) {
                 try {
-                    List<TCtErrorBasicJoin> rslt = errBasicMap.selectByCond4( ErrBasic, ErrTxn );
+                    List<TCtErrorBasicJoin> rslt = errBasicMap.selectByJoin1( ErrBasic, ErrTxn );
                     if( rslt.size() == 0 ) {
                         logger.info("[DBInsertUpdate] 장애복구건 없음");
                         msgTX.rollback(safeData.getTXS());
@@ -719,34 +869,91 @@ public class CommonPackImpl implements CommonPack {
                     throw e;
                 }
             }
-        }
-        else {
-            /*
-             *  해당 장애만 Clear
-             */
-            if( ErrBasic.getOrgCd().equals(MsgBrokerConst.NICE_CODE) )  {
-                int i = 0;
-                for( i = 0; i < saNiceErrorList.length; i++ ) {
-                    if( ErrBasic.getErrorCd().equals(saNiceErrorList[i]) ) {
-                        if( curMacStateError[i] == '1' )
-                            break;
-                        else {
-                            /* 완료를 먼저 찍고 복구가 나중에 들어온 경우 unfinish에서 빠지게 됨으로 
-                             * 복구시간이 넣어지지 않음에 따라 나이스 인 경우에만 .szCurErrList 이외에
-                             * 완료후복구 장애를 체크하여 복구 시간을 update 하도록 수정 2014.01.23
-                             */
-                            try {
-                                if( errBasicMap.countByCond1( ErrBasic ) == 0 )
+            else {
+                /*
+                 *  해당 장애만 Clear
+                 */
+                if( ErrBasic.getOrgCd().equals(MsgBrokerConst.NICE_CODE) )  {
+                    int i = 0;
+                    for( i = 0; i < saNiceErrorList.length; i++ ) {
+                        if( ErrBasic.getErrorCd().equals(saNiceErrorList[i]) ) {
+                            if( curMacStateError[i] == '1' )
+                                break;
+                            else {
+                                /* 
+                                 * 완료를 먼저 찍고 복구가 나중에 들어온 경우 unfinish에서 빠지게 됨으로 
+                                 * 복구시간이 넣어지지 않음에 따라 나이스 인 경우에만 .szCurErrList 이외에
+                                 * 완료후복구 장애를 체크하여 복구 시간을 update 하도록 수정 2014.01.23
+                                 */
+                                try {
+                                    if( errBasicMap.countByCond1( ErrBasic ) == 0 )
+                                        return;
+                                }
+                                catch ( Exception e ) {
                                     return;
+                                }
+                                break;
                             }
-                            catch ( Exception e ) {
-                                return;
-                            }
-                            break;
                         }
                     }
+                    if( i >= saNiceErrorList.length) return;
                 }
-                if( i >= saNiceErrorList.length) return;
+                /*
+                 *  정산기 일경우
+                 */
+                else if( ErrBasic.getOrgCd().equals(MsgBrokerConst.CS_CODE)
+                      ||  ErrBasic.getOrgCd().equals(MsgBrokerConst.EMART_CODE) ) {
+                    int i = 0;
+                    for( i = 0; i < saCalcErrorList.length; i++ ) {
+                        if( ErrBasic.getErrorCd().equals(saCalcErrorList[i]) ) {
+                            if( curMacStateError[i] == '1' )
+                                break;
+                            else {
+                                //logger.info("복구장애없음");
+                                return;
+                            }
+                        }
+                    }
+
+                    if( i >= saCalcErrorList.length ) return;
+                }
+                /*
+                 *  농협 신 상태전문이 아닌 타기관 전문일경우 처리
+                 *  농협일경우에는 기존 장애 여부를 위에서 체크하므로 해당 장애 코드를 복구 처리
+                 *  출동알림의 경우는 기본 상태필드 atm_state 가 아닌 FILLER 추가부분을 사용하므로 따로 처리
+                 */
+                else if( !ErrBasic.getOrgCd().equals(MsgBrokerConst.NONGH_CODE)
+                      &&  !ErrBasic.getOrgCd().equals(MsgBrokerConst.ALARM_CODE) ) {
+                    int i = 0;
+                    for( i = 0 ; i < saAtmErrorList.length; i++ ) {
+                        if( ErrBasic.getErrorCd().equals(saAtmErrorList[i]) ) {
+                            if( curMacStateError[i] == '1' )
+                                break;
+                            else {
+                                //logger.info("복구장애없음");
+                                return;
+                            }
+                        }
+                    }
+
+                    if( i >= saAtmErrorList.length ) return;
+                }
+            }
+            /*
+             * 장애복구건 검색시 finish_date의 상태는 체크하지 않는다.
+             * 관제요원들이 복구가 되지 않아도 날짜(finish_date)를 입력 하는경우가 있다.
+             */
+            logger.info("Update<<===");
+            /*
+             *  삼성생명으로 인해 f_get... function을 호출함에 따른 부하때문에 임시 분리 20090330 by BHJ
+             */
+            try {
+                List<TCtErrorBasicJoin> rslt = errBasicMap.selectByJoin2( ErrBasic, ErrTxn );
+            }
+            catch ( Exception e ) {
+                logger.info( ">>> [DBInsertUpdate] (T_CT_ERROR_BASIC)UPDATE ERROR [{}-{}][{}]",
+                        ErrBasic.getCreateDate(), ErrBasic.getErrorNo(), e.getLocalizedMessage());
+                throw e;
             }
         }
     }

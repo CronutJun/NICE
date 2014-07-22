@@ -507,7 +507,7 @@ public interface TCtErrorBasicMapper {
      *
      * @author KDJ, on Sun Jul 20 22:13:31 KST 2014
      */
-    @SelectProvider(type=TCtErrorBasicMiscProvider.class, method="selectByCond4")
+    @SelectProvider(type=TCtErrorBasicMiscProvider.class, method="selectByJoin1")
     @Results({
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
@@ -515,7 +515,22 @@ public interface TCtErrorBasicMapper {
         @Result(column="REPAIR_DATE", property="repairDate", jdbcType=JdbcType.VARCHAR),
         @Result(column="REPAIR_TIME", property="repairTime", jdbcType=JdbcType.VARCHAR)
     })
-    List<TCtErrorBasicJoin> selectByCond4( @Param("basic") TCtErrorBasic basic, @Param("txn") TCtErrorTxn txn );
+    List<TCtErrorBasicJoin> selectByJoin1( @Param("basic") TCtErrorBasic basic, @Param("txn") TCtErrorTxn txn );
+
+    /**
+     * CommonPackImpl.updateErrMng 에서 호출
+     *
+     * @author KDJ, on Sun Jul 20 22:13:31 KST 2014
+     */
+    @SelectProvider(type=TCtErrorBasicMiscProvider.class, method="selectByJoin2")
+    @Results({
+        @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
+        @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="REPAIR_DATE", property="repairDate", jdbcType=JdbcType.VARCHAR),
+        @Result(column="REPAIR_TIME", property="repairTime", jdbcType=JdbcType.VARCHAR)
+    })
+    List<TCtErrorBasicJoin> selectByJoin2( @Param("basic") TCtErrorBasic basic, @Param("txn") TCtErrorTxn txn );
 
     /**
      * CommonPackImpl.updateErrMng 에서 호출
