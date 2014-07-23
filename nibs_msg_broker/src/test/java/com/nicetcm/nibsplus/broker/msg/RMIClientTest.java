@@ -12,7 +12,7 @@ public class RMIClientTest {
             System.out.println("registry");
             MsgBrokerRMI remoteObj = (MsgBrokerRMI)registry.lookup("MsgBrokerRMI");
             System.out.println("lookup");
-            System.out.println(remoteObj.callBrokerSync(new byte[20], 0).length);
+            System.out.println(remoteObj.callBrokerSync(new byte[20], 5).length);
             /*
             String msg = remoteObj.sayHello("KDJ"); 
             System.out.println(msg);
