@@ -501,6 +501,28 @@ public interface TCtErrorBasicMapper {
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR)
     })
     TCtErrorBasic selectByCond3( TCtErrorBasic cond );
+    
+    /**
+     * CommonPackImpl.updateErrMng 에서 호출
+     *
+     * @author KDJ
+     * @since Wed Jul 23 11:42:21 KST 2014
+     */
+    @Select({
+        "SELECT ORG_MSG                                                      ",
+        "FROM   OP.T_CT_ERROR_BASIC                                          ",
+        "WHERE  CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )) ",
+        "AND    ORG_CD     = #{orgCd, jdbcType=VARCHAR}                      ",
+        "AND    BRANCH_CD  = #{branchCd, jdbcType=VARCHAR}                   ",
+        "AND    MAC_NO     = #{macNo, jdbcType=VARCHAR}                      ",
+        "AND    TRANS_DATE  = :psuDBEm->trans_date                           ",
+        "AND    RTRIM(ORG_MSG_NO) = RTRIM(#{orgMsgNo, jdbcType=VARCHAR})     ",
+        "AND    ORG_MSG IS NOT NULL                                          "
+    })
+    @Results({
+        @Result(column="ORG_MSG", property="orgMsg", jdbcType=JdbcType.VARCHAR)
+    })
+    TCtErrorBasic selectByCond4( TCtErrorBasic cond );
 
     /**
      * CommonPackImpl.updateErrMng 에서 호출
@@ -513,7 +535,11 @@ public interface TCtErrorBasicMapper {
         @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
         @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="REPAIR_DATE", property="repairDate", jdbcType=JdbcType.VARCHAR),
-        @Result(column="REPAIR_TIME", property="repairTime", jdbcType=JdbcType.VARCHAR)
+        @Result(column="REPAIR_TIME", property="repairTime", jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_DATE", property="finishDate", jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_TIME", property="finishTime", jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_UID",  property="finishUid",  jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_STATUS", property="sendStatus", jdbcType=JdbcType.VARCHAR)
     })
     List<TCtErrorBasicJoin> selectByJoin1( @Param("basic") TCtErrorBasic basic, @Param("txn") TCtErrorTxn txn );
 
@@ -528,9 +554,32 @@ public interface TCtErrorBasicMapper {
         @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
         @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="REPAIR_DATE", property="repairDate", jdbcType=JdbcType.VARCHAR),
-        @Result(column="REPAIR_TIME", property="repairTime", jdbcType=JdbcType.VARCHAR)
+        @Result(column="REPAIR_TIME", property="repairTime", jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_DATE", property="finishDate", jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_TIME", property="finishTime", jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_UID",  property="finishUid",  jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_STATUS", property="sendStatus", jdbcType=JdbcType.VARCHAR)
     })
     List<TCtErrorBasicJoin> selectByJoin2( @Param("basic") TCtErrorBasic basic, @Param("txn") TCtErrorTxn txn );
+
+    /**
+     * CommonPackImpl.updateErrMng 에서 호출
+     *
+     * @author KDJ, on Sun Jul 20 22:13:31 KST 2014
+     */
+    @SelectProvider(type=TCtErrorBasicMiscProvider.class, method="selectByJoin3")
+    @Results({
+        @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
+        @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="REPAIR_DATE", property="repairDate", jdbcType=JdbcType.VARCHAR),
+        @Result(column="REPAIR_TIME", property="repairTime", jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_DATE", property="finishDate", jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_TIME", property="finishTime", jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_UID",  property="finishUid",  jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_STATUS", property="sendStatus", jdbcType=JdbcType.VARCHAR)
+    })
+    List<TCtErrorBasicJoin> selectByJoin3( TCtErrorBasic cond );
 
     /**
      * CommonPackImpl.updateErrMng 에서 호출

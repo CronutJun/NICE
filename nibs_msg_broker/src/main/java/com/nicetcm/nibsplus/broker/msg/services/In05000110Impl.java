@@ -315,7 +315,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                  *  2. 복구시간(발생시간)
                  */
                 errTxn.setRepairTime( parsed.getString("create_time") );
-                comPack.insertUpdateMacOpen( macInfo, errBasic );
+                comPack.insertUpdateMacOpen( safeData, macInfo, errBasic );
                 comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
                         errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
                
@@ -337,7 +337,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                  *  2. 복구시간(발생시간)
                  */
                 errTxn.setRepairTime( parsed.getString("create_time") );
-                comPack.insertUpdateMacOpen( macInfo, errBasic );
+                comPack.insertUpdateMacOpen( safeData, macInfo, errBasic );
                 comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ALL_CLEAR, 
                         errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, errState.getErrorStates().getBytes() );
             }

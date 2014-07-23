@@ -222,4 +222,36 @@ public interface TMiscMapper {
         "            and        CASH_DATE   = #{cashDate, jdbcType=VARCHAR}                                                                                                                                                     "
     })
     void updateTFnAtmsCashPlan(TMisc tMisc);
+
+    @Select({
+        "SELECT site.dept_cd,                                ",
+        "       site.office_cd                               ",
+        "from op.t_cm_mac mac,                               ",
+        "     op.t_cm_site site                              ",
+        "where site.org_cd = mac.org_cd                      ",
+        "and    site.jijum_cd = mac.jijum_cd                 ",
+        "and    site.site_cd = mac.site_cd                   ",
+        "and    mac.org_cd = #{orgCd, jdbcType=VARCHAR}      ",
+        "and    mac.jijum_cd = #{branchCd, jdbcType=VARCHAR} ",
+        "and    mac.mac_no = #{macNo, jdbcType=VARCHAR}      "
+    })
+    @Results({
+        @Result(column="DEPT_CD", property="deptCd", jdbcType=JdbcType.VARCHAR),
+        @Result(column="OFFICE_CD", property="officeCd", jdbcType=JdbcType.VARCHAR)
+    })
+    TMacInfo getDeptOfficeCd(TMacInfo tMacInfo);
+
+    @Select({
+        "SELECT count(*) cnt                                                                                                                                                                        ",
+        "FROM   OP.T_FN_CHALSI_DEAL_DSUM                                                                                                                                                            ",
+        "where  deal_date      = decode(trim(#{closeType, jdbcType=VARCHAR}), '01', to_char(to_date(#{dealDate, jdbcType=VARCHAR}, 'YYYYMMDD') + 1, 'YYYYMMDD'), #{dealDate, jdbcType=VARCHAR} )    ",
+        "  and  org_cd         = #{orgCd, jdbcType=VARCHAR}                                                                                                                                         ",
+        "  and  jijum_cd       = #{branchCd, jdbcType=VARCHAR}                                                                                                                                      ",
+        "  and  mac_no         = #{macNo, jdbcType=VARCHAR}                                                                                                                                         ",
+        "  and  close_type     = trim(#{closeType, jdbcType=VARCHAR})                                                                                                                               "
+    })
+    @Results({
+        @Result(column="cnt", property="cnt", jdbcType=JdbcType.VARCHAR),
+    })
+    TMisc selectCountFnChalsiDealDsum(TMisc tMisc);
 }

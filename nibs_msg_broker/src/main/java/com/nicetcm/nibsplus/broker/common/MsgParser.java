@@ -114,6 +114,13 @@ public class MsgParser {
                 msgFmtRec.ref_size = result.getString("ref_size");
             }
             
+            if( result.containsKey("iteration") ) {
+                if( msgFmtRec.ref_iteration.length() > 0 )
+                    throw new Exception(String.format("iteration is not able to be set when ref_iteration property is set! [%s]",
+                            msgFmtRec.name));
+                msgFmtRec.iteration = result.getInt("iteration");
+            }
+            
             if( result.containsKey("length") ) {
                 msgFmtRec.length = result.getInt("length");
                 schemaLength += msgFmtRec.length;
@@ -195,6 +202,7 @@ public class MsgParser {
             dataMap.put(e.getKey(), data);
             
             savePos = td.msg.position();
+            data.iteration = e.getValue().iteration;
             if( e.getValue().ref_iteration.length() > 0) {
                 data.iteration = getMsgData(dataMap, e.getValue().ref_iteration).getInt();
             }
@@ -268,7 +276,7 @@ public class MsgParser {
                 }
                 td.msg.position(savePos);
                 
-                if( e.getValue().ref_iteration.length() == 0) { /* ���� struct ���翩�� */
+                if( e.getValue().ref_iteration.length() == 0) {
                     if( e.getValue().schema != null ) {
                         dMap = new LinkedHashMap<String, MsgData>();
                         data.adata.add(dMap);
@@ -753,7 +761,7 @@ public class MsgParser {
                 }
             }
             else {
-                if( e.getValue().refFmt.ref_iteration.length() == 0 ) { /* ���� struct */
+                if( e.getValue().refFmt.ref_iteration.length() == 0 ) { 
                     if( e.getValue().refFmt.schema != null ) {
                         syncSubMessage( thrData, e.getValue().adata.get(0) );
                     }

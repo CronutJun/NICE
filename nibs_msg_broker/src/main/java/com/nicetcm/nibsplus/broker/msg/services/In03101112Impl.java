@@ -76,17 +76,9 @@ public class In03101112Impl extends InMsgHandlerImpl {
                                                     .andBranchCdEqualTo(parsed.getString("brch_cd"))
                                                     .andMacNoEqualTo(parsed.getString("mac_no"));
 
-
-            //updateTCtInputCheckList.setFromDate(parsed.getString("from_date"));
-            //updateTCtInputCheckList.setToDate(parsed.getString("to_date"));
-            //updateTCtInputCheckList.setOrgCd(parsed.getString("CM.org_cd"));
-            //updateTCtInputCheckList.setBranchCd(parsed.getString("brch_cd"));
-            //updateTCtInputCheckList.setMacNo(parsed.getString("mac_no"));
-
             try
             {
                 tCtInputCheckListMapper.updateBySpecSelective(updateTCtInputCheckList, tCtInputCheckListSpec);
-                //tCtInputCheckListMapper.updateByPrimaryKeySelective(updateTCtInputCheckList);
 
             } catch (Exception e1)
             {

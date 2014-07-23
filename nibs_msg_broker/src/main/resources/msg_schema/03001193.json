@@ -4,7 +4,7 @@
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
       { "name" : "org_cd",                 "kname" : "기관코드",               "type" : "AN",  "length"  : 3   },
-      { "name" : "deman_date",             "kname" : "자금청구일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "demand_date",             "kname" : "자금청구일자",           "type" : "N",   "length"  : 8   },
       { "name" : "start_date",             "kname" : "자금소요시작일자",       "type" : "N",   "length"  : 8   },
       { "name" : "end_date",               "kname" : "자금소요종료일자",       "type" : "N",   "length"  : 8   },
       { "name" : "use_days",               "kname" : "자금소요기간",           "type" : "N",   "length"  : 2   },

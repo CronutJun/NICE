@@ -256,23 +256,68 @@ public class MsgBrokerConst {
     public static final int AUTO_NOT_CREATE  = 3;
     public static final int AUTO_KB_COPY     = 4;
 
+    public static final String NICE_ERROR_LINE_ERROR           = "NI101"; /* 회선장애     */
+    public static final String NICE_ERROR_AC_ERROR             = "NI102"; /* AC전원차단   */
+    /*
+     *  나이스 에러 코드
+     */
+    public static final String NICE_ERROR_CASHBOX_EMPTY        = "NI110"; /* 지폐함 빔*/
+    public static final String NICE_ERROR_COLLECTBOX_EMPTY     = "NI111"; /* 회수함 참*/
+    public static final String NICE_ERROR_SPECSBOX_EMPTY       = "NI112"; /* 명세표 빔*/
+    public static final String NICE_ERROR_INBOX_FULL           = "NI114"; /* 입금함 참*/
+    public static final String NICE_ERROR_CHECKBOX_EMPTY       = "NI115"; /* 수표함 빔*/
+
+    /*
+     *  ATM H/W 장애
+     */
+    public static final String NICE_ERROR_CASHOUT_ERROR        = "NI121"; /* 지폐방출기*/
+    public static final String NICE_ERROR_CARDREAD_ERROR       = "NI122"; /* 카드판독기*/
+    public static final String NICE_ERROR_SPECS_ERROR          = "NI123"; /* 명세표*/
+    public static final String NICE_ERROR_JOURNAL_ERROR        = "NI124"; /* 저널*/
+    public static final String NICE_ERROR_INBOX_ERROR          = "NI126"; /* 입금함 */
+    public static final String NICE_ERROR_SYSTEM_DISK_ERROR    = "NI127"; /* SYSTEM DISK */
+    public static final String NICE_ERROR_BANKBOOK_ERROR       = "NI128"; /* 통장정리부 */
+    public static final String NICE_ERROR_SYSTEM_CONTROL_ERROR = "NI119"; /* 시스템 제어부 */
+    public static final String NICE_ERROR_DEAL_LIST_ERROR      = "NI129"; /* 거래내역출력부 */
+    public static final String NICE_ERROR_PINPAD_ERROR         = "NI118"; /* 암호화장비 */
+    public static final String NICE_ERROR_CASHIN_ERROR         = "NI131"; /* 지폐미수취*/
+    public static final String NICE_ERROR_TMONEY_ERROR         = "NI132"; /* T-MONEY*/
+    public static final String NICE_ERROR_DONGUL_ERROR         = "NI133"; /* 동글이*/
+    public static final String NICE_ERROR_DVR_ERROR            = "NI134"; /* DVR 2003.11.13 추가 */
+    public static final String NICE_ERROR_PRINTER              = "NI130"; /* 프린터기 장애 20071106 추가 */
+    public static final String NICE_ERROR_INPUT_CHECK          = "NI135"; /* 수표입금부   20090701    */
+    public static final String NICE_ERROR_OUT_CHECK            = "NI136"; /* 수표출금부 20090701      */
+    public static final String NICE_ERROR_INPUT_BOX_50000      = "NI137"; /* 오만원권입금부 20090701    */
+    public static final String NICE_ERROR_INPUT_BOX_100000     = "NI138"; /* 십만원권입금부 20090701    */
+    public static final String NICE_ERROR_REMAIN_MONEY         = "NI139"; /* 지폐잔류 20100129       */
+
+    /*
+     *  ATM 감시 전문
+     */
+    public static final String NICE_ERROR_SUPERVISOR           = "NI140"; /* 슈퍼바이저*/
+    public static final String NICE_ERROR_ATMWATCH_ERROR       = "NI141"; /* 침투상태 */
+    public static final String NICE_ERROR_URGENCY_ERROR        = "NI142"; /* 침투상태(긴급) */
+    public static final String NICE_ERROR_ATMWATCH_OPEN_ERROR  = "NI143"; /* 침투상태(금고개폐) 20080109 추가 */
+    public static final String NICE_ERROR_ATMWATCH_CLOSE_ERROR = "NI144"; /* 침투상태(금고잠금) 20080109 추가 */
+
     /* 
      * 나이스에서 요청한 에러 
      */
-    public static final String NICE_ERROR_USER_N02 = "NI902";   /*픽에러*/
-    public static final String NICE_ERROR_USER_N03 = "NI903";   /*픽이상*/
-    public static final String NICE_ERROR_USER_N04 = "NI904";   /*무거래*/
-    public static final String NICE_ERROR_USER_N07 = "NI907";   /*무거래(특별) 20080215 추가 */
-    public static final String NICE_ERROR_USER_N08 = "NI908";   /*무거래(일반) 20080215 추가 */
-    public static final String NICE_ERROR_USER_N05 = "NI905";   /*잔액조회*/
-    public static final String NICE_ERROR_USER_N06 = "NI906";   /*지폐방출후 잔액조회*/
-    public static final String NICE_ERROR_USER_N09 = "NI909";   /*empty 센서 이상*/
-    public static final String NICE_ERROR_USER_N10 = "NI910";   /*IC무거래*/
-    public static final String NICE_ERROR_USER_N11 = "NI911";   /*픽에러(EMPTY)*/
-    public static final String NICE_ERROR_USER_N12 = "NI912";   /*현금부족(기준금액)*/
-    public static final String NICE_ERROR_USER_N13 = "NI913";   /*기준금액없음*/
-    public static final String NICE_ERROR_USER_N14 = "NI914";   /*현금부족예보(기준금액)*/
-    public static final String NICE_ERROR_USER_N15 = "NI915";   /*금고침투(진동)*/
+    public static final String NICE_ERROR_USER_N02             = "NI902"; /*픽에러*/
+    public static final String NICE_ERROR_USER_N03             = "NI903"; /*픽이상*/
+    public static final String NICE_ERROR_USER_N04             = "NI904"; /*무거래*/
+    public static final String NICE_ERROR_USER_N07             = "NI907"; /*무거래(특별) 20080215 추가 */
+    public static final String NICE_ERROR_USER_N08             = "NI908"; /*무거래(일반) 20080215 추가 */
+    public static final String NICE_ERROR_USER_N05             = "NI905"; /*잔액조회*/
+    public static final String NICE_ERROR_USER_N06             = "NI906"; /*지폐방출후 잔액조회*/
+    public static final String NICE_ERROR_USER_N09             = "NI909"; /*empty 센서 이상*/
+    public static final String NICE_ERROR_USER_N10             = "NI910"; /*IC무거래*/
+    public static final String NICE_ERROR_USER_N11             = "NI911"; /*픽에러(EMPTY)*/
+    public static final String NICE_ERROR_USER_N12             = "NI912"; /*현금부족(기준금액)*/
+    public static final String NICE_ERROR_USER_N13             = "NI913"; /*기준금액없음*/
+    public static final String NICE_ERROR_USER_N14             = "NI914"; /*현금부족예보(기준금액)*/
+    public static final String NICE_ERROR_USER_N15             = "NI915"; /*금고침투(진동)*/
+
 
     /*======================================================================*/
     /* Message Type Code 정의                                               */

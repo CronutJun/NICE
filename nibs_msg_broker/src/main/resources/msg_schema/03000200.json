@@ -54,7 +54,7 @@
       { "name" : "out_23",                 "kname" : "22시~23시 출금금액",     "type" : "N",   "length"  : 8   },
       { "name" : "in_24",                  "kname" : "23시~24시 입금금액",     "type" : "N",   "length"  : 8   },
       { "name" : "out_24",                 "kname" : "23시~24시 출금금액",     "type" : "N",   "length"  : 8   },
-      { "name" : "kj_cl",                  "kname" : "권종구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "kj_gb",                  "kname" : "권종구분",               "type" : "AN",  "length"  : 1   },
       { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 9   }
    ]
 }

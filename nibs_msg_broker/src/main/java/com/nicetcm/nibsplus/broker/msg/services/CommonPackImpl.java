@@ -48,6 +48,7 @@ public class CommonPackImpl implements CommonPack {
     @Autowired private TCmSite01Mapper     cmSite01Map;
     @Autowired private TCmMemberMapper     cmMemberMap;
     
+    @Autowired private TCtOpenMapper       openMap;
     @Autowired private TCtErrorMapper      errMap;
     @Autowired private TCtErrorBasicMapper errBasicMap;
     @Autowired private TCtErrorRcptMapper  errRcptMap;
@@ -949,6 +950,55 @@ public class CommonPackImpl implements CommonPack {
              */
             try {
                 List<TCtErrorBasicJoin> rslt = errBasicMap.selectByJoin2( ErrBasic, ErrTxn );
+                if( rslt.size() == 0 ) {
+                    logger.info("[DBInsertUpdate] 장애복구건 없음");
+                    msgTX.rollback(safeData.getTXS());
+                    safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
+                    return;
+                }
+                for( TCtErrorBasicJoin errBasicJoin: rslt ) {
+                    TCtErrorBasic updErrBasic = new TCtErrorBasic();
+                    TCtErrorNoti updErrNoti = new TCtErrorNoti();
+                    TCtErrorTxn updErrTxn = new TCtErrorTxn();
+                    if( errBasicJoin.getRepairDate() == null )
+                        updErrTxn.setRepairDate( ErrTxn.getRepairDate() );
+                    if( errBasicJoin.getRepairTime().equals("999999") )
+                        updErrTxn.setRepairTime( ErrTxn.getRepairTime() );
+                    if( errBasicJoin.getFinishDate() == null )
+                        updErrTxn.setFinishDate( ErrTxn.getRepairDate() );
+                    if( errBasicJoin.getFinishTime() == null )
+                        updErrTxn.setFinishTime( ErrTxn.getRepairTime() );
+                    if( errBasicJoin.getFinishUid() == null )
+                        errBasicJoin.setFinishUid("online");
+                    if( errBasicJoin.getSendStatus().equals("0") )
+                        updErrNoti.setSendStatus("1");
+                    updErrBasic.setErrorStatus("7000");
+                    updErrBasic.setUpdateDate( safeData.getDSysDate() );
+                    updErrBasic.setUpdateUid("online");
+                    updErrBasic.setErrorNo( errBasicJoin.getErrorNo() );
+                    updErrBasic.setCreateDate( errBasicJoin.getCreateDate() );
+                    updErrBasic.setCreateTime( errBasicJoin.getCreateTime() );
+                    updErrTxn.setUpdateDate( safeData.getDSysDate() );
+                    updErrTxn.setUpdateUid("online");;;
+                    updErrTxn.setErrorNo( errBasicJoin.getErrorNo() );
+                    updErrTxn.setCreateDate( errBasicJoin.getCreateDate() );
+                    updErrTxn.setCreateTime( errBasicJoin.getCreateTime() );
+                    updErrNoti.setUpdateDate( safeData.getDSysDate() );
+                    updErrNoti.setUpdateUid("online");;;
+                    updErrNoti.setErrorNo( errBasicJoin.getErrorNo() );
+                    updErrNoti.setCreateDate( errBasicJoin.getCreateDate() );
+                    updErrNoti.setCreateTime( errBasicJoin.getCreateTime() );
+                    /*
+                     * Update
+                     */
+                    errBasicMap.updateByPrimaryKeySelective( updErrBasic );
+                    errNotiMap.updateByPrimaryKeySelective( updErrNoti );
+                    errTxnMap.updateByPrimaryKeySelective( updErrTxn );
+                    
+                    /*
+                     * Update Trigger
+                     */
+                }
             }
             catch ( Exception e ) {
                 logger.info( ">>> [DBInsertUpdate] (T_CT_ERROR_BASIC)UPDATE ERROR [{}-{}][{}]",
@@ -956,6 +1006,99 @@ public class CommonPackImpl implements CommonPack {
                 throw e;
             }
         }
+        /*
+         * 출동요청 취소 
+         */
+        else if( WorkType == MsgBrokerConst.DB_UPDATE_CANCEL_MNG ) {
+            TCtErrorBasic rsltErrBasic;
+            try {
+                rsltErrBasic = errBasicMap.selectByCond4( ErrBasic );
+                if( rsltErrBasic == null ) {
+                    logger.info("[DBInsertUpdate] ORG_CD[{}], BRANCH_CD[{}], MAC_NO[{}]",
+                            ErrBasic.getOrgCd(), ErrBasic.getBranchCd(), ErrBasic.getMacNo() );
+                    rsltErrBasic = new TCtErrorBasic();
+                    rsltErrBasic.setOrgMsg("");
+                }
+            }
+            catch( Exception e ) {
+                logger.info(">>> [DBInsertUpdate] GET ORG_MSG ERROR [{}]", e.getMessage() );
+                rsltErrBasic = new TCtErrorBasic();
+                rsltErrBasic.setOrgMsg("");
+            }
+            /*
+             * 외환은행 출동취소 무시. 20080305 김희천대리 요청 
+             * 그 외 기관은 출동취소 처리
+             */
+            if( !ErrBasic.getOrgCd().equals(MsgBrokerConst.KEB_CODE) ) {
+                /*
+                 * ORG_MSG에 기관 메모 덧붙이는 작업 
+                 */
+                try {
+                    List<TCtErrorBasicJoin> rslt = errBasicMap.selectByJoin3( ErrBasic );
+                    if( rslt.size() == 0 ) {
+                        logger.info("[DBInsertUpdate DB_UPDATE_CANCEL_MNG ] ORG_CD[{}], BRANCH_CD[{}], MAC_NO[{}]", 
+                                ErrBasic.getOrgCd(), ErrBasic.getBranchCd(), ErrBasic.getMacNo());
+                        throw new Exception( String.format("[DBInsertUpdate DB_UPDATE_CANCEL_MNG ] ORG_CD[%s], BRANCH_CD[%s], MAC_NO[%s]",
+                                ErrBasic.getOrgCd(), ErrBasic.getBranchCd(), ErrBasic.getMacNo()) );
+                    }
+                    for( TCtErrorBasicJoin errBasicJoin: rslt ) {
+                        TCtErrorBasic updErrBasic = new TCtErrorBasic();
+                        TCtErrorNoti updErrNoti = new TCtErrorNoti();
+                        TCtErrorTxn updErrTxn = new TCtErrorTxn();
+                        if( errBasicJoin.getRepairDate() == null )
+                            updErrTxn.setRepairDate( ErrTxn.getRepairDate() );
+                        if( errBasicJoin.getRepairTime().equals("999999") )
+                            updErrTxn.setRepairTime( ErrTxn.getRepairTime() );
+                        if( errBasicJoin.getFinishDate() == null )
+                            updErrTxn.setFinishDate( ErrTxn.getRepairDate() );
+                        if( errBasicJoin.getFinishTime() == null )
+                            updErrTxn.setFinishTime( ErrTxn.getRepairTime() );
+                        if( errBasicJoin.getFinishUid() == null )
+                            errBasicJoin.setFinishUid("online");
+                        if( errBasicJoin.getSendStatus().equals("0") )
+                            updErrNoti.setSendStatus("1");
+                        updErrBasic.setErrorStatus("7000");
+                        updErrBasic.setOrgSendYn("3");
+                        updErrBasic.setOrgMsg(rsltErrBasic.getOrgMsg() + "/" + ErrBasic.getOrgMsg());
+                        updErrBasic.setUpdateDate( safeData.getDSysDate() );
+                        updErrBasic.setUpdateUid("online");
+                        updErrBasic.setErrorNo( errBasicJoin.getErrorNo() );
+                        updErrBasic.setCreateDate( errBasicJoin.getCreateDate() );
+                        updErrBasic.setCreateTime( errBasicJoin.getCreateTime() );
+                        updErrTxn.setFinishType("0001");
+                        updErrTxn.setFinishNm("취소");
+                        updErrTxn.setUpdateDate( safeData.getDSysDate() );
+                        updErrTxn.setUpdateUid("online");;;
+                        updErrTxn.setErrorNo( errBasicJoin.getErrorNo() );
+                        updErrTxn.setCreateDate( errBasicJoin.getCreateDate() );
+                        updErrTxn.setCreateTime( errBasicJoin.getCreateTime() );
+                        updErrNoti.setUpdateDate( safeData.getDSysDate() );
+                        updErrNoti.setUpdateUid("online");;;
+                        updErrNoti.setErrorNo( errBasicJoin.getErrorNo() );
+                        updErrNoti.setCreateDate( errBasicJoin.getCreateDate() );
+                        updErrNoti.setCreateTime( errBasicJoin.getCreateTime() );
+                        /*
+                         * Update
+                         */
+                        errBasicMap.updateByPrimaryKeySelective( updErrBasic );
+                        errNotiMap.updateByPrimaryKeySelective( updErrNoti );
+                        errTxnMap.updateByPrimaryKeySelective( updErrTxn );
+                        
+                        /*
+                         * Update Trigger
+                         */
+                    }
+                }
+                catch ( Exception e ) {
+                    logger.info( ">>> [DBInsertUpdate] (T_CT_ERROR_BASIC)UPDATE ERROR [{}-{}][{}]",
+                            ErrBasic.getTransDate(), ErrBasic.getOrgMsgNo(), e.getLocalizedMessage());
+                    throw e;
+                }
+            }
+            logger.info("출동취소 처리완료 [ORG_CD = '{}', BRANCH_CD = '{}', MAC_NO = '{}', TRANS_DATE = '{}', ORG_MSG_NO = '{}'",
+                    ErrBasic.getOrgCd(), ErrBasic.getBranchCd(), ErrBasic.getMacNo(), ErrBasic.getTransDate(), ErrBasic.getOrgMsgNo());
+       }
+       logger.info("@@@ 장애복구 처리완료");
     }
 
    /**
@@ -969,9 +1112,35 @@ public class CommonPackImpl implements CommonPack {
     * @see TMacInfo
     * @see TCtErrorBasic
     */
-    public void insertUpdateMacOpen( TMacInfo MacInfo, TCtErrorBasic ErrBasic ) throws Exception {
+    public void insertUpdateMacOpen( MsgBrokerData safeData, TMacInfo MacInfo, TCtErrorBasic ErrBasic ) throws Exception {
         
+        TCtOpen open = new TCtOpen();
+        open.setOrgCd( ErrBasic.getOrgCd() );                          // 기관코드
+        open.setBranchCd( ErrBasic.getBranchCd() );                    // 지점코드
+        open.setMacNo( ErrBasic.getErrorNo() );                        // 기번
+        open.setOpenDate( ErrBasic.getCreateDate().toString() );       // 개시일
+        open.setOpenTime( ErrBasic.getCreateTime() );                  // 개시시간
+        open.setSerialNo( MacInfo.getSerialNo() );                     // 일련번호
+        open.setMacAddress( MacInfo.getMacAddress() );                 // 맥어드레스
+        open.setUpdateDate( safeData.getDSysDate() );
+        try {
+            openMap.insertSelective(open);
+        }
+        catch( org.springframework.dao.DataIntegrityViolationException e ) {
+            try {
+                openMap.updateByPrimaryKeySelective( open );
+            }
+            catch ( Exception ne ) {
+                logger.info( ">>> [DBInsertUpdate] (T_CT_OPEN) UPDATE ERROR [{}]", ne.getMessage());
+                throw ne;
+            }
+        }
+        catch( Exception e ) {
+            logger.info( ">>> [DBInsertUpdate] (T_CT_OPEN) INSERT ERROR [{}]", e.getMessage());
+            throw e;
+        }
     }
+    
     /**
      * 
      * 같은 전문추적 번호가 있는지 검사한다.

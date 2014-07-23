@@ -10,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 public class MsgBrokerMain {
+
+    private MsgBrokerRMIServer rmi;
     
     public static final Logger logger = LoggerFactory.getLogger(MsgBrokerMain.class);
     
@@ -40,6 +42,12 @@ public class MsgBrokerMain {
 //                Thread.sleep(1000 * 60 * 60);
 //            }
 //            logger.debug("Out of loop");
+            /*
+             * RMI Server 초기화
+             */
+            rmi = new MsgBrokerRMIServer();
+            rmi.bind();
+            
         }
         catch (Exception e) {
             logger.error(e.getMessage());

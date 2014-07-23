@@ -22,7 +22,7 @@ public interface CommonPack {
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, String PartMngYn ) throws Exception;
     public void updateErrBasic( MsgBrokerData safeData, int WorkType, String DbMode, TCtErrorBasic ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, byte[] curMacStateError ) throws Exception;
-    public void insertUpdateMacOpen( TMacInfo MacInfo, TCtErrorBasic ErrMng ) throws Exception;
+    public void insertUpdateMacOpen( MsgBrokerData safeData, TMacInfo MacInfo, TCtErrorBasic ErrMng ) throws Exception;
     public byte[] getCurrentErrorState( ErrorState ErrorState ) throws Exception;
 
 }

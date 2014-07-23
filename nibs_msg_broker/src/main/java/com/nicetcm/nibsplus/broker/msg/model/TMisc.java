@@ -41,6 +41,12 @@ public class TMisc {
 
     private String cashDate;
 
+    private String dealDate;
+
+    private String closeType;
+
+    private long cnt;
+
     public String getHoliday() {
         return holiday;
     }
@@ -207,6 +213,54 @@ public class TMisc {
     public void setCashDate(String cashDate)
     {
         this.cashDate = cashDate;
+    }
+
+    /**
+     * @return the dealDate
+     */
+    public String getDealDate()
+    {
+        return dealDate;
+    }
+
+    /**
+     * @param dealDate the dealDate to set
+     */
+    public void setDealDate(String dealDate)
+    {
+        this.dealDate = dealDate;
+    }
+
+    /**
+     * @return the closeType
+     */
+    public String getCloseType()
+    {
+        return closeType;
+    }
+
+    /**
+     * @param closeType the closeType to set
+     */
+    public void setCloseType(String closeType)
+    {
+        this.closeType = closeType;
+    }
+
+    /**
+     * @return the cnt
+     */
+    public long getCnt()
+    {
+        return cnt;
+    }
+
+    /**
+     * @param cnt the cnt to set
+     */
+    public void setCnt(long cnt)
+    {
+        this.cnt = cnt;
     }
 
 }

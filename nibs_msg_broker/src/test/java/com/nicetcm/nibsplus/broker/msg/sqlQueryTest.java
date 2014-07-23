@@ -43,23 +43,13 @@ public class sqlQueryTest extends CmAllTestSuite {
             cond.setErrorCd("ERR17");
             txn.setRepairDate("20140721");
             txn.setRepairTime("080000");
-            List<TCtErrorBasicJoin> rsltErrMng = ctErrBasicMap.selectByCond4(cond, txn);
+            List<TCtErrorBasicJoin> rsltErrMng = ctErrBasicMap.selectByJoin3(cond);
             logger.debug("result:  size = {}", rsltErrMng.size());
             for( TCtErrorBasicJoin rslt: rsltErrMng) {
                 logger.debug("          error_no = {}",    rslt.getErrorNo());
                 logger.debug("          repair_date = {}", rslt.getRepairDate());
                 logger.debug("          repair_time = {}", rslt.getRepairTime());
             }
-            msgTX.rollback(safeData.getTXS());
-            safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
-            rsltErrMng = ctErrBasicMap.selectByCond4(cond, txn);
-            logger.debug("result:  size = {}", rsltErrMng.size());
-            for( TCtErrorBasicJoin rslt: rsltErrMng) {
-                logger.debug("          error_no = {}",    rslt.getErrorNo());
-                logger.debug("          repair_date = {}", rslt.getRepairDate());
-                logger.debug("          repair_time = {}", rslt.getRepairTime());
-            }
-            logger.debug("Count = {}", ctErrBasicMap.countByCond1(cond));
             msgTX.commit(safeData.getTXS());
         }
         catch( Exception e ) {
