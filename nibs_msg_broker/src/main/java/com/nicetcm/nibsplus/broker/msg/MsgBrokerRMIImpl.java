@@ -18,15 +18,8 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
     }
     
     public byte[] callBrokerSync(byte[] msg, int timeout) throws java.rmi.RemoteException {
-        logger.debug("Thread " + Thread.currentThread().getId() + "'s data = " + msg);
-        try {
-            Thread.sleep(10000);
-            logger.debug("Thread " + Thread.currentThread().getId() + "call complete");
-        }
-        catch ( Exception err ) {
-            logger.debug("Exception raised " + err.getMessage());
-        }
-        return new byte[10];
+        
+        return msg;
     }
 
     public void callBrokerAsync(byte[] msg) throws java.rmi.RemoteException {
