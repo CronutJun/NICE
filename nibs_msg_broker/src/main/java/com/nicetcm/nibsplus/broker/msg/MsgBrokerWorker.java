@@ -2,6 +2,7 @@ package com.nicetcm.nibsplus.broker.msg;
 
 import java.nio.ByteBuffer;
 import javax.jms.BytesMessage;
+import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +82,17 @@ public class MsgBrokerWorker implements Runnable {
                         respData.writeBytes(read);
                         prd.produce( respData );
                     }
+                    /*
+                     * nibsplus 또는 기타 AP요청의 응답인지 
+                     * MsgBrokerImpl의 rmiSyncAns Map에서 전문번호로 찾아
+                     * 존재하면 응답처리 한다.
+                     */
+                    else {
+                        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(msgPsr.getString("CM.trans_seq_no"));
+                        if( waitQ != null ) {
+                            waitQ.put( msg );
+                        }
+                    }
                 }
                 catch (MsgBrokerException me) {
                     /*
@@ -103,6 +115,17 @@ public class MsgBrokerWorker implements Runnable {
                         logger.info("Response Data = {}", new String(read) );
                         respData.writeBytes(read);
                         prd.produce( respData );
+                    }
+                    /*
+                     * nibsplus 또는 기타 AP요청의 응답인지 
+                     * MsgBrokerImpl의 rmiSyncAns Map에서 전문번호로 찾아
+                     * 존재하면 응답처리 한다.
+                     */
+                    else {
+                        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(msgPsr.getString("CM.trans_seq_no"));
+                        if( waitQ != null ) {
+                            waitQ.put( msg );
+                        }
                     }
                 }
                 catch (Exception e) {

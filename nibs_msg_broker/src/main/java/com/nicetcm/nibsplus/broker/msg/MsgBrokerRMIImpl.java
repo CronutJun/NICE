@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.nicetcm.nibsplus.broker.common.*;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerRMI;
+import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerTimeoutException;
 
 public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
@@ -18,24 +19,36 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerRMIImpl.class);
     private FileOutputStream fOut;
     
-    public MsgBrokerRMIImpl(){
+    public MsgBrokerRMIImpl() {
     }
     
-    public byte[] callBrokerSync(byte[] msg, int timeout) throws java.rmi.RemoteException {
+    public byte[] callBrokerSync(byte[] msg, int timeout) throws Exception {
+        
+        byte[] respMsg = null;
+        int defTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout"));
         BlockingQueue<byte[]> waitQ = new LinkedBlockingQueue<byte[]>();
         
-        rmiSyncAns.putIfAbsent("1111", waitQ);
+        logger.debug("getting ret");
+        MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg);
+        logger.debug("QNm = {}", ret.QNm);
+        
+        MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
+        logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
+        rmiSyncAns.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), waitQ);
         try {
             try {
-                waitQ.poll(timeout, TimeUnit.SECONDS);
-                if( waitQ.size() == 0 )
-                    throw new java.rmi.RemoteException("Timeout");
+                if( timeout > 0)
+                    defTimeout = timeout;
+                
+                respMsg = waitQ.poll(defTimeout, TimeUnit.SECONDS);
+                if( respMsg == null )
+                    throw new MsgBrokerTimeoutException(String.format("Timeout [%d]", timeout));
              }
              catch (InterruptedException ie ) {
                  logger.debug("Interrupted..");
              }
-             catch ( java.rmi.RemoteException re ) {
-                 logger.debug("callBrokerSync Remote error raised.. {}", re.getMessage());
+             catch ( MsgBrokerTimeoutException re ) {
+                 logger.debug("callBrokerSync Timeout error raised.. {}", re.getMessage());
                  throw re;
              }
              catch ( Exception e) {
@@ -43,14 +56,14 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
              }
         }
         finally {
-            rmiSyncAns.remove("1111");
+            rmiSyncAns.remove(msgPsr.getString("CM.trans_seq_no"));
+            msgPsr.clearMessage();
             logger.debug("remove element of rmiSyncAns");
         }
-        
-        return msg;
+        return respMsg;
     }
 
-    public void callBrokerAsync(byte[] msg) throws java.rmi.RemoteException {
+    public void callBrokerAsync(byte[] msg) throws Exception {
 
     }
 }

@@ -23,7 +23,8 @@ public class MsgParser {
     
     private Map<String, MsgFmtRec> msgFmtMap;
     private Map<String, String> includeMap;
-    private Map<Long, ThrData>   msgThrMap;
+    private ConcurrentMap<Long, ThrData>   msgThrMap;
+    private ThrData currentThrData;
     
     private int schemaLength;
     
@@ -147,6 +148,7 @@ public class MsgParser {
     public MsgParser parseMessage( ByteBuffer msg ) throws Exception {
         
         ThrData td;
+        
         logger.debug("Thr Id = " + java.lang.Thread.currentThread().getId() );
         synchronized (msgThrMap) {
             if( msgThrMap.containsKey(java.lang.Thread.currentThread().getId()))
@@ -173,6 +175,8 @@ public class MsgParser {
     public MsgParser parseMessage( ThrData td ) throws Exception {
         
         logger.debug("Thr Id = " + java.lang.Thread.currentThread().getId() );
+        currentThrData = td;
+        
         td.pos = 0;
         td.isLive = true;
         td.msg.position(0);
@@ -353,6 +357,8 @@ public class MsgParser {
     }
     
     public  MsgParser newMessage( ThrData td ) throws Exception {
+        
+        currentThrData = td;
         
         td.pos = 0;
         td.isLive = false;
@@ -809,6 +815,12 @@ public class MsgParser {
     public ResponseInfo getResponseInfo() throws Exception {
         
         return resInf;
+        
+    }
+    
+    public ThrData getCurrentThrData() {
+        
+        return currentThrData;
         
     }
 }

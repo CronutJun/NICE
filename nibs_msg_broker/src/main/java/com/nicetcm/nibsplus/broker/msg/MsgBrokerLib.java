@@ -15,8 +15,11 @@ package com.nicetcm.nibsplus.broker.msg;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Calendar;
+import java.nio.ByteBuffer;
 
 import org.apache.commons.lang.time.*;
+
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 public class MsgBrokerLib {
 
@@ -154,5 +157,45 @@ public class MsgBrokerLib {
             i--;
         }
         return s.substring(0,i+1);
+    }
+
+    /**
+    *
+    * 버퍼를 할당하고 Incomming전문의 Q명을 돌려준다.
+    * <pre>
+    * Implemented by removing the white spaces.
+    * </pre>
+    *
+    * @param buf 생성하려는 ByteBuffer instance pointer
+    * @param msg 원문전문
+    * @return
+    */
+    public static class BufferAndQName {
+        public ByteBuffer buf;
+        public String QNm;
+    }
+    
+    public static BufferAndQName allocAndFindSchemaName(byte[] msg) {
+        
+        BufferAndQName ret = new BufferAndQName();
+        byte[] bMsgType = new byte[4];
+        byte[] bWrkType = new byte[4];
+
+        ret.buf = ByteBuffer.allocateDirect(msg.length);
+        ret.buf.put(msg);
+        ret.buf.position(51);
+        ret.buf.get(bMsgType);
+        ret.buf.get(bWrkType);
+        ret.buf.position(0);
+        
+        /*
+         * 응답 전문의 경우에 스키마 파일은 원본 요청 전문에 해당하는 스키마를 읽도록 한다.
+         */
+        if( bMsgType[2] == '1')
+            bMsgType[2] = '0';
+        
+        ret.QNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + new String(bWrkType) + ".json";
+        
+        return ret;
     }
 }

@@ -8,11 +8,11 @@ import com.nicetcm.nibsplus.broker.msg.rmi.*;
 public class RMIClientTest {
     public static void main(String[] args) { 
         try { 
-            Registry registry = LocateRegistry.getRegistry("localhost", 10199);
+            Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10199);
             System.out.println("registry");
             MsgBrokerRMI remoteObj = (MsgBrokerRMI)registry.lookup("MsgBrokerRMI");
             System.out.println("lookup");
-            System.out.println(remoteObj.callBrokerSync(new byte[20], 5).length);
+            System.out.println(remoteObj.callBrokerSync("005B00  HOST   0422201407160830013819872         CM03101112                               2014071520140715002300230191    066         000000000000000000000000000000000050000000050000000000000005000000005000000                                                                                                                                                                                                                                                                                                               ".getBytes(), 5).length);
             /*
             String msg = remoteObj.sayHello("KDJ"); 
             System.out.println(msg);

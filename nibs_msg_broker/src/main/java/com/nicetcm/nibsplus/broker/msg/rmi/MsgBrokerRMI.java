@@ -4,6 +4,6 @@ import java.rmi.Remote;
 
 public interface MsgBrokerRMI extends Remote {
     
-    public byte[] callBrokerSync(byte[] msg, int timeout) throws java.rmi.RemoteException;
-    public void callBrokerAsync(byte[] msg) throws java.rmi.RemoteException;
+    public byte[] callBrokerSync(byte[] msg, int timeout) throws Exception;
+    public void callBrokerAsync(byte[] msg) throws Exception;
 }
