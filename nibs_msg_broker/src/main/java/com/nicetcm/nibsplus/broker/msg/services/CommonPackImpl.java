@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.apache.ibatis.session.SqlSession;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
@@ -1956,5 +1955,38 @@ public class CommonPackImpl implements CommonPack {
             retErrState.setErrorStates("000000000000000000000000000000000000000000000000000000000000000000000000");
         }
         return retErrState.getErrorStates().getBytes();
+    }
+
+    /**
+     * 기기 갱신
+     * 
+     * @author KDJ
+     * @since 2014/07/25
+     * @param safeData 비지니스 공유정보
+     * @param MacInfo  기기정보
+     * @param Mac      변경하려는 기기의 정보
+     * @throws Exception
+     */
+    public void updateMacInfo( MsgBrokerData safeData, TMacInfo MacInfo, TCmMac Mac) throws Exception {
+        /*
+         *  기존 정보 모두 변경이 없다면 return
+         */
+        if( MacInfo.getMacVer().equals(Mac.getMacVer())
+        &&  MacInfo.getSerialNo().equals(Mac.getSerialNo())
+        &&  MacInfo.getMacAddress().equals(Mac.getMacAddress()) ) {
+            return;
+        }
+        Mac.setOrgCd( MacInfo.getOrgCd() );
+        Mac.setBranchCd( MacInfo.getBranchCd() );
+        Mac.setMacNo( MacInfo.getMacNo() );
+ 
+        try {
+            cmMacMap.updateByPrimaryKeySelective( Mac );
+        }
+        catch (Exception e) {
+            logger.info( ">>> [DBUpdateMacInfo] (T_CM_MAC) UPDATE ERROR [{}]", e.getMessage() );
+            throw e;
+        }
+        logger.info("기기버전[{}], 시리얼번호[{}] Mac_address[{}]변경 완료", Mac.getMacVer(), Mac.getSerialNo(), Mac.getMacAddress() );
     }
 }

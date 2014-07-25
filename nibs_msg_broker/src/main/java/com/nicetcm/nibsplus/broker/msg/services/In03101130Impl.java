@@ -367,9 +367,9 @@ public class In03101130Impl extends InMsgHandlerImpl {
          * 트리거에서의 부하로 인해 장애 큐로 넘겨 처리 하도록 수정
          * 20090123 by B.H.J
          */
-
+        MsgParser msgPsr = null;
         try {
-            MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")
+            msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")
                              + "03001110" + ".json");
             ByteBuffer msg = ByteBuffer.allocateDirect( msgPsr.getSchemaLength() );
             msgPsr.newMessage( msg );
@@ -390,6 +390,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
                   /* inq_close_yn 이 1일 경우는 ap로 응답전문 보내지 않도록 한다. */
                   .setString( "inq_close_yn",  parsed.getString("inq_close_yn"));
+            msgPsr.syncMessage();
 
             MsgBrokerProducer prd = MsgBrokerProducer.producers.get( "ATMS.003.H.Q" );  //기업은행
             BytesMessage nsData = prd.getBytesMessage();
@@ -404,6 +405,14 @@ public class In03101130Impl extends InMsgHandlerImpl {
         }
         catch ( Exception e ) {
             logger.debug("[sendNICERepairMsg] Error raised..{}", e.getMessage() );
+        } finally {
+            try
+            {
+                msgPsr.clearMessage();
+            } catch (Exception e)
+            {
+                logger.info(e.getMessage());
+            }
         }
     }//end method
 

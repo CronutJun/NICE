@@ -1,7 +1,6 @@
 package com.nicetcm.nibsplus.broker.msg.rmi;
 
-import java.util.List;
-import com.nicetcm.nibsplus.broker.common.*;
+import com.nicetcm.nibsplus.broker.common.MsgParser;
 
 public interface MsgBrokerCallBack<PT>{
 

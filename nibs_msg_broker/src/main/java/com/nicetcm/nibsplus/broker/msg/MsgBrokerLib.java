@@ -12,12 +12,13 @@ package com.nicetcm.nibsplus.broker.msg;
  *           @author  K.D.J
  */
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Calendar;
 import java.nio.ByteBuffer;
 
-import org.apache.commons.lang.time.*;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang.time.FastDateFormat;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
@@ -44,6 +45,29 @@ public class MsgBrokerLib {
 
         FastDateFormat fdt = FastDateFormat.getInstance("yyyyMMdd", Locale.getDefault());
         return fdt.format(calcDay);
+    }
+
+    /**
+     * 해당 날짜를 기준으로 amount만큼 가감한 날짜를 구한다
+     * @param date
+     * @param amount
+     * @return
+     */
+    public static String SysDate(Date date, int amount) {
+        FastDateFormat fdt = FastDateFormat.getInstance("yyyyMMdd", Locale.getDefault());
+        return fdt.format(DateUtils.addDays(date, amount));
+    }
+
+    /**
+     * 해당 날짜를 기준으로 amount만큼 가감한 날짜를 구한다
+     * @param yyyymmdd
+     * @param amount
+     * @return
+     * @throws Exception
+     */
+    public static String SysDate(String yyyymmdd, int amount) throws Exception {
+        FastDateFormat fdt = FastDateFormat.getInstance("yyyyMMdd", Locale.getDefault());
+        return fdt.format(DateUtils.addDays(MsgBrokerLib.toDate(yyyymmdd, "yyyyMMdd"), 1));
     }
 
     /**

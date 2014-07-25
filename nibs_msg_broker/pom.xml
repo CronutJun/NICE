@@ -24,6 +24,7 @@
 
         <!-- Test -->
         <junit.version>4.11</junit.version>
+        <maven.test.skip>true</maven.test.skip>
 
     </properties>
 

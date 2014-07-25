@@ -64,7 +64,7 @@ public class MsgParser {
             if( instPool.containsKey(incFile) )
                 return instPool.get(incFile);
             else {
-                logger.debug("Creating Instance");
+                logger.debug("Creating Instance..[incFile:{}]", incFile);
                 MsgParser mp = new MsgParser(incFile);
                 instPool.put( incFile, mp );
                 return mp;
