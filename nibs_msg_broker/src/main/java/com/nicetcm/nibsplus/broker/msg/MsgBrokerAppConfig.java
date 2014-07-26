@@ -32,7 +32,7 @@ public class MsgBrokerAppConfig {
     public static PropertyPlaceholderConfigurer propertyConfigurer() {
         
         PropertyPlaceholderConfigurer props = new PropertyPlaceholderConfigurer();
-        ClassPathResource resources[] = new ClassPathResource[] {new ClassPathResource("/msg.properties")};
+        ClassPathResource resources[] = new ClassPathResource[] {new ClassPathResource(String.format("/%s/msg.properties", MsgBrokerConst.SVR_TYPE))};
         props.setLocations(resources);
         props.setIgnoreUnresolvablePlaceholders(true);
         
@@ -84,7 +84,7 @@ public class MsgBrokerAppConfig {
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
 
         factory.setDataSource(ds);
-        factory.setConfigLocation(MsgBrokerSpringMain.sprCtx.getResource("classpath:msg_db_conf.xml"));
+        factory.setConfigLocation(MsgBrokerSpringMain.sprCtx.getResource(String.format("classpath:%s/msg_db_conf.xml", MsgBrokerConst.SVR_TYPE)));
         
         this.factory = factory.getObject();
         

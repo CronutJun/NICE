@@ -20,18 +20,18 @@ public class CallAgentTest {
         MsgBrokerConf msgBrokerConf = new MsgBrokerConf("003", "CM", "0300", "1210");
 
         //전문값 설정(사용자 정의 VO객체)
-        MsgSampleVO msgSampleVO = new MsgSampleVO();
-        msgSampleVO.setBrchCd("XXXX");  //String형(문자열)
-        msgSampleVO.setInCnt(9999);     //int형(건수)
-        msgSampleVO.setInAmt(380000);   //Long형(금액)
+        //MsgSampleVO msgSampleVO = new MsgSampleVO();
+        //msgSampleVO.setBrchCd("XXXX");  //String형(문자열)
+        //msgSampleVO.setInCnt(9999);     //int형(건수)
+        //msgSampleVO.setInAmt(380000);   //Long형(금액)
 
         //콜백 인터페이스 구현
-        MsgBrokerCallBack<MsgSampleVO> callback = new MsgBrokerCallBack<MsgSampleVO>()
+        MsgBrokerCallBack<Object> callback = new MsgBrokerCallBack<Object>()
         {
             //전문 호출전
             //전문에 Message 셋팅
             @Override
-            public void doPreCallBroker(MsgParser parsed, MsgSampleVO params) throws Exception
+            public void doPreCallBroker(MsgParser parsed, Object params) throws Exception
             {
                 parsed.setString("brch_cd", "096");
             }
@@ -39,17 +39,17 @@ public class CallAgentTest {
             //전문 호출후
             //결과값 얻기
             @Override
-            public void doPostCallBroker(MsgParser parsed, MsgSampleVO params) throws Exception
+            public void doPostCallBroker(MsgParser parsed, Object params) throws Exception
             {
                 //전문 결과값을 VO객체에 설정
-                params.setPreCloseInAmt(parsed.getLong("pre_close_in_amt"));
+                //params.setPreCloseInAmt(parsed.getLong("pre_close_in_amt"));
 
                 //※ 비동기식 전문호출은 현재 메소드를 수행하지 않습니다.
             }
         };
 
         //전문호출 객체 생성
-        MsgBrokerCallAgent<MsgSampleVO> agent = new MsgBrokerCallAgent<MsgSampleVO>(msgBrokerConf, msgSampleVO, callback);
+        MsgBrokerCallAgent<Object> agent = new MsgBrokerCallAgent<Object>(msgBrokerConf, null, callback);
 
         //동기식 전문호출(Timeout설정)
         try
@@ -71,7 +71,7 @@ public class CallAgentTest {
         //    e.printStackTrace();
         //}
 
-        logger.info(msgSampleVO.toString());
+        //logger.info(msgSampleVO.toString());
     }
 
 }

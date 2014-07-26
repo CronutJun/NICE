@@ -34,6 +34,10 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
+        
+        if( msgPsr.getString("CM.trans_seq_no").length() == 0 ) 
+            throw new Exception("trans_seq_no is empty!!");
+        
         rmiSyncAns.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), waitQ);
         try {
             try {

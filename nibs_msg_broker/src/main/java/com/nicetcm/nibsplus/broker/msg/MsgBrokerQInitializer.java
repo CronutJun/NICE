@@ -21,7 +21,7 @@ public class MsgBrokerQInitializer {
     private JsonObject obj;
     
     private MsgBrokerQInitializer(String configFile) {
-        InputStream is = MsgBrokerQInitializer.class.getResourceAsStream("/" + configFile);
+        InputStream is = MsgBrokerQInitializer.class.getResourceAsStream(String.format("/%s/%s", MsgBrokerConst.SVR_TYPE, configFile));
         rdr = Json.createReader(is);
         obj = rdr.readObject();
     }

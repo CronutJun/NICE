@@ -2,8 +2,6 @@ package com.nicetcm.nibsplus.broker.msg;
 
 import java.io.InputStream;
 
-import javax.jms.BytesMessage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +56,10 @@ public class MsgBrokerMain {
     public static void main(String[] args) {
         
         try {
-            InputStream is = MsgBrokerMain.class.getResourceAsStream("/msg.properties");
+            org.apache.log4j.xml.DOMConfigurator.configure(MsgBrokerMain.class.getResource(
+                    String.format("/%s/log4j.xml", MsgBrokerConst.SVR_TYPE)));
+            InputStream is = MsgBrokerMain.class.getResourceAsStream(
+                    String.format("/%s/msg.properties", MsgBrokerConst.SVR_TYPE));
             MsgCommon.msgProps.load(is);
             MsgBrokerMain main = new MsgBrokerMain();
         }

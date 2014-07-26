@@ -2,6 +2,8 @@ package com.nicetcm.nibsplus.broker.msg;
 
 public class MsgBrokerConst {
     
+    public static final String SVR_TYPE = System.getProperty("server.type", "dev");
+    
     /* 전문헤더 길이 */
     public static final int HEADER_LEN = 90;
     /*

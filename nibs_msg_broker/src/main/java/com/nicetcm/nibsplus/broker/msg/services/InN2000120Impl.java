@@ -23,10 +23,12 @@ import org.springframework.stereotype.Service;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtNiceMngMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnBrandSetStateMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnRcCntMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCmMacMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorRcpt;
@@ -36,6 +38,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtNiceMng;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMac;
+import com.nicetcm.nibsplus.broker.msg.model.TCmMacKey;
 import com.nicetcm.nibsplus.broker.msg.model.TFnBrandSetState;
 import com.nicetcm.nibsplus.broker.msg.model.TFnRcCnt;
 
@@ -49,6 +52,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
     @Autowired private TCtNiceMngMapper niceMngMap;
     @Autowired private TFnBrandSetStateMapper fnBrandSetStateMap;
     @Autowired private TFnRcCntMapper fnRcCntMap;
+    @Autowired private TCmMacMapper cmMacMap;
     
     private enum EnumNHME {
         IDX_HW_LINE_ERR,        /* 0 - 통신장애         */
@@ -268,7 +272,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                             errNoti, errCall, errTxn, macInfo, retErrState );
                 }
                 for( EnumNHME enumNHME: EnumNHME.values() ) {
-                    if( enumNHME.name().equals("IDX_HW_CASH_OUT" )           /* 1 지폐방출기 */
+                   if( enumNHME.name().equals("IDX_HW_CASH_OUT" )           /* 1 지폐방출기 */
                     ||  enumNHME.name().equals("IDX_HW_CARD_READ")           /* 2 카드판독기 */
                     ||  enumNHME.name().equals("IDX_HW_SPECS"    )           /* 3 명세표       */
                     ||  enumNHME.name().equals("IDX_HW_INPUT_BOX")           /* 5 입금함       */
@@ -287,104 +291,200 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_50000" )    /* 17- 오만원입금함       */
                     ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_100000")    /* 18- 십만원입금함       */
                     ||  enumNHME.name().equals("IDX_HW_REMAIN_MONEY"    ) ) {/* 19- 지폐잔류         */
-                        errBasic.setErrorCd( saNiceErrState[enumNHME.ordinal()] );
-                        if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                            .substring(0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR)
-                        ||  parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                            .substring(0,1).equals(MsgBrokerConst.NICE_HW_ERROR) ) {
-                            /*
-                             * 2007.02.12 지폐방출기, 카드 판독기의 경우 '3'인 경우는 무시,  
-                             * '4'인경우만 장애 발생하도록 수정                            
-                             * 2007.02.23. FKM 기기가 지폐방출장애를 3->4로 먼저 변경 후 적용하기위해 임시 주석처리 
-                             */
-                            if( (enumNHME.name().equals("IDX_HW_CASH_OUT") || enumNHME.name().equals("IDX_HW_CARD_READ"))
-                             && parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                                .substring(0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR) ) {
-                                continue;
-                            }
+                       if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
+                           errBasic.setErrorCd( saNiceErrState[enumNHME.ordinal()] );
+                           comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                                   errNoti, errCall, errTxn, macInfo, retErrState );
+                       }
 
-                            errBasic.setErrorCd( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())) );
-                            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
-
-                            errBasic.setMadeErrCd(null);
-
-                            /*
-                             * 2007.02.23 DVR 장애 관제는 하지 않으나 조건조회에서 조회 가능하도록 발생과 동시에 복구 처리 - 운총요청 
-                             */
-                            if( enumNHME.name().equals("IDX_HW_DVR_ERR") ) {
-                                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                        errNoti, errCall, errTxn, macInfo, retErrState );
-                            }
-                        }
-                        else if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                .substring(0,1).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
-                            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                    errNoti, errCall, errTxn, macInfo, retErrState );
-                        }
-                    }
-                    else
-                        continue;
-                }
-                for( EnumNHME enumNHME: EnumNHME.values() ) {
-                    if( enumNHME.name().equals("IDX_HW_CASH_OUT" )           /* 1 지폐방출기 */
-                    ||  enumNHME.name().equals("IDX_HW_CARD_READ")           /* 2 카드판독기 */
-                    ||  enumNHME.name().equals("IDX_HW_SPECS"    )           /* 3 명세표       */
-                    ||  enumNHME.name().equals("IDX_HW_INPUT_BOX")           /* 5 입금함       */
-                    ||  enumNHME.name().equals("IDX_HW_BANK_BOOK")           /* 7 통장정리부 */
-                    ||  enumNHME.name().equals("IDX_HW_DEAL_LIST")           /* 9 거래내역출력부 */
-                    ||  enumNHME.name().equals("IDX_HW_CASHIN"   )           /* 11 지폐미수취     */
-                        /* 
-                         * 2006.11.17 계약 만료에 의해 동글이 장애 무시
-                         * i == IDX_HW_DONGGLEI  ||   /+ 13 동글이+/
-                         * 2006.11.17 DVR 장애 관제 하지 않음 .. 무시
-                         * 2007.02.23 DVR 장애 관제는 하지 않으나 조건조회에서 조회 가능하도록 발생과 동시에 복구 처리 - 운총요청
-                         */
-                    ||  enumNHME.name().equals("IDX_HW_DVR_ERR"         )    /* 14 DVR   */
-                    ||  enumNHME.name().equals("IDX_HW_INPUT_CHECK"     )    /* 15- 수표입금부        */
-                    ||  enumNHME.name().equals("IDX_HW_OUT_CHECK"       )    /* 16- 수표출금부        */
-                    ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_50000" )    /* 17- 오만원입금함       */
-                    ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_100000")    /* 18- 십만원입금함       */
-                    ||  enumNHME.name().equals("IDX_HW_REMAIN_MONEY"    ) ) {/* 19- 지폐잔류         */
-                        errBasic.setErrorCd( saNiceErrState[enumNHME.ordinal()] );
-                        if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                            .substring(0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR)
-                        ||  parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                            .substring(0,1).equals(MsgBrokerConst.NICE_HW_ERROR) ) {
-                            /*
-                             * 2007.02.12 지폐방출기, 카드 판독기의 경우 '3'인 경우는 무시,  
-                             * '4'인경우만 장애 발생하도록 수정                            
-                             * 2007.02.23. FKM 기기가 지폐방출장애를 3->4로 먼저 변경 후 적용하기위해 임시 주석처리 
-                             */
-                            if( (enumNHME.name().equals("IDX_HW_CASH_OUT") || enumNHME.name().equals("IDX_HW_CARD_READ"))
-                             && parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                                .substring(0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR) ) {
-                                continue;
-                            }
-
-                            errBasic.setErrorCd( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())) );
-                            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
-
-                            errBasic.setMadeErrCd(null);
-
-                            /*
-                             * 2007.02.23 DVR 장애 관제는 하지 않으나 조건조회에서 조회 가능하도록 발생과 동시에 복구 처리 - 운총요청 
-                             */
-                            if( enumNHME.name().equals("IDX_HW_DVR_ERR") ) {
-                                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                        errNoti, errCall, errTxn, macInfo, retErrState );
-                            }
-                        }
-                        else if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                .substring(0,1).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
-                            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                    errNoti, errCall, errTxn, macInfo, retErrState );
-                        }
                     }
                     else
                         continue;
                 }
             }
-       }
+            /*
+             * 유저정의 장애 복구는 응답송신하지 않는다. 
+             */
+            throw new MsgBrokerException( "유저정의 장애 복구는 응답송신하지 않는다.", -99 );
+        }
+        /*
+         * 장애전문 
+         */
+        else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_ERR) ) {
+            /*
+             * 유저 정의 에러 일때는 이것만 처리 하고 리턴 한다 
+             * --> 나머지 장애 관련 데이타는 임의로 만든 데이타 이기 때문에 처리하면 안된다 
+             */
+            if( !parsed.getString("user_made_err").substring(0, 1).equals("0") ) {
+                switch( parsed.getString("user_made_err").getBytes()[0] ) {
+                    case '2' :
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N02 ); 
+                        break;
+                    case '3' :
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N03 ); 
+                        break;
+                    case '4' :
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N04 ); 
+                        break;
+                    case '5' :
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N05 ); 
+                        break;
+                    case '6' :
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N06 ); 
+                        break;
+                    case '7' : /* 무거래(특별) 추가 */
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N07 ); 
+                        break;
+                    case '8' :  /* 무거래(일반) 추가 */
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N08 ); 
+                        break;
+                    case 'a' :  /* IC 무거래 */
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N10 ); 
+                        break;
+                    case 'b' : /*11 픽에러(EMPTY) */
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N11 ); 
+                        break;
+                    case 'c' : /*12 현금부족(기준금액) */
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N12 ); 
+                        break;
+                    case 'd' : /*13 기준금액 없음*/
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N13 ); 
+                        break;
+                    case 'e' : /*14 현금부족 예보 */
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N14 ); 
+                        break;
+                    case 'f' : /*  금고침투 장애 15 => 금고진동은 user define 장애로 변경 */
+                        if( parsed.getString("create_time").substring(0, 2).compareTo("08") >= 0
+                        &&  parsed.getString("create_time").substring(0, 2).compareTo("21") <= 0 ) {
+                            /*
+                             * 주간 ATM 감시 전문 처리
+                             */
+                            errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
+                            if( parsed.getString("atm_monitor").substring(0,1).equals(MsgBrokerConst.NICE_ERROR) ) {
+                                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                                /*
+                                 * Terminal Mode 가 '1' 일 경우 작업 상태 이므로 슈퍼바이저 에러만 발생 시키고 
+                                 * 금고 침투 장애를 발생 시키지 않는다.                                      
+                                 * 유저정의 장애는 응답송신하지 않는다. 
+                                 */
+                                throw new MsgBrokerException("유저정의 장애는 응답송신하지 않는다", -99);
+                            }
+                            else {
+                                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                                        errNoti, errCall, errTxn, macInfo, retErrState );
+                            }
+
+                            errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N15 );
+                            /*
+                             * 금고침투 장애가 아닌 경우 아래에서 복구 처리
+                             * UpdateNICEErrMng(&suBody, NICE_ERROR_ATMWATCH_ERROR);
+                             */
+                        }
+                        else {
+                            /*
+                             * 야간 ATM 감시 전문 처리 (금고침투긴급)
+                             */
+                            errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_URGENCY_ERROR );
+                            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                            /*
+                             * 유저정의 장애는 응답송신하지 않는다. 
+                             */
+                            throw new MsgBrokerException("유저정의 장애는 응답송신하지 않는다", -99);
+
+                            /*
+                             * 야간에 모든것이 정상이라면 주간에 발생한 슈퍼바이저 에대한
+                             * 복구도 처리해야 한다     아래에서 복구 처리                                  
+                             */
+                        }
+                        break;
+                    default :
+                        break;
+                }
+                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                /*
+                 * 유저정의 장애는 응답송신하지 않는다. 
+                 */
+                throw new MsgBrokerException("유저정의 장애는 응답송신하지 않는다", -99);
+            }
+            /*
+             * 608(회선장애) 발생후 302(회선복구) 발생하지않고 301(장애), 001(개국) 이 발생하면 
+             * 회선장애를 복구 시킨다.
+             */ 
+            errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_LINE_ERROR );
+            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                    errNoti, errCall, errTxn, macInfo, retErrState );
+            /*
+             * 310(AC전원차단) 301(장애), 001(개국) 이 발생하면 
+             * AC전원차단 복구 시킨다.
+             */ 
+            errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_AC_ERROR );
+            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                    errNoti, errCall, errTxn, macInfo, retErrState );
+            /*
+             * 지폐함 및 용지상태
+             * 지폐함 1, 2, 3, 4 상태 검사 
+             */
+      }     
+            
+
+//                for( EnumNHME enumNHME: EnumNHME.values() ) {
+//                    if( enumNHME.name().equals("IDX_HW_CASH_OUT" )           /* 1 지폐방출기 */
+//                    ||  enumNHME.name().equals("IDX_HW_CARD_READ")           /* 2 카드판독기 */
+//                    ||  enumNHME.name().equals("IDX_HW_SPECS"    )           /* 3 명세표       */
+//                    ||  enumNHME.name().equals("IDX_HW_INPUT_BOX")           /* 5 입금함       */
+//                    ||  enumNHME.name().equals("IDX_HW_BANK_BOOK")           /* 7 통장정리부 */
+//                    ||  enumNHME.name().equals("IDX_HW_DEAL_LIST")           /* 9 거래내역출력부 */
+//                    ||  enumNHME.name().equals("IDX_HW_CASHIN"   )           /* 11 지폐미수취     */
+//                        /* 
+//                         * 2006.11.17 계약 만료에 의해 동글이 장애 무시
+//                         * i == IDX_HW_DONGGLEI  ||   /+ 13 동글이+/
+//                         * 2006.11.17 DVR 장애 관제 하지 않음 .. 무시
+//                         * 2007.02.23 DVR 장애 관제는 하지 않으나 조건조회에서 조회 가능하도록 발생과 동시에 복구 처리 - 운총요청
+//                         */
+//                    ||  enumNHME.name().equals("IDX_HW_DVR_ERR"         )    /* 14 DVR   */
+//                    ||  enumNHME.name().equals("IDX_HW_INPUT_CHECK"     )    /* 15- 수표입금부        */
+//                    ||  enumNHME.name().equals("IDX_HW_OUT_CHECK"       )    /* 16- 수표출금부        */
+//                    ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_50000" )    /* 17- 오만원입금함       */
+//                    ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_100000")    /* 18- 십만원입금함       */
+//                    ||  enumNHME.name().equals("IDX_HW_REMAIN_MONEY"    ) ) {/* 19- 지폐잔류         */
+//                        errBasic.setErrorCd( saNiceErrState[enumNHME.ordinal()] );
+//                        if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
+//                                            .substring(0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR)
+//                        ||  parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
+//                                            .substring(0,1).equals(MsgBrokerConst.NICE_HW_ERROR) ) {
+//                            /*
+//                             * 2007.02.12 지폐방출기, 카드 판독기의 경우 '3'인 경우는 무시,  
+//                             * '4'인경우만 장애 발생하도록 수정                            
+//                             * 2007.02.23. FKM 기기가 지폐방출장애를 3->4로 먼저 변경 후 적용하기위해 임시 주석처리 
+//                             */
+//                            if( (enumNHME.name().equals("IDX_HW_CASH_OUT") || enumNHME.name().equals("IDX_HW_CARD_READ"))
+//                             && parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
+//                                                .substring(0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR) ) {
+//                                continue;
+//                            }
+//
+//                            errBasic.setErrorCd( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())) );
+//                            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+//
+//                            errBasic.setMadeErrCd(null);
+//
+//                            /*
+//                             * 2007.02.23 DVR 장애 관제는 하지 않으나 조건조회에서 조회 가능하도록 발생과 동시에 복구 처리 - 운총요청 
+//                             */
+//                            if( enumNHME.name().equals("IDX_HW_DVR_ERR") ) {
+//                                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+//                                        errNoti, errCall, errTxn, macInfo, retErrState );
+//                            }
+//                        }
+//                        else if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
+//                                .substring(0,1).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
+//                            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+//                                    errNoti, errCall, errTxn, macInfo, retErrState );
+//                        }
+//                    }
+//                    else
+//                        continue;
+//                }
 
     }
     
@@ -602,5 +702,37 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             logger.info( ">>> [DBInsertUpdateRCCnt] (T_FN_RC_CNT) INSERT ERROR [{}]\n", e.getLocalizedMessage() );
             throw e;
         }
+    }
+    
+    /**
+     * NICE-기기정보에 입력된 지폐함 개수를 가져온다.
+     * 
+     * @author KDJ originated by 방혜진
+     * @since 2006/09/04
+     * @param macNo  기기번호
+     * @return short 갯수
+     * @throws Exception
+     */
+    private short getNiceCashBox(String macNo) throws Exception {
+        TCmMacKey cmMacKey = new TCmMacKey();
+        
+        cmMacKey.setMacNo( macNo );
+        cmMacKey.setBranchCd( "9600" );
+        cmMacKey.setOrgCd( "096" );
+
+        TCmMac cmMac = null;
+        try {
+            cmMac = cmMacMap.selectByPrimaryKey( cmMacKey );
+            if( cmMac == null ) {
+                logger.info( ">>> [DBGetNICECashBox] 지폐함 갯수 파악 실패 [NOT FOUND]" );
+                throw new Exception( ">>> [DBGetNICECashBox] 지폐함 갯수 파악 실패" );
+            }
+        }
+        catch ( Exception e ) {
+            logger.info( ">>> [DBGetNICECashBox] 지폐함 갯수 파악 실패 [{}]", e.getLocalizedMessage() );
+            throw e;
+        }
+        
+        return (cmMac.getjCnt() == null || cmMac.getjCnt().length() == 0) ? 0 : Short.parseShort(cmMac.getjCnt() );
     }
 }
