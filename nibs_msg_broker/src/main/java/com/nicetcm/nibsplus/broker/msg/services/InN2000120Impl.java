@@ -65,8 +65,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         IDX_STATE_SPECS,        /* 5 - 명세표       */
         IDX_STATE_JOURNAL,      /* 6 - 감사용지     */
         IDX_STATE_INPUT_BOX,    /* 7 - 입금함       */
-        IDX_STATE_CHECK_BOX,    /* 8 - 수표함       */
-        IDX_STATE_CASH_BOX_CNT
+        IDX_STATE_CHECK_BOX     /* 8 - 수표함       */
     }
     
     private enum EnumNHME {
@@ -90,9 +89,26 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         IDX_HW_INPUT_BOX_50000, /* 17- 오만원입금함     */
         IDX_HW_INPUT_BOX_100000,/* 18- 십만원입금함     */
         IDX_HW_IMSI,            /* 19- 임시             */
-        IDX_HW_REMAIN_MONEY,    /* 20- 지폐잔류         */
+        IDX_HW_REMAIN_MONEY     /* 20- 지폐잔류         */
     };
     
+    private enum EnumNM {
+        IDX_MON_TERM_MODE,      /* 0 - Terminal Mode    */
+        IDX_MON_OPNE_SAFE_YN,   /* 1 - 금고개폐여부     */
+        IDX_MON_LOCK_SAFE_YN,   /* 2 - 금고잠금여부     */
+        IDX_MON_SHAKE_SAFE_YN,  /* 3 - 금고진동여부     */
+        IDX_MON_SAFE_HEAT,      /* 4 - 금고열감지       */
+        IDX_MON_OPEN_DOOR,      /* 5 - 문열림           */
+        IDX_MON_RECALL_CASH,    /* 6 - 지폐회수함       */
+        IDX_MON_CASH_BOX1,      /* 7 - 지폐함 1         */
+        IDX_MON_CASH_BOX2,      /* 8 - 지폐함 2         */
+        IDX_MON_CASH_BOX3,      /* 9 - 지폐함 3         */
+        IDX_MON_CASH_BOX4,      /* 10- 지폐함 4         */
+        IDX_MON_CARD_READ,      /* 11- 카드판독기       */
+        IDX_MON_ENCODE_MAC,     /* 12- 암호장비         */
+        IDX_MON_BANK_BOOK       /* 13- 통장부           */
+    };
+
     @Override
     public void inMsgBizProc( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
         
@@ -679,7 +695,142 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 else
                     continue;
             }
-        }     
+            
+            int nNormal = 0;    /* ATM 감시 전문중 정상 상태인것 체크 위해 */
+            int errorType = 0;
+
+            for( EnumNM enumNM: EnumNM.values() ) {
+                /*
+                 * 문열림(앞문개폐)는 무시하도록 20070420  && 금고진동(user define 장애)은 user define error , 
+                 * 열감지,회수함,지폐함1,2,3,4 무시(금고잠금은 NCR 때문에 무시안함) 20071105 김희천대리 요청 
+                 */
+
+                if( !enumNM.name().equals("IDX_MON_TERM_MODE" )
+                &&  !enumNM.name().equals("IDX_MON_OPNE_SAFE_YN" )
+                &&  !enumNM.name().equals("IDX_MON_LOCK_SAFE_YN" ) ) {
+                    nNormal = nNormal + 1;
+                }
+                else  {
+                    if( parsed.getString("atm_monitor").substring(enumNM.ordinal(), enumNM.ordinal()+1).equals(MsgBrokerConst.NICE_NORMAL)
+                    ||  parsed.getString("atm_monitor").substring(enumNM.ordinal(), enumNM.ordinal()+1).equals(MsgBrokerConst.NICE_NO_SET) ) {
+                        nNormal = nNormal + 1;
+                    }
+                    else {
+                        if ( enumNM.name().equals("IDX_MON_OPNE_SAFE_YN") ) { /* 금고개폐 20080109 */
+                            errorType = 1;
+                        }
+                        else if ( enumNM.name().equals("IDX_MON_LOCK_SAFE_YN") ) { /* 금고잠금 20080109 */
+                            errorType = 2;
+
+                        }
+                        else {
+                            errorType = 0;
+                        }
+                    }
+                }
+            }
+
+            if( parsed.getString("create_time").substring(0, 2).compareTo("08") >= 0
+            &&  parsed.getString("create_time").substring(0, 2).compareTo("21") <= 0 ) {
+                /*
+                 * 주간 ATM 감시 전문 처리 
+                 */
+                errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
+                if( parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_TERM_MODE.ordinal(), 
+                        EnumNM.IDX_MON_TERM_MODE.ordinal()+1).equals(MsgBrokerConst.NICE_ERROR) ) {
+                    comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                    /*
+                     * Terminal Mode 가 '1' 일 경우 작업 상태 이므로 슈퍼바이저 에러만 발생 시키고 
+                     * 금고 침투 장애를 발생 시키지 않는다.                                      
+                     */
+                    return;
+                }
+                else {
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                            errNoti, errCall, errTxn, macInfo, retErrState );
+                }
+
+                if( nNormal != EnumNM.values().length ) {
+                    if( errorType == 1 ) {
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_OPEN_ERROR );
+                    }
+                    else if( errorType == 2 ) {
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_CLOSE_ERROR );
+                    }
+                    else {
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
+                    }
+
+                    comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                }
+                else  {
+                    errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_OPEN_ERROR );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                            errNoti, errCall, errTxn, macInfo, retErrState );
+
+                    errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_CLOSE_ERROR );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                            errNoti, errCall, errTxn, macInfo, retErrState );
+
+                    errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                            errNoti, errCall, errTxn, macInfo, retErrState );
+                }
+            }
+            else {
+                /*
+                 *  야간 ATM 감시 전문 처리
+                 */
+                if( nNormal != EnumNM.values().length ) {
+                    /*
+                     *  야간에 Terminal Mode 상태이거나 금고 개패인경우는 긴급장애로 처리   
+                     */
+                    if( parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_TERM_MODE.ordinal(), 
+                            EnumNM.IDX_MON_TERM_MODE.ordinal()+1).equals(MsgBrokerConst.NICE_ERROR)
+                    ||  parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_OPNE_SAFE_YN.ordinal(), 
+                            EnumNM.IDX_MON_OPNE_SAFE_YN.ordinal()+1).equals(MsgBrokerConst.NICE_ERROR) ) {
+                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_URGENCY_ERROR );
+                        comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                        return;
+                    }
+
+                    errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
+                    comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                }
+                else {
+                    /*
+                     * 야간에 모든것이 정상이라면 주간에 발생한 슈퍼바이저 에대한
+                     * 복구도 처리해야 한다                                         
+                     */
+                    errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                            errNoti, errCall, errTxn, macInfo, retErrState );
+                    
+                    errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                            errNoti, errCall, errTxn, macInfo, retErrState );
+                }
+            }
+            
+            /*
+             * 원격 명령 요청 후 수신된 개국의 경우 해당 장애 복구 여부를 체크하여 원격관리 테이블에 update 해준다. 
+             */
+            if( parsed.getString("rm_seq").length() > 0 ) {   
+                updateRemoteMng( parsed.getString("rm_create_date"), parsed.getString("rm_error_no"), 
+                        parsed.getString("rm_seq") );
+            }
+        }
+        else {
+            logger.info(">>> [NICE] ERROR-전문이상 - 알수없는전문입니다.");
+            throw new Exception(">>> [NICE] ERROR-전문이상 - 알수없는전문입니다.");
+        }
+        
+        /*
+         * (입금) 장애의 경우 해당 고객의 계좌번호를 별도로 저장하도록 함.
+         */
+        if( parsed.getString("cust_account_no").length() > 0 ) {
+//            DBInsertUpdateCustInfo( &suBody );
+        }
     }
     
     /**
@@ -893,7 +1044,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             }
         }
         catch ( Exception e ) {
-            logger.info( ">>> [DBInsertUpdateRCCnt] (T_FN_RC_CNT) INSERT ERROR [{}]\n", e.getLocalizedMessage() );
+            logger.info( ">>> [DBInsertUpdateRCCnt] (T_FN_RC_CNT) INSERT ERROR [{}]", e.getLocalizedMessage() );
             throw e;
         }
     }
@@ -976,4 +1127,161 @@ public class InN2000120Impl extends InMsgHandlerImpl {
 
         return 0;
     }
+    
+    private void updateRemoteMng( String createDate, String errorNo, String rmSeq ) throws Exception {
+//        char hREPAIR_TIME[6+1];
+//        char hERROR_CD[8+1];
+//        char szStatus[2+1];
+//        
+//        memset( hREPAIR_TIME, 0x00, sizeof( hREPAIR_TIME ) );
+//        memset( hERROR_CD, 0x00, sizeof( hERROR_CD ) );
+//
+//        EXEC SQL    SELECT  repair_time,
+//                            error_cd
+//                    INTO    :hREPAIR_TIME,
+//                            :hERROR_CD
+//                    FROM    T_CT_ERROR_MNG
+//                    WHERE   CREATE_DATE = TO_NUMBER(:pCreateDate)
+//                    AND     ERROR_NO = :pErrorNo;
+//
+//        if(sqlca.sqlcode == DB_NO_DATA)
+//        {
+//            logger( "...해당 장애 없음 create_date[%s] error_no[%s]\n", pCreateDate, pErrorNo);
+//            return;
+//        }
+//        else if( sqlca.sqlcode )
+//        {
+//            logger(">>>  원격요청 장애 파악 실패[%.200s] create_date[%s] error_no[%s] \n", 
+//                SqlErrMsg, pCreateDate, pErrorNo );
+//            return ;
+//        }
+//        
+//        memset( szStatus, 0x00, sizeof( szStatus ) );
+//        
+//        /* 기기 상태 장애에 대한 원격일경우 
+//            복구 성공 'SU'
+//            복구 실패 'FA'
+//           상태장애가 아닌 콜센터 접수 장애에 대한 원격일 경우는 
+//           원격 실행여부에 대한 관리만  'EX'
+//        */
+//        if( memcmp( &hERROR_CD[0], "NI", 2 ) == 0 )
+//        {
+//            if( memcmp( hREPAIR_TIME, "999999", 6 ) == 0 )
+//            {
+//                memcpy( szStatus, "FA", 2 );
+//            }
+//            else
+//            {
+//                memcpy( szStatus, "SU", 2 );
+//            }
+//        }
+//        else
+//        {
+//            memcpy( szStatus, "EX", 2 );
+//        }
+//        
+//
+//        EXEC SQL UPDATE t_ct_remote_history
+//                    SET RMT_STATUS = :szStatus,
+//                        EXE_DATE = SYSDATE                      
+//                  WHERE CREATE_DATE = :pCreateDate              
+//                  AND   ERROR_NO = :pErrorNo
+//                  AND   CREATE_SEQ = :pRmSeq;
+//
+//        if(sqlca.sqlcode == DB_NO_DATA)
+//        {
+//    #ifdef DEBUG
+//    logger("[t_ct_remote_history] 상태전문수신 - 원격요청값 없음 CREATE_DATE[%s]-ERROR_NO[%s]-CREATE_SEQ[%s]\n", 
+//        pCreateDate, pErrorNo, pRmSeq );
+//    #endif
+//            EXEC SQL ROLLBACK;
+//            return ;
+//        }
+//        else if ( sqlca.sqlcode )
+//        {
+//            logger( "샹태전문 수신 t_ct_remote_history UPDATE Error [%.200s]\n", SqlErrMsg );
+//            EXEC SQL ROLLBACK;
+//            return ;
+//        }
+//
+//        EXEC SQL COMMIT WORK;
+    }
+
+    /**
+     * CD-VAN 상태장애 중 고객정보에 대한 저장 처리
+     * 
+     * @author KDJ
+     * @since 2014/07/27
+     * @param macNo  기기번호
+     * @return short 갯수
+     * @throws Exception
+     */
+    private short insertUpdateCustInfo( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
+//        char hcreate_date[8+1];
+//        char herror_no[6+1];
+//        char herror_cd[8+1];
+//        
+//        memset( hcreate_date, 0x00, sizeof( hcreate_date ) );
+//        memset( herror_no, 0x00, sizeof( herror_no ) );
+//        memset( herror_cd, 0x00, sizeof( herror_cd ) );
+//        
+//                    
+//        
+//        EXEC SQL    INSERT INTO T_CT_ERROR_CUST_INFO (
+//                                CREATE_DATE    ,
+//                                ORG_CD         ,
+//                                JIJUM_CD       ,
+//                                MAC_NO         ,
+//                                ATM_DEAL_NO    ,
+//                                CREATE_TIME    ,
+//                                CUST_ORG_CD    ,
+//                                CUST_ACCOUNT_NO,
+//                                UPDATE_DATE    
+//                                )
+//                        VALUES (
+//                                :psuNSData->create_date     ,                                              
+//                                '096'                       ,
+//                                '9600'                      ,
+//                                :psuNSData->mac_no          ,                                      
+//                                :psuNSData->atm_deal_no     ,
+//                                :psuNSData->create_time     ,
+//                                :psuNSData->cust_org_cd     ,
+//                                FC_FN_SECURITY( :psuNSData->cust_account_no, '1'),                        
+//                                sysdate
+//                            );
+//
+//            if ( sqlca.sqlcode == DB_DUP_DATA )
+//            {
+//                EXEC SQL    UPDATE T_CT_ERROR_CUST_INFO SET
+//                                    CREATE_TIME     = :psuNSData->create_date, 
+//                                    CUST_ORG_CD     = :psuNSData->cust_org_cd,
+//                                    CUST_ACCOUNT_NO = FC_FN_SECURITY( :psuNSData->cust_account_no, '1'),
+//                                    UPDATE_DATE     = sysdate
+//                        WHERE   CREATE_DATE = :psuNSData->create_date
+//                        AND     ORG_CD = '096'
+//                        AND     JIJUM_CD = '9600'
+//                        AND     MAC_NO = :psuNSData->mac_no
+//                        AND     ATM_DEAL_NO = :psuNSData->atm_deal_no;
+//
+//                if(sqlca.sqlcode)
+//                {
+//                    logger( ">>> [DBInsertUpdateCustInfo] (T_CT_ERROR_CUST_INFO) UPDATE ERROR [%.200s]\n", SqlErrMsg);
+//                    EXEC SQL ROLLBACK WORK;
+//                    return -1;
+//                }
+//            }
+//            else if( sqlca.sqlcode )
+//            {
+//                logger(">>> [DBInsertUpdateCustInfo] T_CT_ERROR_CUST_INFO INSERT ERROR [%.300s]\n", SqlErrMsg);
+//                EXEC SQL ROLLBACK;
+//                return -1;
+//            }
+//            
+//            EXEC SQL COMMIT;        
+//            
+//            logger(">>> [DBInsertUpdateCustInfo] 고객정보 [%s-%s-%s] 저장  완료\n", psuNSData->create_date, psuNSData->mac_no, psuNSData->atm_deal_no);
+            
+            return 0;
+    }
+
 }
