@@ -13,11 +13,12 @@ import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 public class In03000204Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(In03000204Impl.class);
-    
+
     @Autowired private StoredProcMapper splMap;
-    
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+
 
     }
 }

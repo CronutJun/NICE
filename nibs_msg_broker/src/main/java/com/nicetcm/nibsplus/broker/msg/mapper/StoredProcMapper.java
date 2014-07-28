@@ -1,8 +1,11 @@
 package com.nicetcm.nibsplus.broker.msg.mapper;
 
 import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.mapping.StatementType;
+import org.apache.ibatis.type.JdbcType;
 
 import com.nicetcm.nibsplus.broker.msg.model.FnMacClose;
 import com.nicetcm.nibsplus.broker.msg.model.IfCashInsert;
@@ -170,4 +173,13 @@ public interface StoredProcMapper {
     })
     @Options(statementType=StatementType.CALLABLE)
     void spFnMacCloseEmart(FnMacClose fnMacClose);
+
+    @Select({
+        "SELECT FC_FN_SECURITY( #{argValue, jdbcType=VARCHAR}, #{argType, jdbcType=VARCHAR} ) AS SECURE_RESULT",
+        "FROM   DUAL                                                                                           "
+    })
+    @Results({
+        @Result(column="SECURE_RESULT", property="secureResult", jdbcType=JdbcType.VARCHAR)
+    })
+    TMisc sfFcFnSecurity(TMisc cond);
 }

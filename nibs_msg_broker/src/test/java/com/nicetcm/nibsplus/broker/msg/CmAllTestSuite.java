@@ -45,8 +45,12 @@ public class CmAllTestSuite
             bMsgType[2] = '0';
         }
 
-        InputStream is = MsgBrokerMain.class.getResourceAsStream("/msg.properties");
+        InputStream is = MsgBrokerMain.class.getResourceAsStream("/uat/msg.properties");
         MsgCommon.msgProps.load(is);
+
+        System.out.println("schema_path: " + MsgCommon.msgProps.getProperty("schema_path"));
+        System.out.println("json: " + new String(bMsgType) + new String(bWrkType) + ".json");
+
         inQNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + new String(bWrkType) + ".json";
 
         return MsgParser.getInstance(inQNm).parseMessage(buf);

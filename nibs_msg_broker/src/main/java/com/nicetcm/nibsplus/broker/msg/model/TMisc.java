@@ -46,6 +46,12 @@ public class TMisc {
     private String closeType;
 
     private long cnt;
+    
+    private String argValue;
+    
+    private String argType;
+    
+    private String secureResult;
 
     public String getHoliday() {
         return holiday;
@@ -261,6 +267,54 @@ public class TMisc {
     public void setCnt(long cnt)
     {
         this.cnt = cnt;
+    }
+
+    /**
+     * @return the argValue
+     */
+    public String getArgValue()
+    {
+        return argValue;
+    }
+
+    /**
+     * @param argValue the argValue to set
+     */
+    public void setArgValue(String argValue)
+    {
+        this.argValue = argValue;
+    }
+
+    /**
+     * @return the argType
+     */
+    public String getArgType()
+    {
+        return argType;
+    }
+
+    /**
+     * @param argType the argType to set
+     */
+    public void setArgType(String argType)
+    {
+        this.argType = argType;
+    }
+
+    /**
+     * @return the secureResult
+     */
+    public String getSecureResult()
+    {
+        return secureResult;
+    }
+
+    /**
+     * @param secureResult the secureResult to set
+     */
+    public void setSecureResult(String secureResult)
+    {
+        this.secureResult = secureResult;
     }
 
 }

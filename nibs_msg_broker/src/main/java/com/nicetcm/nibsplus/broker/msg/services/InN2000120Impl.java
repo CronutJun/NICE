@@ -15,32 +15,56 @@ package com.nicetcm.nibsplus.broker.msg.services;
  */
 
 
+import java.nio.ByteBuffer;
+import java.util.List;
+
+import javax.jms.BytesMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtNiceMngMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnBrandSetStateMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnMacMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnRcCntMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmMacMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorBasicMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorTxnMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtRemoteHistoryMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorCustInfoMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCmSiteMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorRcpt;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxnSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TCtNiceMng;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasicSpec;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMac;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacKey;
+import com.nicetcm.nibsplus.broker.msg.model.TCmMacSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TFnBrandSetState;
 import com.nicetcm.nibsplus.broker.msg.model.TFnRcCnt;
+import com.nicetcm.nibsplus.broker.msg.model.TFnMac;
+import com.nicetcm.nibsplus.broker.msg.model.TFnMacKey;
+import com.nicetcm.nibsplus.broker.msg.model.TCtRemoteHistory;
+import com.nicetcm.nibsplus.broker.msg.model.TCtRemoteHistorySpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCustInfo;
+import com.nicetcm.nibsplus.broker.msg.model.TMisc;
+import com.nicetcm.nibsplus.broker.msg.model.TCmSite;
+import com.nicetcm.nibsplus.broker.msg.model.TCmSiteKey;
 
 
 @Service("inN2000120")
@@ -53,6 +77,12 @@ public class InN2000120Impl extends InMsgHandlerImpl {
     @Autowired private TFnBrandSetStateMapper fnBrandSetStateMap;
     @Autowired private TFnRcCntMapper fnRcCntMap;
     @Autowired private TCmMacMapper cmMacMap;
+    @Autowired private TFnMacMapper fnMacMap;
+    @Autowired private TCtErrorBasicMapper errBasicMap;
+    @Autowired private TCtErrorTxnMapper errTxnMap;
+    @Autowired private TCtRemoteHistoryMapper remoteHistoryMap;
+    @Autowired private TCtErrorCustInfoMapper errCustInfoMap;
+    @Autowired private TCmSiteMapper cmSiteMap;
     
     private static final int CNT_CASH_BOX = 4; /* 총 지폐함 수 */
     
@@ -113,6 +143,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
     public void inMsgBizProc( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
         
         int iCashBox = 0, iCash = 0;
+        int nRtn = -1;
         
         TMacInfo macInfo = new TMacInfo();
         TCtErrorBasic errBasic = new TCtErrorBasic();
@@ -223,6 +254,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_AC_ERROR );
             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                     errNoti, errCall, errTxn, macInfo, retErrState );
+            nRtn = 0;
         }
         /*
          * 회선장애 
@@ -230,6 +262,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_LINE_ERR) ) {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_LINE_ERROR );
             comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            nRtn = 0;
         }
         /*
          * AC전원차단 
@@ -238,6 +271,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_AC_ERR) ) {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_AC_ERROR );
             comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            nRtn = 0;
         }
         /*
          * 회선장애복구 
@@ -246,6 +280,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             errBasic.setErrorCd( MsgBrokerConst.NICE_STATE_LINE_CLEAR );
             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                     errNoti, errCall, errTxn, macInfo, retErrState );
+            nRtn = 0;
         }
         /*
          * 트란에서의 나이스 발생 장애 복구 요청 처리   
@@ -816,7 +851,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              * 원격 명령 요청 후 수신된 개국의 경우 해당 장애 복구 여부를 체크하여 원격관리 테이블에 update 해준다. 
              */
             if( parsed.getString("rm_seq").length() > 0 ) {   
-                updateRemoteMng( parsed.getString("rm_create_date"), parsed.getString("rm_error_no"), 
+                updateRemoteMng( safeData, parsed.getInt("rm_create_date"), parsed.getString("rm_error_no"), 
                         parsed.getString("rm_seq") );
             }
         }
@@ -829,7 +864,156 @@ public class InN2000120Impl extends InMsgHandlerImpl {
          * (입금) 장애의 경우 해당 고객의 계좌번호를 별도로 저장하도록 함.
          */
         if( parsed.getString("cust_account_no").length() > 0 ) {
-//            DBInsertUpdateCustInfo( &suBody );
+            try {
+                insertUpdateCustInfo( safeData, parsed );
+            }
+            catch ( Exception e ) {
+                //do Noting
+            }
+        }
+        
+        /*
+         * [기업은행] 브랜드CD기 상태전문 전송 
+         *  - 브랜드제휴기기 상태전문을 기업은행으로 전송한다.
+         *  - 개국전문만 바이패스한다. 장애/복구신호는 OrgAutoSend로 보낸다.
+         *  - 응답코드목록은 그대로 하드코딩하였다.
+         */
+        if( parsed.getString("brand_org_cd").equals(MsgBrokerConst.KIUP_CODE) 
+        ||  parsed.getString("brand_org_cd").equals(MsgBrokerConst.BK_CODE) ) {
+            /*return nRtn;*/        /* 오류날 경우 주석 해제 */
+            /*
+             * 공통데이터
+             * 상태전문 데이터를 기업은행 브랜드CD 상태전문으로 옮기고, 
+             */
+            MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")
+                    + "05001130" + ".json");
+            try {
+                ByteBuffer msg = ByteBuffer.allocateDirect( msgPsr.getSchemaLength() );
+                msgPsr.newMessage( msg );
+                msg.position(0);
+                msgPsr.setString( "mac_no",                       parsed.getString("mac_no") )         // 기기번호
+                      .setString( "create_date",                  parsed.getString("create_date") )    // 발생일자
+                      .setString( "create_time",                  parsed.getString("create_time") )    // 발생시각
+                      .setString( "made_seq",                     parsed.getString("serial_no") )      // 제조일련번호
+                      .setString( "encrypt_state",                "E" );                               // 암호화상태
+                /*
+                 * 긁어올 수 있는 DB데이터를 긁어온다.
+                 */
+                TCmMacSpec cmMacSpec = new TCmMacSpec();
+                cmMacSpec.createCriteria().andOrgCdEqualTo( parsed.getString("CM.org_cd") )
+                                          .andMacNoEqualTo( parsed.getString("mac_no") );
+                try {
+                    List<TCmMac> rslt = cmMacMap.selectBySpec( cmMacSpec );
+                    if( rslt.size() == 1 ) {
+                        TCmMac cmMac = rslt.get(0);
+                        msgPsr.setString( "DES_board_yn", cmMac.getDesYn() );       // DES보드가능구분
+                        if( cmMac.getBillUseType().equals("6") )
+                            msgPsr.setString( "cash_50000_yn", "2" );               // 현금5만원권가능구분
+                        else
+                            msgPsr.setString( "cash_50000_yn", "0" );
+                        
+                        TCmSiteKey cmSiteKey = new TCmSiteKey();
+                        cmSiteKey.setOrgCd( cmMac.getOrgCd() );
+                        cmSiteKey.setBranchCd( cmMac.getBranchCd() );
+                        cmSiteKey.setSiteCd( cmMac.getSiteCd() );
+                        try {
+                            TCmSite cmSite = cmSiteMap.selectByPrimaryKey( cmSiteKey );
+                            if( cmSite != null ) {
+                                msgPsr.setString( "site_nm", cmSite.getSiteNm() ); //코너명
+                                /*
+                                 * 가동시간
+                                 */
+                                msgPsr.setString( "oper_time", String.format("%s:%s~%s:%s", cmSite.getOperStartTime().substring(0,2)
+                                                                                          , cmSite.getOperStartTime().substring(2,4)
+                                                                                          , cmSite.getOperEndTime().substring(0,2)
+                                                                                          , cmSite.getOperEndTime().substring(2,4)) );
+                                if( cmSite.getOutType().equals("0") )
+                                    msgPsr.setString( "booth_type", "1" );         // 부스형태
+                                else
+                                    msgPsr.setString( "booth_type", "2" );
+                            }
+                        }
+                        catch ( Exception e ) {
+                            // No necessary to handle some...
+                        }
+                    }
+                }
+                catch ( Exception e ) {
+                    // No handling
+                }
+                msgPsr.setString( "EMV_yn",        "0" )                           // EMV가능구분
+                      .setString( "IR_yn",         "0" )                           // IR가능구분
+                      .setString( "RF_yn",         "0" )                           // RF가능구분
+                      .setString( "thumb_print_yn","0" );                          // 지문인식가능구분
+                /*
+                 * 개국전문 - 개국 or 장애복구
+                 */
+                if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_START) ) {
+                    msgPsr.setString( "gubun_cd",   "5" )                          // 전문구분코드(5:개국)
+                          .setString( "total_cd",   "00" );                        // 집계분류코드(00: -)
+                    //msgPsr.setString( "error_class","0" );                         // 장애구분(0:정상)
+                }
+                /*
+                 * 회선장애(는 보내지 않는다.)
+                 */
+                else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_LINE_ERR) ) {
+                    if( nRtn == 0 )
+                        return;
+                    else
+                        throw new Exception("회선장애(는 보내지 않는다.");
+                }
+                /*
+                 * 장애전문, 장애복구도 network_info=301 로 올라온다. 
+                 * 역시 보내지 않는다. OrgAutoSend에서 보냄.
+                 */
+                else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_ERR) 
+                      ||  parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_AC_ERR) ) {
+                    if( nRtn == 0 )
+                        return;
+                    else
+                        throw new Exception("장애전문, 장애복구도 network_info=301 로 올라온다.");
+                }
+                /*
+                 * 나머지는 정상(이용중)
+                 */
+                else {
+                    msgPsr.setString( "gubun_cd",   "0" )                          // 전문구분코드(5:개국)
+                          .setString( "total_cd",   "00" )                         // 집계분류코드(00: -)
+                          .setString( "error_class","0" );                         // 장애구분(0:정상)
+                }
+                
+                /*
+                 * 기업은행 ATMS로 전송한다. 
+                 */                                                                                            
+                msgPsr.setString( "CM.org_cd", MsgBrokerConst.KIUP_CODE )
+                      .setString( "CM.ret_cd_src", "S" )
+                      .setString( "CM.msg_id", "MngAuto" )
+                      .setInt   ( "CM.body_len", msgPsr.getMessageLength() - MsgBrokerConst.HEADER_LEN )
+                      .setString( "CM.trans_date", safeData.getSysDate() )
+                      .setString( "CM.trans_time", safeData.getSysTime() )
+                      .setString( "CM.format_type", "ES" )
+                      .setString( "CM.msg_type", MsgBrokerConst.ES_REQ )
+                      .setString( "CM.work_type", "1130" )
+                      .setString( "CM.service_gb", "1" );
+                
+                msgPsr.syncMessage();
+
+                MsgBrokerProducer prd = MsgBrokerProducer.producers.get( "ATMS.003.H.Q" );  //기업은행
+                BytesMessage nsData = prd.getBytesMessage();
+
+                byte[] read = new byte[msg.limit()];
+                msg.position(0);
+                msg.get(read);
+                logger.info("NS State Data = {}", new String(read) );
+                nsData.writeBytes(read);
+                prd.produce( nsData );
+            }
+            catch ( Exception e ) {
+                
+            }
+            finally {
+                msgPsr.clearMessage();
+            }
         }
     }
     
@@ -1091,120 +1275,112 @@ public class InN2000120Impl extends InMsgHandlerImpl {
      * @throws Exception
      */
     short getIsCashState( String macNo ) {
-//    EXEC SQL BEGIN DECLARE SECTION;
-//        char hmac_no[13];       /* 기기번호 */
-//        char hin_mac_amt[11];   /* 잔액 */
-//    EXEC SQL END DECLARE SECTION;
-//        int nmacamt = 0;
-//
-//
-//        memset(hmac_no      , (int)0x00, sizeof(hmac_no)    );
-//        memset(hin_mac_amt  , (int)0x00, sizeof(hin_mac_amt));
-//
-//        memcpy(hmac_no  , pMacNo        , 4 );
-//
-//
-//        EXEC SQL    SELECT  IN_MAC_AMT
-//                    INTO    :hin_mac_amt
-//                    FROM    T_FN_MAC
-//                    WHERE   MAC_NO      = :hmac_no
-//                    AND     JIJUM_CD    = '9600'
-//                    AND     ORG_CD      = '096';
-//
-//        if( sqlca.sqlcode )
-//        {
-//            logger( ">>> [DBGetIsCashState] 기기 잔액 파악 실패 [%.200s]\n", SqlErrMsg);
-//            /* 기기의 현금 상태를 알수 없어서 0로 리턴한다 */
-//            return 0;
-//        }
-//
-//        nmacamt = atoi(hin_mac_amt);
-//
-//        /* 기기의 현금이 5백만원 이상이라면 empty 센서 에러 발생 위해 RET_ERROR로 리턴 */
-//        if( nmacamt >= 5000000 )
-//            return -1;
-//
+
+        TFnMacKey fnMacKey = new TFnMacKey();
+        
+        fnMacKey.setMacNo( macNo );
+        fnMacKey.setBranchCd( "9600" );
+        fnMacKey.setOrgCd( "096" );
+
+        TFnMac fnMac = null;
+        try {
+            fnMac = fnMacMap.selectByPrimaryKey( fnMacKey );
+            if( fnMac == null ) {
+                logger.info( ">>> [DBGetIsCashState] 기기 잔액 파악 실패 [NOT FOUND]" );
+                return 0;
+            }
+        }
+        catch ( Exception e ) {
+            logger.info( ">>> [DBGetIsCashState] 기기 잔액 파악 실패 [{}]", e.getLocalizedMessage() );
+            return 0;
+        }
+
+        /*
+         *  기기의 현금이 5백만원 이상이라면 empty 센서 에러 발생 위해 RET_ERROR로 리턴
+         */
+        if( fnMac.getInMacAmt() >= 5000000 )
+            return -1;
+
 
         return 0;
     }
     
-    private void updateRemoteMng( String createDate, String errorNo, String rmSeq ) throws Exception {
-//        char hREPAIR_TIME[6+1];
-//        char hERROR_CD[8+1];
-//        char szStatus[2+1];
-//        
-//        memset( hREPAIR_TIME, 0x00, sizeof( hREPAIR_TIME ) );
-//        memset( hERROR_CD, 0x00, sizeof( hERROR_CD ) );
-//
-//        EXEC SQL    SELECT  repair_time,
-//                            error_cd
-//                    INTO    :hREPAIR_TIME,
-//                            :hERROR_CD
-//                    FROM    T_CT_ERROR_MNG
-//                    WHERE   CREATE_DATE = TO_NUMBER(:pCreateDate)
-//                    AND     ERROR_NO = :pErrorNo;
-//
-//        if(sqlca.sqlcode == DB_NO_DATA)
-//        {
-//            logger( "...해당 장애 없음 create_date[%s] error_no[%s]\n", pCreateDate, pErrorNo);
-//            return;
-//        }
-//        else if( sqlca.sqlcode )
-//        {
-//            logger(">>>  원격요청 장애 파악 실패[%.200s] create_date[%s] error_no[%s] \n", 
-//                SqlErrMsg, pCreateDate, pErrorNo );
-//            return ;
-//        }
-//        
-//        memset( szStatus, 0x00, sizeof( szStatus ) );
-//        
-//        /* 기기 상태 장애에 대한 원격일경우 
-//            복구 성공 'SU'
-//            복구 실패 'FA'
-//           상태장애가 아닌 콜센터 접수 장애에 대한 원격일 경우는 
-//           원격 실행여부에 대한 관리만  'EX'
-//        */
-//        if( memcmp( &hERROR_CD[0], "NI", 2 ) == 0 )
-//        {
-//            if( memcmp( hREPAIR_TIME, "999999", 6 ) == 0 )
-//            {
-//                memcpy( szStatus, "FA", 2 );
-//            }
-//            else
-//            {
-//                memcpy( szStatus, "SU", 2 );
-//            }
-//        }
-//        else
-//        {
-//            memcpy( szStatus, "EX", 2 );
-//        }
-//        
-//
-//        EXEC SQL UPDATE t_ct_remote_history
-//                    SET RMT_STATUS = :szStatus,
-//                        EXE_DATE = SYSDATE                      
-//                  WHERE CREATE_DATE = :pCreateDate              
-//                  AND   ERROR_NO = :pErrorNo
-//                  AND   CREATE_SEQ = :pRmSeq;
-//
-//        if(sqlca.sqlcode == DB_NO_DATA)
-//        {
-//    #ifdef DEBUG
-//    logger("[t_ct_remote_history] 상태전문수신 - 원격요청값 없음 CREATE_DATE[%s]-ERROR_NO[%s]-CREATE_SEQ[%s]\n", 
-//        pCreateDate, pErrorNo, pRmSeq );
-//    #endif
-//            EXEC SQL ROLLBACK;
-//            return ;
-//        }
-//        else if ( sqlca.sqlcode )
-//        {
-//            logger( "샹태전문 수신 t_ct_remote_history UPDATE Error [%.200s]\n", SqlErrMsg );
-//            EXEC SQL ROLLBACK;
-//            return ;
-//        }
-//
-//        EXEC SQL COMMIT WORK;
+    private void updateRemoteMng( MsgBrokerData safeData, int createDate, String errorNo, String rmSeq ) throws Exception {
+        
+        TCtErrorBasicSpec  errBasicSpec = new TCtErrorBasicSpec(); 
+        TCtErrorTxnSpec    errTxnSpec   = new TCtErrorTxnSpec();
+        TCtErrorBasic      errBasic;
+        TCtErrorTxn        errTxn;
+        
+        errBasicSpec.createCriteria().andErrorNoEqualTo( errorNo )
+                                     .andCreateDateEqualTo( createDate );
+        try {
+            List<TCtErrorBasic> rslt = errBasicMap.selectBySpec( errBasicSpec );
+            if( rslt.size() == 0 ) {
+                logger.debug( "...해당 장애 없음 create_date[{}] error_no[{}]", createDate, errorNo );
+                return;
+            }
+            errBasic = rslt.get(0);
+        }
+        catch ( Exception e ) {
+            logger.info(">>>  원격요청 장애 파악 실패[{}] create_date[{}] error_no[{}]", 
+                    e.getLocalizedMessage(), createDate, errorNo );
+                return ;
+        }
+        
+        errTxnSpec.createCriteria().andErrorNoEqualTo( errorNo )
+                                   .andCreateDateEqualTo( createDate );
+        try {
+            List<TCtErrorTxn> rslt = errTxnMap.selectBySpec( errTxnSpec );
+            if( rslt.size() == 0 ) {
+                logger.debug( "...해당 장애 없음 create_date[{}] error_no[{}]", createDate, errorNo );
+                return;
+            }
+            errTxn = rslt.get(0);
+        }
+        catch ( Exception e ) {
+            logger.info(">>>  원격요청 장애 파악 실패[{}] create_date[{}] error_no[{}]", 
+                    e.getLocalizedMessage(), createDate, errorNo );
+                return ;
+        }
+
+        /*
+         *  기기 상태 장애에 대한 원격일경우 
+         *  복구 성공 'SU'
+         *  복구 실패 'FA'
+         *  상태장애가 아닌 콜센터 접수 장애에 대한 원격일 경우는 
+         * 원격 실행여부에 대한 관리만  'EX'
+         */
+        TCtRemoteHistory   rmtHist = new TCtRemoteHistory();
+        if( errBasic.getErrorCd().substring(0, 2).equals("NI") ) {
+            if( errTxn.getRepairTime().equals("999999") ) {
+                rmtHist.setRmtStatus( "FA" );
+            }
+            else {
+                rmtHist.setRmtStatus( "SU" );
+            }
+        }
+        else {
+            rmtHist.setRmtStatus( "EX" );
+        }
+        
+
+        TCtRemoteHistorySpec rmtHistSpec = new TCtRemoteHistorySpec();
+        rmtHistSpec.createCriteria().andCreateDateEqualTo( Integer.toString(createDate) )
+                                    .andErrorNoEqualTo( errorNo )
+                                    .andCreateSeqEqualTo( rmSeq );
+        rmtHist.setExeDate( safeData.getDSysDate());
+        try {
+            if( remoteHistoryMap.updateBySpecSelective( rmtHist, rmtHistSpec ) == 0) {
+                logger.info("[t_ct_remote_history] 상태전문수신 - 원격요청값 없음 CREATE_DATE[{}]-ERROR_NO[{}]-CREATE_SEQ[{}]",
+                        createDate, errorNo, rmSeq );
+                return;
+            }
+        }
+        catch ( Exception e ) {
+            logger.info( "샹태전문 수신 t_ct_remote_history UPDATE Error [{}]", e.getLocalizedMessage() );
+            return ;
+        }
     }
 
     /**
@@ -1216,72 +1392,47 @@ public class InN2000120Impl extends InMsgHandlerImpl {
      * @return short 갯수
      * @throws Exception
      */
-    private short insertUpdateCustInfo( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
-//        char hcreate_date[8+1];
-//        char herror_no[6+1];
-//        char herror_cd[8+1];
-//        
-//        memset( hcreate_date, 0x00, sizeof( hcreate_date ) );
-//        memset( herror_no, 0x00, sizeof( herror_no ) );
-//        memset( herror_cd, 0x00, sizeof( herror_cd ) );
-//        
-//                    
-//        
-//        EXEC SQL    INSERT INTO T_CT_ERROR_CUST_INFO (
-//                                CREATE_DATE    ,
-//                                ORG_CD         ,
-//                                JIJUM_CD       ,
-//                                MAC_NO         ,
-//                                ATM_DEAL_NO    ,
-//                                CREATE_TIME    ,
-//                                CUST_ORG_CD    ,
-//                                CUST_ACCOUNT_NO,
-//                                UPDATE_DATE    
-//                                )
-//                        VALUES (
-//                                :psuNSData->create_date     ,                                              
-//                                '096'                       ,
-//                                '9600'                      ,
-//                                :psuNSData->mac_no          ,                                      
-//                                :psuNSData->atm_deal_no     ,
-//                                :psuNSData->create_time     ,
-//                                :psuNSData->cust_org_cd     ,
-//                                FC_FN_SECURITY( :psuNSData->cust_account_no, '1'),                        
-//                                sysdate
-//                            );
-//
-//            if ( sqlca.sqlcode == DB_DUP_DATA )
-//            {
-//                EXEC SQL    UPDATE T_CT_ERROR_CUST_INFO SET
-//                                    CREATE_TIME     = :psuNSData->create_date, 
-//                                    CUST_ORG_CD     = :psuNSData->cust_org_cd,
-//                                    CUST_ACCOUNT_NO = FC_FN_SECURITY( :psuNSData->cust_account_no, '1'),
-//                                    UPDATE_DATE     = sysdate
-//                        WHERE   CREATE_DATE = :psuNSData->create_date
-//                        AND     ORG_CD = '096'
-//                        AND     JIJUM_CD = '9600'
-//                        AND     MAC_NO = :psuNSData->mac_no
-//                        AND     ATM_DEAL_NO = :psuNSData->atm_deal_no;
-//
-//                if(sqlca.sqlcode)
-//                {
-//                    logger( ">>> [DBInsertUpdateCustInfo] (T_CT_ERROR_CUST_INFO) UPDATE ERROR [%.200s]\n", SqlErrMsg);
-//                    EXEC SQL ROLLBACK WORK;
-//                    return -1;
-//                }
-//            }
-//            else if( sqlca.sqlcode )
-//            {
-//                logger(">>> [DBInsertUpdateCustInfo] T_CT_ERROR_CUST_INFO INSERT ERROR [%.300s]\n", SqlErrMsg);
-//                EXEC SQL ROLLBACK;
-//                return -1;
-//            }
-//            
-//            EXEC SQL COMMIT;        
-//            
-//            logger(">>> [DBInsertUpdateCustInfo] 고객정보 [%s-%s-%s] 저장  완료\n", psuNSData->create_date, psuNSData->mac_no, psuNSData->atm_deal_no);
-            
-            return 0;
+    private void insertUpdateCustInfo( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
+
+        TCtErrorCustInfo errCustInfo = new TCtErrorCustInfo();
+        errCustInfo.setCreateDate( parsed.getString("create_date") );
+        errCustInfo.setOrgCd( "096");
+        errCustInfo.setBranchCd( "9600" );
+        errCustInfo.setAtmDealNo( parsed.getString("atm_deal_no") );
+        errCustInfo.setCreateTime( parsed.getString("create_time") );
+        errCustInfo.setCustOrgCd( parsed.getString("cust_org_cd") );
+        
+        TMisc misc = new TMisc();
+        misc.setArgValue( parsed.getString("cust_account_no") );
+        misc.setArgType( "1" );
+        TMisc secRslt;
+        try {
+            secRslt = splMap.sfFcFnSecurity( misc );
+        }
+        catch ( Exception e ) {
+            secRslt = new TMisc();
+            secRslt.setSecureResult("");
+        }
+        errCustInfo.setCustAccountNo( secRslt.getSecureResult() );
+        errCustInfo.setUpdateDate( safeData.getDSysDate() );
+        try {
+            errCustInfoMap.insertSelective( errCustInfo );
+        }
+        catch( org.springframework.dao.DataIntegrityViolationException de ) {
+            try {
+                errCustInfoMap.updateByPrimaryKeySelective( errCustInfo );
+            }
+            catch ( Exception e) {
+                logger.info( ">>> [DBInsertUpdateCustInfo] (T_CT_ERROR_CUST_INFO) UPDATE ERROR [{}]", e.getLocalizedMessage() );
+                throw e;
+            }
+        }
+        catch( Exception e) {
+            logger.info(">>> [DBInsertUpdateCustInfo] T_CT_ERROR_CUST_INFO INSERT ERROR [{}]", e.getLocalizedMessage() );
+            throw e;
+        }
+        logger.info(">>> [DBInsertUpdateCustInfo] 고객정보 [{}-{}-{}] 저장  완료",
+                parsed.getString("create_date"), parsed.getString("mac_no"), parsed.getString("atm_deal_no") );
     }
 
 }

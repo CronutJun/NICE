@@ -1,0 +1,10 @@
+{
+   "name" : "03000402",                    "kname" : "가수금 미정리내역 통보",
+   "response" : { "code" : "03000402",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "std_date",               "kname" : "기준일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "suspnd_amt",             "kname" : "미정리금액",             "type" : "N",   "length"  : 10  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 101 }
+   ]
+}

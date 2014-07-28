@@ -656,4 +656,92 @@ public class MsgBrokerConst {
             return bankName;
         }
     }
+    
+    public enum  EnumCalcErrorState {
+        IDX_ST_LINE              ("회선 장애",                CD_ERROR_LINE_ERR       ), 
+        IDX_ST_LACK_BILL         ("전표 부족",                CD_ERROR_SPECS          ), 
+        IDX_ST_LACK_TIE          ("지폐입금부 묶음띠 부족",   CD_ERROR_TIELACK        ), 
+        IDX_ST_LACK_CASH_100000  ("10만원권 부족",            CD_ERROR_100000         ), 
+        IDX_ST_LACK_CASH_50000   ("5만원권  부족",            CD_ERROR_50000          ), 
+        IDX_ST_LACK_CASH_10000   ("1만원권  부족",            CD_ERROR_CASH           ), 
+        IDX_ST_LACK_CASH_5000    ("5천원권  부족",            CD_ERROR_5000           ), 
+        IDX_ST_LACK_CASH_1000    ("1천원권  부족",            CD_ERROR_1000           ), 
+        IDX_ST_LACK_COIN_500     ("500원권  부족",            CD_ERROR_500            ), 
+        IDX_ST_LACK_COIN_100     ("100원권  부족",            CD_ERROR_100            ), 
+        IDX_ST_LACK_COIN_50      ("50원권   부족",            CD_ERROR_50             ), 
+        IDX_ST_LACK_COIN_10      ("10원권   부족",            CD_ERROR_10             ), 
+        IDX_ST_FULL_INCHECK      ("수표 입금함 참",           CD_ERROR_CHECKBOX       ), 
+        IDX_ST_FULL_INBOX        ("봉투 입금함 참",           CD_ERROR_INBOX          ), 
+        IDX_ST_FULL_INCASH_100000("십만원권 입금함 참",       CD_ERROR_CASHBOX_100000 ), 
+        IDX_ST_FULL_INCASH_50000 ("오만원권 입금함 참",       CD_ERROR_CASHBOX_50000  ), 
+        IDX_ST_FULL_INCASH_10000 ("1만원 입금함 참",          CD_ERROR_CASHBOX        ), 
+        IDX_ST_FULL_INCASH_5000  ("5천원권 입금함 참",        CD_ERROR_CASHBOX_5000   ), 
+        IDX_ST_FULL_INCASH_1000  ("1천원권 입금함 참",        CD_ERROR_CASHBOX_1000   ), 
+        IDX_ST_FULL_INCOIN_500   ("5백원권 입금함 참",        CD_ERROR_CASHBOX_500    ), 
+        IDX_ST_FULL_INCOIN_100   ("1백원권 입금함 참",        CD_ERROR_CASHBOX_100    ), 
+        IDX_ST_FULL_INCOIN_50    ("5십원권 입금함 참",        CD_ERROR_CASHBOX_50     ), 
+        IDX_ST_FULL_INCOIN_10    ("1십원권 입금함 참",        CD_ERROR_CASHBOX_10     ), 
+        IDX_ST_HOOK_BILL         ("명세표걸림",               CD_ERROR_HANG_BILL      ), 
+        IDX_ST_REM_INCOIN        ("입금동전잔류",             CD_ERROR_REM_IN_COIN    ), 
+        IDX_ST_REM_OUTCASH       ("출금지폐잔류",             CD_ERROR_REM_OUT_CASH   ), 
+        IDX_ST_REM_OUTCOIN       ("출금동전잔류",             CD_ERROR_REM_OUT_COIN   ), 
+        IDX_ST_INCHECK           ("수표입금부상태",           CD_ERROR_STATE_INCHECK  ), 
+        IDX_ST_INCASH            ("지폐입금부상태",           CD_ERROR_STATE_INCASH   ), 
+        IDX_ST_INCOIN            ("동전입금부상태",           CD_ERROR_STATE_COIN_IN  ), 
+        IDX_ST_BILL              ("명세표부상태",             CD_ERROR_STATE_SPECS    ), 
+        IDX_ST_INBOX             ("봉투입금부 상태",          CD_ERROR_STATE_BOX_IN   ), 
+        IDX_ST_OUTCASH           ("현금출금부가동상태",       CD_ERROR_STATE_OUTCASH  ), 
+        IDX_ST_OUTCOIN           ("통전출금부 상태",          CD_ERROR_STATE_COIN_OUT ), 
+        IDX_ST_CAM               ("카메라부 상태",            CD_ERROR_STATE_CAM      ), 
+        IDX_ST_PPAD              ("핀패드 상태",              CD_ERROR_STATE_PPAD     ), 
+        IDX_ST_FCD               ("FCD보드 상태",             CD_ERROR_STATE_FCD      ), 
+        IDX_ST_INSHEET           ("낱장입금부 상태",          CD_ERROR_STATE_INSHEET  ), 
+        IDX_ST_OUTTICKET_A       ("상품권출금부상태A",        CD_ERROR_STATE_TIC_A    ), 
+        IDX_ST_OUTTICKET_B       ("상품권출금부상태B",        CD_ERROR_STATE_TIC_B    ), 
+        IDX_ST_OUTTICKET_C       ("상품권출금부상태C",        CD_ERROR_STATE_TIC_C    ), 
+        IDX_ST_OUTTICKET_D       ("상품권출금부상태D",        CD_ERROR_STATE_TIC_D    ), 
+        IDX_ST_LACK_OUTTICKET_A  ("상품권출금부A 부족",       CD_ERROR_TIC_A          ), 
+        IDX_ST_LACK_OUTTICKET_B  ("상품권출금부B 부족",       CD_ERROR_TIC_B          ), 
+        IDX_ST_LACK_OUTTICKET_C  ("상품권출금부C 부족",       CD_ERROR_TIC_C          ), 
+        IDX_ST_LACK_OUTTICKET_D  ("상품권출금부D 부족",       CD_ERROR_TIC_D          );
+        
+        private String errorName;
+        private String errorCd;
+        
+        EnumCalcErrorState(String errorName, String errorCd) {
+            this.errorName = errorName;
+            this.errorCd = errorCd;
+        }
+        
+        public String getErrorName() {
+            return errorName;
+        }
+        
+        public String getErrorCd() {
+            return errorCd;
+        }
+    }
+    
+    public enum EnumCalcMacStateSkipYN {
+        ORG_0CS("1110000000001000100100000001111000000000000000", "신세계 첼시"),
+        ORG_OEM("0111111111111111111111111111111111111111101110", "이마트"),
+        ORG_0EL("0000000000000000000000000000000000000000000000", "이랜드"),
+        ORG_DFT("0000000000000000000000000000000000000000000000", "Default");
+
+        private String errStates;
+        private String bankName;
+        
+        EnumCalcMacStateSkipYN(String errStates, String bankName) {
+            this.errStates = errStates;
+            this.bankName = bankName;
+        }
+        
+        public String getErrStates() {
+            return errStates;
+        }
+        
+        public String getBankName() {
+            return bankName;
+        }
+    }
 }
