@@ -130,6 +130,62 @@ public class In05000111Impl extends InMsgHandlerImpl {
                     return;
                 }
             }
+            /* 복구 */
+            else if ( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_CLEAR ) {
+                errTxn.setRepairDate( parsed.getString("create_date") );                        // 1. 복구일자(발생일자)
+                errTxn.setRepairTime( parsed.getString("create_time") );                        // 2. 복구시간(발생시간)
+
+                /*
+                 *  복구 일때는 예보와 장애 모두를 복구 시킨다.
+                 */
+                errBasic.setErrorCd( String.format("NE1%02s", e.getErrorCd()) );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                        errNoti, errCall, errTxn, macInfo, retErrStates );
+
+                errBasic.setErrorCd( String.format("NE2%02s", e.getErrorCd()) );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                        errNoti, errCall, errTxn, macInfo, retErrStates );
+
+                /*logger.info(">>> [SaveCalcMacErrState] 기관[{}] 상태[index-{}][{}][{}] ... 복구...",
+                parsed.getString("CM.org_cd"), e.ordinal(), parsed.getBytes("atm_state")[e.ordinal()], errBasic.getErrorCd());*/
+            }
+            else if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP1
+                 ||  parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP2
+                 ||  parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP3 ) {
+            /*
+                logger.info(">>> [SaveCalcMacErrState] 상태무시");
+            */
+            }
+            else {
+                logger.info(">>> [SaveCalcMacErrState] 잘못된 상태코드 수신-코드({}) - ex)복구:0,예보:1,장애:2, 무시:' ' or 9",
+                     parsed.getString("atm_state").substring(e.ordinal(), e.ordinal()+1) );
+            }
+        }
+        /*
+         *  이랜드 일 경우 상태 부분말고 made_err_cd 부분에 장애가 들어온다.
+         */
+        /*
+         *  이랜드 일 경우  made_err_cd 부분에 '7' 회선장애 '8' 회선장애 복구
+         */
+        if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.ELAND_CODE) ) {
+            if( parsed.getString("error_hw_yn").equals("2") ) {
+                errBasic.setErrorCd( parsed.getString("mtc_cd") );
+                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            }
+            else if( parsed.getString("error_hw_yn").equals("6") ) {
+                errBasic.setErrorCd( parsed.getString("mtc_cd") );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, errBasic, errRcpt,
+                        errNoti, errCall, errTxn, macInfo, retErrStates );
+            }
+            if( parsed.getString("error_hw_yn").equals("7") ) {
+                errBasic.setErrorCd( "NE211" );
+                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            }
+            else if( parsed.getString("error_hw_yn").equals("8") ) {
+                errBasic.setErrorCd( "NE211" );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, errBasic, errRcpt,
+                        errNoti, errCall, errTxn, macInfo, retErrStates );
+            }
         }
     }
 }
