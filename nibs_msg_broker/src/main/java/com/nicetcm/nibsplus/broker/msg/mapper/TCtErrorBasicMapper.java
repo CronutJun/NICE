@@ -525,6 +525,29 @@ public interface TCtErrorBasicMapper {
     TCtErrorBasic selectByCond4( TCtErrorBasic cond );
 
     /**
+     * In05001130Impl 에서 호출
+     *
+     * @author KDJ
+     * @since  Tue Jul 29 20:20:01 KST 2014
+     */
+    @Select({
+        "SELECT ERROR_NO, CREATE_DATE, CREATE_TIME            ",
+        "FROM   OP.T_CT_ERROR_MNG                             ",
+        "WHERE  CREATE_DATE = #{createDate, jdbcType=DECIMAL} ",
+        "AND    CREATE_TIME = #{createTime, jdbcType=VARCHAR} ",
+        "AND    ORG_CD      = '096'                           ",
+        "AND    BRANCH_CD   = '9600'                          ",
+        "AND    MAC_NO      = #{macNo, jdbcType=VARCHAR}      ",
+        "AND    ERROR_CD   <> #{errorCd, jdbcType=VARCHAR}    "
+    })
+    @Results({
+        @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
+        @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true)
+    })
+    List<TCtErrorBasic> selectByCond5( TCtErrorBasic cond );
+
+    /**
      * CommonPackImpl.updateErrMng 에서 호출
      *
      * @author KDJ, on Sun Jul 20 22:13:31 KST 2014
@@ -606,6 +629,59 @@ public interface TCtErrorBasicMapper {
     List<TCtErrorBasicJoin> selectByJoin4( TCtErrorBasic cond );
     
     /**
+     * In05001130Impl에서 호출
+     *
+     * @author KDJ, on Tue Jul 29 21:36:31 KST 2014
+     */
+    @Select({
+        "SELECT  BASIC.ERROR_NO, BASIC.CREATE_DATE, BASIC.CREATE_TIME           ",
+        "FROM    OP.T_CT_ERROR_BASIC BASIC                                      ",
+        "        LEFT JOIN OP.T_CT_ERROR_TXN TXN                                ",
+        "        ON   BASIC.ERROR_NO = TXN.ERROR_NO                             ",
+        "        AND  BASIC.CREATE_DATE = TXN.CREATE_DATE                       ",
+        "WHERE   BASIC.CREATE_DATE >= TO_NUMBER(TO_CHAR(sysdate-1,'yyyymmdd'))  ",
+        "AND     TXN.FINISH_DATE    = #{createDate, jdbcType=DECIMAL}           ",
+        "AND     TXN.FINISH_TIME    = #{createTime, jdbcType=VARCHAR}           ",
+        "AND     BASIC.ORG_CD       = '096'                                     ",
+        "AND     BASIC.BRANCH_CD    = '9600'                                    ",
+        "AND     BASIC.MAC_NO       = #{macNo, jdbcType=VARCHAR}                ",
+        "AND     BASIC.ERROR_CD     = #{errorCd, jdbcType=VARCHAR}              "
+    })
+    @Results({
+        @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
+        @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true)
+    })
+    List<TCtErrorBasic> selectByJoin5( TCtErrorBasic cond );
+    
+    /**
+     * In05001130Impl에서 호출
+     *
+     * @author KDJ, on Tue Jul 29 22:51:31 KST 2014
+     */
+    @Select({
+        "SELECT  BASIC.ERROR_NO, BASIC.CREATE_DATE, BASIC.CREATE_TIME           ",
+        "FROM    OP.T_CT_ERROR_BASIC BASIC                                      ",
+        "        LEFT JOIN OP.T_CT_ERROR_TXN TXN                                ",
+        "        ON   BASIC.ERROR_NO = TXN.ERROR_NO                             ",
+        "        AND  BASIC.CREATE_DATE = TXN.CREATE_DATE                       ",
+        "WHERE   BASIC.CREATE_DATE >= TO_NUMBER(TO_CHAR(sysdate-10,'yyyymmdd')) ",
+        "AND     TXN.FINISH_DATE    = #{createDate, jdbcType=DECIMAL}           ",
+        "AND     TXN.FINISH_TIME    = #{createTime, jdbcType=VARCHAR}           ",
+        "AND     BASIC.ORG_CD       = '096'                                     ",
+        "AND     BASIC.BRANCH_CD    = '9600'                                    ",
+        "AND     BASIC.MAC_NO       = #{macNo, jdbcType=VARCHAR}                ",
+        "AND     BASIC.ERROR_CD     = #{errorCd, jdbcType=VARCHAR}              ",
+        "AND     BASIC.ORG_SEND_YN IN ( '1', '2', '5' )                         "
+    })
+    @Results({
+        @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.DECIMAL,id=true),
+        @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true)
+    })
+    List<TCtErrorBasic> selectByJoin6( TCtErrorBasic cond );
+    
+    /**
      * CommonPackImpl.updateErrMng 에서 호출
      *
      * @author KDJ
@@ -625,6 +701,28 @@ public interface TCtErrorBasicMapper {
         "AND     NVL(ERROR_STATUS, '0')= '7000'                                   ",
         "AND     REPAIR_TIME = '999999'                                           "        
     })
-    int countByCond1( TCtErrorBasic record);
+    int countByCond1( TCtErrorBasic cond );
+    
+    /**
+     * In05001130Impl 에서 호출
+     *
+     * @author KDJ
+     * @since  Tue Jul 29 20:20:01 KST 2014
+     */
+    @Select({
+        "SELECT COUNT(1)                                      ",
+        "FROM   OP.T_CT_ERROR_MNG                             ",
+        "WHERE  CREATE_DATE = #{createDate, jdbcType=DECIMAL} ",
+        "AND    CREATE_TIME = #{createTime, jdbcType=VARCHAR} ",
+        "AND    ORG_CD      = '096'                           ",
+        "AND    BRANCH_CD   = '9600'                          ",
+        "AND    MAC_NO      = #{macNo, jdbcType=VARCHAR}      ",
+        "AND   (ORG_SEND_YN = '0' OR ORG_SEND_YN IS NULL)     ",
+        "AND    ERROR_CD IN (SELECT CD_NM1                    ",
+        "                    FROM   OP.T_CM_COMMON            ",
+        "                    WHERE  LARGE_CD = '1120'         ",
+        "                    AND    CD_NM2 = '1')             "
+    })
+    int countByCond2( TCtErrorBasic cond );
     
 }
