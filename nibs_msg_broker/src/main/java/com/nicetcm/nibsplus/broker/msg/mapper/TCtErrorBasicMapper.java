@@ -582,6 +582,30 @@ public interface TCtErrorBasicMapper {
     List<TCtErrorBasicJoin> selectByJoin3( TCtErrorBasic cond );
 
     /**
+     * In05000120Impl에서 호출
+     *
+     * @author KDJ, on Sun Jul 20 22:13:31 KST 2014
+     */
+    @Select({
+        "SELECT  DISTINCT ERROR_CD                                                                ",
+        "FROM    OP.T_CT_ERROR_BASIC BASIC                                                        ",
+        "        LEFT JOIN OP.T_CT_ERROR_TXN TXN                                                  ",
+        "        ON   BASIC.ERROR_NO = TXN.ERROR_NO                                               ",
+        "        AND  BASIC.CREATE_DATE = TXN.CREATE_DATE                                         ",
+        "WHERE   BASIC.CREATE_DATE >= TO_NUMBER(TO_CHAR( SYSDATE - 10, 'YYYYMMDD' ))              ",
+        "AND     BASIC.ORG_CD = #{orgCd, jdbcType=VARCHAR}                                        ",
+        "AND     BASIC.BRANCH_CD = #{branchCd, jdbcType=VARCHAR}                                  ",
+        "AND     BASIC.MAC_NO = #{macNo, jdbcType=VARCHAR}                                        ",
+        "AND     TXN.REPAIR_TIME = '999999'                                                       ",
+        "AND     BASIC.ERROR_CD LIKE 'ES%'                  /* 기기상태에의한 것이나 ESF0, ESF1 */",
+        "AND     BASIC.ERROR_CD NOT IN ('ES031', 'ES041', 'ES002')   /* 수표부족, 보수모드 제외 */"
+    })
+    @Results({
+        @Result(column="ERROR_CD",    property="errorCd",    jdbcType=JdbcType.VARCHAR)
+    })
+    List<TCtErrorBasicJoin> selectByJoin4( TCtErrorBasic cond );
+    
+    /**
      * CommonPackImpl.updateErrMng 에서 호출
      *
      * @author KDJ

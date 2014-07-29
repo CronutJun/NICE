@@ -5,6 +5,7 @@ import java.util.Locale;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -16,11 +17,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @Service
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {com.nicetcm.nibsplus.broker.msg.MsgBrokerAppConfig.class})
-public class MsgBrokerLibTest extends CmAllTestSuite
+public class MsgBrokerLibTest
 {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
+    @Ignore
     @Test
     public void addDay() throws Exception {
         FastDateFormat fdt = FastDateFormat.getInstance("yyyyMMdd", Locale.getDefault());
@@ -30,5 +32,15 @@ public class MsgBrokerLibTest extends CmAllTestSuite
 
         Date date2 = DateUtils.addDays(date, 1);
         System.out.println("to : " + fdt.format(date2));
+    }
+
+    @Test
+    public void decode() throws Exception {
+
+        System.out.println(MsgBrokerLib.decode("A", "A", 1, "B", 2, "C", 3, 4));
+        System.out.println(MsgBrokerLib.decode("B", "A", 1, "B", 2, "C", 3, 4));
+        System.out.println(MsgBrokerLib.decode("C", "A", 1, "B", 2, "C", 3, 4));
+        System.out.println(MsgBrokerLib.decode("D", "A", 1, "B", 2, "C", 3, 4));
+        System.out.println(MsgBrokerLib.decode("E", "A", 1, "B", 2, "C", 3));
     }
 }

@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.type.JdbcType;
 
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
+import com.nicetcm.nibsplus.broker.msg.model.TFnBoxOrg;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.CloseAmt;
@@ -229,10 +230,10 @@ public interface TMiscMapper {
         "from op.t_cm_mac mac,                               ",
         "     op.t_cm_site site                              ",
         "where site.org_cd = mac.org_cd                      ",
-        "and    site.jijum_cd = mac.jijum_cd                 ",
+        "and    site.branch_cd = mac.branch_cd                 ",
         "and    site.site_cd = mac.site_cd                   ",
         "and    mac.org_cd = #{orgCd, jdbcType=VARCHAR}      ",
-        "and    mac.jijum_cd = #{branchCd, jdbcType=VARCHAR} ",
+        "and    mac.branch_cd = #{branchCd, jdbcType=VARCHAR} ",
         "and    mac.mac_no = #{macNo, jdbcType=VARCHAR}      "
     })
     @Results({
@@ -246,7 +247,7 @@ public interface TMiscMapper {
         "FROM   OP.T_FN_CHALSI_DEAL_DSUM                                                                                                                                                            ",
         "where  deal_date      = decode(trim(#{closeType, jdbcType=VARCHAR}), '01', to_char(to_date(#{dealDate, jdbcType=VARCHAR}, 'YYYYMMDD') + 1, 'YYYYMMDD'), #{dealDate, jdbcType=VARCHAR} )    ",
         "  and  org_cd         = #{orgCd, jdbcType=VARCHAR}                                                                                                                                         ",
-        "  and  jijum_cd       = #{branchCd, jdbcType=VARCHAR}                                                                                                                                      ",
+        "  and  branch_cd       = #{branchCd, jdbcType=VARCHAR}                                                                                                                                      ",
         "  and  mac_no         = #{macNo, jdbcType=VARCHAR}                                                                                                                                         ",
         "  and  close_type     = trim(#{closeType, jdbcType=VARCHAR})                                                                                                                               "
     })
@@ -254,4 +255,96 @@ public interface TMiscMapper {
         @Result(column="cnt", property="cnt", jdbcType=JdbcType.VARCHAR),
     })
     TMisc selectCountFnChalsiDealDsum(TMisc tMisc);
+
+    /**
+     *
+     * 원거래 데이터가 존재하는지 체크
+     * <pre>
+     * DBGetOwnTradeSeqYN
+     * </pre>
+     *
+     * @param tMisc
+     * @return
+     */
+    @Select({
+        "SELECT  COUNT(*) cnt                               ",
+        "FROM   OP.T_FN_INOUT_ORG                           ",
+        "WHERE  ORG_CD = #{orgCd, jdbcType=VARCHAR}         ",
+        "AND    BRANCH_CD = #{branchCd, jdbcType=VARCHAR}   ",
+        "AND    MAC_NO = #{macNo, jdbcType=VARCHAR}         ",
+        "AND    DEAL_DATE = #{dealDate, jdbcType=VARCHAR}   ",
+        "AND    SEQ = #{seq, jdbcType=VARCHAR}              "
+    })
+    @Results({
+        @Result(column="cnt", property="cnt", jdbcType=JdbcType.VARCHAR),
+    })
+    TMisc getOwnTradeSeqYN(TMisc tMisc);
+
+    /**
+     *
+     * BOX 데이터가 RETRY 되어 중복 수신되었을 경우 저장 하지 않고 정상으로 RETURN 처리
+     * <pre>
+     * DBGetBoxRecvYN
+     * </pre>
+     *
+     * @param tMisc
+     * @return
+     */
+    @Select({
+        "SELECT  COUNT(*) cnt                                                                                                       ",
+        "FROM   OP.T_FN_BOX_ORG                                                                                                     ",
+        "WHERE  ORG_CD = #{orgCd, jdbcType=VARCHAR}                                                                                 ",
+        "AND    BRANCH_CD = #{branchCd, jdbcType=VARCHAR}                                                                           ",
+        "AND    MAC_NO = #{macNo, jdbcType=VARCHAR}                                                                                 ",
+        "AND    DEAL_DATE = #{dealDate, jdbcType=VARCHAR}                                                                           ",
+        "AND    SEQ = #{seq, jdbcType=VARCHAR}                                                                                      ",
+        "AND    BOX_GUBUN1 = #{boxGubun1, jdbcType=VARCHAR}                                                                         ",
+        "AND    CASE WHEN NVL(BOX_GUBUN2, 'A') = 'A' THEN 'A'                                                                       ",
+        "       ELSE  LPAD( BOX_GUBUN2, 4, '0')                                                                                     ",
+        "       END = DECODE(NVL(#{boxGubun2, jdbcType=VARCHAR}, 'A'), 'A', 'A', LPAD( #{boxGubun2, jdbcType=VARCHAR}, 4, '0'))     ",
+        "AND    CASE WHEN NVL(KJ_GUBUN , 'A') = 'A' THEN 'A'                                                                        ",
+        "       ELSE  KJ_GUBUN                                                                                                      ",
+        "       END = DECODE(NVL(#{kjGubun, jdbcType=VARCHAR}, 'A'), 'A', 'A', LPAD( #{kjGubun, jdbcType=VARCHAR}, 4, '0'))         "
+    })
+    @Results({
+        @Result(column="cnt", property="cnt", jdbcType=JdbcType.VARCHAR),
+    })
+    TMisc getBoxRecvYN(TMisc tMisc);
+
+    /**
+     *
+     * RETRY로 인한 중복 수신 처리
+     * <pre>
+     * DBGetTicketDealRecvYN
+     * </pre>
+     *
+     * @param tMisc
+     * @return
+     */
+    @Select({
+        "SELECT  COUNT(*) cnt                                                                                ",
+        "FROM   OP.T_FN_TICKET_DEAL                                                                          ",
+        "WHERE  ORG_CD = #{orgCd, jdbcType=VARCHAR}                                                          ",
+        "AND    BRANCH_CD = #{branchCd, jdbcType=VARCHAR}                                                    ",
+        "AND    MAC_NO = #{macNo, jdbcType=VARCHAR}                                                               ",
+        "AND    DEAL_DATE = #{dealDate, jdbcType=VARCHAR}                                                            ",
+        "AND    SEQ = #{seq, jdbcType=VARCHAR}                                                                  ",
+        "AND    TICKET_CD = LPAD(#{ticketCd, jdbcType=VARCHAR},4,'0')                                                ",
+        "AND    CASE WHEN NVL(KJ_GUBUN , 'A') = 'A' THEN 'A'                                                 ",
+        "       ELSE  KJ_GUBUN                                                                               ",
+        "       END = DECODE(NVL(#{kjGubun, jdbcType=VARCHAR}, 'A'), 'A', 'A', LPAD( #{kjGubun, jdbcType=VARCHAR}, 4, '0'))"
+    })
+    @Results({
+        @Result(column="cnt", property="cnt", jdbcType=JdbcType.VARCHAR),
+    })
+    TMisc getTicketDealRecvYN(TMisc tMisc);
+
+    @Select({
+        "SELECT OP.SEQ_BOX.NEXTVAL AS boxseq",
+        "FROM DUAL"
+    })
+    @Results({
+        @Result(column="boxseq", property="boxSeq", jdbcType=JdbcType.VARCHAR)
+    })
+    TFnBoxOrg generateSeqBox();
 }

@@ -1990,4 +1990,90 @@ public class CommonPackImpl implements CommonPack {
         }
         logger.info("기기버전[{}], 시리얼번호[{}] Mac_address[{}]변경 완료", Mac.getMacVer(), Mac.getSerialNo(), Mac.getMacAddress() );
     }
+
+    /**
+     *
+     * 원거래 데이터가 존재하는지 체크
+     * <pre>
+     * int DBGetOwnTradeSeqYN( char * pOrgCd, char * pJijumCd, char * pMacNo, char * pOwnTradeDate, char * pOwnSeqNo )
+     * </pre>
+     *
+     * @param tMisc
+     * @return
+     */
+    @Override
+    public int getOwnTradeSeqYN(TMisc tMisc) {
+        try
+        {
+            miscMap.getOwnTradeSeqYN(tMisc);
+        } catch (Exception e)
+        {
+            logger.info(">>> [DBGetOwnTradeSeqYN]-정산기 원거래 데이터 없음. {}", e.getMessage());
+            return -1;
+        }
+
+        return 0;   //AS-IS에서 Exception발생 없이 정상수행되면 0을 리턴함.
+    }
+
+    /**
+     *
+     * BOX 데이터가 RETRY 되어 중복 수신되었을 경우 저장 하지 않고 정상으로 RETURN 처리
+     * <pre>
+     * DBGetBoxRecvYN( char * pOrgCd, char * pJijumCd, char * pMacNo, char * pOwnTradeDate, char * pOwnSeqNo, char * pBoxGubun1, char * pBoxGubun2, char * pKJGubun )
+     * </pre>
+     *
+     * @param tMisc
+     * @return
+     */
+    @Override
+    public int getBoxRecvYN(TMisc tMisc) {
+        TMisc resultTMisc = null;
+
+        try
+        {
+            resultTMisc = miscMap.getBoxRecvYN(tMisc);
+        } catch (Exception e)
+        {
+            logger.info(">>> [DBGetBoxRecvYN]-정산기 BOX 데이터 파악 실패 {}", e.getMessage());
+            return -1;
+        }
+
+        if(resultTMisc != null && resultTMisc.getCnt() > 0) {
+            logger.info(">>> [DBGetBoxRecvYN]-정산기 BOX 데이터 중복수신");
+            return 1;
+        }
+
+        return 0;
+    }
+
+    /**
+     *
+     * RETRY로 인한 중복 수신 처리
+     * <pre>
+     * DBGetTicketDealRecvYN( char * pOrgCd, char * pJijumCd, char * pMacNo, char * pOwnTradeDate, char * pOwnSeqNo, char * pTicketCd, char * pKJGubun )
+     * </pre>
+     *
+     * @param tMisc
+     * @return
+     */
+    @Override
+    public int getTicketDealRecvYN(TMisc tMisc) {
+        TMisc resultTMisc = null;
+
+        try
+        {
+            resultTMisc = miscMap.getTicketDealRecvYN(tMisc);
+        } catch (Exception e)
+        {
+            logger.info(">>> [DBGetTicketDealRecvYN]-정산기 상품권기기입금 데이터 파악 실패 {}", e.getMessage());
+            return -1;
+        }
+
+        if(resultTMisc != null && resultTMisc.getCnt() > 0) {
+            logger.info(">>> [DBGetTicketDealRecvYN]-정산기 상품권기기입금 데이터 중복수신");
+            return 1;
+        }
+
+        return 0;
+    }
 }

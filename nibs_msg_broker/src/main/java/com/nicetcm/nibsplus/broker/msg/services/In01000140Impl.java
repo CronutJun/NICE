@@ -12,9 +12,14 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorMngMadeComMapper;
+import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngMadeCom;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngMadeComSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorRcpt;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 
 /**
@@ -105,6 +110,7 @@ public class In01000140Impl extends InMsgHandlerImpl {
          *  macInfo의 값을 errMng로 일괄 복사
          */
         BeanUtils.copyProperties( errBasic, macInfo );
+
         errBasic.setCreateDate(parsed.getInt("cancel_date"));
         errBasic.setCreateTime(parsed.getString("cancel_time"));
         errBasic.setOrgMsgNo  (parsed.getString("trans1_seq"));
@@ -134,6 +140,18 @@ public class In01000140Impl extends InMsgHandlerImpl {
         ==========>
         출동취소에서는 쓰지 않으므로 는 임시로
         *****************************************************************************************/
-        //comPack.updateErrBasic(safeData, MsgBrokerConst.DB_UPDATE_CANCEL_MNG, DbMode, ErrMng, ErrRcpt, ErrNoti, ErrCall, ErrTxn, MacInfo, curMacStateError);
+        TCtErrorRcpt errRcpt = new TCtErrorRcpt();
+        TCtErrorNoti errNoti = new TCtErrorNoti();
+        TCtErrorCall errCall = new TCtErrorCall();
+        TCtErrorTxn  errTxn  = new TCtErrorTxn();
+
+        ErrorState errState = new ErrorState();
+        errState.setMacType( MsgBrokerConst.CURERR_ATM );
+        errState.setOrgCd( errBasic.getOrgCd() );
+        errState.setMacNo( errBasic.getMacNo() );
+        byte[] curErrList = comPack.getCurrentErrorState( errState );
+
+        //DBUpdateErrMng( DB_UPDATE_CANCEL_MNG, &suDBErr, &suCurErrList );
+        comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_CANCEL_MNG, MsgBrokerConst.MODE_UPDATE_HW_ONE_CLEAR, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, curErrList );
     }//end method
 }

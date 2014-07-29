@@ -141,8 +141,8 @@ public class TCtErrorBasicMiscProvider {
              + "AND    BASIC.CREATE_DATE || BASIC.CREATE_TIME <=                       \n"
              + "                      RTRIM(#{txn.repairDate, jdbcType=VARCHAR})||RTRIM(#{txn.repairTime, jdbcType=VARCHAR}) \n"
 //             + "AND    BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-20, 'YYYYMMDD' ))  ";
-             + "AND    BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))  ";
-//             + "FOR UPDATE OF ERROR_NO, CREATE_DATE, CREATE_TIME ";
+             + "AND    BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))\n";
+             //+ "FOR UPDATE WITH RR                                                       ";
         
         logger.debug("SQL = {}", sql );
         return sql;
@@ -191,7 +191,7 @@ public class TCtErrorBasicMiscProvider {
                  + "            RTRIM(#{txn.repairDate, jdbcType=VARCHAR})||RTRIM(#{txn.repairTime, jdbcType=VARCHAR})\n"
                  + "AND     BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))                          \n";
             
-//        sql += "FOR UPDATE                                                             \n";
+        //sql += "FOR UPDATE WITH RR                                                            ";
         
         logger.debug("SQL = {}", sql );
         return sql;
@@ -218,7 +218,8 @@ public class TCtErrorBasicMiscProvider {
              + "AND    TRANS_DATE      = #{transDate, jdbcType=VARCHAR}                       \n"
              + "AND    RTRIM(ORG_MSG_NO)  = RTRIM(#{orgMsgNo, jdbcType=VARCHAR})              \n"
              + "AND    (SUBSTR(FORMAT_TYPE,1,1) = '2' OR SUBSTR(FORMAT_TYPE,1,1) = '1'        \n"
-             + "     OR SUBSTR(FORMAT_TYPE,1,1) = '3' )                                         ";
+             + "     OR SUBSTR(FORMAT_TYPE,1,1) = '3' )                                       \n";
+             //+ "FOR UPDATE WITH RR                                                              ";
         
         logger.debug("SQL = {}", sql );
         return sql;

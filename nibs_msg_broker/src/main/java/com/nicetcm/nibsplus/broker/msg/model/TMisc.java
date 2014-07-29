@@ -46,12 +46,22 @@ public class TMisc {
     private String closeType;
 
     private long cnt;
-    
+
     private String argValue;
-    
+
     private String argType;
-    
+
     private String secureResult;
+
+    private String seq;
+
+    private String boxGubun1;
+
+    private String boxGubun2;
+
+    private String kjGubun;
+
+    private String ticketCd;
 
     public String getHoliday() {
         return holiday;
@@ -315,6 +325,86 @@ public class TMisc {
     public void setSecureResult(String secureResult)
     {
         this.secureResult = secureResult;
+    }
+
+    /**
+     * @return the seq
+     */
+    public String getSeq()
+    {
+        return seq;
+    }
+
+    /**
+     * @param seq the seq to set
+     */
+    public void setSeq(String seq)
+    {
+        this.seq = seq;
+    }
+
+    /**
+     * @return the boxGubun1
+     */
+    public String getBoxGubun1()
+    {
+        return boxGubun1;
+    }
+
+    /**
+     * @param boxGubun1 the boxGubun1 to set
+     */
+    public void setBoxGubun1(String boxGubun1)
+    {
+        this.boxGubun1 = boxGubun1;
+    }
+
+    /**
+     * @return the boxGubun2
+     */
+    public String getBoxGubun2()
+    {
+        return boxGubun2;
+    }
+
+    /**
+     * @param boxGubun2 the boxGubun2 to set
+     */
+    public void setBoxGubun2(String boxGubun2)
+    {
+        this.boxGubun2 = boxGubun2;
+    }
+
+    /**
+     * @return the kjGubun
+     */
+    public String getKjGubun()
+    {
+        return kjGubun;
+    }
+
+    /**
+     * @param kjGubun the kjGubun to set
+     */
+    public void setKjGubun(String kjGubun)
+    {
+        this.kjGubun = kjGubun;
+    }
+
+    /**
+     * @return the ticketCd
+     */
+    public String getTicketCd()
+    {
+        return ticketCd;
+    }
+
+    /**
+     * @param ticketCd the ticketCd to set
+     */
+    public void setTicketCd(String ticketCd)
+    {
+        this.ticketCd = ticketCd;
     }
 
 }

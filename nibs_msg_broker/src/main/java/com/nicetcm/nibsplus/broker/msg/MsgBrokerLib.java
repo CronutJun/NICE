@@ -12,10 +12,10 @@ package com.nicetcm.nibsplus.broker.msg;
  *           @author  K.D.J
  */
 
+import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.nio.ByteBuffer;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
@@ -198,9 +198,9 @@ public class MsgBrokerLib {
         public ByteBuffer buf;
         public String QNm;
     }
-    
+
     public static BufferAndQName allocAndFindSchemaName(byte[] msg) {
-        
+
         BufferAndQName ret = new BufferAndQName();
         byte[] bMsgType = new byte[4];
         byte[] bWrkType = new byte[4];
@@ -211,15 +211,49 @@ public class MsgBrokerLib {
         ret.buf.get(bMsgType);
         ret.buf.get(bWrkType);
         ret.buf.position(0);
-        
+
         /*
          * 응답 전문의 경우에 스키마 파일은 원본 요청 전문에 해당하는 스키마를 읽도록 한다.
          */
         if( bMsgType[2] == '1')
             bMsgType[2] = '0';
-        
+
         ret.QNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + new String(bWrkType) + ".json";
-        
+
         return ret;
+    }
+
+    /**
+     *
+     * Oracle의 Decode 함수 구현
+     * <pre>
+     * Decoding Expresssions to values same as 'DECODE' function in Oracle
+     * </pre>
+     *
+     * @param args
+     * @return
+     * @throws Exception
+     */
+    public static Object decode(Object... args) throws Exception {
+        Object compareItem = args[0];
+        int maxIndex = args.length - 1;
+        int indx = 1;
+
+        if (compareItem != null)
+        {
+            for (; indx < maxIndex; indx += 2)
+            {
+                if (compareItem.equals(args[indx]))
+                {
+                    return args[indx + 1];
+                }
+            }
+        } else
+        {
+            throw new Exception("MsgBrokerLib.decode :: First Element in array is null value");
+        }
+
+        return indx == maxIndex ? args[indx] : null;
+
     }
 }

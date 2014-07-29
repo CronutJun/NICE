@@ -457,9 +457,9 @@ public class MsgBrokerConst {
     public static final String ALARM_NON_FILE         = "NE295";/* 출동알림 파일  없음  */
 
     /* 정산기 감시전문 */
-    public static final String CALC_MAC_NORMAL        = "0";    /* 정상상태 */
-    public static final String CALC_MAC_SUPERVISOR    = "1";    /* 슈퍼바이저 모드 상태 */
-    public static final String CALC_MAC_ERROR         = "2";    /* 침투상태 */
+    public static final byte   CALC_MAC_NORMAL        = '0';    /* 정상상태 */
+    public static final byte   CALC_MAC_SUPERVISOR    = '1';    /* 슈퍼바이저 모드 상태 */
+    public static final byte   CALC_MAC_ERROR         = '2';    /* 침투상태 */
 
     public static final String  HWERR_CLEAR           = "0";    /* 복구   */
     public static final String  HWERR_ERROR           = "1";    /* 장애   */

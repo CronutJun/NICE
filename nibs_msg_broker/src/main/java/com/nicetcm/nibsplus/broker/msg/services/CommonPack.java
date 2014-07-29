@@ -22,9 +22,12 @@ public interface CommonPack {
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, String PartMngYn ) throws Exception;
     public void updateErrBasic( MsgBrokerData safeData, int WorkType, String DbMode, TCtErrorBasic ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, byte[] curMacStateError ) throws Exception;
-    public void insertUpdateMacOpen( MsgBrokerData safeData, TMacInfo MacInfo, TCtErrorBasic ErrMng ) throws Exception;
+    public void insertUpdateMacOpen( MsgBrokerData safeData, TMacInfo MacInfo, TCtErrorBasic ErrBasic ) throws Exception;
     public byte[] getCurrentErrorState( ErrorState ErrorState ) throws Exception;
     public void updateMacInfo( MsgBrokerData safeData, TMacInfo MacInfo, TCmMac Mac) throws Exception;
     boolean getDupErrorMng(TCtErrorBasic ErrBasic, int CancelYN) throws Exception;
+    int getOwnTradeSeqYN(TMisc tMisc);
+    int getBoxRecvYN(TMisc tMisc);
+    int getTicketDealRecvYN(TMisc tMisc);
 
 }

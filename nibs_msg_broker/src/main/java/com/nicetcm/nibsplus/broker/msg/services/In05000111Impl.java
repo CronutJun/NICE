@@ -13,16 +13,21 @@ package com.nicetcm.nibsplus.broker.msg.services;
  */
 
 
+import java.io.File;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
+import com.nicetcm.nibsplus.broker.msg.model.TCmMac;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
@@ -34,6 +39,8 @@ import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 public class In05000111Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(In05000111Impl.class);
+    
+    private static final int CNT_CALC_MAC_ATMWATCH_STATE = 6;
     
     @Autowired private StoredProcMapper splMap;
     
@@ -187,5 +194,96 @@ public class In05000111Impl extends InMsgHandlerImpl {
                         errNoti, errCall, errTxn, macInfo, retErrStates );
             }
         }
+        
+        /*
+         *  정산기 금고침투 감시 장애 처리
+         */
+        int nNormal = 0;
+        for( int i = 0; i < CNT_CALC_MAC_ATMWATCH_STATE; i++ ) {
+            if( parsed.getBytes("atm_monitor")[i] == MsgBrokerConst.CALC_MAC_NORMAL
+            ||  parsed.getBytes("atm_monitor")[i] == MsgBrokerConst.STATE_SKIP1
+            ||  parsed.getBytes("atm_monitor")[i] == MsgBrokerConst.STATE_SKIP2
+            ||  parsed.getBytes("atm_monitor")[i] == MsgBrokerConst.STATE_SKIP3 )
+                nNormal = nNormal + 1;
+        }
+        if( parsed.getBytes("atm_monitor")[0] == MsgBrokerConst.CALC_MAC_SUPERVISOR ) {  // 슈퍼바이저 모드일 경우
+            errBasic.setErrorCd( String.format("NE%d%02s", 2, MsgBrokerConst.CD_CALC_MAC_SUPERVISOR) );
+
+            logger.info(">>> [SaveCalcMacErrState] [정산기 슈퍼바이져 상태] {}", errBasic.getErrorCd() );
+
+            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            /*
+             *  Terminal Mode 가 '1' 일 경우 작업 상태 이므로 슈퍼바이저 에러만 발생 시키고
+             * 금고 침투 장애를 발생 시키지 않는다.
+             */
+        }
+        else if( parsed.getBytes("atm_monitor")[0] == MsgBrokerConst.CALC_MAC_NORMAL ) {
+            errBasic.setErrorCd( String.format("NE%c%02s", MsgBrokerConst.CALC_MAC_ERROR, MsgBrokerConst.CD_CALC_MAC_SUPERVISOR) );
+
+            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, errBasic, errRcpt,
+                    errNoti, errCall, errTxn, macInfo, retErrStates );
+
+            if( nNormal != CNT_CALC_MAC_ATMWATCH_STATE ) {
+                errBasic.setErrorCd( String.format("NE2%02s", MsgBrokerConst.CD_CALC_MAC_WATCH_ERR) );
+                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            }
+            else {
+                errBasic.setErrorCd( String.format("NE2%02s", MsgBrokerConst.CD_CALC_MAC_WATCH_ERR) );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, errBasic, errRcpt,
+                        errNoti, errCall, errTxn, macInfo, retErrStates );
+            }
+        }
+        /*
+         *  기기 버전 UPDATE
+         */
+        /*
+         *  나이스 기기 UPDATE 함수를 함께 쓴다.
+         */
+        TCmMac cmMac = new TCmMac();
+        cmMac.setMacVer( parsed.getString("mac_ver") );
+        comPack.updateMacInfo( safeData, macInfo, cmMac ); // 기기 프로그램 버전, 시리얼 번호 업데이트
+
+        /*
+         *  정산기 ftp_Cnt가 설정되어 있다면 해당 file의 수신 개수를 확인 처리하여 응답
+         *  개수가 맞지 않다면 오류코드 001' 세팅
+         */
+        if( parsed.getInt("ftp_cnt") > 0 ) {
+            int nCnt = getFtpFileCnt( parsed.getString("create_date").substring(4), cmMac.getMacNo() );
+
+            if ( nCnt == -1 )
+                throw new Exception("getFtpFileCnt Error");
+            else if ( nCnt < parsed.getInt("ftp_cnt") ) {
+                logger.info("MngES_SaveCalcMacErrState : file 개수 맞지 않음 [{}][{}]", parsed.getString("ftp_cnt"),  nCnt);
+                throw new MsgBrokerException(String.format("MngES_SaveCalcMacErrState : file 개수 맞지 않음 [%d][%s]",
+                        parsed.getInt("ftp_cnt"), nCnt), -7 );
+            }
+        }
+
+    }
+    
+    /**
+     * FTP로 수신받은 파일갯수 Count
+     *  
+     * @author KDJ, 2014/07/29
+     * @param MMDD  월일
+     * @param macNo 기기번호
+     */
+    private int getFtpFileCnt( String MMDD, String macNo ) {
+        
+        int iCnt = 0;
+        
+        File dir = new File(MsgCommon.msgProps.getProperty("file.path.casher"));
+        
+        if( dir.isDirectory() ) {
+            File[] fList = dir.listFiles();
+            for( File f: fList ) {
+                if( f.getName().substring(3, 7).equals(MMDD) 
+                &&  f.getName().substring(16, 20).equals(macNo) ) {
+                    iCnt++;
+                }
+            }
+            return iCnt;
+        }
+        else return -1;
     }
 }
