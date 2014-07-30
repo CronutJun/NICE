@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
-import com.nicetcm.nibsplus.broker.msg.model.TFnNotendEmartFrgnSpec;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnForeigncurrencyMapper;
+import com.nicetcm.nibsplus.broker.msg.model.TFnForeigncurrency;
+import com.nicetcm.nibsplus.broker.msg.model.TFnForeigncurrencySpec;
 
 /**
  *
@@ -28,30 +30,29 @@ public class In03101208Impl extends InMsgHandlerImpl {
 
     @Autowired private StoredProcMapper splMap;
 
+    @Autowired private TFnForeigncurrencyMapper tFnForeigncurrencyMapper;
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-/*        TFnForeigncurrency tFnForeigncurrency = new TFnForeigncurrency();
-        tFnNotendEmartFrgn.setOrgSendYn("1");
+        TFnForeigncurrency tFnForeigncurrency = new TFnForeigncurrency();
+        tFnForeigncurrency.setOrgSendYn("1");
 
-        TFnNotendEmartFrgnSpec tFnNotendEmartFrgnSpec = new TFnNotendEmartFrgnSpec();
-        tFnNotendEmartFrgnSpec.createCriteria()
+        TFnForeigncurrencySpec tFnForeigncurrencySpec = new TFnForeigncurrencySpec();
+        tFnForeigncurrencySpec.createCriteria()
         .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
         .andBranchCdEqualTo(parsed.getString("brch_cd"))
-        .andMacNoEqualTo(parsed.getString("mac_no"))
-        .andDealDateEqualTo(parsed.getString("deal_date"))
-        .andDealTimeEqualTo(parsed.getString("deal_time"))
-        .andMemberIdEqualTo(parsed.getString("member_id"));
+        .andDepoDateEqualTo(parsed.getString("depo_date"));
 
         try
         {
-            tFnNotendEmartFrgnMapper.updateBySpecSelective(tFnNotendEmartFrgn, tFnNotendEmartFrgnSpec);
+            tFnForeigncurrencyMapper.updateBySpecSelective(tFnForeigncurrency, tFnForeigncurrencySpec);
 
         } catch (Exception e)
         {
-            logger.info(">>> [T_FN_NOTEND_EMART_FRGN] UPDATE ERROR {}", e.getMessage());
+            logger.info(">>> [T_FN_FOREIGNCURRENCY] UPDATE ERROR {}", e.getMessage());
             throw e;
         }
 
-        logger.info(">>> [T_FN_NOTEND_EMART_FRGN] UPDATE OK");*/
+        logger.info(">>> [T_FN_FOREIGNCURRENCY] UPDATE OK");
     }
 }

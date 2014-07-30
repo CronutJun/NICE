@@ -8,6 +8,7 @@ import org.apache.ibatis.type.JdbcType;
 
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.TFnBoxOrg;
+import com.nicetcm.nibsplus.broker.msg.model.TFnTicketDeal;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.CloseAmt;
@@ -347,4 +348,13 @@ public interface TMiscMapper {
         @Result(column="boxseq", property="boxSeq", jdbcType=JdbcType.VARCHAR)
     })
     TFnBoxOrg generateSeqBox();
+
+    @Select({
+        "SELECT OP.SEQ_TICKET_DEAL.NEXTVAL AS TICKET_DEAL_ID",
+        "FROM DUAL"
+    })
+    @Results({
+        @Result(column="TICKET_DEAL_ID", property="ticketDealId", jdbcType=JdbcType.VARCHAR)
+    })
+    TFnTicketDeal generateSeqTicketDeal();
 }
