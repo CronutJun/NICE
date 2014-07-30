@@ -18,15 +18,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.apache.commons.beanutils.BeanUtils;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceCloseOrgMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceCloseTmpMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceCloseMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceCloseOrg;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceCloseTmp;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceCloseTmpSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TFnNiceClose;
 
 @Service("inN3000100")
 public class InN3000100Impl extends InMsgHandlerImpl {
@@ -36,6 +39,8 @@ public class InN3000100Impl extends InMsgHandlerImpl {
     @Autowired private StoredProcMapper splMap;
     @Autowired private TFnNiceCloseOrgMapper fnNiceCloseOrgMap;
     @Autowired private TFnNiceCloseTmpMapper fnNiceCloseTmpMap;
+    @Autowired private TFnNiceCloseMapper fnNiceCloseMap;
+    
     
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
@@ -253,6 +258,41 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             logger.info( "[T_FN_NICE_CLOSE_TMP] Select Sum Error.. {}", e.getLocalizedMessage() );
             throw e;
 
+        }
+        
+        /*
+         *  차세대 NTMS 운영부 및 지사 필드에 자금부서 와 자금지사코드를 넣도록함
+         * 송호석 과장 요청
+         */
+        // OrnzCD 호출
+        
+        TFnNiceClose fnNiceClose = new TFnNiceClose();
+        
+        BeanUtils.copyProperties( fnNiceClose, sum );
+        try {
+            fnNiceCloseMap.insert( fnNiceClose );
+        }
+        catch( Exception e ) {
+            logger.info( "[T_FN_NICE_CLOSE] Insert Error.. {}", e.getLocalizedMessage() );
+            throw e;
+        }
+        
+        TFnNiceCloseTmpSpec fnNCTSpec = new TFnNiceCloseTmpSpec();
+        fnNCTSpec.createCriteria().andMacNoEqualTo( cond.getMacNo() )
+                                  .andCloseDateLessThan( cond.getCloseDate() );
+        try {
+            fnNiceCloseTmpMap.deleteBySpec( fnNCTSpec );
+        }
+        catch( Exception e ) {
+            logger.info( "[T_FN_NICE_CLOSE_TMP] Delete Error.. {}", e.getLocalizedMessage() );
+            throw e;
+        }
+        try {
+            insertNiceCloseTmp( safeData, parsed );
+        }
+        catch( Exception e ) {
+            logger.info( "DBInsertNiceCloseSum => DBInsertNiceCloseTmp Error." );
+            throw e;
         }
     }
 }

@@ -148,6 +148,19 @@ public interface StoredProcMapper {
     void spIfCashinsert(IfCashInsert ifCashInsert);
 
     @Select({
+        "CALL op.sp_fn_macClose( ",
+            "#{closeDate   , mode=IN,  jdbcType=VARCHAR},",
+            "#{orgCode     , mode=IN,  jdbcType=VARCHAR},",
+            "#{jijumCode   , mode=IN,  jdbcType=VARCHAR},",
+            "#{macNo       , mode=IN,  jdbcType=VARCHAR},",
+            "#{userId      , mode=IN,  jdbcType=VARCHAR},",
+            "#{result      , mode=OUT, jdbcType=VARCHAR} ",
+        ")"
+    })
+    @Options(statementType=StatementType.CALLABLE)
+    void spFnMacClose(FnMacClose fnMacClose);
+
+    @Select({
         "CALL op.sp_fn_macClose_nh( ",
             "#{closeDate   , mode=IN,  jdbcType=VARCHAR},",
             "#{orgCode     , mode=IN,  jdbcType=VARCHAR},",
@@ -175,11 +188,20 @@ public interface StoredProcMapper {
     void spFnMacCloseEmart(FnMacClose fnMacClose);
 
     @Select({
-        "SELECT FC_FN_SECURITY( #{argValue, jdbcType=VARCHAR}, #{argType, jdbcType=VARCHAR} ) AS SECURE_RESULT",
+        "SELECT OP.FC_FN_SECURITY( #{argValue, jdbcType=VARCHAR}, #{argType, jdbcType=VARCHAR} ) AS SECURE_RESULT",
         "FROM   DUAL                                                                                           "
     })
     @Results({
         @Result(column="SECURE_RESULT", property="secureResult", jdbcType=JdbcType.VARCHAR)
     })
-    TMisc sfFcFnSecurity(TMisc cond);
+    TMisc fcFnSecurity(TMisc cond);
+
+    @Select({
+        "SELECT OP.FC_GET_JOJIC_CD_BY_MACNO('FD', '096', '9600', :psuIn->mac_no) AS ORNZ_CD ",
+        "FROM   DUAL                                                                                           "
+    })
+    @Results({
+        @Result(column="ORNZ_CD", property="ornzCd", jdbcType=JdbcType.VARCHAR)
+    })
+    TMisc fcGetOrnzCdByMacNo( TMisc cond );
 }

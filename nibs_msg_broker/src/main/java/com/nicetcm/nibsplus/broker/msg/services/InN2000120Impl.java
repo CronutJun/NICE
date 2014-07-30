@@ -1407,7 +1407,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         misc.setArgType( "1" );
         TMisc secRslt;
         try {
-            secRslt = splMap.sfFcFnSecurity( misc );
+            secRslt = splMap.fcFnSecurity( misc );
         }
         catch ( Exception e ) {
             secRslt = new TMisc();

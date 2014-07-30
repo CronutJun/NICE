@@ -62,6 +62,8 @@ public class TMisc {
     private String kjGubun;
 
     private String ticketCd;
+    
+    private String ornzCd;
 
     public String getHoliday() {
         return holiday;
@@ -405,6 +407,22 @@ public class TMisc {
     public void setTicketCd(String ticketCd)
     {
         this.ticketCd = ticketCd;
+    }
+
+    /**
+     * @return the ornzCd
+     */
+    public String getOrnzCd()
+    {
+        return ornzCd;
+    }
+
+    /**
+     * @param ornzCd the ornzCd to set
+     */
+    public void setOrnzCd(String ornzCd)
+    {
+        this.ornzCd = ornzCd;
     }
 
 }
