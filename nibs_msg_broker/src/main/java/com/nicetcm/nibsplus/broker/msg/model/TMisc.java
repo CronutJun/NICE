@@ -62,8 +62,16 @@ public class TMisc {
     private String kjGubun;
 
     private String ticketCd;
-    
+
     private String ornzCd;
+
+    private String madeComCd;
+
+    private String madeOrgCd;
+    
+    private String sendMsg;
+    
+    private float sendMode;
 
     public String getHoliday() {
         return holiday;
@@ -424,5 +432,54 @@ public class TMisc {
     {
         this.ornzCd = ornzCd;
     }
+
+    /**
+     * @return the madeComCd
+     */
+    public String getMadeComCd()
+    {
+        return madeComCd;
+    }
+
+    /**
+     * @param madeComCd the madeComCd to set
+     */
+    public void setMadeComCd(String madeComCd)
+    {
+        this.madeComCd = madeComCd;
+    }
+
+    /**
+     * @return the madeOrgCd
+     */
+    public String getMadeOrgCd()
+    {
+        return madeOrgCd;
+    }
+
+    /**
+     * @param madeOrgCd the madeOrgCd to set
+     */
+    public void setMadeOrgCd(String madeOrgCd)
+    {
+        this.madeOrgCd = madeOrgCd;
+    }
+
+    public String getSendMsg() {
+        return sendMsg;
+    }
+
+    public void setSendMsg(String sendMsg) {
+        this.sendMsg = sendMsg;
+    }
+
+    public float getSendMode() {
+        return sendMode;
+    }
+
+    public void setSendMode(float sendMode) {
+        this.sendMode = sendMode;
+    }
+
 
 }

@@ -18,6 +18,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TCmMacNo;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacNoSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TCtInputCheckList;
 import com.nicetcm.nibsplus.broker.msg.model.TCtInputCheckListSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.CloseAmt;
 import com.nicetcm.nibsplus.broker.msg.services.In03101130Impl.CmCash;
 
@@ -88,6 +89,7 @@ public class TMiscMapperTest extends MapperTestSuite
 
     }
 
+    @Ignore
     @Test
     public void timestampTest2() {
         TCtInputCheckList updateTCtInputCheckList = new TCtInputCheckList();
@@ -107,6 +109,25 @@ public class TMiscMapperTest extends MapperTestSuite
         //private String macNo;
 
         tCtInputCheckListMapper.updateBySpecSelective(updateTCtInputCheckList, tCtInputCheckListSpec);
+
+    }
+
+    @Ignore
+    @Test
+    public void getMadeComCd() {
+
+        TMisc tMisc = tMiscMapper.getMadeComCd("096", "9600", "0202");
+
+        if(tMisc == null) {
+            logger.debug("tMisc is null");
+        } else {
+            logger.debug(tMisc.toString());
+        }
+
+    }
+
+    @Test
+    public void test() {
 
     }
 }

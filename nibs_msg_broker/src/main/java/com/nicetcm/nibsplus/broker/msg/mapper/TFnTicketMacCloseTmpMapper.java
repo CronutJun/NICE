@@ -1,9 +1,12 @@
 package com.nicetcm.nibsplus.broker.msg.mapper;
 
+import com.nicetcm.nibsplus.broker.msg.model.TFnNiceCloseTmp;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketMacCloseTmp;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketMacCloseTmpKey;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketMacCloseTmpSpec;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Insert;
@@ -208,4 +211,51 @@ public interface TFnTicketMacCloseTmpMapper {
           "and CLOSE_TIME = #{closeTime,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(TFnTicketMacCloseTmp record);
+    
+    /**
+     * InN3000200Impl에서 호출
+     *
+     * @author KDJ, on Wed Jul 31 11:24:00 KST 2014
+     */
+    @Select({
+        "SELECT CLOSE_DATE, CLOSE_TIME                               ",
+        "FROM   T_FN_TICKET_MAC_CLOSE_TMP                            ",
+        "WHERE  CLOSE_DATE  <= #{closeDate, jdbcType=VARCHAR}        ",
+        "AND    ORG_CD      =  #{orgCd, jdbcType=VARCHAR}            ",
+        "AND    BRANCH_CD   =  #{branchCd, jdbcType=VARCHAR}         ",
+        "AND    MAC_NO      =  #{macNo, jdbcType=VARCHAR}            ",
+        "AND    TICKET_CD   =  #{ticketCd, jdbcType=VARCHAR}         ",
+        "AND    TICKET_GUBUN_CD = #{ticketGubunCd, jdbcType=VARCHAR} ",
+        "AND    DEAL_TYPE   = '0'                                    ",
+        "AND    ROWNUM      < 2                                      ",
+        "ORDER BY CLOSE_DATE, CLOSE_TIME DESC                        "
+    })
+    @Results({
+        @Result(column="CLOSE_DATE", property="closeDate", jdbcType=JdbcType.VARCHAR),
+        @Result(column="CLOSE_TIME", property="closeTime", jdbcType=JdbcType.VARCHAR)
+    })
+    List<TFnTicketMacCloseTmp> selectByCond1( TFnTicketMacCloseTmp cond );
+
+    /**
+     * InN3000200Impl에서 호출
+     *
+     * @author KDJ, on Wed Jul 31 13:36:00 KST 2014
+     */
+    @Select({
+        "SELECT NVL( SUM( TICKET1_EMIT_CNT     ), 0 ) + #{ticket1EmitCnt, jdbcType=DECIMAL} AS TICKET1_EMIT_CNT",
+        "FROM   T_FN_TICKET_MAC_CLOSE_TMP                                                                      ",
+        "WHERE  CLOSE_DATE  < #{closeDate, jdbcType=VARCHAR}                                                   ",
+        "AND    ORG_CD      = '096'                                                                            ",
+        "AND    BRANCH_CD   = '9600'                                                                           ",
+        "AND    MAC_NO      = #{macNo, jdbcType=VARCHAR}                                                       ",
+        "AND    TICKET_CD   = #{ticketCd, jdbcType=VARCHAR}                                                    ",
+        "AND    TICKET_GUBUN_CD = #{ticketGubunCd, jdbcType=VARCHAR}                                           ",
+        "AND    DEAL_TYPE = '0'                                                                                ",
+        "AND    CLOSE_TIME  != '999999'                                                                        "
+    })
+    @Results({
+        @Result(column="TICKET1_EMIT_CNT",       property="track1EmitCnt",        jdbcType=JdbcType.DECIMAL)
+   })
+    TFnTicketMacCloseTmp selectBySum1( TFnTicketMacCloseTmp cond );
+ 
 }

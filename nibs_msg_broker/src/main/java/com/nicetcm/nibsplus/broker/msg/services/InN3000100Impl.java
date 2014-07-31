@@ -22,14 +22,19 @@ import org.apache.commons.beanutils.BeanUtils;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceCloseOrgMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceCloseTmpMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceCloseMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceCloseGiftMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceCloseOrg;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceCloseTmp;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceCloseTmpSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceClose;
+import com.nicetcm.nibsplus.broker.msg.model.TFnNiceCloseGift;
+import com.nicetcm.nibsplus.broker.msg.model.TMisc;
+import com.nicetcm.nibsplus.broker.msg.model.FnMacClose;
 
 @Service("inN3000100")
 public class InN3000100Impl extends InMsgHandlerImpl {
@@ -40,14 +45,101 @@ public class InN3000100Impl extends InMsgHandlerImpl {
     @Autowired private TFnNiceCloseOrgMapper fnNiceCloseOrgMap;
     @Autowired private TFnNiceCloseTmpMapper fnNiceCloseTmpMap;
     @Autowired private TFnNiceCloseMapper fnNiceCloseMap;
+    @Autowired private TFnNiceCloseGiftMapper fnNiceCloseGiftMap;
     
     
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+        try {
+            insertNiceCloseOrg( safeData, parsed );
+        }
+        catch( org.springframework.dao.DataIntegrityViolationException de ) {
+            /* 이미 수신된 데이타인 경우 (Duplicate)
+             * DB 행으로 인해 Time Out 이 발생하여 HOST에서 같은 전문을 재 송신한 경우
+             * HOST 정상으로으로 응답을 송신한다.
+             */
+            return;
+        }
+        int iRtn = compCloseDate( parsed.getString("mac_no"), parsed.getString("close_date") );
+        if( iRtn < 0 ) {
+            logger.info( "CompCloseDate function result error" );
+            throw new Exception("CompCloseDate function result error");
+        }
+        /*
+         *  동일일자에 두번 마감을 눌렀을 경우 첫번째 마감을 실 마감으로 보고
+         *  두번째 마감 이후 올라온것은 다음날 마감시 합산처리하기위해 마감시간을 넣어
+         *  T_FN_NICE_CLOSE_TMP에만 저장처리하도록 한다.
+         */
+        else if( iRtn == 0 ) {
+            try {
+                insertNiceCloseTmp( safeData, parsed );
+            }
+            catch( Exception e ) {
+                logger.info( "insertNiceCloseTmp Error." );
+                throw e;
+            }
+        }
+        /*
+         *  T_FN_NICE_CLOSE_TMP 에 저장된 데이터가 없거나 전일 두번째 이상 마감된 데이터 가있을경우
+         */
+        else if( iRtn == 1 ) {
+            try {
+                insertNiceCloseSum( safeData, parsed );
+            }
+            catch( Exception e ) {
+                logger.info( "insertNiceCloseSum Error." );
+                throw e;
+            }
+            logger.debug( "close_date[{}], mac_no[{}], update_uid[{}]",
+                    parsed.getString("close_date"), parsed.getString("mac_no"), parsed.getString("CM.msg_id") );
+            FnMacClose macClose = new FnMacClose();
+            macClose.setCloseDate( parsed.getString("close_date") );
+            macClose.setOrgCode( "096" );
+            macClose.setJijumCode( "9600" );
+            macClose.setMacNo( parsed.getString("mac_no") );
+            macClose.setUserId( parsed.getString("CM.msg_id") );
+            try {
+                splMap.spFnMacClose( macClose );
+                if( !macClose.getResult().equals("OK") )
+                    logger.info( "sp_fn_macclose procedure Error. [{}]", macClose.getResult() );
+            }
+            catch( Exception e ) {
+                
+            }
+        }
+        msgTX.rollback(safeData.getTXS());
+        safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
 
+        /*
+         *  상품권 마감일 경우 별도 테이블에 저장 처리 하도록 한다.
+         */
+        if( parsed.getInt("gv_out_cnt") > 0 ) {
+            TFnNiceCloseGift fnNCG = new TFnNiceCloseGift();
+            
+            fnNCG.setOrgCd     ( "096"                          );
+            fnNCG.setBranchCd  ( "9600"                         );
+            fnNCG.setMacNo     ( parsed.getString("mac_no"    ) );
+            fnNCG.setCloseDate ( parsed.getString("close_date") );
+            fnNCG.setCloseTime ( parsed.getString("close_time") );
+            fnNCG.setGvComCd   ( parsed.getString("gv_com_cd" ) );
+            fnNCG.setGvType    ( parsed.getString("gv_type"   ) );
+            fnNCG.setGvOutCnt  ( parsed.getInt   ("gv_out_cnt") );
+            fnNCG.setUpdateDate( safeData.getDSysDate()         );
+            fnNCG.setUpdateUid ( "online"                       );
+            try {
+                fnNiceCloseGiftMap.insert( fnNCG );
+            }
+            catch( org.springframework.dao.DataIntegrityViolationException de ) {
+                logger.info("]T_FN_NICE_CLOSE_GIFT] dup Error!!!");
+            }
+            catch( Exception e ) {
+                logger.info("[T_FN_NICE_CLOSE_GIFT] Insert Error [{}]", e.getLocalizedMessage() );
+                throw e;
+            }
+        }
     }
     
-    private void InsertNiceCloseOrgTicket( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
+    private void insertNiceCloseOrg( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
         
         TFnNiceCloseOrg fnNCO = new TFnNiceCloseOrg();
         fnNCO.setMacNo               (  parsed.getString("mac_no"                ) );
@@ -264,11 +356,47 @@ public class InN3000100Impl extends InMsgHandlerImpl {
          *  차세대 NTMS 운영부 및 지사 필드에 자금부서 와 자금지사코드를 넣도록함
          * 송호석 과장 요청
          */
-        // OrnzCD 호출
         
         TFnNiceClose fnNiceClose = new TFnNiceClose();
         
         BeanUtils.copyProperties( fnNiceClose, sum );
+        
+        fnNiceClose.setCloseDate( parsed.getString("close_date") );
+        fnNiceClose.setCloseTime( parsed.getString("close_time") );
+        fnNiceClose.setMacNo( parsed.getString("mac_no") );
+        fnNiceClose.setTrackUseType( parsed.getString("track_use_type") );
+        
+        TMisc miscCond = new TMisc();
+        TMisc rsltMisc = null;
+        miscCond.setArgType( "FD" );
+        miscCond.setOrgCd( "096" );
+        miscCond.setBranchCd( "9600" );
+        miscCond.setMacNo( parsed.getString("mac_no") );
+        try {
+            rsltMisc = splMap.fcGetOrnzCdByMacNo( miscCond );
+            if( rsltMisc != null ) {
+                fnNiceClose.setDeptCd( rsltMisc.getOrnzCd().substring(0, 2) );
+            }
+        }
+        catch( Exception e ) {
+            logger.info( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
+        }
+        miscCond.setArgType( "FO" );
+        miscCond.setOrgCd( "096" );
+        miscCond.setBranchCd( "9600" );
+        miscCond.setMacNo( parsed.getString("mac_no") );
+        try {
+            rsltMisc = splMap.fcGetOrnzCdByMacNo( miscCond );
+            if( rsltMisc != null ) {
+                fnNiceClose.setOfficeCd( rsltMisc.getOrnzCd().substring(2, 4) );
+            }
+        }
+        catch( Exception e ) {
+            logger.info( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
+        }
+        
+        fnNiceClose.setInsertDate( safeData.getDSysDate() );
+        fnNiceClose.setInsertUid( parsed.getString("CM.msg_id") );
         try {
             fnNiceCloseMap.insert( fnNiceClose );
         }

@@ -1,44 +1,44 @@
 package com.nicetcm.nibsplus.broker.msg.services;
 
-import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
-import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
+import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
+import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
+/**
+ *
+ * 동시다발장애출동요청
+ * <pre>
+ * MngEM_SaveManyErrCall( pRecvData, nLen );
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 @Service("in01001480")
-public class In01001480Impl implements InMsgHandler {
+public class In01001480Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(In01001480Impl.class);
-    
-    @Autowired private SqlSession sqlSession;
-    @Autowired private DataSourceTransactionManager msgTX;
-    
-    @Autowired private CommonPack comPack;
-    @Autowired private StoredProcMapper splMap;
-    
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired private TMiscMapper tMiscMapper;
+
     @Override
-    public void inMsgHandle(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        TransactionStatus status = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
-        try {
-            logger.debug("Msg Received");
-            logger.debug(parsed.getString("CM.work_type"));
+    public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+        TMisc tMisc = tMiscMapper.getMadeComCd(parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"));
 
-            
-            
-            msgTX.commit(status);
+        if(tMisc == null) {
+            logger.info( String.format("[MngEM_SaveManyErrCall] 기기제조사 정보  검색 실패 기관[%s] 지점[%s] 기번[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no") ));
+            throw new MsgBrokerException(-1);
         }
-        catch( Exception e ) {
-            msgTX.rollback(status);
-            throw e;
-        }
+
+        //TCtManyErrorMng
+
     }
-
 }

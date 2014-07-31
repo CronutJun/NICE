@@ -23,6 +23,13 @@ public interface StoredProcMapper {
     void SendSMSMacInfo(TMacInfo cond);
 
     @Select({
+        "CALL OP.SP_IF_SENDSMSTRANCNTMISMATCH( #{sendMsg,  mode=IN, jdbcType=VARCHAR}, ",
+        "                                      #{sendMode, mode=IN, jdbcType=FLOAT} )"
+    })
+    @Options( statementType = StatementType.CALLABLE )
+    void spIfSendSMSTranCntMismatch( TMisc cond );
+    
+    @Select({
         "CALL op.test_if( #{orgCd, jdbcType=VARCHAR, mode=IN}, #{branchCd, jdbcType=VARCHAR, mode=IN},",
         "                         #{orgSiteCd, jdbcType=VARCHAR, mode=IN}, 'EM', #{macNo, jdbcType=VARCHAR, mode=OUT})"
     })
@@ -197,8 +204,11 @@ public interface StoredProcMapper {
     TMisc fcFnSecurity(TMisc cond);
 
     @Select({
-        "SELECT OP.FC_GET_JOJIC_CD_BY_MACNO('FD', '096', '9600', :psuIn->mac_no) AS ORNZ_CD ",
-        "FROM   DUAL                                                                                           "
+        "SELECT OP.FC_GET_ORNZ_CD_BY_MACNO(#{argType,  jdbcType=VARCHAR},                  ",
+        "                                  #{orgCd,    jdbcType=VARCHAR},                  ",
+        "                                  #{branchCd, jdbcType=VARCHAR},                  ",
+        "                                  #{macNo,    jdbcType=VARCHAR}) AS ORNZ_CD       ",
+        "FROM   DUAL                                                                       "
     })
     @Results({
         @Result(column="ORNZ_CD", property="ornzCd", jdbcType=JdbcType.VARCHAR)

@@ -1,5 +1,8 @@
 package com.nicetcm.nibsplus.broker.msg.mapper;
 
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
@@ -357,4 +360,44 @@ public interface TMiscMapper {
         @Result(column="TICKET_DEAL_ID", property="ticketDealId", jdbcType=JdbcType.VARCHAR)
     })
     TFnTicketDeal generateSeqTicketDeal();
+
+    /**
+     *
+     * 기기 제조사 코드를 얻는다.
+     * <pre>
+     * int      DBGetMadeComCd(struct MACINFO_DATA *psuMacInfo, char * pMadeComCd, char * pMadeOrgCd)
+     * </pre>
+     *
+     * @param orgCd
+     * @param branchCd
+     * @param macNo
+     * @return
+     */
+    @Select({
+        "SELECT  mac.made_com_cd,                              ",
+        "        co1.cd_nm5                                    ",
+        "  FROM  OP.T_CM_MAC mac,                                 ",
+        "        OP.T_CM_COMMON co1                               ",
+        " WHERE  mac.org_cd = #{orgCd, jdbcType=VARCHAR}       ",
+        "   AND  mac.branch_cd = #{branchCd, jdbcType=VARCHAR} ",
+        "   AND  mac.mac_no = #{macNo, jdbcType=VARCHAR}       ",
+        "   AND  co1.large_cd = '2100'                         ",
+        "   AND  co1.small_cd = mac.made_com_cd                "
+    })
+    @Results({
+        @Result(column="made_com_cd", property="madeComCd", jdbcType=JdbcType.VARCHAR),
+        @Result(column="cd_nm5", property="madeOrgCd", jdbcType=JdbcType.VARCHAR)
+    })
+    TMisc getMadeComCd(@Param("orgCd") String orgCd, @Param("branchCd") String branchCd, @Param("macNo") String macNo);
+
+    @Select({
+        "SELECT case when (nvl(retire_date,'0') < to_char(SYSDATE, 'YYYYMMDD')) ",
+        "        then '0'                                                       ",
+        "    else     '1'                                                       ",
+        "end mbr_yn                                                             ",
+        "FROM OP.T_CM_MEMBER                                                       ",
+        "WHERE SUBSTR(resident_no,1,6) = SUBSTR(#{mbrIdNo, jdbcType=VARCHAR},1,6)           ",
+        "AND member_nm = #{mbrNm, jdbcType=VARCHAR}                                        "
+    })
+    String getCmMemberYn(@Param("mbrIdNo") String mbrIdNo, @Param("mbrNm") String mbrNm);
 }

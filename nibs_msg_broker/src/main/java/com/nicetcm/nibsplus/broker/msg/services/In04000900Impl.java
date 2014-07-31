@@ -9,13 +9,24 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 
+/**
+ *
+ * 0900 전문중계용 전체전문수신
+ * <pre>
+ * MngIQ_SaveRelayMsg( pRecvData, nLen );
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 @Service("in04000900")
 public class In04000900Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(In04000900Impl.class);
-    
+
     @Autowired private StoredProcMapper splMap;
-    
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 

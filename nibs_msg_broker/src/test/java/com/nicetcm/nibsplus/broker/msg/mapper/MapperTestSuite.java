@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerAppConfig;
@@ -19,7 +20,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 public class MapperTestSuite
 {
 
-    protected TMiscMapper tMiscMapper;
+    @Autowired protected TMiscMapper tMiscMapper;
 
     private String orgCd = "096";
     private String branchCd = "9600";
@@ -27,7 +28,7 @@ public class MapperTestSuite
 
     @Before
     public void test() {
-        InputStream is = MsgBrokerMain.class.getResourceAsStream("/msg.properties");
+        InputStream is = MsgBrokerMain.class.getResourceAsStream("/uat/msg.properties");
         try
         {
             MsgCommon.msgProps.load(is);
