@@ -211,7 +211,7 @@ public interface TFnTicketMacCloseTmpMapper {
           "and CLOSE_TIME = #{closeTime,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(TFnTicketMacCloseTmp record);
-    
+
     /**
      * InN3000200Impl에서 호출
      *
@@ -255,7 +255,7 @@ public interface TFnTicketMacCloseTmpMapper {
     })
     @Results({
         @Result(column="TICKET1_EMIT_CNT",       property="track1EmitCnt",        jdbcType=JdbcType.DECIMAL)
-   })
+    })
     TFnTicketMacCloseTmp selectBySum1( TFnTicketMacCloseTmp cond );
- 
+
 }

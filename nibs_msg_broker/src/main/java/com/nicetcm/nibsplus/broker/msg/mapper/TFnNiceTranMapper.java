@@ -3,7 +3,11 @@ package com.nicetcm.nibsplus.broker.msg.mapper;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTran;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTranKey;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTranSpec;
+import com.nicetcm.nibsplus.broker.msg.model.BNetCalc;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
+
 import java.util.List;
+
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Insert;
@@ -362,4 +366,36 @@ public interface TFnNiceTranMapper {
           "and DEAL_NO = #{dealNo,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(TFnNiceTran record);
+
+    /**
+     * InN5000300Impl 에서 호출
+     *
+     * @author KDJ
+     * @since  Tue Aug 01 14:21:01 KST 2014
+     */
+    @SelectProvider(type=TFnNiceTranMiscProvider.class, method="selectBNetCalc")
+    @Results({
+        @Result(column="DEAL_DATE",           property="dealDate",         jdbcType=JdbcType.DECIMAL),
+        @Result(column="ORG_CD",              property="orgCd",            jdbcType=JdbcType.VARCHAR),
+        @Result(column="MAC_NO",              property="macNo",            jdbcType=JdbcType.VARCHAR),
+        @Result(column="CASH_CNT",            property="cashCnt",          jdbcType=JdbcType.DECIMAL),
+        @Result(column="CASH_AMT",            property="cashAmt",          jdbcType=JdbcType.DECIMAL),
+        @Result(column="CASH_CANCEL_CNT",     property="cashCancelCnt",    jdbcType=JdbcType.DECIMAL),
+        @Result(column="CASH_CANCEL_AMT",     property="cashCancelAmt",    jdbcType=JdbcType.DECIMAL),
+        @Result(column="SAME_CNT",            property="sameCnt",          jdbcType=JdbcType.DECIMAL),
+        @Result(column="SAME_AMT",            property="sameAmt",          jdbcType=JdbcType.DECIMAL),
+        @Result(column="DIFF_CNT",            property="diffCnt",          jdbcType=JdbcType.DECIMAL),
+        @Result(column="DIFF_AMT",            property="diffAmt",          jdbcType=JdbcType.DECIMAL),
+        @Result(column="CASH_SVC_CNT",        property="cashSvcCnt",       jdbcType=JdbcType.DECIMAL),
+        @Result(column="CASH_SVC_AMT",        property="cashSvcAmt",       jdbcType=JdbcType.DECIMAL),
+        @Result(column="CASH_IN_CNT",         property="cashInCnt",        jdbcType=JdbcType.DECIMAL),
+        @Result(column="CASH_IN_AMT",         property="cashInAmt",        jdbcType=JdbcType.DECIMAL),
+        @Result(column="CASH_IN_CANCEL_CNT",  property="cashInCancelCnt",  jdbcType=JdbcType.DECIMAL),
+        @Result(column="CASH_IN_CANCEL_AMT",  property="cashInCancelAmt",  jdbcType=JdbcType.DECIMAL),
+        @Result(column="REAL_TRADE_AMT",      property="realTradeAmt",     jdbcType=JdbcType.DECIMAL),
+        @Result(column="OUT_CUST_FEE_AMT",    property="outCustFeeAmt",    jdbcType=JdbcType.DECIMAL),
+        @Result(column="SAME_CUST_FEE_AMT",   property="sameCustFeeAmt",   jdbcType=JdbcType.DECIMAL),
+        @Result(column="DIFF_CUST_FEE_AMT",   property="diffCustFeeAmt",   jdbcType=JdbcType.DECIMAL)
+    })
+    BNetCalc selectBNetCalc(BNetCalc cond);
 }

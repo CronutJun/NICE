@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.nicetcm.nibsplus.broker.msg.mapper.*;
 import com.nicetcm.nibsplus.broker.msg.model.*;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 
 import java.util.List;
 
@@ -24,36 +25,33 @@ public class sqlQueryTest extends CmAllTestSuite {
 
     @Autowired protected DataSourceTransactionManager msgTX;
     @Autowired private StoredProcMapper splMap;
-    @Autowired private TCtErrorBasicMapper ctErrBasicMap;
-    
+    @Autowired private TFnNiceTranMapper fnNiceTranMap;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void testCase1() {
+        org.apache.log4j.xml.DOMConfigurator.configure(MsgBrokerMain.class.getResource(
+                String.format("/%s/log4j.xml", MsgBrokerConst.SVR_TYPE)));
         logger.debug("start test case#1");
         MsgBrokerData safeData = new MsgBrokerData();
-        
+
         safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
         try {
-            TCtErrorBasic cond = new TCtErrorBasic();
-            TCtErrorTxn txn = new TCtErrorTxn();
-            cond.setOrgCd("096");
-            cond.setBranchCd("9600");
-            cond.setMacNo("2884");
-            cond.setErrorCd("ERR17");
-            txn.setRepairDate("20140721");
-            txn.setRepairTime("080000");
-            List<TCtErrorBasicJoin> rsltErrMng = ctErrBasicMap.selectByJoin3(cond);
-            logger.debug("result:  size = {}", rsltErrMng.size());
-            for( TCtErrorBasicJoin rslt: rsltErrMng) {
-                logger.debug("          error_no = {}",    rslt.getErrorNo());
-                logger.debug("          repair_date = {}", rslt.getRepairDate());
-                logger.debug("          repair_time = {}", rslt.getRepairTime());
+            BNetCalc cond = new BNetCalc();
+            cond.setOrgCd("0JL");
+            cond.setMacNo("NICE");
+            cond.setDealDate("20140711");
+            BNetCalc rslt = fnNiceTranMap.selectBNetCalc(cond);
+            if( rslt.getDealDate().equals("ERROR")) {
+                logger.debug("DealDate = {}",rslt.getDealDate());
+                logger.debug("CashCnt = {}", rslt.getCashCnt());
             }
             msgTX.commit(safeData.getTXS());
         }
         catch( Exception e ) {
             msgTX.rollback(safeData.getTXS());
+            logger.debug("err msg = {}", e.getLocalizedMessage() );
         }
     }
 

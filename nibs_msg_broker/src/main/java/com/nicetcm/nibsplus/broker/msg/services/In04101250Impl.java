@@ -13,17 +13,17 @@ import com.nicetcm.nibsplus.broker.msg.model.TCmSiteCheckDaySpec;
 
 /**
  *
- * 1240 코너일일점검결과
+ * 1250 코너일일점검사진정보
  * <pre>
- * MngIQ_AP_SaveSiteChk( pRecvData, nLen );
+ * MngIQ_AP_SaveSiteChkURL( pRecvData, nLen );
  * </pre>
  *
  * @author s7760ker@gmail.com
  * @version 1.0
  * @see
  */
-@Service("in04101240")
-public class In04101240Impl extends InMsgHandlerImpl {
+@Service("in04101250")
+public class In04101250Impl extends InMsgHandlerImpl {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -32,7 +32,7 @@ public class In04101240Impl extends InMsgHandlerImpl {
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         TCmSiteCheckDay tCmSiteCheckDay = new TCmSiteCheckDay();
-        tCmSiteCheckDay.setOrgSendYn("1");
+        tCmSiteCheckDay.setOrgSendYn("2");
         tCmSiteCheckDay.setOrgSendDate(safeData.getDSysDate());
         tCmSiteCheckDay.setUpdateUid("APmng");
 

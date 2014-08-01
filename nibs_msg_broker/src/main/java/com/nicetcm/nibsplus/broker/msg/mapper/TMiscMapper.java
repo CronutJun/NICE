@@ -1,7 +1,5 @@
 package com.nicetcm.nibsplus.broker.msg.mapper;
 
-import java.util.List;
-
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
@@ -10,6 +8,7 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.type.JdbcType;
 
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
+import com.nicetcm.nibsplus.broker.msg.model.TCtPenaltyList;
 import com.nicetcm.nibsplus.broker.msg.model.TFnBoxOrg;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketDeal;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
@@ -400,4 +399,38 @@ public interface TMiscMapper {
         "AND member_nm = #{mbrNm, jdbcType=VARCHAR}                                        "
     })
     String getCmMemberYn(@Param("mbrIdNo") String mbrIdNo, @Param("mbrNm") String mbrNm);
+
+    /**
+     *
+     * 코너코드 삽입
+     * <pre>
+     *           [기업은행] 브랜드제휴 패널티적용명세
+     *            - 관리점코드와 코너(사이트)코드가 비어서 들어오므로,
+     *              데이터가 입력되기 전에 강제로 넣어준다.
+     * </pre>
+     *
+     * @param macNo
+     * @return
+     */
+    @Select({
+        "SELECT SITE.SITE_CD                             ",
+        "FROM    OP.T_CM_SITE SITE,                      ",
+        "        OP.T_CM_MAC  MAC                        ",
+        "WHERE   SITE.ORG_CD = MAC.ORG_CD                ",
+        "    AND SITE.JIJUM_CD = MAC.JIJUM_CD            ",
+        "    AND SITE.SITE_CD  = MAC.SITE_CD             ",
+        "    AND MAC.ORG_CD = '096'                      ",
+        "    AND MAC.JIJUM_CD = '9600'                   ",
+        "    ANd MAC.MAC_NO = #{macNo, jdbcType=VARCHAR} "
+    })
+    String getSiteCdOrg096(@Param("macNo") String macNo);
+
+    @Select({
+        "SELECT OP.SEQ_T_CT_PENALTY.NEXTVAL AS SEQ_NO",
+        "FROM DUAL"
+    })
+    @Results({
+        @Result(column="SEQ_NO", property="seqNo", jdbcType=JdbcType.VARCHAR)
+    })
+    TCtPenaltyList generateSeqPenaltyList();
 }
