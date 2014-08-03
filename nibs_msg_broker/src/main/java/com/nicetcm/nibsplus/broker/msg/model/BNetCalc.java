@@ -24,7 +24,13 @@ public class BNetCalc {
     private long   outCustFeeAmt = 0;
     private long   sameCustFeeAmt = 0;
     private long   diffCustFeeAmt = 0;
-
+    private int    afterCashCnt = 0;       
+    private long   afterCashAmt = 0;       
+    private int    afterCashCancelCnt = 0;
+    private long   afterCashCancelAmt = 0;
+    private int    afterSameCnt = 0;       
+    private long   afterSameAmt = 0;
+    
     public String getDealDate() {
         return dealDate;
     }
@@ -199,6 +205,54 @@ public class BNetCalc {
 
     public void setDiffCustFeeAmt(long diffCustFeeAmt) {
         this.diffCustFeeAmt = diffCustFeeAmt;
+    }
+
+    public int getAfterCashCnt() {
+        return afterCashCnt;
+    }
+
+    public void setAfterCashCnt(int afterCashCnt) {
+        this.afterCashCnt = afterCashCnt;
+    }
+
+    public long getAfterCashAmt() {
+        return afterCashAmt;
+    }
+
+    public void setAfterCashAmt(long afterCashAmt) {
+        this.afterCashAmt = afterCashAmt;
+    }
+
+    public int getAfterCashCancelCnt() {
+        return afterCashCancelCnt;
+    }
+
+    public void setAfterCashCancelCnt(int afterCashCancelCnt) {
+        this.afterCashCancelCnt = afterCashCancelCnt;
+    }
+
+    public long getAfterCashCancelAmt() {
+        return afterCashCancelAmt;
+    }
+
+    public void setAfterCashCancelAmt(long afterCashCancelAmt) {
+        this.afterCashCancelAmt = afterCashCancelAmt;
+    }
+
+    public int getAfterSameCnt() {
+        return afterSameCnt;
+    }
+
+    public void setAfterSameCnt(int afterSameCnt) {
+        this.afterSameCnt = afterSameCnt;
+    }
+
+    public long getAfterSameAmt() {
+        return afterSameAmt;
+    }
+
+    public void setAfterSameAmt(long afterSameAmt) {
+        this.afterSameAmt = afterSameAmt;
     }
 
 }
