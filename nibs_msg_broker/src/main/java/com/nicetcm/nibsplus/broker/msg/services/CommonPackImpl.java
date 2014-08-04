@@ -2116,9 +2116,9 @@ public class CommonPackImpl implements CommonPack {
         }
         else if( WorkType == MsgBrokerConst.DB_WORK_CANCEL ) {
             TCtMacSetMng record = new TCtMacSetMng();
-            record.setCancelDate   ( safeData.getSysDate()        );
-            record.setCancelType   ( "1"                          );
-            record.setOrgCancelMemo( MacSetMng.getOrgCancelMemo() );
+            record.setCancelDate   ( safeData.getSysDate()        ); // 취소 요청일           
+            record.setCancelType   ( "1"                          ); // 취소여부('1':Y, '0':N)
+            record.setOrgCancelMemo( MacSetMng.getOrgCancelMemo() ); // 기관 취소건 메모
             record.setSetStatus    ( "9000 "                      );
             record.setUpdateDate   ( safeData.getDSysDate()       );
             /*

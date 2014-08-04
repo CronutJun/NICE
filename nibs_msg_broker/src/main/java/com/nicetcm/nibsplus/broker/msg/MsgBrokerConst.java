@@ -553,9 +553,13 @@ public class MsgBrokerConst {
     public static final String CD_CALC_MAC_SUPERVISOR       = "40";  /* 정산기 슈퍼바이저장애  */
     public static final String CD_CALC_MAC_WATCH_ERR        = "41";  /* 정산기 금고침투 */
 
-    public static final int   DB_WORK_INSERT               = 100;
-    public static final int   DB_WORK_UPDATE               = 200;
-    public static final int   DB_WORK_CANCEL               = 300;
+    public static final int   DB_WORK_INSERT                = 100;
+    public static final int   DB_WORK_UPDATE                = 200;
+    public static final int   DB_WORK_CANCEL                = 300;
+
+    public static final String CD_NEW                       = "1";   /* 기기번호신설   */
+    public static final String CD_MOD                       = "2";   /* 관리업체변경   */
+    public static final String CD_DEL                       = "3";   /* 신규취소     */
 
     public enum  EnumOrgErrorState {
 
