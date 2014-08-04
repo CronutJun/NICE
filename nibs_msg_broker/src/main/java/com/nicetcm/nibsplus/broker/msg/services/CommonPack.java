@@ -25,6 +25,7 @@ public interface CommonPack {
     public void insertUpdateMacOpen( MsgBrokerData safeData, TMacInfo MacInfo, TCtErrorBasic ErrBasic ) throws Exception;
     public byte[] getCurrentErrorState( ErrorState ErrorState ) throws Exception;
     public void updateMacInfo( MsgBrokerData safeData, TMacInfo MacInfo, TCmMac Mac) throws Exception;
+    public void insertUpdateMacSet( MsgBrokerData safeData, int WorkType, TCtMacSetMng MacSetMng ) throws Exception;
     boolean getDupErrorMng(TCtErrorBasic ErrBasic, int CancelYN) throws Exception;
     int getOwnTradeSeqYN(TMisc tMisc);
     int getBoxRecvYN(TMisc tMisc);

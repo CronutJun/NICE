@@ -3,6 +3,7 @@ package com.nicetcm.nibsplus.broker.msg.mapper;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTran;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTranKey;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTranSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTranJoin;
 import com.nicetcm.nibsplus.broker.msg.model.BNetCalc;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 
@@ -404,4 +405,45 @@ public interface TFnNiceTranMapper {
         @Result(column="AFTER_SAME_AMT",        property="afterSameAmt",       jdbcType=JdbcType.DECIMAL)
     })
     BNetCalc selectBNetCalc(BNetCalc cond);
+
+    /**
+     * InN5000410Impl 에서 호출
+     *
+     * @author KDJ
+     * @since  Tue Aug 04 10:16:01 KST 2014
+     */
+    @Select({
+        "SELECT DECODE(NMC.JOIN_CD, #{orgCd, jdbcType=VARCHAR}, 'B', /*  브랜드기기  */ ",
+        "                                           'V') AS MAC_CL,  /*  제휴기기    */ ",
+        "       /* 기기구분(제휴/브랜드/결합부스) */                                    ",
+        "       OFC.TELE_NO AS TEL_NO,                               /* 관리전화번호 */ ",
+        "       SITE.SITE_NM,                                        /* 사이트명     */ ",
+        "       SITE.SET_ADDR                                        /* 사이트주소   */ ",
+        "FROM   T_FN_NICE_TRAN TRAN                                                     ",
+        "       LEFT JOIN T_CM_MAC MAC ON                                               ",
+        "            TRAN.MAC_NO    = MAC.MAC_NO                                        ",
+        "       LEFT JOIN T_CM_SITE SITE ON                                             ",
+        "            MAC.ORG_CD     = SITE.ORG_CD                                       ",
+        "       AND  MAC.JIJUM_CD   = SITE.JIJUM_CD                                     ",
+        "       AND  MAC.SITE_CD    = SITE.SITE_CD                                      ",
+        "       LEFT JOIN T_CM_OFFICE OFC ON                                            ",
+        "            SITE.DEPT_CD   = OFC.DEPT_CD                                       ",
+        "       AND  SITE.OFFICE_CD = OFC.OFFICE_CD                                     ",
+        "       LEFT OUTER JOIN T_CT_NICE_MAC NMC ON                                    ",
+        "            MAC.ORG_CD     = NMC.ORG_CD                                        ",
+        "       AND  MAC.JIJUM_CD   = NMC.JIJUM_CD                                      ",
+        "       AND  MAC.MAC_NO     = NMC.MAC_NO                                        ",
+        "WHERE  TRAN.DEAL_YEAR = #{dealYear, jdbcType=VARCHAR}                          ",
+        "AND    TRAN.DEAL_DATE = #{dealDate, jdbcType=VARCHAR}                          ",
+        "AND    TRAN.DEAL_NO   = #{dealNo, jdbcType=VARCHAR}                            ",
+        "AND    MAC.ORG_CD     = '096'                                                  "
+    })
+    @Results({
+        @Result(column="MAC_CL",             property="macCl",           jdbcType=JdbcType.VARCHAR),
+        @Result(column="TEL_NO",             property="telNo",           jdbcType=JdbcType.VARCHAR),
+        @Result(column="SITE_NM",            property="siteNm",          jdbcType=JdbcType.VARCHAR),
+        @Result(column="SET_ADDR",           property="setAddr",         jdbcType=JdbcType.VARCHAR)
+    })
+    TFnNiceTranJoin selectByJoin1(TFnNiceTranJoin cond);
+
 }

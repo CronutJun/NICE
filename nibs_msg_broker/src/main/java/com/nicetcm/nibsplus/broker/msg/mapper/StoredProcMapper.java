@@ -16,6 +16,12 @@ import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.IfCashInsertEmart
 public interface StoredProcMapper {
 
     @Select({
+        "CALL sp_if_SendSMS( #{telNo, mode=IN, jdbcType=VARCHAR}, #{sendMsg, mode=IN, jdbcType=VARCHAR} )"
+    })
+    @Options( statementType = StatementType.CALLABLE )
+    void sendSMS(TMisc cond);
+
+    @Select({
         "CALL sp_if_SendSMSMacInfo( #{orgCd, mode=IN, jdbcType=VARCHAR}, #{branchCd, mode=IN, jdbcType=VARCHAR},",
         "                         #{orgSiteCd, mode=INOUT, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}, 'EM')"
     })
@@ -28,7 +34,7 @@ public interface StoredProcMapper {
     })
     @Options( statementType = StatementType.CALLABLE )
     void spIfSendSMSTranCntMismatch( TMisc cond );
-    
+
     @Select({
         "CALL op.test_if( #{orgCd, jdbcType=VARCHAR, mode=IN}, #{branchCd, jdbcType=VARCHAR, mode=IN},",
         "                         #{orgSiteCd, jdbcType=VARCHAR, mode=IN}, 'EM', #{macNo, jdbcType=VARCHAR, mode=OUT})"

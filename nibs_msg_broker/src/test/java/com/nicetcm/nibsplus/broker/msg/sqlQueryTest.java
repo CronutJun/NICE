@@ -38,15 +38,16 @@ public class sqlQueryTest extends CmAllTestSuite {
 
         safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
         try {
-            BNetCalc cond = new BNetCalc();
-            cond.setOrgCd("0JL");
-            cond.setMacNo("NICE");
-            cond.setDealDate("20140711");
-            BNetCalc rslt = fnNiceTranMap.selectBNetCalc(cond);
-            if( rslt.getDealDate().equals("ERROR")) {
-                logger.debug("DealDate = {}",rslt.getDealDate());
-                logger.debug("CashCnt = {}", rslt.getCashCnt());
-            }
+            TFnNiceTranSpec spec = new TFnNiceTranSpec();
+            TFnNiceTranSpec.Criteria cri = spec.createCriteria();
+
+            cri.andAccountNoEqualTo("123")
+               .andOfficeCdEqualTo("365");
+            spec.or().andAdmisOrgEqualTo("3");
+            spec.or().andAtmDealNoEqualTo("b");
+            logger.debug("cri getCriteria() size = {}", cri.getAllCriteria().size());
+            TFnNiceTranSqlProvider a = new TFnNiceTranSqlProvider();
+            logger.debug(a.selectBySpec(spec));
             msgTX.commit(safeData.getTXS());
         }
         catch( Exception e ) {

@@ -12,6 +12,7 @@ import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtPenaltyListMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCtPenaltyList;
+import com.nicetcm.nibsplus.broker.msg.model.TCtPenaltyListSpec;
 
 /**
  *
@@ -135,35 +136,57 @@ public class In04000220Impl extends InMsgHandlerImpl {
 
                             tCtPenaltyList.setSiteCd        (parsed.getString("site_cd"));
                             tCtPenaltyList.setSiteNm        (parsed.getString("site_nm"));
-                            tCtPenaltyList.setCreateDate    (parsed.getString("create_date"));
-                            tCtPenaltyList.setCreateTime    (parsed.getString("create_time"));
-                            tCtPenaltyList.setCallDate      (parsed.getString("call_date").equals("") ? parsed.getString("create_date") : parsed.getString("call_date"));
-                            tCtPenaltyList.setCallTime      (parsed.getString("call_time").equals("") ? parsed.getString("create_time") : parsed.getString("call_time"));
+
+
                             tCtPenaltyList.setArrivalDate   (parsed.getString("arrival_date"));
                             tCtPenaltyList.setArrivalTime   (parsed.getString("arrival_time"));
                             tCtPenaltyList.setRepairDate    (parsed.getString("repair_date"));
                             tCtPenaltyList.setRepairTime    (parsed.getString("repair_time"));
-                            tCtPenaltyList.setMacModel      (parsed.getString("mac_model"));
-                            tCtPenaltyList.setMemo          (parsed.getString("memo"));
                             tCtPenaltyList.setPenaltyAmt    (parsed.getLong("penalty_amt"));
+
                             tCtPenaltyList.setPenaltyYn     ("");
-                            tCtPenaltyList.setPenaltyReason (null);
-                            tCtPenaltyList.setUpdateUid     ("ETCmng");
-                            tCtPenaltyList.setUpdateDate    (safeData.getDSysDate());
-                            tCtPenaltyList.setOrgSendYn     ("0");
+                            tCtPenaltyList.setPenaltyReason ("");
                             tCtPenaltyList.setTransDate     (null);
-                            tCtPenaltyList.setOrgMsgNo      (parsed.getString("org_msg_no"));
-                            tCtPenaltyList.setOrgCallCnt    (parsed.getString("org_call_cnt"));
-                            tCtPenaltyList.setOrgCallClass  (parsed.getString("org_call_class"));
-                            tCtPenaltyList.setRepairElapse  (parsed.getString("repair_elapse").trim());
-                            tCtPenaltyList.setBrandOrgCd    (parsed.getString("CM.org_cd"));
-                            tCtPenaltyList.setPenaltyCd     (parsed.getString("penalty_cd").trim());
                             tCtPenaltyList.setGroupErrorCd  (parsed.getString("group_error_cd"));
                             tCtPenaltyList.setStdErrorCd    (parsed.getString("std_error_cd"));
                             tCtPenaltyList.setErrorCd       (parsed.getString("error_cd"));
+                            tCtPenaltyList.setMacModel      (parsed.getString("mac_model"));
+                            tCtPenaltyList.setMemo          (parsed.getString("memo"));
+                            tCtPenaltyList.setUpdateUid     ("ETCmng");
+                            tCtPenaltyList.setUpdateDate    (safeData.getDSysDate());
+                            tCtPenaltyList.setOrgSendYn     ("0");
+                            tCtPenaltyList.setRepairElapse  (parsed.getString("repair_elapse").trim());
+                            tCtPenaltyList.setBrandOrgCd    (parsed.getString("CM.org_cd"));
+                            tCtPenaltyList.setPenaltyCd     (parsed.getString("penalty_cd").trim());
                             tCtPenaltyList.setExceptCd      (parsed.getString("except_cd"));
 
+                            TCtPenaltyListSpec tCtPenaltyListSpec = new TCtPenaltyListSpec();
+                            tCtPenaltyListSpec.createCriteria()
+                            .andOrgCdEqualTo("096")
+                            .andBranchCdEqualTo("9600")
+                            .andMacNoEqualTo(parsed.getString("mac_no"))
+                            .andCreateDateEqualTo(parsed.getString("create_date"))
+                            .andCreateTimeEqualTo(parsed.getString("create_time"))
+                            .andErrorCdEqualTo(parsed.getString("error_cd"));
+
+
+                            try
+                            {
+                                tCtPenaltyListMapper.updateBySpecSelective(tCtPenaltyList, tCtPenaltyListSpec);
+                            } catch (Exception e)
+                            {
+                                logger.info("[T_CT_PENALTY_LIST] 1차 명세통보 Update Error(브랜드) [{}]", e.getMessage());
+                                throw e;
+                            }
+
+
+
                         }
+
+                        logger.info( String.format("[T_CT_PENALTY_LIST] 1차 명세통보 Insert/Update 완료(브랜드) BRAND_ORG_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
+                                        parsed.getString("CM.org_cd"), parsed.getString("mac_no"), parsed.getString("create_date"), parsed.getString("create_time"))  );
+                    } else if(parsed.getString("notice_type").equals("2")) {
+                        /* 2차 명세통보(최종) */
                     }
 
 

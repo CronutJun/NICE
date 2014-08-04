@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.type.JdbcType;
 
+import com.nicetcm.nibsplus.broker.msg.model.TCmGoodsApply;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.TCtPenaltyList;
 import com.nicetcm.nibsplus.broker.msg.model.TFnBoxOrg;
@@ -433,4 +434,15 @@ public interface TMiscMapper {
         @Result(column="SEQ_NO", property="seqNo", jdbcType=JdbcType.VARCHAR)
     })
     TCtPenaltyList generateSeqPenaltyList();
+
+    @Update({
+        "UPDATE OP.T_CM_GOODS_APPLY                              ",
+        "SET     ORG_SEND_YN = '1'                               ",
+        "WHERE   APPLY_DATE = #{applyDate, jdbcType=VARCHAR}     ",
+        "    AND ORG_CD     = #{orgCd, jdbcType=VARCHAR}         ",
+        "    AND branch_cd  = #{branchCd, jdbcType=VARCHAR}      ",
+        "    AND GOOD_CD    = #{goodCd, jdbcType=VARCHAR}        ",
+        "    AND ( ORG_SEND_YN = '0' or ORG_SEND_YN IS NULL )    "
+    })
+    void updateCmGoodsApply(TCmGoodsApply tCmGoodsApply);
 }

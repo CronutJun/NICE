@@ -68,10 +68,12 @@ public class TMisc {
     private String madeComCd;
 
     private String madeOrgCd;
-    
+
     private String sendMsg;
-    
+
     private float sendMode;
+
+    private String telNo;
 
     public String getHoliday() {
         return holiday;
@@ -479,6 +481,14 @@ public class TMisc {
 
     public void setSendMode(float sendMode) {
         this.sendMode = sendMode;
+    }
+
+    public String getTelNo() {
+        return telNo;
+    }
+
+    public void setTelNo(String telNo) {
+        this.telNo = telNo;
     }
 
 

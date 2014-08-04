@@ -48,20 +48,20 @@ public class InN5000300Impl extends InMsgHandlerImpl {
                 rslt = new BNetCalc();
             }
             else if( rslt.getDealDate().equals("ERROR") ) {
-                throw new MsgBrokerException("Error Fired..", rslt.getCashCnt() );
+                throw new MsgBrokerException("Error raised..", rslt.getCashCnt() );
             }
         }
         catch( Exception e ) {
             throw e;
         }
-        parsed.setInt ( "cash_cnt",              rslt.getCashCnt()            ); 
-        parsed.setLong( "cash_amt",              rslt.getCashAmt()            ); 
+        parsed.setInt ( "cash_cnt",              rslt.getCashCnt()            );
+        parsed.setLong( "cash_amt",              rslt.getCashAmt()            );
         parsed.setInt ( "cash_cancel_cnt",       rslt.getCashCancelCnt()      );
         parsed.setLong( "cash_cancel_amt",       rslt.getCashCancelAmt()      );
-        parsed.setInt ( "same_cnt",              rslt.getSameCnt()            ); 
-        parsed.setLong( "same_amt",              rslt.getSameAmt()            ); 
-        parsed.setInt ( "diff_cnt",              rslt.getDiffCnt()            ); 
-        parsed.setLong( "diff_amt",              rslt.getDiffAmt()            ); 
+        parsed.setInt ( "same_cnt",              rslt.getSameCnt()            );
+        parsed.setLong( "same_amt",              rslt.getSameAmt()            );
+        parsed.setInt ( "diff_cnt",              rslt.getDiffCnt()            );
+        parsed.setLong( "diff_amt",              rslt.getDiffAmt()            );
         parsed.setInt ( "cash_svc_cnt",          rslt.getCashSvcCnt()         );
         parsed.setLong( "cash_svc_amt",          rslt.getCashSvcAmt()         );
         parsed.setInt ( "cash_in_cnt",           rslt.getCashInCnt()          );
@@ -77,5 +77,6 @@ public class InN5000300Impl extends InMsgHandlerImpl {
         parsed.setInt ( "after_cash_cancel_cnt", rslt.getAfterCashCancelCnt() );
         parsed.setLong( "after_cash_cancel_amt", rslt.getAfterCashCancelAmt() );
         parsed.setInt ( "after_same_cnt",        rslt.getAfterSameCnt()       );
-        parsed.setLong( "after_same_amt",        rslt.getAfterSameAmt()       );    }
+        parsed.setLong( "after_same_amt",        rslt.getAfterSameAmt()       );
+    }
 }

@@ -10,9 +10,8 @@
     <javaModelGenerator targetPackage="com.nicetcm.nibsplus.broker.msg.model" targetProject="nibs_msg_broker" />
     <sqlMapGenerator targetPackage="com.nicetcm.nibsplus.broker.msg.mapper" targetProject="nibs_msg_broker" />
     <javaClientGenerator targetPackage="com.nicetcm.nibsplus.broker.msg.mapper" targetProject="nibs_msg_broker" type="ANNOTATEDMAPPER" />
-    <table schema="op" tableName="T_FN_STOREKEEPER_DAY_CLOSE" >
+    <table schema="op" tableName="T_CT_MAC_SET_MNG" >
       <!-- <columnOverride column="as_seq" property="AsSeq" /> -->
     </table>
-    <table schema="op" tableName="T_CT_STOREKEEPER_CASH_FAULT" ></table>
   </context>
 </generatorConfiguration>

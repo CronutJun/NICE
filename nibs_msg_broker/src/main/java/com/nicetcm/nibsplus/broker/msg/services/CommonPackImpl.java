@@ -54,6 +54,7 @@ public class CommonPackImpl implements CommonPack {
     @Autowired private TCtErrorNotiMapper  errNotiMap;
     @Autowired private TCtErrorCallMapper  errCallMap;
     @Autowired private TCtErrorTxnMapper   errTxnMap;
+    @Autowired private TCtMacSetMngMapper  macSetMngMap;
 
     @Autowired private TCtNiceMacMapper    niceMacMap;
 
@@ -82,6 +83,7 @@ public class CommonPackImpl implements CommonPack {
             TCmCommonSpec spec = new TCmCommonSpec();
             spec.createCriteria().andLargeCdEqualTo("1501")
                                  .andSmallCdLike(MacInfo.getOrgCd() + "%");
+
             List<TCmCommon> rslt = cmMap.selectBySpec(spec);
             logger.debug("Result length = {}", rslt.size());
             if( rslt.size() == 0 ) {
@@ -2077,5 +2079,66 @@ public class CommonPackImpl implements CommonPack {
         return 0;
     }
 
+    /**
+     * 설치관리전문 의 DB 처리
+     *
+     * @author KDJ originated by 홍민표
+     * @since 2004/03/08
+     * @param safeData   비지니스 공유정보
+     * @param Worktype   작업유형
+     * @param MacSetMng  기기설치 정보
+     * @throws Exception
+     */
+    public void insertUpdateMacSet( MsgBrokerData safeData, int WorkType, TCtMacSetMng MacSetMng ) throws Exception {
 
+        if( WorkType == MsgBrokerConst.DB_WORK_INSERT ) {
+            MacSetMng.setUpdateDate( safeData.getDSysDate() );
+            try {
+                macSetMngMap.insert( MacSetMng );
+            }
+            catch( org.springframework.dao.DataIntegrityViolationException de ) {
+                logger.info("...중복요청건...");
+            }
+            catch( Exception e ) {
+                logger.info( ">>> [DBInsertUpdateMacSet] (T_CT_MAC_SET_MNG) INSERT ERROR [{}]", e.getLocalizedMessage() );
+                throw e;
+            }
+        }
+        else if( WorkType == MsgBrokerConst.DB_WORK_UPDATE ) {
+            try {
+                macSetMngMap.updateByPrimaryKey( MacSetMng );
+            }
+            catch( Exception e ) {
+                logger.info( ">>> [DBInsertUpdateMacSet] (T_CT_MAC_SET_MNG) UPDATE ERROR [{}]", e.getLocalizedMessage() );
+                throw e;
+            }
+
+        }
+        else if( WorkType == MsgBrokerConst.DB_WORK_CANCEL ) {
+            TCtMacSetMng record = new TCtMacSetMng();
+            record.setCancelDate   ( safeData.getSysDate()        );
+            record.setCancelType   ( "1"                          );
+            record.setOrgCancelMemo( MacSetMng.getOrgCancelMemo() );
+            record.setSetStatus    ( "9000 "                      );
+            record.setUpdateDate   ( safeData.getDSysDate()       );
+            /*
+             * Key
+             */
+            record.setOrgCd   ( MacSetMng.getOrgCd()    );
+            record.setBranchCd( MacSetMng.getBranchCd() );
+            record.setSiteCd  ( MacSetMng.getSiteCd()   );
+            record.setMacNo   ( MacSetMng.getMacNo()    );
+            record.setSetType ( MacSetMng.getSetType()  );
+            record.setSetDate ( MacSetMng.getSetDate()  );
+            record.setSetTime ( MacSetMng.getSetTime()  );
+            try {
+                macSetMngMap.updateByPrimaryKey( record );
+            }
+            catch( Exception e ) {
+                logger.info( ">>> [DBInsertUpdateMacSet] (T_CT_MAC_SET_MNG) CANCEL ERROR [{}]", e.getLocalizedMessage() );
+                throw e;
+            }
+
+        }
+    }
 }
