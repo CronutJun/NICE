@@ -40,29 +40,30 @@ public class CommonPackImpl implements CommonPack {
 
     @Autowired protected DataSourceTransactionManager msgTX;
 
-    @Autowired private TCmCommonMapper     cmMap;
-    @Autowired private TCmMacMapper        cmMacMap;
-    @Autowired private TCmMacNoMapper      cmMacNoMap;
-    @Autowired private TCmSiteMapper       cmSiteMap;
-    @Autowired private TCmSite01Mapper     cmSite01Map;
-    @Autowired private TCmMemberMapper     cmMemberMap;
+    @Autowired private TCmCommonMapper         cmMap;
+    @Autowired private TCmMacMapper            cmMacMap;
+    @Autowired private TCmMacNoMapper          cmMacNoMap;
+    @Autowired private TCmSiteMapper           cmSiteMap;
+    @Autowired private TCmSite01Mapper         cmSite01Map;
+    @Autowired private TCmMemberMapper         cmMemberMap;
 
-    @Autowired private TCtOpenMapper       openMap;
-    @Autowired private TCtErrorMapper      errMap;
-    @Autowired private TCtErrorBasicMapper errBasicMap;
-    @Autowired private TCtErrorRcptMapper  errRcptMap;
-    @Autowired private TCtErrorNotiMapper  errNotiMap;
-    @Autowired private TCtErrorCallMapper  errCallMap;
-    @Autowired private TCtErrorTxnMapper   errTxnMap;
-    @Autowired private TCtMacSetMngMapper  macSetMngMap;
+    @Autowired private TCtOpenMapper           openMap;
+    @Autowired private TCtErrorMapper          errMap;
+    @Autowired private TCtErrorBasicMapper     errBasicMap;
+    @Autowired private TCtErrorRcptMapper      errRcptMap;
+    @Autowired private TCtErrorNotiMapper      errNotiMap;
+    @Autowired private TCtErrorCallMapper      errCallMap;
+    @Autowired private TCtErrorTxnMapper       errTxnMap;
+    @Autowired private TCtMacSetMngMapper      macSetMngMap;
+    @Autowired private TCtOrgSiteChangeMapper  orgSiteChangeMap;
 
-    @Autowired private TCtNiceMacMapper    niceMacMap;
+    @Autowired private TCtNiceMacMapper        niceMacMap;
 
-    @Autowired private TCtUnfinishMapper   unfinishMap;
+    @Autowired private TCtUnfinishMapper       unfinishMap;
 
-    @Autowired private TFnSendReportMapper fnSRptMap;
+    @Autowired private TFnSendReportMapper     fnSRptMap;
 
-    @Autowired private TMiscMapper miscMap;
+    @Autowired private TMiscMapper             miscMap;
 
     /**
      *
@@ -2116,7 +2117,7 @@ public class CommonPackImpl implements CommonPack {
         }
         else if( WorkType == MsgBrokerConst.DB_WORK_CANCEL ) {
             TCtMacSetMng record = new TCtMacSetMng();
-            record.setCancelDate   ( safeData.getSysDate()        ); // 취소 요청일           
+            record.setCancelDate   ( safeData.getSysDate()        ); // 취소 요청일
             record.setCancelType   ( "1"                          ); // 취소여부('1':Y, '0':N)
             record.setOrgCancelMemo( MacSetMng.getOrgCancelMemo() ); // 기관 취소건 메모
             record.setSetStatus    ( "9000 "                      );
@@ -2141,4 +2142,29 @@ public class CommonPackImpl implements CommonPack {
 
         }
     }
+
+    /**
+     *
+     * 설치관리전문 의 DB 처리
+     *
+     * @author KDJ originated by 홍민표
+     * @since 2004/03/08
+     * @param safeData   비지니스 공유정보
+     * @param OrgSiteChange  기기설치 정보
+     * @throws Exception
+     */
+    public void insertOrgSigeChnage( MsgBrokerData safeData, TCtOrgSiteChange OrgSiteChange ) throws Exception {
+        try {
+            orgSiteChangeMap.insert( OrgSiteChange );
+        }
+        catch( org.springframework.dao.DataIntegrityViolationException de ) {
+            logger.info("[T_CT_ORG_SITE_CHANGE]...중복요청건...");
+            throw de;
+        }
+        catch( Exception e ) {
+            logger.info( ">>> [DBInsertOrgSigeChnage] (T_CT_ORG_SITE_CHANGE) INSERT ERROR [{}]", e.getLocalizedMessage() );
+            throw e;
+        }
+    }
+
 }
