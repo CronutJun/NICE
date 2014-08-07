@@ -34,6 +34,7 @@ public class MsgBrokerLibTest
         System.out.println("to : " + fdt.format(date2));
     }
 
+    @Ignore("skip")
     @Test
     public void decode() throws Exception {
 
@@ -42,5 +43,11 @@ public class MsgBrokerLibTest
         System.out.println(MsgBrokerLib.decode("C", "A", 1, "B", 2, "C", 3, 4));
         System.out.println(MsgBrokerLib.decode("D", "A", 1, "B", 2, "C", 3, 4));
         System.out.println(MsgBrokerLib.decode("E", "A", 1, "B", 2, "C", 3));
+    }
+
+    @Test
+    public void test() {
+        logger.info( "...해당 장애 없음 trans_date[{}] org_msg_no[{}]", "1", "2");
+        logger.info("010-6601_8989".replaceAll("_", ""));
     }
 }

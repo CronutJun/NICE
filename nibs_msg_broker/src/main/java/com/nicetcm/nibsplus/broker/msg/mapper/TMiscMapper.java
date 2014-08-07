@@ -9,6 +9,7 @@ import org.apache.ibatis.type.JdbcType;
 
 import com.nicetcm.nibsplus.broker.msg.model.TCmGoodsApply;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngMadeCom;
 import com.nicetcm.nibsplus.broker.msg.model.TCtPenaltyList;
 import com.nicetcm.nibsplus.broker.msg.model.TFnBoxOrg;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketDeal;
@@ -445,4 +446,37 @@ public interface TMiscMapper {
         "    AND ( ORG_SEND_YN = '0' or ORG_SEND_YN IS NULL )    "
     })
     void updateCmGoodsApply(TCmGoodsApply tCmGoodsApply);
+
+    @Select({
+        "select Round(( To_Date(#{yyyymmddhh24miss1, jdbcType=VARCHAR}, 'yyyymmddhh24miss') - To_Date(#{yyyymmddhh24miss2, jdbcType=VARCHAR}, 'yyyymmddhh24miss') )*60*60*24) elapse_time ",
+        "from dual                                                                                                                                                            "
+    })
+    String getElapseTime(@Param("yyyymmddhh24miss1") String yyyymmddhh24miss1, @Param("yyyymmddhh24miss2") String yyyymmddhh24miss2);
+
+    @Update({
+        "update OP.T_CT_ERROR_MNG_MADE_COM                                                                                                                  ",
+        "set     ARRIVAL_EST_DATE = rtrim(#{arrivalEstDate, jdbcType=VARCHAR}),                                                                             ",
+        "        ARRIVAL_EST_TIME = SUBSTR(rtrim(#{arrivalEstTime, jdbcType=VARCHAR}), 1, 4),                                                               ",
+        "        COM_MAN_NM = DECODE(#{comManNm, jdbcType=VARCHAR}, NULL, COM_MAN_NM, #{comManNm, jdbcType=VARCHAR}),                                       ",
+        "        COM_MAN_TEL_NO = DECODE(#{comManTelNo, jdbcType=VARCHAR}, NULL, COM_MAN_TEL_NO, OP.FC_FN_SECURITY(#{comManTelNo, jdbcType=VARCHAR}, '1')), ",
+        "        UPDATE_DATE = SYSDATE,                                                                                                                     ",
+        "        UPDATE_UID  = 'ERRmng'                                                                                                                     ",
+        "WHERE   AS_ACPT_date = #{asAcptDate, jdbcType=VARCHAR}                                                                                             ",
+        "  AND   ORG_CD = #{orgCd, jdbcType=VARCHAR}                                                                                                        ",
+        "  AND   BRANCH_CD = #{branchCd, jdbcType=VARCHAR}                                                                                                  ",
+        "  AND   MAC_NO = #{macNo, jdbcType=VARCHAR}                                                                                                        ",
+        "  AND   ORG_CALL_CNT = #{orgCallCnt, jdbcType=VARCHAR}                                                                                             "
+    })
+    void updateCtErrorMngMadeCom(TCtErrorMngMadeCom tCtErrorMngMadeCom);
+
+    @Select({
+        "SELECT  CO1.CD_NM1 as arrival_nm                                               ",
+        "FROM    OP.T_CT_ERROR_MNG MNG,                                                 ",
+        "        OP.T_CM_COMMON     CO1                                                 ",
+        "where   MNG.CREATE_DATE = TO_NUMBER(rtrim(#{createDate, jdbcType=VARCHAR}))    ",
+        "and     MNG.ERROR_NO    = rtrim(#{errorNo, jdbcType=VARCHAR})                  ",
+        "and     CO1.large_cd = '2301'                                                  ",
+        "and     CO1.small_cd = MNG.recv_place                                          "
+    })
+    String getArrivalNm(@Param("createDate") String createDate, @Param("errorNo") String errorNo);
 }

@@ -1,5 +1,7 @@
 package com.nicetcm.nibsplus.broker.msg.services;
 
+import java.lang.reflect.InvocationTargetException;
+
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.model.*;
@@ -31,5 +33,6 @@ public interface CommonPack {
     int getOwnTradeSeqYN(TMisc tMisc);
     int getBoxRecvYN(TMisc tMisc);
     int getTicketDealRecvYN(TMisc tMisc);
+    int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMngSpec tCtErrorMngSpec) throws IllegalAccessException, InvocationTargetException;
 
 }

@@ -128,6 +128,7 @@ public class TMiscMapperTest extends MapperTestSuite
 
     @Test
     public void test() {
-
+        CmCash cmCash = new CmCash();
+        tMiscMapper.selectCountCmCash(cmCash);
     }
 }
