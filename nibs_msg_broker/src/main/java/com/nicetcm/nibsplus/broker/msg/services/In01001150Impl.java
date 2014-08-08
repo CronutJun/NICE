@@ -237,12 +237,12 @@ public class In01001150Impl extends InMsgHandlerImpl {
                 tCtErrorMng2.setRecvUserNm     (parsed.getString("arrival_nm"));
                 tCtErrorMng2.setRecvUserUid    (parsed.getString("office_nm").equals("") ? "9999999" : parsed.getString("office_nm"));
                 tCtErrorMng2.setRecvTeleNo     (parsed.getString("arrival_tel_no"));
-                tCtErrorMng2.setSendStatus     (parsed.getString("2"));
-                tCtErrorMng2.setSendSmsStatus  (parsed.getString("6040"));
-                tCtErrorMng2.setWorkStatus     (parsed.getString("6050"));
+                tCtErrorMng2.setSendStatus     ("2");
+                tCtErrorMng2.setSendSmsStatus  ("6040");
+                tCtErrorMng2.setWorkStatus     ("6050");
                 tCtErrorMng2.setUpdateDate     (safeData.getDSysDate());
-                tCtErrorMng2.setUpdateUid      (parsed.getString("ERRmng"));
-                tCtErrorMng2.setOrgSendYn      (parsed.getString("0"));
+                tCtErrorMng2.setUpdateUid      ("ERRmng");
+                tCtErrorMng2.setOrgSendYn      ("0");
 
                 TCtErrorMngSpec tCtErrorMngSpec2 = new TCtErrorMngSpec();
                 tCtErrorMngSpec2.createCriteria()

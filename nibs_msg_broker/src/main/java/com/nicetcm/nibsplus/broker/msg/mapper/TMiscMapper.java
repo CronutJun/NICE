@@ -469,6 +469,22 @@ public interface TMiscMapper {
     })
     void updateCtErrorMngMadeCom(TCtErrorMngMadeCom tCtErrorMngMadeCom);
 
+    @Update({
+        "update OP.T_CT_ERROR_MNG_MADE_COM                                                                                                                  ",
+        "set     ARRIVAL_DATE = #{arrivalDate, jdbcType=VARCHAR},                                                                             ",
+        "        ARRIVAL_TIME = #{arrivalTime, jdbcType=VARCHAR},                                                               ",
+        "        COM_MAN_NM = DECODE(#{comManNm, jdbcType=VARCHAR}, NULL, COM_MAN_NM, #{comManNm, jdbcType=VARCHAR}),                                       ",
+        "        COM_MAN_TEL_NO = DECODE(#{comManTelNo, jdbcType=VARCHAR}, NULL, COM_MAN_TEL_NO, OP.FC_FN_SECURITY(#{comManTelNo, jdbcType=VARCHAR}, '1')), ",
+        "        UPDATE_DATE = SYSDATE,                                                                                                                     ",
+        "        UPDATE_UID  = 'ERRmng'                                                                                                                     ",
+        "WHERE   AS_ACPT_date = #{asAcptDate, jdbcType=VARCHAR}                                                                                             ",
+        "  AND   ORG_CD = #{orgCd, jdbcType=VARCHAR}                                                                                                        ",
+        "  AND   BRANCH_CD = #{branchCd, jdbcType=VARCHAR}                                                                                                  ",
+        "  AND   MAC_NO = #{macNo, jdbcType=VARCHAR}                                                                                                        ",
+        "  AND   ORG_CALL_CNT = #{orgCallCnt, jdbcType=VARCHAR}                                                                                             "
+    })
+    void updateCtErrorMngMadeCom2(TCtErrorMngMadeCom tCtErrorMngMadeCom);
+
     @Select({
         "SELECT  CO1.CD_NM1 as arrival_nm                                               ",
         "FROM    OP.T_CT_ERROR_MNG MNG,                                                 ",

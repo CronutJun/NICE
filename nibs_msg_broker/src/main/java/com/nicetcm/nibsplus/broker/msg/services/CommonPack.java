@@ -34,5 +34,7 @@ public interface CommonPack {
     int getBoxRecvYN(TMisc tMisc);
     int getTicketDealRecvYN(TMisc tMisc);
     int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMngSpec tCtErrorMngSpec) throws IllegalAccessException, InvocationTargetException;
+    String parseErrorMsg(String errorMsg, int pos);
+
 
 }

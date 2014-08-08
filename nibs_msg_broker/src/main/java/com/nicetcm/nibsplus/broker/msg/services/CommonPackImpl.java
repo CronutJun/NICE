@@ -2299,7 +2299,10 @@ public class CommonPackImpl implements CommonPack {
                     }
 
                     logger.info(">>>>>> TOTAL Updated Table Count: {}", updatedTableCnt);
-                    returnValue++;
+
+                    if(updatedTableCnt > 0) {
+                        returnValue++;
+                    }
                 }
             }
 
@@ -2345,4 +2348,27 @@ public class CommonPackImpl implements CommonPack {
         return false;
     }
 
+    /**
+     *
+     * 전문 errorMsg 에 대해 개별항목값을 리턴
+     * <pre>
+     * AS-IS
+     * char   error_msg       [80 +1]; 의 한필드에 복합적인 값들을 pos에 의해 parse함
+     * </pre>
+     *
+     * @param errorMsg 전문메세지
+     * @param pos 위치
+     * @return
+     */
+    @Override
+    public String parseErrorMsg( String errorMsg, int pos ) {
+        String parsedValue = "";
+
+        if(pos == 15) {
+            //org_call_cnt
+            parsedValue = errorMsg.substring(15, 17);
+        }
+
+        return parsedValue;
+    }
 }

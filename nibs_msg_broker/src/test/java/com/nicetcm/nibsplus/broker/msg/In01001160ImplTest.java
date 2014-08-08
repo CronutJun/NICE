@@ -33,6 +33,11 @@ public class In01001160ImplTest extends CmAllTestSuite
 
 
         //inMsgHandler.inMsgHandle(new MsgBrokerData(), getMsgParser(testMsg));
+
+        //"        a "
+        logger.info("org_call_cnt:{}", msgParser.getString("error_msg").substring(15, 17));
+
+
     }
 
 
