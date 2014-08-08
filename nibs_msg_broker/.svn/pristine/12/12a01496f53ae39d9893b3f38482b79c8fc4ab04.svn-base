@@ -1,0 +1,26 @@
+{
+   "name" : "04001140",                    "kname" : "기기점검결과",
+   "response" : { "code" : "04001140",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "serial_no",              "kname" : "연번",                   "type" : "AN",  "length"  : 5   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "service_cd",             "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "site_cd",                "kname" : "코너코드",               "type" : "AN",  "length"  : 6   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "mac_model",              "kname" : "기종",                   "type" : "AN",  "length"  : 4   },
+      { "name" : "chk_com_cd",             "kname" : "점검업체",               "type" : "AN",  "length"  : 1   },
+      { "name" : "chk_nm",                 "kname" : "점검자명",               "type" : "AN",  "length"  : 10  },
+      { "name" : "cfrm_nm",                "kname" : "검수자명",               "type" : "AN",  "length"  : 10  },
+      { "name" : "cfrm_com_cd",            "kname" : "검수업체",               "type" : "AN",  "length"  : 1   },
+      { "name" : "check_type",             "kname" : "점검구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "check_date",             "kname" : "점검일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "check_start_time",       "kname" : "점검시작시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "check_end_time",         "kname" : "점검종료시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "check_result",           "kname" : "점검조치내용",           "type" : "AN",  "length"  : 100 },
+      { "name" : "message",                "kname" : "검수의견",               "type" : "AN",  "length"  : 100 },
+      { "name" : "nice_site_cd",           "kname" : "나이스 사이트코드",      "type" : "AN",  "length"  : 4   },
+      { "name" : "cfrm_uid",               "kname" : "검수자 사번",            "type" : "AN",  "length"  : 7   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 125 }
+   ]
+}

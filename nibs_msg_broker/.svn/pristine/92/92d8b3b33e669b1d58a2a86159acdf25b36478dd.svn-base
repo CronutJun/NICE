@@ -1,0 +1,30 @@
+{
+   "name" : "02000111",                    "kname" : "신규기기정보",
+   "response" : { "code" : "02000111",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "req_date",               "kname" : "설치요청일",             "type" : "N",   "length"  : 8   },
+      { "name" : "brch_cd",                "kname" : "지점코드",               "type" : "AN",  "length"  : 8   },
+      { "name" : "place_type",             "kname" : "장소구분코드",           "type" : "AN",  "length"  : 4   },
+      { "name" : "brch_mng_nm",            "kname" : "영업담당자성명",         "type" : "AN",  "length"  : 10  },
+      { "name" : "brch_mng_tel",           "kname" : "영업담당자전화",         "type" : "AN",  "length"  : 20  },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 40  },
+      { "name" : "distance",               "kname" : "지점과의 거리",          "type" : "AN",  "length"  : 5   },
+      { "name" : "set_place",              "kname" : "설치장소",               "type" : "AN",  "length"  : 60  },
+      { "name" : "set_addr",               "kname" : "설치주소",               "type" : "AN",  "length"  : 60  },
+      { "name" : "optr_nm",                "kname" : "실사협의자성명",         "type" : "AN",  "length"  : 10  },
+      { "name" : "optr_tel",               "kname" : "실사협의자전화",         "type" : "AN",  "length"  : 20  },
+      { "name" : "booth_type",             "kname" : "부스형태",               "type" : "AN",  "length"  : 4   },
+      { "name" : "atm_cnt",                "kname" : "ATM기기수",              "type" : "AN",  "length"  : 2   },
+      { "name" : "cd_cnt",                 "kname" : "CD기 설치수",            "type" : "AN",  "length"  : 2   },
+      { "name" : "oper_start_time",        "kname" : "운영 시간 (from)",       "type" : "AN",  "length"  : 4   },
+      { "name" : "oper_end_time",          "kname" : "운영 시간 (to)",         "type" : "AN",  "length"  : 4   },
+      { "name" : "elec_fee_type",          "kname" : "전기료타입",             "type" : "AN",  "length"  : 1   },
+      { "name" : "deposit_amt",            "kname" : "보증금",                 "type" : "N",   "length"  : 10  },
+      { "name" : "rent_fee",               "kname" : "월임자료",               "type" : "N",   "length"  : 10  },
+      { "name" : "mng_fee",                "kname" : "월관리비",               "type" : "N",   "length"  : 10  },
+      { "name" : "set_rsn_cd",             "kname" : "설치사유코드",           "type" : "AN",  "length"  : 20  },
+      { "name" : "memo",                   "kname" : "신청 의견",              "type" : "AN",  "length"  : 100 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 10  }
+   ]
+}

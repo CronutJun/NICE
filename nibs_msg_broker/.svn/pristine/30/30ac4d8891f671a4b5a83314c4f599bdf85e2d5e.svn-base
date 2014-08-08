@@ -1,0 +1,28 @@
+{
+   "name" : "N4001600",                    "kname" : "NICE 기기정보 Service",
+   "response" : { "code" : "N4001600",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "mac_no",                 "kname" : "기기ID",                 "type" : "AN",  "length"  : 12  },
+      { "name" : "job_type",               "kname" : "업무구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "line_open_yn",           "kname" : "회선개/폐여부",          "type" : "AN",  "length"  : 1   },
+      { "name" : "fault_yn",               "kname" : "일시장애/해제",          "type" : "AN",  "length"  : 1   },
+      { "name" : "line_type",              "kname" : "회선종류",               "type" : "AN",  "length"  : 1   },
+      { "name" : "svc_status",             "kname" : "서비스상태",             "type" : "AN",  "length"  : 1   },
+      { "name" : "src_yn",                 "kname" : "예금인출잔액조회",       "type" : "AN",  "length"  : 1   },
+      { "name" : "supply_yn",              "kname" : "예금인출",               "type" : "AN",  "length"  : 1   },
+      { "name" : "tran_yn",                "kname" : "계좌이체",               "type" : "AN",  "length"  : 1   },
+      { "name" : "lend_yn",                "kname" : "약관대출",               "type" : "AN",  "length"  : 1   },
+      { "name" : "svc_src_yn",             "kname" : "현금서비스잔액조회",     "type" : "AN",  "length"  : 1   },
+      { "name" : "svc_supply_yn",          "kname" : "현금서비스",             "type" : "AN",  "length"  : 1   },
+      { "name" : "in_yn",                  "kname" : "전자화폐",               "type" : "AN",  "length"  : 1   },
+      { "name" : "in_amt_yn",              "kname" : "입금",                   "type" : "AN",  "length"  : 1   },
+      { "name" : "filler1",                "kname" : "여분",                   "type" : "AN",  "length"  : 2   },
+      { "name" : "foreign_yn",             "kname" : "해외카드",               "type" : "AN",  "length"  : 1   },
+      { "name" : "filler2",                "kname" : "여분",                   "type" : "AN",  "length"  : 4   },
+      { "name" : "join_cd",                "kname" : "제휴기관코드",           "type" : "AN",  "length"  : 3   },
+      { "name" : "join_mojum_cd",          "kname" : "제휴기관거래모점",       "type" : "AN",  "length"  : 8   },
+      { "name" : "vpn_ip",                 "kname" : "VPN IP addr",            "type" : "AN",  "length"  : 12  },
+      { "name" : "filler3",                "kname" : "여유공간",               "type" : "AN",  "length"  : 5   }
+   ]
+}
