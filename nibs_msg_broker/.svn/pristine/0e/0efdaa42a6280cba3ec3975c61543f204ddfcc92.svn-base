@@ -495,11 +495,4 @@ public interface TMiscMapper {
         "and     CO1.small_cd = MNG.recv_place                                          "
     })
     String getArrivalNm(@Param("createDate") String createDate, @Param("errorNo") String errorNo);
-
-
-    @Select({
-        "select op.f_get_nice_jijum_cd(#{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{orgSiteCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}) from dual"
-    })
-    String fGetNiceJijumCd(@Param("orgCd") String orgCd, @Param("branchCd") String branchCd, @Param("orgSiteCd") String orgSiteCd, @Param("macNo") String macNo);
-
 }

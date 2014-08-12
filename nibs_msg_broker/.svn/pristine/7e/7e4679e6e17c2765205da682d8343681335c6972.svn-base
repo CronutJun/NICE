@@ -9,17 +9,17 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 
 /**
  *
- * 경비해제수신
+ * 도착통보
  * <pre>
- * MngEM_SaveUnLockTime( pRecvData, nLen );
+ * MngEM_AP_SaveArrival( pRecvData, nLen );
  * </pre>
  *
  * @author s7760ker@gmail.com
  * @version 1.0
  * @see
  */
-@Service("in01000161")
-public class In01000161Impl extends InMsgHandlerImpl {
+@Service("in01101160")
+public class In01101160Impl extends InMsgHandlerImpl {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

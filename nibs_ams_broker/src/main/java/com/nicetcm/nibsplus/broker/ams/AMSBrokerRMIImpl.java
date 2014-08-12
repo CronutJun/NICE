@@ -1,31 +1,31 @@
 package com.nicetcm.nibsplus.broker.ams;
 
-//import java.rmi.RemoteException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Date;
 import java.io.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nicetcm.nibsplus.broker.common.*;
+import com.nicetcm.nibsplus.broker.ams.rmi.*;
 
-//import java.rmi.server.UnicastRemoteObject;
-
-public class AMSBrokerRMIImpl /*extends UnicastRemoteObject*/ implements AMSBrokerRMI {
+public class AMSBrokerRMIImpl implements AMSBrokerRMI {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerRMIImpl.class);
     private FileOutputStream fOut;
-    
-    public AMSBrokerRMIImpl()/* throws RemoteException */{
+
+    public AMSBrokerRMIImpl() {
         /*super();*/
     }
-    
+
     /*@Override*/
     public String sayHello(String name)/* throws RemoteException */{
-        
+
         AMSBrokerClient client = new AMSBrokerClient("localhost", 8080 );
         try {
-            FileInputStream file = new FileInputStream("D:/CronutWorks/NICE/Documents/Design/07. Åë½ÅÀü¹®°ü·Ã/Àü¹®°ü·Ã/P140217_DS 06 È­¸éÁ¤ÀÇ¼­_AMS v1.1.pptx");
+            FileInputStream file = new FileInputStream("D:/CronutWorks/NICE/Documents/Design/07. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½/P140217_DS 06 È­ï¿½ï¿½ï¿½ï¿½ï¿½Ç¼ï¿½_AMS v1.1.pptx");
             ByteBuffer msg = ByteBuffer.allocateDirect(MsgCommon.READ_BUF_SIZE);
             MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path") + "21003003.json").newMessage(msg);
             msg.position(0);
@@ -48,7 +48,7 @@ public class AMSBrokerRMIImpl /*extends UnicastRemoteObject*/ implements AMSBrok
             err.printStackTrace();
         }
         return "Hello world " + name + "!";
-        
+
     }
 
     public String threadTest(String data) throws java.rmi.RemoteException {
@@ -81,4 +81,38 @@ public class AMSBrokerRMIImpl /*extends UnicastRemoteObject*/ implements AMSBrok
             logger.warn(err.getMessage());
         }
     }
+
+    public void reqEnvInfToMac( Date trxDate, String trxNo, String macNo, int timeOut ) throws Exception {
+
+        try {
+        AMSBrokerClient client = new AMSBrokerClient("10.3.28.114", 33001 );
+
+        ByteBuffer msg = ByteBuffer.allocateDirect(MsgCommon.READ_BUF_SIZE);
+        MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path") + "21002002.json").newMessage(msg);
+        msg.position(0);
+        msgPsr.setString("CM._AOCMsgCode",     "2100")
+              .setString("CM._AOCServiceCode", "2002")
+              .setString("CM._AOCMsgSendDate", "20140812")
+              .setString("CM._AOCMsgSendTime", "172600")
+              .setInt   ("CM._AOCMsgLen", msgPsr.getMessageLength() - 9)
+              .syncMessage();
+        logger.debug("Message Length = "  + msgPsr.getMessageLength());
+        logger.debug("Last Position = "   + msgPsr.lastPosition());
+        msg.limit(msgPsr.lastPosition());
+        byte[] read = new byte[msg.limit()];
+        msg.position(0);
+        msg.get(read);
+        logger.debug(new String(read));
+        client.outboundCall(msg, null);
+        }
+        catch( Exception e ) {
+            logger.debug(e.getLocalizedMessage());
+            throw e;
+        }
+    }
+
+    public void reqEnvInfToMacs( Date trxDate, String trxNo, ArrayList<String> macs ) throws Exception {
+
+    }
+
 }

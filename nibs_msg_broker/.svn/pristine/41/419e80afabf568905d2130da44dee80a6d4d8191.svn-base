@@ -35,7 +35,6 @@ public interface CommonPack {
     int getTicketDealRecvYN(TMisc tMisc);
     int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMngSpec tCtErrorMngSpec) throws IllegalAccessException, InvocationTargetException;
     String parseErrorMsg(String errorMsg, int pos);
-    String fGetNiceJijumCd(String orgCd, String branchCd, String orgSiteCd, String macNo);
 
 
 }

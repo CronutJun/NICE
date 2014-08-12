@@ -16,7 +16,7 @@ public class AMSBrokerMain extends Thread {
         System.out.println("properties = " + MsgCommon.msgProps.getProperty("schema_path"));
         this.jobName = job;
         if( jobName.equals("SERVER") ) {
-            svr = new AMSBrokerServer(8080);
+            svr = new AMSBrokerServer(Integer.parseInt(MsgCommon.msgProps.getProperty("ams.port")));
         }
         else if( jobName.equals("RMI") ) {
             rmi = new AMSBrokerRMIServer();

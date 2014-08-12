@@ -2371,23 +2371,4 @@ public class CommonPackImpl implements CommonPack {
 
         return parsedValue;
     }
-
-    /**
-     *
-     * 기관의 지점코드를 구함 OP.F_GET_NICE_JIJUM_CD
-     * <pre>
-     * OP.F_GET_NICE_JIJUM_CD DB-Function 호출
-     * </pre>
-     *
-     * @param orgCd
-     * @param branchCd
-     * @param orgSiteCd
-     * @param macNo
-     * @return
-     */
-    @Override
-    public String fGetNiceJijumCd(String orgCd, String branchCd, String orgSiteCd, String macNo) {
-        String returnValue = miscMap.fGetNiceJijumCd(orgCd, branchCd, orgSiteCd, macNo);
-        return returnValue == null ? "" : returnValue;
-    }
 }
