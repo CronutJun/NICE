@@ -93,6 +93,12 @@ public class MsgParser {
             if( res.containsKey("schema") )
                 resInf.schema = res.getString("schema");
         }
+        else {
+            resInf.code = "";
+            resInf.type = "";
+            resInf.schema = "";
+        }
+
         JsonArray results = obj.getJsonArray("columns");
 
         readSubSchema( results, msgMap );

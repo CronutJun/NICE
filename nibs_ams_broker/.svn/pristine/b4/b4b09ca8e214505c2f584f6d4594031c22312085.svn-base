@@ -54,8 +54,11 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
     public void reqEnvInfToMac( Date trxDate, String trxNo, String macNo, int timeOut ) throws Exception {
 
         try {
+            logger.debug("Start");
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob("3301");
+            logger.debug("Start #1");
             reqJob.requestJob();
+            logger.debug("Start #2");
             ByteBuffer rslt = reqJob.getAns().take();
             logger.debug("reqEnvInfToMac result = {}",rslt.capacity());
         }
