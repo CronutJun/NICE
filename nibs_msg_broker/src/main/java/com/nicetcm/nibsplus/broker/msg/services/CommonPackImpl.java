@@ -2177,7 +2177,7 @@ public class CommonPackImpl implements CommonPack {
     }
 
     /**
-     * T_CT_ERROR_MNG 의 5분활 Table Update
+     * T_CT_ERROR_MNG 의 5분활 Table Update (멀티건 Update 가능)
      * <pre>
      * AS-IS T_CT_ERROR_MNG 테이블 정보를 TO-BE의 스키마로 Update
      *
@@ -2308,6 +2308,139 @@ public class CommonPackImpl implements CommonPack {
 
         } else {
             logger.info("tCtErrorMngList is null");
+        }
+
+        logger.info(">>>>>> TOTAL Updated Row Count: {}", returnValue);
+
+        return returnValue;
+    }
+
+    /**
+     * T_CT_ERROR_MNG 의 5분활 Table Update (단건 Update만 가능)
+     * <pre>
+     * AS-IS T_CT_ERROR_MNG 테이블 정보를 TO-BE의 스키마로 Update
+     *
+     * T_CT_ERROR_BASIC
+     * T_CT_ERROR_RCPT
+     * T_CT_ERROR_NOTI
+     * T_CT_ERROR_CALL
+     * T_CT_ERROR_TXN
+     *
+     * </pre>
+     *
+     * @param updateTCtErrorMng Update대상값
+     * @param tCtErrorMng       Update조건문
+     * @return
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @Override
+    public int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMng tCtErrorMng) throws IllegalAccessException, InvocationTargetException {
+
+        int returnValue = 0;
+
+        if (updateTCtErrorMng != null)
+        {
+
+            if (tCtErrorMng != null)
+            {
+
+                //변경해야될 값을 각 테이블별 MODEL에 설정
+                TCtErrorBasic tCtErrorBasic = new TCtErrorBasic();
+                BeanUtils.copyProperties(tCtErrorBasic, updateTCtErrorMng);
+
+                TCtErrorRcpt tCterrRcpt = new TCtErrorRcpt();
+                BeanUtils.copyProperties(tCterrRcpt, updateTCtErrorMng);
+
+                TCtErrorNoti tCterrNoti = new TCtErrorNoti();
+                BeanUtils.copyProperties(tCterrNoti, updateTCtErrorMng);
+
+                TCtErrorCall tCterrCall = new TCtErrorCall();
+                BeanUtils.copyProperties(tCterrCall, updateTCtErrorMng);
+
+                TCtErrorTxn tCterrTxn = new TCtErrorTxn();
+                BeanUtils.copyProperties(tCterrTxn, updateTCtErrorMng);
+
+
+                //조회된 TCtErrorMng에서 PK를 추출
+                //errorNo              ;   //장애번호
+                //createDate           ;   //장애 일자
+                //createTime           ;   //발생시각
+
+                int updatedTableCnt = 0; //Update가 발생한 Table건수 (max: 5)
+
+                if (isNotNullFieldExists(tCtErrorBasic))
+                {
+                    TCtErrorBasicSpec tCtErrorBasicSpec = new TCtErrorBasicSpec();
+                    tCtErrorBasicSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
+                                    .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
+
+                    int updatedCnt = errBasicMap.updateBySpecSelective(tCtErrorBasic, tCtErrorBasicSpec);
+
+                    logger.info(">>> T_CT_ERROR_BASIC Updated", updatedCnt);
+                    updatedTableCnt++;
+                }
+
+                if (isNotNullFieldExists(tCterrRcpt))
+                {
+                    TCtErrorRcptSpec tCtErrorRcptSpec = new TCtErrorRcptSpec();
+                    tCtErrorRcptSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
+                                    .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
+
+                    int updatedCnt = errRcptMap.updateBySpecSelective(tCterrRcpt, tCtErrorRcptSpec);
+
+                    logger.info(">>> T_CT_ERROR_RCPT Updated: {}", updatedCnt);
+                    updatedTableCnt++;
+                }
+
+                if (isNotNullFieldExists(tCterrNoti))
+                {
+                    TCtErrorNotiSpec tCtErrorNotiSpec = new TCtErrorNotiSpec();
+                    tCtErrorNotiSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
+                                    .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
+
+                    int updatedCnt = errNotiMap.updateBySpecSelective(tCterrNoti, tCtErrorNotiSpec);
+
+                    logger.info(">>> T_CT_ERROR_NOTI Updated: {}", updatedCnt);
+                    updatedTableCnt++;
+                }
+
+                if (isNotNullFieldExists(tCterrCall))
+                {
+                    TCtErrorCallSpec tCtErrorCallSpec = new TCtErrorCallSpec();
+                    tCtErrorCallSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
+                                    .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
+
+                    int updatedCnt = errCallMap.updateBySpecSelective(tCterrCall, tCtErrorCallSpec);
+
+                    logger.info(">>> T_CT_ERROR_CALL Updated: {}", updatedCnt);
+                    updatedTableCnt++;
+                }
+
+                if (isNotNullFieldExists(tCterrTxn))
+                {
+                    TCtErrorTxnSpec tCtErrorTxnSpec = new TCtErrorTxnSpec();
+                    tCtErrorTxnSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
+                                    .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
+
+                    int updatedCnt = errTxnMap.updateBySpecSelective(tCterrTxn, tCtErrorTxnSpec);
+
+                    logger.info(">>> T_CT_ERROR_TXN Updated: {}", updatedCnt);
+                    updatedTableCnt++;
+                }
+
+                logger.info(">>>>>> TOTAL Updated Table Count: {}", updatedTableCnt);
+
+                if(updatedTableCnt > 0) {
+                    returnValue++;
+                }
+
+            } else {
+                logger.info("tCtErrorMng is null");
+            }
+
+        } else {
+            logger.info("updateTCtErrorMng is null");
         }
 
         logger.info(">>>>>> TOTAL Updated Row Count: {}", returnValue);

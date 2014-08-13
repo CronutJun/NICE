@@ -36,6 +36,7 @@ public interface CommonPack {
     int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMngSpec tCtErrorMngSpec) throws IllegalAccessException, InvocationTargetException;
     String parseErrorMsg(String errorMsg, int pos);
     String fGetNiceJijumCd(String orgCd, String branchCd, String orgSiteCd, String macNo);
+    int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMng tCtErrorMng) throws IllegalAccessException, InvocationTargetException;
 
 
 }
