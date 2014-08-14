@@ -503,6 +503,18 @@ public interface TMiscMapper {
     })
     void updateCtErrorMngMadeCom3(TCtErrorMngMadeCom tCtErrorMngMadeCom);
 
+    @Update({
+        "UPDATE  OP.T_CT_ERROR_MNG_MADE_COM SET                             ",
+        "        ORG_MSG = ORG_MSG || #{orgMsg, jdbcType=VARCHAR},          ",
+        "        CHANGE_SEND_YN = '1',                                      ",
+        "        UPDATE_DATE = SYSDATE,                                     ",
+        "        UPDATE_UID = 'ERRmng'                                      ",
+        "WHERE   TRANS_DATE          = #{transDate, jdbcType=VARCHAR}       ",
+        "AND     rtrim(ORG_MSG_NO)   = rtrim(#{orgMsgNo, jdbcType=VARCHAR}) ",
+        "AND     ORG_CALL_CNT        = #{orgCallCnt, jdbcType=VARCHAR}      "
+    })
+    int updateCtErrorMngMadeCom4(TCtErrorMngMadeCom tCtErrorMngMadeCom);
+
     @Select({
         "SELECT  CO1.CD_NM1 as arrival_nm                                               ",
         "FROM    OP.T_CT_ERROR_MNG MNG,                                                 ",
@@ -520,4 +532,8 @@ public interface TMiscMapper {
     })
     String fGetNiceJijumCd(@Param("orgCd") String orgCd, @Param("branchCd") String branchCd, @Param("orgSiteCd") String orgSiteCd, @Param("macNo") String macNo);
 
+    @Select({
+        "select op.FC_GET_MAP_SITE_CD(#{cType, jdbcType=VARCHAR}, #{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{siteCd, jdbcType=VARCHAR}) from dual"
+    })
+    String fcGetMapSiteCd(@Param("cType") String cType, @Param("orgCd") String orgCd, @Param("branchCd") String branchCd, @Param("siteCd") String siteCd);
 }

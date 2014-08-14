@@ -159,8 +159,6 @@ public class In01101160Impl extends InMsgHandlerImpl {
                 return;
             }
 
-            /** 2014.08.08 여기까지 코딩함 */
-
             TCtErrorMng updateTCtErrorMng = new TCtErrorMng();
             updateTCtErrorMng.setOrgSendYn(hSEND_YN);
 

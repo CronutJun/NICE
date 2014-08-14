@@ -738,7 +738,6 @@ public class MsgParser {
     private void syncSubMessage(ThrData thrData, Map<String, MsgData> mapData) throws Exception {
 
         String fmt, fmted;
-        byte[] data;
         int i;
         MsgData aElem;
 
@@ -757,22 +756,18 @@ public class MsgParser {
                         aElem = e.getValue().adata.get(i).get(e.getKey());
                         if( aElem.refFmt.type.toUpperCase().equals("N") ) {
                             fmt = String.format("%%0%dd", aElem.length);
-                            data = new byte[aElem.length];
 
-                            fmted = String.format(fmt, aElem.getInt());
+                            fmted = String.format(fmt, aElem.getLong());
 
                             thrData.msg.put(fmted.getBytes());
                             thrData.pos += aElem.length;
                         }
                         else {
                             fmt = String.format("%%-%ds", aElem.length);
-                            data = new byte[aElem.length];
 
-                            System.arraycopy(aElem.getString().getBytes(), 0, data, 0,
-                                aElem.length > aElem.getString().length()
-                                ? aElem.getString().length() : aElem.length);
-
-                            fmted = String.format(fmt, new String(data));
+                            fmted = String.format(fmt, aElem.getString());
+                            if( fmted.length() > e.getValue().length )
+                                fmted = fmted.substring(0, e.getValue().length);
 
                             thrData.msg.put(fmted.getBytes());
                             thrData.pos += aElem.length;
@@ -789,23 +784,20 @@ public class MsgParser {
                     else {
                         if( e.getValue().refFmt.type.toUpperCase().equals("N") ) {
                             fmt = String.format("%%0%dd", e.getValue().length);
-                            data = new byte[e.getValue().length];
 
-                            fmted = String.format(fmt, e.getValue().getInt());
+                            fmted = String.format(fmt, e.getValue().getLong());
 
                             thrData.msg.put(fmted.getBytes());
                             thrData.pos += e.getValue().length;
                         }
                         else {
                             fmt = String.format("%%-%ds", e.getValue().length);
-                            data = new byte[e.getValue().length];
 
-                            System.arraycopy(e.getValue().getString().getBytes(), 0, data, 0,
-                                    e.getValue().length > e.getValue().getString().length()
-                                    ? e.getValue().getString().length() : e.getValue().length);
+                            logger.debug("Field = " + e.getKey() + ", Format = " + fmt + ", Length = " + e.getValue().length + ", DataLen = " + e.getValue().getString().length());
+                            fmted = String.format(fmt, e.getValue().getString());
 
-                            logger.debug("Field = " + e.getKey() + ", Format = " + fmt + ", Length = " + e.getValue().length);
-                            fmted = String.format(fmt, new String(data));
+                            if( fmted.length() > e.getValue().length )
+                                fmted = fmted.substring(0, e.getValue().length);
 
                             thrData.msg.put(fmted.getBytes());
                             thrData.pos += e.getValue().length;

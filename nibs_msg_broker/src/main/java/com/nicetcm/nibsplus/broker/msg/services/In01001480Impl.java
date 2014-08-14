@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtManyErrorMngMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
+import com.nicetcm.nibsplus.broker.msg.model.TCtManyErrorMng;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
 /**
@@ -29,6 +31,8 @@ public class In01001480Impl extends InMsgHandlerImpl {
 
     @Autowired private TMiscMapper tMiscMapper;
 
+    @Autowired private TCtManyErrorMngMapper tCtManyErrorMngMapper;
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         TMisc tMisc = tMiscMapper.getMadeComCd(parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"));
@@ -38,7 +42,42 @@ public class In01001480Impl extends InMsgHandlerImpl {
             throw new MsgBrokerException(-1);
         }
 
-        //TCtManyErrorMng
+        TCtManyErrorMng tCtManyErrorMng = new TCtManyErrorMng();
+        tCtManyErrorMng.setCallDate   (parsed.getString("call_date"));
+        tCtManyErrorMng.setCallNo     (parsed.getString("call_no"));
+        tCtManyErrorMng.setMadeComCd  (tMisc.getMadeComCd());
+        tCtManyErrorMng.setCallTime   (parsed.getString("call_time"));
+        tCtManyErrorMng.setBaseDayCnt (parsed.getShort ("base_day_cnt"));
+        tCtManyErrorMng.setBaseLimit  (parsed.getShort ("base_limit"));
+        tCtManyErrorMng.setErrCnt     (parsed.getShort ("err_cnt"));
+        tCtManyErrorMng.setOrgCd      (parsed.getString("org_cd"));
+        tCtManyErrorMng.setBranchCd   (parsed.getString("brch_cd"));
+        tCtManyErrorMng.setMacNo      (parsed.getString("mac_no"));
+        tCtManyErrorMng.setSiteCd     (parsed.getString("site_cd"));
+        tCtManyErrorMng.setMacModel   (parsed.getString("mac_model"));
+        tCtManyErrorMng.setSiteNm     (parsed.getString("site_nm"));
+        tCtManyErrorMng.setMsg        (parsed.getString("msg"));
+        tCtManyErrorMng.setAsMedia    (parsed.getString("as_media"));
+        tCtManyErrorMng.setManyErrGb  (parsed.getString("many_err_gb"));
+        tCtManyErrorMng.setErrorCd    (parsed.getString("error_cd"));
+        tCtManyErrorMng.setLcCd       (parsed.getString("lc_cd"));
+        tCtManyErrorMng.setMtcCd      (parsed.getString("mtc_cd"));
+        tCtManyErrorMng.setOrgSendYn  ("0");
+        tCtManyErrorMng.setUpdateDate (safeData.getDSysDate());
+        tCtManyErrorMng.setUpdateUid  ("online");
+
+        try
+        {
+            tCtManyErrorMngMapper.insertSelective(tCtManyErrorMng);
+        } catch( org.springframework.dao.DataIntegrityViolationException e ) {
+            logger.info(">>> [MngEM_SaveManyErrCall] T_CT_MANY_ERROR_MNG 같은요청전문 수신");
+            throw new Exception(">>> [MngEM_SaveManyErrCall] T_CT_MANY_ERROR_MNG 같은요청전문 수신");
+
+        } catch (Exception e)
+        {
+            logger.info(">>> [MngEM_SaveManyErrCall]  T_CT_MANY_ERROR_MNG INSERT ERROR [{}]", e.getMessage());
+            throw new Exception(">>> [MngEM_SaveManyErrCall]  T_CT_MANY_ERROR_MNG INSERT ERROR");
+        }
 
     }
 }

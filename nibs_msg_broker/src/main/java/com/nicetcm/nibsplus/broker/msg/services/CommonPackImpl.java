@@ -2506,8 +2506,9 @@ public class CommonPackImpl implements CommonPack {
     }
 
     /**
-     *
      * 기관의 지점코드를 구함 OP.F_GET_NICE_JIJUM_CD
+     *
+     * TO-BE는 적용안해도 되는 Function 이라고 함.
      * <pre>
      * OP.F_GET_NICE_JIJUM_CD DB-Function 호출
      * </pre>
@@ -2519,8 +2520,28 @@ public class CommonPackImpl implements CommonPack {
      * @return
      */
     @Override
+    @Deprecated
     public String fGetNiceJijumCd(String orgCd, String branchCd, String orgSiteCd, String macNo) {
         String returnValue = miscMap.fGetNiceJijumCd(orgCd, branchCd, orgSiteCd, macNo);
+        return returnValue == null ? "" : returnValue;
+    }
+
+    /**
+     *
+     * 구정보/신정보 구함 OP.FC_GET_MAP_SITE_CD
+     * <pre>
+     * OP.FC_GET_MAP_SITE_CD DB-Function 호출
+     * </pre>
+     *
+     * @param cType
+     * @param orgCd
+     * @param branchCd
+     * @param siteCd
+     * @return
+     */
+    @Override
+    public String fcGetMapSiteCd(String cType, String orgCd, String branchCd, String siteCd) {
+        String returnValue = miscMap.fcGetMapSiteCd(cType, orgCd, branchCd, siteCd);
         return returnValue == null ? "" : returnValue;
     }
 }
