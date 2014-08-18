@@ -3,9 +3,12 @@ package com.nicetcm.nibsplus.broker.ams;
 /*
  * Copyright 2014 The NIBS Project
  *
- * AMS
+ * AMSBrokerClient
  *
- *           2014. 05. 23    K.D.J
+ * 기기로 요청을 보낼때 기기의 서버소켓과 통신을 하기위한 클라이언트 소켓 객체
+ * 
+ * @author  K.D.J
+ * @since   2014.05.23
  */
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;

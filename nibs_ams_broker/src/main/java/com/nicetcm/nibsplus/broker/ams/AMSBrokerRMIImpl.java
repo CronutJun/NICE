@@ -1,8 +1,19 @@
 package com.nicetcm.nibsplus.broker.ams;
 
+/**
+ * Copyright 2014 The NIBS+ Project
+ *
+ * AMSBrokerRMIImpl
+ *
+ *  AMS Broker와 NIBS Web Client간 RMI인터페이스 구현
+ *
+ *
+ * @author  K.D.J
+ * @since   2014.08.18
+ */
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Date;
 import java.io.*;
 
 import org.slf4j.Logger;
@@ -94,10 +105,9 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         }
     }
 
-    public void reqRegInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, RMIReqRegInfo reqRegInfo, int timeOut ) throws Exception {
-
+    public void reqRegInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo, int timeOut ) throws Exception {
         try {
-            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, true);
+            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqRegInfo.getMacNo(), true);
             reqJob.setTrxDate( trxDate );
             reqJob.setTrxNo( trxNo );
             reqJob.setTrxCd( trxCd );
@@ -112,6 +122,26 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
             else if( rslt.capacity() == 1 ) {
                 throw new Exception("Error while request information");
+            }
+        }
+        catch( Exception e ) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    public void reqRegInfToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<RMIReqRegInfo> reqRegInfos ) throws Exception {
+        try {
+            for( RMIReqRegInfo reqRegInfo: reqRegInfos ) {
+                AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqRegInfo.getMacNo(), false);
+                reqJob.setTrxDate( trxDate );
+                reqJob.setTrxNo( trxNo );
+                reqJob.setTrxCd( trxCd );
+                reqJob.setActCd( actCd );
+                reqJob.setTrxUid( trxUid );
+                reqJob.setReqRegInfo( reqRegInfo );
+                reqJob.setTimeOut( 0 );
+                reqJob.requestJob();
             }
         }
         catch( Exception e ) {

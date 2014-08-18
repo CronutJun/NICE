@@ -57,11 +57,12 @@ public class RMIClientTest {
         System.out.println("lookup");
 
         RMIReqRegInfo reqRegInfo = new RMIReqRegInfo();
+        reqRegInfo.setMacNo( "3001" );
         reqRegInfo.setBaseKey( "HKEY_CURRENT_USER" );
         reqRegInfo.setKeyPath( "Software\\ANGARA" );
         reqRegInfo.setKeyName( "TraceFileName" );
 
-        remoteObj.reqRegInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), "000001", "2000", "1000", "test", "3001", reqRegInfo, 0 );
+        remoteObj.reqRegInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), "000001", "2000", "1000", "test", reqRegInfo, 0 );
     }
 
     public static void main(String[] args) {

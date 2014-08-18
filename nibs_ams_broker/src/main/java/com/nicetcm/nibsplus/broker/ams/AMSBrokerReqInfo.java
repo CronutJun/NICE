@@ -1,5 +1,16 @@
 package com.nicetcm.nibsplus.broker.ams;
 
+/*
+ * Copyright 2014 The NIBS Project
+ *
+ * AMS 기기관리시스템 - AMSBrokerReqInfo
+ * 
+ * 기기와 접속처리 전 접속정보를 보관하는 모델 객체
+ * 
+ * @author  K.D.J
+ * @since   2014.08.18
+ */
+
 import java.nio.*;
 
 public class AMSBrokerReqInfo {

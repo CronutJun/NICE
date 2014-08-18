@@ -3,9 +3,12 @@ package com.nicetcm.nibsplus.broker.ams;
 /*
  * Copyright 2014 The NIBS Project
  *
- * AMS 기기관리시스템
- *
- *           2014. 05. 23    K.D.J
+ * AMS 기기관리시스템 - AMSBrokerClientHandler
+ * 
+ * 접속한 클라이언트의 요청 처리 객체
+ * 
+ * @author  K.D.J
+ * @since   2014.05.23
  */
 
 

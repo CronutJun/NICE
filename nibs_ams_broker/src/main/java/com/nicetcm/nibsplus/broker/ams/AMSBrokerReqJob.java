@@ -1,5 +1,16 @@
 package com.nicetcm.nibsplus.broker.ams;
 
+/*
+ * Copyright 2014 The NIBS Project
+ *
+ * AMS 기기관리시스템 - AMSBrokerReqJob
+ * 
+ * 기기와 접속 정보관리 및 대기열 관리를 위한 객체
+ * 
+ * @author  K.D.J
+ * @since   2014.08.18
+ */
+
 import java.util.concurrent.*;
 import java.nio.ByteBuffer;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqRegInfo;
