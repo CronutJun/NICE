@@ -1,5 +1,17 @@
 package com.nicetcm.nibsplus.broker.ams;
 
+/**
+ * Copyright 2014 The NIBS+ Project
+ *
+ * AMSBrokerAppConfig
+ *
+ *  Spring 및 AMSBroker가 필요한 자원의 설정값을 annotation기반으로 관리
+ *
+ *
+ * @author  K.D.J
+ * @since   2014.08.18
+ */
+
 import javax.sql.*;
 
 import org.slf4j.Logger;

@@ -1,6 +1,7 @@
 package com.nicetcm.nibsplus.broker.ams;
 
 import io.netty.channel.ChannelHandlerContext;
+
 import java.io.*;
 
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ public class AMSBrokerBizHandler {
     private FileOutputStream fOut = null;
     private AMSBrokerData amsSafeData = new AMSBrokerData();
 
-    public void classifyMessage(ChannelHandlerContext ctx, Object msg, MsgParser parsed, byte[] remain, boolean beContinue) throws Exception {
+    public void classifyMessage(ChannelHandlerContext ctx, Object msg, MsgParser parsed, AMSBrokerReqJob reqJob, byte[] remain, boolean beContinue) throws Exception {
 
         logger.debug("remain bytes = " + remain.length + ", befBeContinue = " + befBeContinue + ", beContinue = " + beContinue);
         String fileName = "tmp_" + Thread.currentThread().getId() + "_in";
@@ -48,7 +49,7 @@ public class AMSBrokerBizHandler {
                 try {
                     InMsgHandler bizBranch = (InMsgHandler)AMSBrokerSpringMain
                             .sprCtx.getBean("in" + parsed.getString("CM._AOCMsgCode") + parsed.getString("CM._AOCServiceCode"));
-                    bizBranch.inMsgHandle(amsSafeData, parsed, fileName);
+                    bizBranch.inMsgHandle(amsSafeData, parsed, reqJob, fileName);
                 }
                 finally {
                     if( tg.exists() ) {

@@ -1,7 +1,6 @@
 package com.nicetcm.nibsplus.broker.ams;
 
 import java.util.concurrent.*;
-import java.util.Date;
 import java.nio.ByteBuffer;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqRegInfo;
 
@@ -17,10 +16,13 @@ public class AMSBrokerReqJob {
     private final String macNo;
     private final boolean isBlocking;
     private final BlockingQueue<ByteBuffer> ans;
-    private Date trxDate;
+    private String trxDate;
     private String trxNo;
     private String trxCd;
     private String actCd;
+    private String trxUid;
+    private String OrgCreateDate;
+    private String OrgMsgSeq;
     private RMIReqRegInfo reqRegInfo;
     private int timeOut;
 
@@ -60,11 +62,11 @@ public class AMSBrokerReqJob {
         return ans;
     }
 
-    public Date getTrxDate() {
+    public String getTrxDate() {
         return trxDate;
     }
 
-    public void setTrxDate(Date trxDate) {
+    public void setTrxDate(String trxDate) {
         this.trxDate = trxDate;
     }
 
@@ -90,6 +92,30 @@ public class AMSBrokerReqJob {
 
     public void setActCd(String actCd) {
         this.actCd = actCd;
+    }
+
+    public String getTrxUid() {
+        return trxUid;
+    }
+
+    public void setTrxUid(String trxUid) {
+        this.trxUid = trxUid;
+    }
+
+    public String getOrgCreateDate() {
+        return OrgCreateDate;
+    }
+
+    public void setOrgCreateDate(String orgCreateDate) {
+        OrgCreateDate = orgCreateDate;
+    }
+
+    public String getOrgMsgSeq() {
+        return OrgMsgSeq;
+    }
+
+    public void setOrgMsgSeq(String orgMsgSeq) {
+        OrgMsgSeq = orgMsgSeq;
     }
 
     public int getTimeOut() {

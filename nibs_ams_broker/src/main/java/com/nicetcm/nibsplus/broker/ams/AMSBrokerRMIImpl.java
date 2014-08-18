@@ -50,7 +50,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         }
     }
 
-    public void reqEnvInfToMac( Date trxDate, String trxNo, String trxCd, String actCd, String macNo, int timeOut ) throws Exception {
+    public void reqEnvInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, int timeOut ) throws Exception {
 
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, true);
@@ -58,6 +58,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setTrxNo( trxNo );
             reqJob.setTrxCd( trxCd );
             reqJob.setActCd( actCd );
+            reqJob.setTrxUid( trxUid );
             reqJob.setTimeOut( timeOut );
             reqJob.requestJob();
             ByteBuffer rslt = reqJob.getAns().take();
@@ -74,7 +75,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         }
     }
 
-    public void reqEnvInfToMacs( Date trxDate, String trxNo, String trxCd, String actCd, ArrayList<String> macs ) throws Exception {
+    public void reqEnvInfToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs ) throws Exception {
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
@@ -82,6 +83,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                 reqJob.setTrxNo( trxNo );
                 reqJob.setTrxCd( trxCd );
                 reqJob.setActCd( actCd );
+                reqJob.setTrxUid( trxUid );
                 reqJob.setTimeOut( 0 );
                 reqJob.requestJob();
             }
@@ -92,7 +94,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         }
     }
 
-    public void reqRegInfToMac( Date trxDate, String trxNo, String trxCd, String actCd, String macNo, RMIReqRegInfo reqRegInfo, int timeOut ) throws Exception {
+    public void reqRegInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, RMIReqRegInfo reqRegInfo, int timeOut ) throws Exception {
 
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, true);
@@ -100,6 +102,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setTrxNo( trxNo );
             reqJob.setTrxCd( trxCd );
             reqJob.setActCd( actCd );
+            reqJob.setTrxUid( trxUid );
             reqJob.setReqRegInfo( reqRegInfo );
             reqJob.setTimeOut( timeOut );
             reqJob.requestJob();

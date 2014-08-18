@@ -1,25 +1,41 @@
 package com.nicetcm.nibsplus.broker.ams;
 
+/**
+ * Copyright 2014 The NIBS+ Project
+ *
+ * AMSOutboundQ
+ *
+ *  AMSBroker를 통한 기기 전문요청 큐리스너 객체
+ *
+ *
+ * @author  K.D.J
+ * @since   2014.08.18
+ */
+
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nicetcm.nibsplus.broker.common.MsgCommon;
-import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.ams.rmi.AMSBrokerTimeoutException;
 import com.nicetcm.nibsplus.broker.ams.services.ReqMsgHandler;
+import com.nicetcm.nibsplus.broker.ams.services.AnsMsgHandler;
 
 public class AMSBrokerReqConsumer extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerReqConsumer.class);
 
     private final BlockingQueue<AMSBrokerReqJob> listenQueue;
+
     private AMSBrokerData amsSafeData = new AMSBrokerData();
+    private ReqMsgHandler reqMsg;
+    private AnsMsgHandler ansMsg;
 
     public AMSBrokerReqConsumer( BlockingQueue<AMSBrokerReqJob> queue ) {
         listenQueue = queue;
+        reqMsg = (ReqMsgHandler)AMSBrokerSpringMain.sprCtx.getBean("reqMsg");
+        ansMsg = (AnsMsgHandler)AMSBrokerSpringMain.sprCtx.getBean("ansMsg");
     }
 
     public void run()  {
@@ -48,28 +64,37 @@ public class AMSBrokerReqConsumer extends Thread {
         try {
             AMSBrokerReqInfo reqInfo = new AMSBrokerReqInfo();
 
-            ReqMsgHandler reqMsg = (ReqMsgHandler)AMSBrokerSpringMain.sprCtx.getBean("reqMsg");
             reqMsg.reqMsgHandle( amsSafeData, reqJob, reqInfo );
 
-            AMSBrokerClient client = new AMSBrokerClient( reqInfo.getDestIP(), reqInfo.getDestPort() );
-            ByteBuffer rslt = client.outboundCall( reqInfo.getMsg(), null, reqJob.getTimeOut() );
-            if( reqJob.getIsBlocking() )
-                reqJob.getAns().put(rslt);
-        }
-        catch( AMSBrokerTimeoutException te) {
-            logger.debug("timeout error");
-            if( reqJob.getIsBlocking() ) {
-                ByteBuffer ret = ByteBuffer.allocateDirect(3);
-                ret.position(0);
-                ret.put("TMO".getBytes());
-                reqJob.getAns().put(ret);
+            try {
+                AMSBrokerClient client = new AMSBrokerClient( reqInfo.getDestIP(), reqInfo.getDestPort(), reqJob );
+                ByteBuffer rslt = client.outboundCall( reqInfo.getMsg(), null, reqJob.getTimeOut() );
+
+                ansMsg.ansMsgHandle( amsSafeData, reqJob, rslt, "9" );
+                if( reqJob.getIsBlocking() )
+                    reqJob.getAns().put(rslt);
+            }
+            catch( AMSBrokerTimeoutException te) {
+                logger.debug("timeout error");
+                ansMsg.ansMsgHandle( amsSafeData, reqJob, null, "3" );
+                if( reqJob.getIsBlocking() ) {
+                    ByteBuffer ret = ByteBuffer.allocateDirect(3);
+                    ret.position(0);
+                    ret.put("TMO".getBytes());
+                    reqJob.getAns().put(ret);
+                }
+            }
+            catch( Exception e ) {
+                logger.debug(e.getMessage());
+                ansMsg.ansMsgHandle( amsSafeData, reqJob, null, "5" );
+                if( reqJob.getIsBlocking() )
+                    reqJob.getAns().put(ByteBuffer.allocateDirect(1));
             }
         }
         catch( Exception e ) {
             logger.debug(e.getMessage());
             if( reqJob.getIsBlocking() )
                 reqJob.getAns().put(ByteBuffer.allocateDirect(1));
-            throw e;
         }
     }
 

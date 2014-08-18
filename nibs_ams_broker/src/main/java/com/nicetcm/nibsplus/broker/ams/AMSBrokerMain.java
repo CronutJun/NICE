@@ -1,5 +1,18 @@
 package com.nicetcm.nibsplus.broker.ams;
 
+/**
+ * Copyright 2014 The NIBS+ Project
+ *
+ * AMSBrokerMain
+ *
+ *  AMSBroker의 시작을 관리
+ *
+ *
+ * @author  K.D.J
+ * @since   2014.06.29
+ */
+
+
 import java.io.*;
 
 import com.nicetcm.nibsplus.broker.common.*;

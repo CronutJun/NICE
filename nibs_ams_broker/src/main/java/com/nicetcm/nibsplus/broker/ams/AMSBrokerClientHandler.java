@@ -41,12 +41,14 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
 
     private AMSBrokerBizHandler biz = new AMSBrokerBizHandler();
 
+    private final AMSBrokerReqJob        reqJob;
     private final BlockingQueue<ByteBuf> ans;
 
     /**
      * Creates a client-side handler.
      */
-    public AMSBrokerClientHandler(BlockingQueue<ByteBuf> ans) {
+    public AMSBrokerClientHandler(AMSBrokerReqJob reqJob, BlockingQueue<ByteBuf> ans) {
+        this.reqJob = reqJob;
         this.ans = ans;
     }
 
@@ -125,7 +127,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                     logger.debug("Continue set msgPsr length = " + msgPsr.getMessageLength());
                 }
 
-                biz.classifyMessage(ctx,  msg, msgPsr, remainBytes, isContinue);
+                biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
                 if( !isContinue )
                     ans.put(buf);
             }
@@ -142,7 +144,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
 
                 if( iRemain <= 0 ) isContinue = false;
 
-                biz.classifyMessage(ctx,  msg, msgPsr, remainBytes, isContinue);
+                biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
                 if( !isContinue )
                     ans.put(buf);
             }

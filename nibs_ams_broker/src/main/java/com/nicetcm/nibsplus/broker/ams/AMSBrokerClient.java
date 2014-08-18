@@ -38,12 +38,14 @@ public class AMSBrokerClient {
 
     private final String host;
     private final int port;
-    private ByteBuf reqBuf;
+    private final AMSBrokerReqJob        reqJob;
     private final BlockingQueue<ByteBuf> ans;
+    private ByteBuf reqBuf;
 
-    public AMSBrokerClient(String host, int port) {
+    public AMSBrokerClient(String host, int port, AMSBrokerReqJob reqJob) {
         this.host = host;
         this.port = port;
+        this.reqJob = reqJob;
         this.ans  = new LinkedBlockingQueue<ByteBuf>();
     }
 
@@ -61,7 +63,7 @@ public class AMSBrokerClient {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
                      ch.pipeline().addLast(
-                             new AMSBrokerClientHandler(ans));
+                             new AMSBrokerClientHandler(reqJob, ans));
                  }
              });
 
