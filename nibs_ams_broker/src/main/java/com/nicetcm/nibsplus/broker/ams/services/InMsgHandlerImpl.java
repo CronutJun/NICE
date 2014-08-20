@@ -26,17 +26,18 @@ import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 
 public abstract class InMsgHandlerImpl implements InMsgHandler {
 
-    @Autowired protected SqlSession sqlSession;
+    @Autowired protected SqlSession                   sqlSession;
     @Autowired protected DataSourceTransactionManager amsTX;
+
+    @Autowired protected CommonPackImpl               comPack;
 
     @Override
     public void inMsgHandle(AMSBrokerData safeData, MsgParser parsed, AMSBrokerReqJob reqJob, String fileLoc) throws Exception {
 
-        Date sysDate = AMSBrokerLib.getSysDate();
-
         safeData.setTXS(amsTX.getTransaction( AMSBrokerTransaction.defAMSTX ));
-        safeData.setMsgDate( AMSBrokerLib.getMsgDate(sysDate) );
-        safeData.setMsgTime( AMSBrokerLib.getMsgTime(sysDate) );
+        safeData.setSysDate( AMSBrokerLib.getSysDate() );
+        safeData.setMsgDate( AMSBrokerLib.getMsgDate(safeData.getSysDate()) );
+        safeData.setMsgTime( AMSBrokerLib.getMsgTime(safeData.getSysDate()) );
         try {
             inMsgBizProc( safeData, parsed, reqJob, fileLoc );
             amsTX.commit(safeData.getTXS());

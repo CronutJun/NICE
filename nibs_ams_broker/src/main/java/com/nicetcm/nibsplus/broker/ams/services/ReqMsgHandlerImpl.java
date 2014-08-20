@@ -70,7 +70,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * 환경정보 조회
              */
-            if( reqJob.getTrxCd().equals("1000") && reqJob.getActCd().equals("1000") ) {
+            if( reqJob.getTrxCd().equals("720103") && reqJob.getActCd().equals("500") ) {
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "2002" );
                 msg.setIoCl( "O" );
@@ -79,23 +79,28 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
 
                 reqInfo.setMsg( ByteBuffer.allocateDirect(MsgCommon.READ_BUF_SIZE) );
                 MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path") + "21002002.json").newMessage(reqInfo.getMsg());
-                reqInfo.getMsg().position(0);
-                msgPsr.setString("CM._AOCMsgCode",     msg.getMsgCd())
-                      .setString("CM._AOCServiceCode", msg.getSvcCd())
-                      .setString("CM._AOCMsgSendDate", safeData.getMsgDate())
-                      .setString("CM._AOCMsgSendTime", safeData.getMsgTime())
-                      .setInt   ("CM._AOCMsgLen",      msgPsr.getMessageLength() - 9)
-                      .setString("CM._AOCTranNo",      msg.getMsgSeq())
-                      .syncMessage();
-                logger.debug("Message Length = "  + msgPsr.getMessageLength());
-                logger.debug("Last Position = "   + msgPsr.lastPosition());
-                reqInfo.getMsg().limit(msgPsr.lastPosition());
-                byte[] read = new byte[reqInfo.getMsg().limit()];
-                reqInfo.getMsg().position(0);
-                reqInfo.getMsg().get(read);
-                logger.debug(new String(read));
+                try {
+                    reqInfo.getMsg().position(0);
+                    msgPsr.setString("CM._AOCMsgCode",     msg.getMsgCd())
+                          .setString("CM._AOCServiceCode", msg.getSvcCd())
+                          .setString("CM._AOCMsgSendDate", safeData.getMsgDate())
+                          .setString("CM._AOCMsgSendTime", safeData.getMsgTime())
+                          .setInt   ("CM._AOCMsgLen",      msgPsr.getMessageLength() - 9)
+                          .setString("CM._AOCTranNo",      msg.getMsgSeq())
+                          .syncMessage();
+                    logger.debug("Message Length = "  + msgPsr.getMessageLength());
+                    logger.debug("Last Position = "   + msgPsr.lastPosition());
+                    reqInfo.getMsg().limit(msgPsr.lastPosition());
+                    byte[] read = new byte[reqInfo.getMsg().limit()];
+                    reqInfo.getMsg().position(0);
+                    reqInfo.getMsg().get(read);
+                    logger.debug(new String(read));
 
-                msgHis.setMsgCtx( new String(read) );
+                    msgHis.setMsgCtx( new String(read) );
+                }
+                finally {
+                    msgPsr.clearMessage();
+                }
             }
             /**
              * Registry 정보 조회
@@ -109,26 +114,108 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
 
                 reqInfo.setMsg( ByteBuffer.allocateDirect(MsgCommon.READ_BUF_SIZE) );
                 MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path") + "21002011.json").newMessage(reqInfo.getMsg());
-                reqInfo.getMsg().position(0);
-                msgPsr.setString( "CM._AOCMsgCode",           msg.getMsgCd())
-                      .setString( "CM._AOCServiceCode",       msg.getSvcCd())
-                      .setString( "CM._AOCMsgSendDate",       safeData.getMsgDate() )
-                      .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
-                      .setInt   ( "CM._AOCMsgLen",            msgPsr.getMessageLength() - 9 )
-                      .setString( "CM._AOCTranNo",            msg.getMsgSeq() )
-                      .setString( "_AocReqRegBaseKey",        reqJob.getReqRegInfo().getBaseKey() )
-                      .setString( "_AocReqRegSubKey",         reqJob.getReqRegInfo().getKeyPath() )
-                      .setString( "_AocReqRegValueKey",       reqJob.getReqRegInfo().getKeyName() )
-                      .syncMessage();
-                logger.debug("Message Length = "  + msgPsr.getMessageLength());
-                logger.debug("Last Position = "   + msgPsr.lastPosition());
-                reqInfo.getMsg().limit(msgPsr.lastPosition());
-                byte[] read = new byte[reqInfo.getMsg().limit()];
-                reqInfo.getMsg().position(0);
-                reqInfo.getMsg().get(read);
-                logger.debug(new String(read));
+                try {
+                    reqInfo.getMsg().position(0);
+                    msgPsr.setString( "CM._AOCMsgCode",           msg.getMsgCd())
+                          .setString( "CM._AOCServiceCode",       msg.getSvcCd())
+                          .setString( "CM._AOCMsgSendDate",       safeData.getMsgDate() )
+                          .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
+                          .setInt   ( "CM._AOCMsgLen",            msgPsr.getMessageLength() - 9 )
+                          .setString( "CM._AOCTranNo",            msg.getMsgSeq() )
+                          .setString( "_AocReqRegBaseKey",        reqJob.getReqRegInfo().getBaseKey() )
+                          .setString( "_AocReqRegSubKey",         reqJob.getReqRegInfo().getKeyPath() )
+                          .setString( "_AocReqRegValueKey",       reqJob.getReqRegInfo().getKeyName() )
+                          .syncMessage();
+                    logger.debug("Message Length = "  + msgPsr.getMessageLength());
+                    logger.debug("Last Position = "   + msgPsr.lastPosition());
+                    reqInfo.getMsg().limit(msgPsr.lastPosition());
+                    byte[] read = new byte[reqInfo.getMsg().limit()];
+                    reqInfo.getMsg().position(0);
+                    reqInfo.getMsg().get(read);
+                    logger.debug(new String(read));
 
-                msgHis.setMsgCtx( new String(read) );
+                    msgHis.setMsgCtx( new String(read) );
+                }
+                finally {
+                    msgPsr.clearMessage();
+                }
+            }
+            /**
+             * Ini 정보 조회
+             */
+            else if( reqJob.getTrxCd().equals("3000") && reqJob.getActCd().equals("1000") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "2012" );
+                msg.setIoCl( "O" );
+                msg.setMsgSts( "0" );
+                msg.setMsgType( "RC" );
+
+                reqInfo.setMsg( ByteBuffer.allocateDirect(MsgCommon.READ_BUF_SIZE) );
+                MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path") + "21002012.json").newMessage(reqInfo.getMsg());
+                try {
+                    reqInfo.getMsg().position(0);
+                    msgPsr.setString( "CM._AOCMsgCode",           msg.getMsgCd())
+                          .setString( "CM._AOCServiceCode",       msg.getSvcCd())
+                          .setString( "CM._AOCMsgSendDate",       safeData.getMsgDate() )
+                          .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
+                          .setInt   ( "CM._AOCMsgLen",            msgPsr.getMessageLength() - 9 )
+                          .setString( "CM._AOCTranNo",            msg.getMsgSeq() )
+                          .setString( "_AOCReqIniPathName",       reqJob.getReqIniInfo().getPathName() )
+                          .setString( "_AOCReqIniSection",        reqJob.getReqIniInfo().getSection()  )
+                          .setString( "_AOCReqIniKey",            reqJob.getReqIniInfo().getKeyName()  )
+                          .syncMessage();
+                    logger.debug("Message Length = "  + msgPsr.getMessageLength());
+                    logger.debug("Last Position = "   + msgPsr.lastPosition());
+                    reqInfo.getMsg().limit(msgPsr.lastPosition());
+                    byte[] read = new byte[reqInfo.getMsg().limit()];
+                    reqInfo.getMsg().position(0);
+                    reqInfo.getMsg().get(read);
+                    logger.debug(new String(read));
+
+                    msgHis.setMsgCtx( new String(read) );
+                }
+                finally {
+                    msgPsr.clearMessage();
+                }
+            }
+            /**
+             * Ini 설정 변경
+             */
+            else if( reqJob.getTrxCd().equals("5000") && reqJob.getActCd().equals("1000") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "3012" );
+                msg.setIoCl( "O" );
+                msg.setMsgSts( "0" );
+                msg.setMsgType( "RC" );
+
+                reqInfo.setMsg( ByteBuffer.allocateDirect(MsgCommon.READ_BUF_SIZE) );
+                MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path") + "21003012.json").newMessage(reqInfo.getMsg());
+                try {
+                    reqInfo.getMsg().position(0);
+                    msgPsr.setString( "CM._AOCMsgCode",           msg.getMsgCd())
+                          .setString( "CM._AOCServiceCode",       msg.getSvcCd())
+                          .setString( "CM._AOCMsgSendDate",       safeData.getMsgDate() )
+                          .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
+                          .setInt   ( "CM._AOCMsgLen",            msgPsr.getMessageLength() - 9 )
+                          .setString( "CM._AOCTranNo",            msg.getMsgSeq() )
+                          .setString( "_AOCReqIniPathName",       reqJob.getReqIniInfo().getPathName() )
+                          .setString( "_AOCReqIniSection",        reqJob.getReqIniInfo().getSection()  )
+                          .setString( "_AOCReqIniKey",            reqJob.getReqIniInfo().getKeyName()  )
+                          .setString( "_AOCReqIniValue",          reqJob.getReqIniInfo().getValue()    )
+                          .syncMessage();
+                    logger.debug("Message Length = "  + msgPsr.getMessageLength());
+                    logger.debug("Last Position = "   + msgPsr.lastPosition());
+                    reqInfo.getMsg().limit(msgPsr.lastPosition());
+                    byte[] read = new byte[reqInfo.getMsg().limit()];
+                    reqInfo.getMsg().position(0);
+                    reqInfo.getMsg().get(read);
+                    logger.debug(new String(read));
+
+                    msgHis.setMsgCtx( new String(read) );
+                }
+                finally {
+                    msgPsr.clearMessage();
+                }
             }
 
             comPack.insUpdMsg(safeData, reqJob, msg, msgHis);

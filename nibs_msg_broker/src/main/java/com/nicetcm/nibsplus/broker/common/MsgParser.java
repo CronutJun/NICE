@@ -134,6 +134,14 @@ public class MsgParser {
                 schemaLength += msgFmtRec.length;
             }
 
+            if( result.containsKey("enc_charset") ) {
+                msgFmtRec.encCharset = result.getString("enc_charset");
+            }
+
+            if( result.containsKey("dec_charset") ) {
+                msgFmtRec.decCharset = result.getString("dec_charset");
+            }
+
             if( msgFmtRec.type.equals("STRUCT") ) {
                 msgFmtRec.schema = new LinkedHashMap<String, MsgFmtRec>();
                 readSubSchema(result.getJsonArray("struct"), msgFmtRec.schema);
@@ -264,7 +272,12 @@ public class MsgParser {
                         td.pos += dMap.get(e.getKey()).length;
                         td.messageLength += dMap.get(e.getKey()).length;
 
-                        dMap.get(e.getKey()).setString(new String(buf));
+                        if( e.getValue().decCharset != null && e.getValue().decCharset.length() > 0) {
+                            logger.debug("decode charset = {}", e.getValue().decCharset);
+                            dMap.get(e.getKey()).setString(new String(buf, e.getValue().decCharset));
+                        }
+                        else
+                            dMap.get(e.getKey()).setString(new String(buf));
 
                         logger.debug("Value [" + dMap.get(e.getKey()).getString() + "]");
                         logger.debug("Position = " + td.msg.position() + ", Capacity = " + td.msg.capacity() + ", limit = " + td.msg.limit());
@@ -311,7 +324,12 @@ public class MsgParser {
                         td.pos += data.length;
                         td.messageLength += data.length;
 
-                        data.setString(new String(buf));
+                        if( e.getValue().decCharset != null && e.getValue().decCharset.length() > 0) {
+                            logger.debug("decode charset = {}", e.getValue().decCharset);
+                            data.setString(new String(buf, e.getValue().decCharset));
+                        }
+                        else
+                            data.setString(new String(buf));
 
                         logger.debug("Value [" + dataMap.get(e.getKey()).getString() + "]");
                         logger.debug("Position = " + td.msg.position() + ", Capacity = " + td.msg.capacity() + ", limit = " + td.msg.limit());
@@ -497,7 +515,12 @@ public class MsgParser {
             td.msg.position(md.pos);
             td.msg.get(data);
 
-            return rtrim(new String(data));
+            if( md.refFmt.decCharset != null && md.refFmt.decCharset.length() > 0 ) {
+                logger.debug("decoding charset = {}", md.refFmt.decCharset);
+                return rtrim(new String(data, md.refFmt.decCharset));
+            }
+            else
+                return rtrim(new String(data));
         }
         else {
             return md.getString();
@@ -527,13 +550,19 @@ public class MsgParser {
             String fmt = String.format("%%-%ds", md.length);
             byte[] data = new byte[md.length];
 
-            System.arraycopy(value.getBytes(), 0, data, 0,
-                md.length > value.length() ? value.length() : md.length);
-
-            String fmted = String.format(fmt, new String(data));
+            String fmted = String.format(fmt, value);
 
             td.msg.position(md.pos);
-            td.msg.put(fmted.getBytes());
+            if( md.refFmt.encCharset != null && md.refFmt.encCharset.length() > 0 ) {
+                logger.debug("encode charset = {}", md.refFmt.encCharset);
+                System.arraycopy(fmted.getBytes(md.refFmt.encCharset), 0, data, 0,
+                         md.length > fmted.length() ? fmted.length() : md.length);
+            }
+            else {
+                System.arraycopy(fmted.getBytes(), 0, data, 0,
+                        md.length > fmted.length() ? fmted.length() : md.length);
+            }
+            td.msg.put(data);
         }
         else {
             md.setString(value);
@@ -738,6 +767,7 @@ public class MsgParser {
     private void syncSubMessage(ThrData thrData, Map<String, MsgData> mapData) throws Exception {
 
         String fmt, fmted;
+        byte[] bFmted, bTrunc;
         int i;
         MsgData aElem;
 
@@ -766,10 +796,21 @@ public class MsgParser {
                             fmt = String.format("%%-%ds", aElem.length);
 
                             fmted = String.format(fmt, aElem.getString());
-                            if( fmted.length() > e.getValue().length )
-                                fmted = fmted.substring(0, e.getValue().length);
 
-                            thrData.msg.put(fmted.getBytes());
+                            if( e.getValue().refFmt.encCharset != null && e.getValue().refFmt.encCharset.length() > 0 ) {
+                                logger.debug("encode charset = {}", e.getValue().refFmt.encCharset);
+                                bFmted = fmted.getBytes(e.getValue().refFmt.encCharset);
+                                logger.debug("decode value = {}", new String(bFmted, "MS949"));
+                            }
+                            else {
+                                bFmted = fmted.getBytes();
+                            }
+
+                            bTrunc = new byte[e.getValue().length];
+                            System.arraycopy(bFmted, 0, bTrunc, 0, e.getValue().length);
+                            logger.debug("trucated data = {}", new String(bTrunc));
+
+                            thrData.msg.put(bTrunc);
                             thrData.pos += aElem.length;
                         }
                         thrData.messageLength += aElem.length;
@@ -793,13 +834,23 @@ public class MsgParser {
                         else {
                             fmt = String.format("%%-%ds", e.getValue().length);
 
-                            logger.debug("Field = " + e.getKey() + ", Format = " + fmt + ", Length = " + e.getValue().length + ", DataLen = " + e.getValue().getString().length());
+                            logger.debug("Field = " + e.getKey() + ", Format = " + fmt + ", Length = " + e.getValue().length + ", DataLen = " + e.getValue().getString().length() + ", Value = " + e.getValue().getString());
                             fmted = String.format(fmt, e.getValue().getString());
 
-                            if( fmted.length() > e.getValue().length )
-                                fmted = fmted.substring(0, e.getValue().length);
+                            if( e.getValue().refFmt.encCharset != null && e.getValue().refFmt.encCharset.length() > 0 ) {
+                                logger.debug("encode charset = {}", e.getValue().refFmt.encCharset);
+                                bFmted = fmted.getBytes(e.getValue().refFmt.encCharset);
+                                logger.debug("decode value = {}", new String(bFmted, "MS949"));
+                            }
+                            else {
+                                bFmted = fmted.getBytes();
+                            }
 
-                            thrData.msg.put(fmted.getBytes());
+                            bTrunc = new byte[e.getValue().length];
+                            System.arraycopy(bFmted, 0, bTrunc, 0, e.getValue().length);
+                            logger.debug("trucated data = {}", new String(bTrunc));
+
+                            thrData.msg.put(bTrunc);
                             thrData.pos += e.getValue().length;
                         }
                         thrData.messageLength += e.getValue().length;

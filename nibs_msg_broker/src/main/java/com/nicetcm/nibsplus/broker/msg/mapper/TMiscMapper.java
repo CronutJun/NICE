@@ -1,5 +1,7 @@
 package com.nicetcm.nibsplus.broker.msg.mapper;
 
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
@@ -7,14 +9,17 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.type.JdbcType;
 
+import com.nicetcm.nibsplus.broker.msg.model.TCmCheckMaster;
 import com.nicetcm.nibsplus.broker.msg.model.TCmGoodsApply;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngMadeCom;
 import com.nicetcm.nibsplus.broker.msg.model.TCtPenaltyList;
 import com.nicetcm.nibsplus.broker.msg.model.TFnBoxOrg;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketDeal;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
+import com.nicetcm.nibsplus.broker.msg.model.TbPhsPushMessages;
 import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.CloseAmt;
 import com.nicetcm.nibsplus.broker.msg.services.In03101130Impl.CmCash;
 
@@ -419,10 +424,10 @@ public interface TMiscMapper {
         "FROM    OP.T_CM_SITE SITE,                      ",
         "        OP.T_CM_MAC  MAC                        ",
         "WHERE   SITE.ORG_CD = MAC.ORG_CD                ",
-        "    AND SITE.JIJUM_CD = MAC.JIJUM_CD            ",
+        "    AND SITE.BRANCH_CD = MAC.BRANCH_CD            ",
         "    AND SITE.SITE_CD  = MAC.SITE_CD             ",
         "    AND MAC.ORG_CD = '096'                      ",
-        "    AND MAC.JIJUM_CD = '9600'                   ",
+        "    AND MAC.BRANCH_CD = '9600'                   ",
         "    ANd MAC.MAC_NO = #{macNo, jdbcType=VARCHAR} "
     })
     String getSiteCdOrg096(@Param("macNo") String macNo);
@@ -528,7 +533,7 @@ public interface TMiscMapper {
 
 
     @Select({
-        "select op.f_get_nice_jijum_cd(#{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{orgSiteCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}) from dual"
+        "select op.f_get_nice_branch_cd(#{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{orgSiteCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}) from dual"
     })
     String fGetNiceJijumCd(@Param("orgCd") String orgCd, @Param("branchCd") String branchCd, @Param("orgSiteCd") String orgSiteCd, @Param("macNo") String macNo);
 
@@ -547,7 +552,7 @@ public interface TMiscMapper {
     String getMaxTransSeqNo(@Param("orgCd") String orgCd, @Param("transDate") String transDate);
 
     @Select({
-        "select op.f_get_org_jijum_cd(#{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{siteCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}) from dual"
+        "select op.f_get_org_branch_cd(#{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{siteCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}) from dual"
     })
     String fGetOrgBranchCd(@Param("orgCd") String orgCd, @Param("branchCd") String branchCd, @Param("siteCd") String siteCd, @Param("macNo") String macNo);
 
@@ -555,4 +560,322 @@ public interface TMiscMapper {
         "select op.f_get_org_site_cd(#{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{siteCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}) from dual"
     })
     String fGetOrgSiteCd(@Param("orgCd") String orgCd, @Param("branchCd") String branchCd, @Param("siteCd") String siteCd, @Param("macNo") String macNo);
+
+    @Select({
+        "SELECT  accept_time, member_id                                                                                     ",
+        "FROM    OP.T_CM_CHECK_MASTER                                                                                       ",
+        "WHERE   org_cd      = #{orgCd, jdbcType=VARCHAR}                                                                   ",
+        "and     branch_cd    = #{branchCd, jdbcType=VARCHAR}                                                                ",
+        "and     site_cd     = #{siteCd, jdbcType=VARCHAR}                                                                  ",
+        "and     accept_date = RTRIM(#{acceptDate, jdbcType=VARCHAR})                                                       ",
+        "and     accept_date||accept_time <= #{acceptDate, jdbcType=VARCHAR}||substr(#{acceptTime, jdbcType=VARCHAR},1,4)   ",
+        "and     arrival_time is null                                                                                       ",
+        "and     complete_time is null                                                                                      ",
+        "and     start_time is not null                                                                                     "
+    })
+    @Results({
+        @Result(column="accept_time", property="acceptTime", jdbcType=JdbcType.VARCHAR),
+        @Result(column="member_id", property="memberId", jdbcType=JdbcType.VARCHAR)
+    })
+    List<TCmCheckMaster> selectCmCheckMaster(TCmCheckMaster tCmCheckMaster);
+
+    @Select({
+        "SELECT  accept_time, member_id                                                                                     ",
+        "FROM    OP.T_CM_CHECK_MASTER                                                                                       ",
+        "WHERE   org_cd      = #{orgCd, jdbcType=VARCHAR}                                                                   ",
+        "and     branch_cd   = #{branchCd, jdbcType=VARCHAR}                                                                ",
+        "and     site_cd     = #{siteCd, jdbcType=VARCHAR}                                                                  ",
+        "and     accept_date = RTRIM(#{acceptDate, jdbcType=VARCHAR})                                                       ",
+        "and     accept_date||accept_time <= #{acceptDate, jdbcType=VARCHAR}||substr(#{acceptTime, jdbcType=VARCHAR},1,4)   ",
+        "and     complete_time is null                                                                                      ",
+        "and     start_time is not null                                                                                     "
+    })
+    @Results({
+        @Result(column="accept_time", property="acceptTime", jdbcType=JdbcType.VARCHAR),
+        @Result(column="member_id", property="memberId", jdbcType=JdbcType.VARCHAR)
+    })
+    List<TCmCheckMaster> selectCmCheckMaster2(TCmCheckMaster tCmCheckMaster);
+
+    @Select({
+        "select  USER_IDX                                           ",
+        "from (select user_idx                                      ",
+        "        from tb_phs_user                                   ",
+        "       where user_number = #{memberId, jdbcType=VARCHAR}   ",
+        "         and status = 'active'                             ",
+        "       order by update_date desc)                          ",
+        "where rownum = 1                                           "
+    })
+    String getUserIdx(@Param("memberId") String memberId);
+
+    @Select({
+        "SELECT OP.SEQ_PHS_PUSH_MESSAGES.NEXTVAL AS PUSH_IDX",
+        "FROM DUAL"
+    })
+    @Results({
+        @Result(column="PUSH_IDX", property="pushIdx", jdbcType=JdbcType.VARCHAR)
+    })
+    TbPhsPushMessages getSeqPhsPushMessages();
+
+    @Select({
+        "select * from OP.T_CT_ERROR_MNG                                                                                        ",
+        "where ORG_CD  = #{orgCd, jdbcType=VARCHAR}                                                                             ",
+        "and branch_cd    = #{branchCd, jdbcType=VARCHAR}                                                                       ",
+        "and site_cd       = #{siteCd, jdbcType=VARCHAR}                                                                        ",
+        "and create_date >= TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD'))                                                         ",
+        "and send_time is NOT NULL                                                                                              ",
+        "and nvl( send_status, '0' ) = '2'                                                                                      ",
+        "and nvl(error_status, '0') not in ( '7000', '1011', '3011', '9011')                                                    ",
+        "and nvl(error_status, '0') <> '2000'                                                                                   ",
+        "and nvl(as_medium, '0000') = '0000'                                                                                    ",
+        "and error_cd <> 'AFTMNG'                                                                                               ",
+        "and     lock_time IS NULL                                                                                              ",
+        "and unlock_time IS NOT NULL                                                                                            ",
+        "and unlock_date||unlock_time < RTRIM(#{unlockDate, jdbcType=VARCHAR}    ) || RTRIM(#{unlockTime, jdbcType=VARCHAR})    "
+    })
+    @Results({
+        @Result(column="ERROR_NO"               , property="errorNo"           , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CREATE_DATE"            , property="createDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CREATE_TIME"            , property="createTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CD"                 , property="orgCd"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="BRANCH_CD"              , property="branchCd"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="MAC_NO"                 , property="macNo"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SITE_CD"                , property="siteCd"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ERROR_CD"               , property="errorCd"           , jdbcType=JdbcType.VARCHAR),
+        @Result(column="MADE_ERR_CD"            , property="madeErrCd"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="MSG"                    , property="msg"               , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ERROR_STATUS"           , property="errorStatus"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_YN"                , property="sendYn"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_MSG_NO"             , property="orgMsgNo"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CURRENT_DATE"           , property="currentDate"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CURRENT_UID"            , property="currentUid"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FORMAT_TYPE"            , property="formatType"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="TRANS_DATE"             , property="transDate"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="MID_ERROR_CD"           , property="midErrorCd"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="GROUP_ERROR_CD"         , property="groupErrorCd"      , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ATM_STATE"              , property="atmState"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="AS_MEDIUM"              , property="asMedium"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_MSG"                , property="orgMsg"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_SEND_YN"            , property="orgSendYn"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="DEPT_CD"                , property="deptCd"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="OFFICE_CD"              , property="officeCd"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="TEAM_CD"                , property="teamCd"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEC"                    , property="sec"               , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CUST_TEL"           , property="orgCustTel"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CUST_NM"            , property="orgCustNm"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CUST_MSG"           , property="orgCustMsg"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CUST_RECV_YN"       , property="orgCustRecvYn"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_START_TIME"        , property="sendStartTime"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_FINISH_TIME"       , property="sendFinishTime"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="UNLOCK_DATE"            , property="unlockDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="UNLOCK_TIME"            , property="unlockTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_ERR_SEND_YN"        , property="orgErrSendYn"      , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CONFLICT_YN"            , property="conflictYn"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="WORK_STATUS"            , property="workStatus"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_COUNT"             , property="sendCount"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REMARK"                 , property="remark"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_SITE_CD"            , property="orgSiteCd"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="LOCK_DATE"              , property="lockDate"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="LOCK_TIME"              , property="lockTime"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REAL_ERROR_CD"          , property="realErrorCd"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REG_DT"                 , property="regDt"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REG_ID"                 , property="regId"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CALL_CNT"           , property="orgCallCnt"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CRT_NO"                 , property="crtNo"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="UPDATE_DATE"            , property="updateDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="UPDATE_UID"             , property="updateUid"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_TYPE"              , property="sendType"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_DATE"              , property="sendDate"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_TIME"              , property="sendTime"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_NM"                , property="sendNm"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_UID"               , property="sendUid"           , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_CHECK_YN"          , property="sendCheckYn"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_CHECK_DATETIME"    , property="sendCheckDatetime" , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_PLAN_DATETIME"     , property="sendPlanDatetime"  , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_PLAN_NM"           , property="sendPlanNm"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_PLAN_UID"          , property="sendPlanUid"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_STATUS"            , property="sendStatus"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_TOOL"              , property="sendTool"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_SMS_STATUS"        , property="sendSmsStatus"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_USER_TYPE"          , property="orgUserType"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_USER_NM"            , property="orgUserNm"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_PLACE"             , property="recvPlace"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_USER_NM"           , property="recvUserNm"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_USER_UID"          , property="recvUserUid"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_TELE_NO"           , property="recvTeleNo"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_DATE"              , property="recvDate"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_TIME"              , property="recvTime"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_PDA_DATE"          , property="recvPdaDate"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_PDA_TIME"          , property="recvPdaTime"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_XPOS"              , property="recvXpos"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_YPOS"              , property="recvYpos"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_SIDO"              , property="recvSido"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_GUGUN"             , property="recvGugun"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_DONG"              , property="recvDong"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_EST_DATE"       , property="arrivalEstDate"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_EST_TIME"       , property="arrivalEstTime"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ACCEPT_DATE"            , property="acceptDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ACCEPT_TIME"            , property="acceptTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ACCEPT_NM"              , property="acceptNm"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ACCEPT_UID"             , property="acceptUid"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REPAIR_DATE"            , property="repairDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REPAIR_TIME"            , property="repairTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_DATE"            , property="finishDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_TIME"            , property="finishTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_PDA_DATE"        , property="finishPdaDate"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_PDA_TIME"        , property="finishPdaTime"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_XPOS"            , property="finishXpos"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_YPOS"            , property="finishYpos"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_SIDO"            , property="finishSido"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_GUGUN"           , property="finishGugun"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_DONG"            , property="finishDong"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_TYPE"            , property="finishType"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_NM"              , property="finishNm"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_UID"             , property="finishUid"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_DATE"           , property="arrivalDate"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_TIME"           , property="arrivalTime"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_PDA_DATE"       , property="arrivalPdaDate"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_PDA_TIME"       , property="arrivalPdaTime"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_XPOS"           , property="arrivalXpos"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_YPOS"           , property="arrivalYpos"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_SIDO"           , property="arrivalSido"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_GUGUN"          , property="arrivalGugun"      , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_DONG"           , property="arrivalDong"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_TYPE"           , property="arrivalType"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_UID"            , property="arrivalUid"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_NM"             , property="arrivalNm"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CLOSE_YN"               , property="closeYn"           , jdbcType=JdbcType.VARCHAR),
+        @Result(column="IVR_YN"                 , property="ivrYn"             , jdbcType=JdbcType.VARCHAR)
+    })
+    List<TCtErrorMng> selectCtErrorMng(TCtErrorMng tCtErrorMng);
+
+    @Select({
+        "select * from OP.T_CT_ERROR_MNG                                                                                        ",
+        "where ORG_CD  = #{orgCd, jdbcType=VARCHAR}                                                                             ",
+        "and branch_cd    = #{branchCd, jdbcType=VARCHAR}                                                                       ",
+        "and site_cd       = #{siteCd, jdbcType=VARCHAR}                                                                        ",
+        "and create_date >= TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD'))                                                         ",
+        "and send_time is NOT NULL                                                                                              ",
+        "and nvl( send_status, '0' ) = '2'                                                                                      ",
+        "and nvl(error_status, '0') not in ( '7000', '1011', '3011', '9011')                                                    ",
+        "and nvl(error_status, '0') <> '2000'                                                                                   ",
+        "and nvl(as_medium, '0000') = '0000'                                                                                    ",
+        "and error_cd <> 'AFTMNG'                                                                                               ",
+        "and unlock_time IS NULL                                                                                              ",
+        "and ( arrival_time is null OR arrival_type is null )    "
+    })
+    @Results({
+        @Result(column="ERROR_NO"               , property="errorNo"           , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CREATE_DATE"            , property="createDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CREATE_TIME"            , property="createTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CD"                 , property="orgCd"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="BRANCH_CD"              , property="branchCd"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="MAC_NO"                 , property="macNo"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SITE_CD"                , property="siteCd"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ERROR_CD"               , property="errorCd"           , jdbcType=JdbcType.VARCHAR),
+        @Result(column="MADE_ERR_CD"            , property="madeErrCd"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="MSG"                    , property="msg"               , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ERROR_STATUS"           , property="errorStatus"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_YN"                , property="sendYn"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_MSG_NO"             , property="orgMsgNo"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CURRENT_DATE"           , property="currentDate"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CURRENT_UID"            , property="currentUid"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FORMAT_TYPE"            , property="formatType"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="TRANS_DATE"             , property="transDate"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="MID_ERROR_CD"           , property="midErrorCd"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="GROUP_ERROR_CD"         , property="groupErrorCd"      , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ATM_STATE"              , property="atmState"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="AS_MEDIUM"              , property="asMedium"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_MSG"                , property="orgMsg"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_SEND_YN"            , property="orgSendYn"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="DEPT_CD"                , property="deptCd"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="OFFICE_CD"              , property="officeCd"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="TEAM_CD"                , property="teamCd"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEC"                    , property="sec"               , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CUST_TEL"           , property="orgCustTel"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CUST_NM"            , property="orgCustNm"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CUST_MSG"           , property="orgCustMsg"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CUST_RECV_YN"       , property="orgCustRecvYn"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_START_TIME"        , property="sendStartTime"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_FINISH_TIME"       , property="sendFinishTime"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="UNLOCK_DATE"            , property="unlockDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="UNLOCK_TIME"            , property="unlockTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_ERR_SEND_YN"        , property="orgErrSendYn"      , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CONFLICT_YN"            , property="conflictYn"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="WORK_STATUS"            , property="workStatus"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_COUNT"             , property="sendCount"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REMARK"                 , property="remark"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_SITE_CD"            , property="orgSiteCd"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="LOCK_DATE"              , property="lockDate"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="LOCK_TIME"              , property="lockTime"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REAL_ERROR_CD"          , property="realErrorCd"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REG_DT"                 , property="regDt"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REG_ID"                 , property="regId"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_CALL_CNT"           , property="orgCallCnt"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CRT_NO"                 , property="crtNo"             , jdbcType=JdbcType.VARCHAR),
+        @Result(column="UPDATE_DATE"            , property="updateDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="UPDATE_UID"             , property="updateUid"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_TYPE"              , property="sendType"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_DATE"              , property="sendDate"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_TIME"              , property="sendTime"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_NM"                , property="sendNm"            , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_UID"               , property="sendUid"           , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_CHECK_YN"          , property="sendCheckYn"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_CHECK_DATETIME"    , property="sendCheckDatetime" , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_PLAN_DATETIME"     , property="sendPlanDatetime"  , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_PLAN_NM"           , property="sendPlanNm"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_PLAN_UID"          , property="sendPlanUid"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_STATUS"            , property="sendStatus"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_TOOL"              , property="sendTool"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="SEND_SMS_STATUS"        , property="sendSmsStatus"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_USER_TYPE"          , property="orgUserType"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ORG_USER_NM"            , property="orgUserNm"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_PLACE"             , property="recvPlace"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_USER_NM"           , property="recvUserNm"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_USER_UID"          , property="recvUserUid"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_TELE_NO"           , property="recvTeleNo"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_DATE"              , property="recvDate"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_TIME"              , property="recvTime"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_PDA_DATE"          , property="recvPdaDate"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_PDA_TIME"          , property="recvPdaTime"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_XPOS"              , property="recvXpos"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_YPOS"              , property="recvYpos"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_SIDO"              , property="recvSido"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_GUGUN"             , property="recvGugun"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="RECV_DONG"              , property="recvDong"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_EST_DATE"       , property="arrivalEstDate"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_EST_TIME"       , property="arrivalEstTime"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ACCEPT_DATE"            , property="acceptDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ACCEPT_TIME"            , property="acceptTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ACCEPT_NM"              , property="acceptNm"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ACCEPT_UID"             , property="acceptUid"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REPAIR_DATE"            , property="repairDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="REPAIR_TIME"            , property="repairTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_DATE"            , property="finishDate"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_TIME"            , property="finishTime"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_PDA_DATE"        , property="finishPdaDate"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_PDA_TIME"        , property="finishPdaTime"     , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_XPOS"            , property="finishXpos"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_YPOS"            , property="finishYpos"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_SIDO"            , property="finishSido"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_GUGUN"           , property="finishGugun"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_DONG"            , property="finishDong"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_TYPE"            , property="finishType"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_NM"              , property="finishNm"          , jdbcType=JdbcType.VARCHAR),
+        @Result(column="FINISH_UID"             , property="finishUid"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_DATE"           , property="arrivalDate"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_TIME"           , property="arrivalTime"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_PDA_DATE"       , property="arrivalPdaDate"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_PDA_TIME"       , property="arrivalPdaTime"    , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_XPOS"           , property="arrivalXpos"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_YPOS"           , property="arrivalYpos"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_SIDO"           , property="arrivalSido"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_GUGUN"          , property="arrivalGugun"      , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_DONG"           , property="arrivalDong"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_TYPE"           , property="arrivalType"       , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_UID"            , property="arrivalUid"        , jdbcType=JdbcType.VARCHAR),
+        @Result(column="ARRIVAL_NM"             , property="arrivalNm"         , jdbcType=JdbcType.VARCHAR),
+        @Result(column="CLOSE_YN"               , property="closeYn"           , jdbcType=JdbcType.VARCHAR),
+        @Result(column="IVR_YN"                 , property="ivrYn"             , jdbcType=JdbcType.VARCHAR)
+    })
+    List<TCtErrorMng> selectCtErrorMng2(TCtErrorMng tCtErrorMng);
 }

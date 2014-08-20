@@ -47,7 +47,7 @@ public class RMIClientTest {
         AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
         System.out.println("lookup");
 
-        remoteObj.reqEnvInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), "000001", "1000", "1000", "test", "3001", 0 );
+        remoteObj.reqEnvInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), "000001", "720103", "500", "test", "0202", 0 );
     }
 
     public void reqRegInfToMac() throws Exception {
@@ -65,9 +65,43 @@ public class RMIClientTest {
         remoteObj.reqRegInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), "000001", "2000", "1000", "test", reqRegInfo, 0 );
     }
 
+    public void reqIniInfToMac() throws Exception {
+        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
+        System.out.println("registry");
+        AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
+        System.out.println("lookup");
+
+        RMIReqIniInfo reqIniInfo = new RMIReqIniInfo();
+        reqIniInfo.setMacNo( "3001" );
+        reqIniInfo.setPathName( "C:\\ANGARA\\DATA\\BankName.ini" );
+        reqIniInfo.setSection( "BANK" );
+        reqIniInfo.setKeyName( "081"  );
+
+        remoteObj.reqIniInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), "000001", "3000", "1000", "test", reqIniInfo, 0 );
+    }
+
+    public void reqIniChgToMac() throws Exception {
+        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
+        System.out.println("registry");
+        AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
+        System.out.println("lookup");
+
+        RMIReqIniInfo reqIniInfo = new RMIReqIniInfo();
+        reqIniInfo.setMacNo( "3001" );
+        reqIniInfo.setPathName( "C:\\ANGARA\\DATA\\BankName.ini" );
+        reqIniInfo.setSection( "BANK" );
+        reqIniInfo.setKeyName( "081"  );
+        reqIniInfo.setValue( "김동준" );
+
+        remoteObj.reqIniChgToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), "000001", "5000", "1000", "test", reqIniInfo, 0 );
+    }
+
     public static void main(String[] args) {
         try {
-            new RMIClientTest().reqRegInfToMac();
+            //new RMIClientTest().reqEnvInfToMac();
+            //new RMIClientTest().reqRegInfToMac();
+            //new RMIClientTest().reqIniInfToMac();
+            new RMIClientTest().reqIniChgToMac();
         }
         catch( java.rmi.RemoteException e ) {
             System.out.println("Something has gone wrong during remote method call...");

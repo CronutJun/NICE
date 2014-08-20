@@ -4,9 +4,9 @@ package com.nicetcm.nibsplus.broker.ams;
  * Copyright 2014 The NIBS Project
  *
  * AMS 기기관리시스템 - AMSBrokerReqJob
- * 
+ *
  * 기기와 접속 정보관리 및 대기열 관리를 위한 객체
- * 
+ *
  * @author  K.D.J
  * @since   2014.08.18
  */
@@ -14,6 +14,8 @@ package com.nicetcm.nibsplus.broker.ams;
 import java.util.concurrent.*;
 import java.nio.ByteBuffer;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqRegInfo;
+import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqIniInfo;
+import com.nicetcm.nibsplus.broker.ams.rmi.RMIEnvValue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,8 @@ public class AMSBrokerReqJob {
     private String OrgCreateDate;
     private String OrgMsgSeq;
     private RMIReqRegInfo reqRegInfo;
+    private RMIReqIniInfo reqIniInfo;
+    private RMIEnvValue envValue;
     private int timeOut;
 
     public AMSBrokerReqJob(String macNo, boolean isBlocking) {
@@ -151,6 +155,22 @@ public class AMSBrokerReqJob {
 
     public void setReqRegInfo(RMIReqRegInfo reqRegInfo) {
         this.reqRegInfo = reqRegInfo;
+    }
+
+    public RMIReqIniInfo getReqIniInfo() {
+        return reqIniInfo;
+    }
+
+    public void setReqIniInfo(RMIReqIniInfo reqIniInfo) {
+        this.reqIniInfo = reqIniInfo;
+    }
+
+    public RMIEnvValue getEnvValue() {
+        return envValue;
+    }
+
+    public void setEnvValue(RMIEnvValue envValue) {
+        this.envValue = envValue;
     }
 
 }

@@ -195,11 +195,24 @@ public class In04000900Impl extends InMsgHandlerImpl {
                 comPack.msgSnd(suHeadSend, suCompBody, safeData);
 
             } else if(parsed.getString("CM.msg_type").equals("0400") && parsed.getString("CM.work_type").equals("1170")) {
-                suHeadSend.setFormatType(MsgBrokerConst.IQ_CODE);
-                suHeadSend.setMsgType(MsgBrokerConst.IQ_REQ);
-                suHeadSend.setWorkType("0900");
+                //suHeadSend.setFormatType(MsgBrokerConst.IQ_CODE);
+                //suHeadSend.setMsgType(MsgBrokerConst.IQ_REQ);
+                //suHeadSend.setWorkType("0900");
+                parsed.setString("format_type", MsgBrokerConst.IQ_CODE);
+                parsed.setString("msg_type", MsgBrokerConst.IQ_REQ);
+                parsed.setString("work_type", "0900");
 
-                /* 20140818 여기까지 코딩 */
+
+                TMisc tMisc = tMiscMapper.getMadeComCd(parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"));
+
+                if(tMisc == null) {
+                    logger.info( String.format("[MngEM_SaveManyErrCall] 기기제조사 정보  검색 실패 기관[%s] 지점[%s] 기번[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no") ));
+                    throw new MsgBrokerException(-1);
+                }
+
+                //suHeadSend.setOrgCd(tMisc.getMadeOrgCd());
+                parsed.setString("CM.org_cd", tMisc.getMadeOrgCd());
+                comPack.msgSnd(parsed);
             }
         }
     }//end method

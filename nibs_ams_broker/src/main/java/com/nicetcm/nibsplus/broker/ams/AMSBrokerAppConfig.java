@@ -20,19 +20,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.apache.ibatis.session.SqlSessionFactory;
-
-import com.nicetcm.nibsplus.broker.common.MsgCommon;
-import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
 
 
 @Configuration
@@ -65,13 +64,17 @@ public class AMSBrokerAppConfig {
     @Bean(name="dataSource")
     public BasicDataSource dataSource() {
 
+        logger.debug("db_usr = {}", db_url);
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("com.ibm.db2.jcc.DB2Driver");
-        ds.setUrl(MsgCommon.msgProps.getProperty("db_url"));
-        ds.setUsername(MsgCommon.msgProps.getProperty("db_user"));
-        ds.setPassword(MsgCommon.msgProps.getProperty("db_pass"));
+        ds.setUrl(db_url);
+        ds.setUsername(db_user);
+        ds.setPassword(db_pass);
         ds.setInitialSize(Integer.parseInt(db_init_conn));
         ds.setMaxActive(Integer.parseInt(db_max_conn));
+
+        this.ds = ds;
+
         return ds;
 
     }
@@ -89,14 +92,16 @@ public class AMSBrokerAppConfig {
 
     @Bean(name="sqlSessionFactory")
     @DependsOn("dataSource")
-    public SqlSessionFactoryBean sqlSessionFactory() {
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
 
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
 
         factory.setDataSource(ds);
         factory.setConfigLocation(AMSBrokerSpringMain.sprCtx.getResource(String.format("classpath:%s/ams_db_conf.xml", AMSBrokerConst.SVR_TYPE)));
 
-        return factory;
+        this.factory = factory.getObject();
+
+        return factory.getObject();
     }
 
     @Bean(name="sqlSession")

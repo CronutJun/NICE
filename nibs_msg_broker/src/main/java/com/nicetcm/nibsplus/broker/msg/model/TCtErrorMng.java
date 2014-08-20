@@ -3586,4 +3586,40 @@ public class TCtErrorMng {
     public void setIvrYn(String ivrYn) {
         this.ivrYn = ivrYn;
     }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString()
+    {
+        return "TCtErrorMng [errorNo=" + errorNo + ", createDate=" + createDate + ", createTime=" + createTime + ", orgCd=" + orgCd + ", branchCd=" + branchCd
+                        + ", macNo=" + macNo + ", siteCd=" + siteCd + ", errorCd=" + errorCd + ", madeErrCd=" + madeErrCd + ", msg=" + msg + ", errorStatus="
+                        + errorStatus + ", sendYn=" + sendYn + ", orgMsgNo=" + orgMsgNo + ", currentDate=" + currentDate + ", currentUid=" + currentUid
+                        + ", formatType=" + formatType + ", transDate=" + transDate + ", midErrorCd=" + midErrorCd + ", groupErrorCd=" + groupErrorCd
+                        + ", atmState=" + atmState + ", asMedium=" + asMedium + ", orgMsg=" + orgMsg + ", orgSendYn=" + orgSendYn + ", deptCd=" + deptCd
+                        + ", officeCd=" + officeCd + ", teamCd=" + teamCd + ", sec=" + sec + ", orgCustTel=" + orgCustTel + ", orgCustNm=" + orgCustNm
+                        + ", orgCustMsg=" + orgCustMsg + ", orgCustRecvYn=" + orgCustRecvYn + ", sendStartTime=" + sendStartTime + ", sendFinishTime="
+                        + sendFinishTime + ", unlockDate=" + unlockDate + ", unlockTime=" + unlockTime + ", orgErrSendYn=" + orgErrSendYn + ", conflictYn="
+                        + conflictYn + ", workStatus=" + workStatus + ", sendCount=" + sendCount + ", remark=" + remark + ", orgSiteCd=" + orgSiteCd
+                        + ", lockDate=" + lockDate + ", lockTime=" + lockTime + ", realErrorCd=" + realErrorCd + ", regDt=" + regDt + ", regId=" + regId
+                        + ", orgCallCnt=" + orgCallCnt + ", crtNo=" + crtNo + ", updateDate=" + updateDate + ", updateUid=" + updateUid + ", sendType="
+                        + sendType + ", sendDate=" + sendDate + ", sendTime=" + sendTime + ", sendNm=" + sendNm + ", sendUid=" + sendUid + ", sendCheckYn="
+                        + sendCheckYn + ", sendCheckDatetime=" + sendCheckDatetime + ", sendPlanDatetime=" + sendPlanDatetime + ", sendPlanNm=" + sendPlanNm
+                        + ", sendPlanUid=" + sendPlanUid + ", sendStatus=" + sendStatus + ", sendTool=" + sendTool + ", sendSmsStatus=" + sendSmsStatus
+                        + ", orgUserType=" + orgUserType + ", orgUserNm=" + orgUserNm + ", recvPlace=" + recvPlace + ", recvUserNm=" + recvUserNm
+                        + ", recvUserUid=" + recvUserUid + ", recvTeleNo=" + recvTeleNo + ", recvDate=" + recvDate + ", recvTime=" + recvTime
+                        + ", recvPdaDate=" + recvPdaDate + ", recvPdaTime=" + recvPdaTime + ", recvXpos=" + recvXpos + ", recvYpos=" + recvYpos + ", recvSido="
+                        + recvSido + ", recvGugun=" + recvGugun + ", recvDong=" + recvDong + ", arrivalEstDate=" + arrivalEstDate + ", arrivalEstTime="
+                        + arrivalEstTime + ", acceptDate=" + acceptDate + ", acceptTime=" + acceptTime + ", acceptNm=" + acceptNm + ", acceptUid=" + acceptUid
+                        + ", repairDate=" + repairDate + ", repairTime=" + repairTime + ", finishDate=" + finishDate + ", finishTime=" + finishTime
+                        + ", finishPdaDate=" + finishPdaDate + ", finishPdaTime=" + finishPdaTime + ", finishXpos=" + finishXpos + ", finishYpos=" + finishYpos
+                        + ", finishSido=" + finishSido + ", finishGugun=" + finishGugun + ", finishDong=" + finishDong + ", finishType=" + finishType
+                        + ", finishNm=" + finishNm + ", finishUid=" + finishUid + ", arrivalDate=" + arrivalDate + ", arrivalTime=" + arrivalTime
+                        + ", arrivalPdaDate=" + arrivalPdaDate + ", arrivalPdaTime=" + arrivalPdaTime + ", arrivalXpos=" + arrivalXpos + ", arrivalYpos="
+                        + arrivalYpos + ", arrivalSido=" + arrivalSido + ", arrivalGugun=" + arrivalGugun + ", arrivalDong=" + arrivalDong + ", arrivalType="
+                        + arrivalType + ", arrivalUid=" + arrivalUid + ", arrivalNm=" + arrivalNm + ", closeYn=" + closeYn + ", ivrYn=" + ivrYn + "]";
+    }
+
+
 }

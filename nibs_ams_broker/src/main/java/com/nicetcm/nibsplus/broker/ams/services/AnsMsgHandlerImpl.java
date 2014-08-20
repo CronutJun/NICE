@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerLib;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
@@ -62,7 +63,7 @@ public class AnsMsgHandlerImpl implements AnsMsgHandler {
 
             msg.setMsgSts( ansSts );
 
-            if( rsltMsg != null ) {
+            if( rsltMsg != null && ansSts.equals("9") ) {
                 byte[] bMsgCd    = new byte[4];
                 byte[] bSvcCd    = new byte[4];
                 byte[] bMacNo    = new byte[12];
@@ -83,10 +84,18 @@ public class AnsMsgHandlerImpl implements AnsMsgHandler {
 
                 msg.setMsgCd( new String(bMsgCd).trim() );
                 msg.setSvcCd( new String(bSvcCd).trim() );
-                msg.setMacNo( new String(bMacNo).trim() );
+                msg.setMacNo( new String(bMacNo).trim().substring(2) );
                 msg.setMacSerNo( new String(bMacSerNo).trim() );
-                msg.setOrgCd( new String(bOrgCd).trim() );
-                msg.setBranchCd( new String(bBrchCd).trim() );
+                msg.setOrgCd( AMSBrokerConst.NICE_ORG_CD );
+                msg.setBranchCd( AMSBrokerConst.NICE_BR_CD );
+
+                rsltMsg.position(0);
+                rsltMsg.get(read);
+
+                msgHis.setMsgCtx( new String(read) );
+            }
+            else if( rsltMsg != null && ansSts.equals("5") ) {
+                byte[] read      = new byte[rsltMsg.limit()];
 
                 rsltMsg.position(0);
                 rsltMsg.get(read);

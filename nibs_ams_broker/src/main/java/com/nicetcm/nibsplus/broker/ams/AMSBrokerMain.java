@@ -75,7 +75,7 @@ public class AMSBrokerMain extends Thread {
         AMSBrokerMain rmi = new AMSBrokerMain("RMI");
 
         AMSBrokerSpringMain.sprCtx.register(AMSBrokerAppConfig.class);
-        //AMSBrokerSpringMain.sprCtx.scan("com.nicetcm.nibsplus.broker.ams.services");
+        //AMSBrokerSpringMain.sprCtx.scan("com.nicetcm.nibsplus.broker.ams.services"); AppConfig @ComponentScan으로 대체
         AMSBrokerSpringMain.sprCtx.refresh();
 
         svr.start();

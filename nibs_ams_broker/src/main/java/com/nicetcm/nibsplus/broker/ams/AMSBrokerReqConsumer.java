@@ -86,7 +86,10 @@ public class AMSBrokerReqConsumer extends Thread {
             }
             catch( Exception e ) {
                 logger.debug(e.getMessage());
-                ansMsg.ansMsgHandle( amsSafeData, reqJob, null, "5" );
+                ByteBuffer err = ByteBuffer.allocateDirect(e.getMessage().length());
+                err.position(0);
+                err.put(e.getMessage().getBytes());
+                ansMsg.ansMsgHandle( amsSafeData, reqJob, err, "5" );
                 if( reqJob.getIsBlocking() )
                     reqJob.getAns().put(ByteBuffer.allocateDirect(1));
             }

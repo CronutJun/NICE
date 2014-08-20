@@ -9,10 +9,12 @@ public class MsgFmtRec {
     public    String                       ref_size;
     public    int                          iteration;
     public    int                          length;
+    public    String                       encCharset;
+    public    String                       decCharset;
     public    Map<String, MsgFmtRec>       schema;
-    
+
     public MsgFmtRec(){
-        
+
         this.name          = "";
         this.type          = "";
         this.ref_iteration = "";
@@ -20,6 +22,6 @@ public class MsgFmtRec {
         this.iteration     = 0;
         this.length        = 0;
         this.schema        = null;
-        
+
     }
 }

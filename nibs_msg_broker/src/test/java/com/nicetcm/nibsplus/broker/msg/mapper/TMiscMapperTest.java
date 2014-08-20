@@ -3,6 +3,7 @@ package com.nicetcm.nibsplus.broker.msg.mapper;
 import static org.junit.Assert.assertTrue;
 
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacNo;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacNoSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
 import com.nicetcm.nibsplus.broker.msg.model.TCtInputCheckList;
 import com.nicetcm.nibsplus.broker.msg.model.TCtInputCheckListSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
@@ -129,6 +131,13 @@ public class TMiscMapperTest extends MapperTestSuite
     @Test
     public void test() {
         CmCash cmCash = new CmCash();
-        tMiscMapper.selectCountCmCash(cmCash);
+        List<TCtErrorMng> tCtEDrrorMngList = tMiscMapper.selectCtErrorMng(new TCtErrorMng());
+
+        for(TCtErrorMng tCtErrorMng : tCtEDrrorMngList) {
+            logger.info(tCtErrorMng.toString());
+        }
+
+
+
     }
 }

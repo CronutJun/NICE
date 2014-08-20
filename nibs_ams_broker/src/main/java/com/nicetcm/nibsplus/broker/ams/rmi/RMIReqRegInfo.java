@@ -10,36 +10,45 @@ public class RMIReqRegInfo implements Serializable {
     private String baseKey;
     private String keyPath;
     private String keyName;
+    private String value;
 
     public String getMacNo() {
         return macNo;
     }
-    
+
     public void setMacNo(String macNo) {
         this.macNo = macNo;
     }
-    
+
     public String getBaseKey() {
         return baseKey;
     }
-    
+
     public void setBaseKey(String baseKey) {
         this.baseKey = baseKey;
     }
-    
+
     public String getKeyPath() {
         return keyPath;
     }
-    
+
     public void setKeyPath(String keyPath) {
         this.keyPath = keyPath;
     }
-    
+
     public String getKeyName() {
         return keyName;
     }
-    
+
     public void setKeyName(String keyName) {
         this.keyName = keyName;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }
