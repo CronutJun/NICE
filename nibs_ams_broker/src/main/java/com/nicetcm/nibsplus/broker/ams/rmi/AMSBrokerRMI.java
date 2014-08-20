@@ -8,17 +8,188 @@ public interface AMSBrokerRMI extends Remote {
     public String threadTest(String data) throws Exception;
     public void dataUploadToBroker( byte[] data, boolean isFirst, boolean hasNext ) throws Exception;
 
-
+    /**
+     * reqEnvInfToMac
+     * 
+     * 단독기기 대상 환경정보 요청
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     기기번호
+     * @param timeOut   대기시간
+     * @throws Exception
+     */
     public void reqEnvInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, int timeOut ) throws Exception;
+    
+    /**
+     * reqEnvInfToMacs
+     * 
+     * 복수기기 대상 환경정보 요청
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      기번집합
+     * @throws Exception
+     */
     public void reqEnvInfToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs ) throws Exception;
+    
+    /**
+     * reqRegInfToMac
+     * 
+     * 단독기기 대상 레지스트리정보 요청
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param reqRegInfo    요청대상 기기 및 레지스트리 항목 정보
+     * @param timeOut   대기시간
+     * @throws Exception
+     */
     public void reqRegInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo, int timeOut ) throws Exception;
+    
+    /**
+     * reqRegInfToMacs
+     * 
+     * 복수기기 대상 레지스트리정보 요청
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param reqRegInfos   요청대상 기기 및 레지스트리 항목 집합
+     * @throws Exception
+     */
     public void reqRegInfToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<RMIReqRegInfo> reqRegInfos ) throws Exception;
+    
+    /**
+     * reqIniInfToMac
+     * 
+     * 단독기기 대상 INI정보 요청
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param reqIniInfo    요청대상 기기 및 INI항목 정보
+     * @param timeOut   대기시간
+     * @throws Exception
+     */
     public void reqIniInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqIniInfo reqIniInfo, int timeOut ) throws Exception;
+    
+    /**
+     * reqIniInfToMacs
+     * 
+     * 복수기기 대상 INI정보 요청
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param reqIniInfos   요청대상 기기 및 INI항목 집합
+     * @throws Exception
+     */
     public void reqIniInfToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<RMIReqIniInfo> reqIniInfos ) throws Exception;
+    
+    /**
+     * reqEnvChgToMac
+     * 
+     * 단독기기 대상 환경설정정보 변경 예약
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     기기번호
+     * @param envValues 변경대상 항목 및 값 집합
+     * @throws Exception
+     */
     public void reqEnvChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, ArrayList<RMIEnvValue> envValues ) throws Exception;
+    
+    /**
+     * reqEnvChgToMacs
+     * 
+     * 복수기기 대상 환경설정정보 변경 예약
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      기기번호 집합
+     * @param envValue  변경대상 항목 및 값
+     * @throws Exception
+     */
     public void reqEnvChgToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, RMIEnvValue envValue ) throws Exception;
-    public void reqRegChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo, int timeOut ) throws Exception;
+    
+    /**
+     * reqRegChgToMac
+     * 
+     * 단독기기 대상 레지스트리정보 변경 예약
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param reqRegInfo    대상 기기번호 및 변경대상 레지스트리 항목, 값
+     * @throws Exception
+     */
+    public void reqRegChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo ) throws Exception;
+    
+    /**
+     * reqRegChgToMacs
+     * 
+     * 복수기기 대상 레지스트리정보 변경 예약
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param reqRegInfos   대상 기기번호 및 변경대상 레지스트리 항목, 값 집합
+     * @throws Exception
+     */
     public void reqRegChgToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<RMIReqRegInfo> reqRegInfos ) throws Exception;
-    public void reqIniChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqIniInfo reqIniInfo, int timeOut ) throws Exception;
+    
+    /**
+     * reqIniChgToMac
+     * 
+     * 단독기기 대상 INI정보 변경 예약
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param reqIniInfo    대상 기기번호 및 변경대상 INI항목, 값
+     * @throws Exception
+     */
+    public void reqIniChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqIniInfo reqIniInfo ) throws Exception;
+    
+    /**
+     * reqIniChgToMacs
+     * 
+     * 복수기기 대상 INI정보 변경 예약
+     * 
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param reqIniInfos   대상 기기번호 및 변경대상 INI항목, 값
+     * @throws Exception
+     */
     public void reqIniChgToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<RMIReqIniInfo> reqIniInfos ) throws Exception;
 }

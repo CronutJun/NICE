@@ -251,18 +251,17 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
 
     }
 
-    public void reqRegChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo, int timeOut ) throws Exception {
+    public void reqRegChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo ) throws Exception {
         try {
-            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqRegInfo.getMacNo(), true);
+            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqRegInfo.getMacNo(), false);
             reqJob.setTrxDate( trxDate );
             reqJob.setTrxNo( trxNo );
             reqJob.setTrxCd( trxCd );
             reqJob.setActCd( actCd );
             reqJob.setTrxUid( trxUid );
             reqJob.setReqRegInfo( reqRegInfo );
-            reqJob.setTimeOut( timeOut );
+            reqJob.setTimeOut( 0 );
             reqJob.requestJob();
-            waitBlocking( reqJob );
         }
         catch( Exception e ) {
             logger.debug(e.getMessage());
@@ -290,18 +289,17 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         }
     }
 
-    public void reqIniChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqIniInfo reqIniInfo, int timeOut ) throws Exception {
+    public void reqIniChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqIniInfo reqIniInfo ) throws Exception {
         try {
-            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqIniInfo.getMacNo(), true);
+            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqIniInfo.getMacNo(), false);
             reqJob.setTrxDate( trxDate );
             reqJob.setTrxNo( trxNo );
             reqJob.setTrxCd( trxCd );
             reqJob.setActCd( actCd );
             reqJob.setTrxUid( trxUid );
             reqJob.setReqIniInfo( reqIniInfo );
-            reqJob.setTimeOut( timeOut );
+            reqJob.setTimeOut( 0 );
             reqJob.requestJob();
-            waitBlocking( reqJob );
         }
         catch( Exception e ) {
             logger.debug(e.getMessage());
