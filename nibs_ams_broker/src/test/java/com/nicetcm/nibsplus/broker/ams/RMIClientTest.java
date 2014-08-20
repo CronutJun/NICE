@@ -93,7 +93,7 @@ public class RMIClientTest {
         reqIniInfo.setKeyName( "081"  );
         reqIniInfo.setValue( "김동준" );
 
-        remoteObj.reqIniChgToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), "000001", "5000", "1000", "test", reqIniInfo, 0 );
+        remoteObj.reqIniChgToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), "000001", "5000", "1000", "test", reqIniInfo );
     }
 
     public static void main(String[] args) {
