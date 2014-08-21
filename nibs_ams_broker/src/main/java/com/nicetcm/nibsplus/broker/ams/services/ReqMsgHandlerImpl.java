@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqInfo;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
@@ -31,7 +32,10 @@ import com.nicetcm.nibsplus.broker.ams.AMSBrokerLib;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.ams.services.CommonPack;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgMapper;
+import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnv;
+import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnvKey;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
 
@@ -44,6 +48,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
     @Autowired protected DataSourceTransactionManager amsTX;
 
     @Autowired private   CommonPack                   comPack;
+    @Autowired private   TRmMacEnvMapper              macEnvMap;
     @Autowired private   TRmMsgMapper                 msgMap;
 
     @Override
@@ -56,8 +61,18 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
         safeData.setMsgTime( AMSBrokerLib.getMsgTime(safeData.getSysDate()) );
         try {
             logger.debug("Start reqMsgHandle");
-            reqInfo.setDestIP("10.3.28.114");
-            reqInfo.setDestPort(33001);
+            TRmMacEnvKey macEnvKey = new TRmMacEnv();
+            macEnvKey.setOrgCd   ( AMSBrokerConst.NICE_ORG_CD );
+            macEnvKey.setBranchCd( AMSBrokerConst.NICE_BR_CD  );
+            macEnvKey.setMacNo   ( reqJob.getMacNo()          );
+            TRmMacEnv rslt = macEnvMap.selectByPrimaryKey( macEnvKey );
+            if( rslt == null )
+                throw new Exception("Mac Environment not found");
+
+            reqInfo.setDestIP  ( rslt.getPriIpAddr()                );
+            reqInfo.setDestPort( Integer.parseInt(rslt.getIpPort()) );
+            //reqInfo.setDestIP("10.3.28.114");
+            //reqInfo.setDestPort(33001);
             logger.debug( "TrxCd = {}, ActCd = {}", reqJob.getTrxCd(), reqJob.getActCd() );
 
             TRmMsg msg       = new TRmMsg();
@@ -90,21 +105,70 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                 msg.setSvcCd( "2012" );
             }
             /**
-             * Ini 설정 변경
+             * Env 설정 변경
+             */
+            else if( reqJob.getTrxCd().equals("4000") && reqJob.getActCd().equals("1000") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "3002" );
+            }
+            /**
+             * Reg 설정 변경
              */
             else if( reqJob.getTrxCd().equals("5000") && reqJob.getActCd().equals("1000") ) {
                 msg.setMsgCd( "2100" );
+                msg.setSvcCd( "3011" );
+            }
+            /**
+             * Ini 설정 변경
+             */
+            else if( reqJob.getTrxCd().equals("6000") && reqJob.getActCd().equals("1000") ) {
+                msg.setMsgCd( "2100" );
                 msg.setSvcCd( "3012" );
             }
-            
+            /**
+             * Reboot 예약
+             */
+            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("501") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "4001" );
+            }
+            /**
+             * Poweroff 예약
+             */
+            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("502") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "4001" );
+            }
+            /**
+             * 장치리셋 예약
+             */
+            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("503") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "4002" );
+            }
+            /**
+             * 장치회수 예약
+             */
+            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("504") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "4002" );
+            }
+            /**
+             * 장치배출 예약
+             */
+            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("505") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "4002" );
+            }
+
             OutMsgHandler outMsg = (OutMsgHandler)AMSBrokerSpringMain.sprCtx.getBean(String.format("out%s%s", msg.getMsgCd(), msg.getSvcCd()));
             reqInfo.setMsg( ByteBuffer.allocateDirect(MsgCommon.READ_BUF_SIZE) );
             MsgParser msgPsr = MsgParser.getInstance(String.format("%s%s%s.json", MsgCommon.msgProps.getProperty("schema_path"), msg.getMsgCd(), msg.getSvcCd()))
                                         .newMessage(reqInfo.getMsg());
             try {
-                
+
                 outMsg.outMsgHandle(msgPsr, safeData, reqJob, reqInfo, msg);
-                
+
                 logger.debug("Message Length = "  + msgPsr.getMessageLength());
                 logger.debug("Last Position = "   + msgPsr.lastPosition());
                 reqInfo.getMsg().limit(msgPsr.lastPosition());

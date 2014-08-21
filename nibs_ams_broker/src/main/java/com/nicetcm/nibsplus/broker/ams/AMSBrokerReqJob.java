@@ -12,6 +12,7 @@ package com.nicetcm.nibsplus.broker.ams;
  */
 
 import java.util.concurrent.*;
+import java.util.ArrayList;
 import java.nio.ByteBuffer;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqRegInfo;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqIniInfo;
@@ -39,6 +40,8 @@ public class AMSBrokerReqJob {
     private RMIReqRegInfo reqRegInfo;
     private RMIReqIniInfo reqIniInfo;
     private RMIEnvValue envValue;
+    private ArrayList<RMIEnvValue> envValues;
+    private String devCd;
     private int timeOut;
 
     public AMSBrokerReqJob(String macNo, boolean isBlocking) {
@@ -171,6 +174,22 @@ public class AMSBrokerReqJob {
 
     public void setEnvValue(RMIEnvValue envValue) {
         this.envValue = envValue;
+    }
+
+    public ArrayList<RMIEnvValue> getEnvValues() {
+        return envValues;
+    }
+
+    public void setEnvValues(ArrayList<RMIEnvValue> envValues) {
+        this.envValues = envValues;
+    }
+
+    public String getDevCd() {
+        return devCd;
+    }
+
+    public void setDevCd(String devCd) {
+        this.devCd = devCd;
     }
 
 }

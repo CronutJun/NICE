@@ -550,19 +550,18 @@ public class MsgParser {
             String fmt = String.format("%%-%ds", md.length);
             byte[] data = new byte[md.length];
 
-            String fmted = String.format(fmt, value);
+            System.arraycopy(value.getBytes(), 0, data, 0,
+                md.length > value.length() ? value.length() : md.length);
+
+            String fmted = String.format(fmt, new String(data));
 
             td.msg.position(md.pos);
             if( md.refFmt.encCharset != null && md.refFmt.encCharset.length() > 0 ) {
                 logger.debug("encode charset = {}", md.refFmt.encCharset);
-                System.arraycopy(fmted.getBytes(md.refFmt.encCharset), 0, data, 0,
-                         md.length > fmted.length() ? fmted.length() : md.length);
+                td.msg.put(fmted.getBytes(md.refFmt.encCharset));
             }
-            else {
-                System.arraycopy(fmted.getBytes(), 0, data, 0,
-                        md.length > fmted.length() ? fmted.length() : md.length);
-            }
-            td.msg.put(data);
+            else
+                td.msg.put(fmted.getBytes());
         }
         else {
             md.setString(value);
@@ -767,7 +766,6 @@ public class MsgParser {
     private void syncSubMessage(ThrData thrData, Map<String, MsgData> mapData) throws Exception {
 
         String fmt, fmted;
-        byte[] bFmted, bTrunc;
         int i;
         MsgData aElem;
 
@@ -796,21 +794,10 @@ public class MsgParser {
                             fmt = String.format("%%-%ds", aElem.length);
 
                             fmted = String.format(fmt, aElem.getString());
+                            if( fmted.length() > e.getValue().length )
+                                fmted = fmted.substring(0, e.getValue().length);
 
-                            if( e.getValue().refFmt.encCharset != null && e.getValue().refFmt.encCharset.length() > 0 ) {
-                                logger.debug("encode charset = {}", e.getValue().refFmt.encCharset);
-                                bFmted = fmted.getBytes(e.getValue().refFmt.encCharset);
-                                logger.debug("decode value = {}", new String(bFmted, "MS949"));
-                            }
-                            else {
-                                bFmted = fmted.getBytes();
-                            }
-
-                            bTrunc = new byte[e.getValue().length];
-                            System.arraycopy(bFmted, 0, bTrunc, 0, e.getValue().length);
-                            logger.debug("trucated data = {}", new String(bTrunc));
-
-                            thrData.msg.put(bTrunc);
+                            thrData.msg.put(fmted.getBytes());
                             thrData.pos += aElem.length;
                         }
                         thrData.messageLength += aElem.length;
@@ -834,23 +821,13 @@ public class MsgParser {
                         else {
                             fmt = String.format("%%-%ds", e.getValue().length);
 
-                            logger.debug("Field = " + e.getKey() + ", Format = " + fmt + ", Length = " + e.getValue().length + ", DataLen = " + e.getValue().getString().length() + ", Value = " + e.getValue().getString());
+                            logger.debug("Field = " + e.getKey() + ", Format = " + fmt + ", Length = " + e.getValue().length + ", DataLen = " + e.getValue().getString().length());
                             fmted = String.format(fmt, e.getValue().getString());
 
-                            if( e.getValue().refFmt.encCharset != null && e.getValue().refFmt.encCharset.length() > 0 ) {
-                                logger.debug("encode charset = {}", e.getValue().refFmt.encCharset);
-                                bFmted = fmted.getBytes(e.getValue().refFmt.encCharset);
-                                logger.debug("decode value = {}", new String(bFmted, "MS949"));
-                            }
-                            else {
-                                bFmted = fmted.getBytes();
-                            }
+                            if( fmted.length() > e.getValue().length )
+                                fmted = fmted.substring(0, e.getValue().length);
 
-                            bTrunc = new byte[e.getValue().length];
-                            System.arraycopy(bFmted, 0, bTrunc, 0, e.getValue().length);
-                            logger.debug("trucated data = {}", new String(bTrunc));
-
-                            thrData.msg.put(bTrunc);
+                            thrData.msg.put(fmted.getBytes());
                             thrData.pos += e.getValue().length;
                         }
                         thrData.messageLength += e.getValue().length;
@@ -877,8 +854,6 @@ public class MsgParser {
     }
 
     public ThrData getCurrentThrData() {
-
-        currentThrData = msgThrMap.get(java.lang.Thread.currentThread().getId());
 
         return currentThrData;
 

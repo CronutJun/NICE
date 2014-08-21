@@ -10,9 +10,9 @@ public interface AMSBrokerRMI extends Remote {
 
     /**
      * reqEnvInfToMac
-     * 
+     *
      * 단독기기 대상 환경정보 요청
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -23,12 +23,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqEnvInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, int timeOut ) throws Exception;
-    
+
     /**
      * reqEnvInfToMacs
-     * 
+     *
      * 복수기기 대상 환경정보 요청
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -38,12 +38,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqEnvInfToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs ) throws Exception;
-    
+
     /**
      * reqRegInfToMac
-     * 
+     *
      * 단독기기 대상 레지스트리정보 요청
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -54,12 +54,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqRegInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo, int timeOut ) throws Exception;
-    
+
     /**
      * reqRegInfToMacs
-     * 
+     *
      * 복수기기 대상 레지스트리정보 요청
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -69,12 +69,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqRegInfToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<RMIReqRegInfo> reqRegInfos ) throws Exception;
-    
+
     /**
      * reqIniInfToMac
-     * 
+     *
      * 단독기기 대상 INI정보 요청
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -85,12 +85,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqIniInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqIniInfo reqIniInfo, int timeOut ) throws Exception;
-    
+
     /**
      * reqIniInfToMacs
-     * 
+     *
      * 복수기기 대상 INI정보 요청
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -100,12 +100,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqIniInfToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<RMIReqIniInfo> reqIniInfos ) throws Exception;
-    
+
     /**
      * reqEnvChgToMac
-     * 
+     *
      * 단독기기 대상 환경설정정보 변경 예약
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -116,12 +116,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqEnvChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, ArrayList<RMIEnvValue> envValues ) throws Exception;
-    
+
     /**
      * reqEnvChgToMacs
-     * 
+     *
      * 복수기기 대상 환경설정정보 변경 예약
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -132,12 +132,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqEnvChgToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, RMIEnvValue envValue ) throws Exception;
-    
+
     /**
      * reqRegChgToMac
-     * 
+     *
      * 단독기기 대상 레지스트리정보 변경 예약
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -147,12 +147,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqRegChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo ) throws Exception;
-    
+
     /**
      * reqRegChgToMacs
-     * 
+     *
      * 복수기기 대상 레지스트리정보 변경 예약
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -162,12 +162,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqRegChgToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<RMIReqRegInfo> reqRegInfos ) throws Exception;
-    
+
     /**
      * reqIniChgToMac
-     * 
+     *
      * 단독기기 대상 INI정보 변경 예약
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -177,12 +177,12 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqIniChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqIniInfo reqIniInfo ) throws Exception;
-    
+
     /**
      * reqIniChgToMacs
-     * 
+     *
      * 복수기기 대상 INI정보 변경 예약
-     * 
+     *
      * @param trxDate   거래일
      * @param trxNo     거래번호
      * @param trxCd     거래코드
@@ -192,4 +192,161 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqIniChgToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<RMIReqIniInfo> reqIniInfos ) throws Exception;
+
+    /**
+     * reqRebootToMac
+     *
+     * 단독기기 대상 Reboot 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기번호
+     * @throws Exception
+     */
+    public void reqRebootToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo ) throws Exception;
+
+    /**
+     * reqRebootToMacs
+     *
+     * 복수기기 대상 Reboot 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기번집합
+     * @throws Exception
+     */
+    public void reqRebootToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs ) throws Exception;
+
+    /**
+     * reqPwroffToMac
+     *
+     * 단독기기 대상 Poweroff 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기번호
+     * @throws Exception
+     */
+    public void reqPwroffToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo ) throws Exception;
+
+    /**
+     * reqPwroffToMacs
+     *
+     * 복수기기 대상 Poweroff 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기번집합
+     * @throws Exception
+     */
+    public void reqPwroffToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs ) throws Exception;
+
+    /**
+     * reqDevResetToMac
+     *
+     * 단독기기 대상 장치 리셋 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기번호
+     * @param devCd     장치코드
+     * @throws Exception
+     */
+    public void reqDevResetToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String devCd ) throws Exception;
+
+    /**
+     * reqDevResetToMacs
+     *
+     * 복수기기 대상 장치 리셋 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기번집합
+     * @param devCd     장치코드
+     * @throws Exception
+     */
+    public void reqDevResetToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String devCd ) throws Exception;
+
+    /**
+     * reqDevCollectToMac
+     *
+     * 단독기기 대상 장치 회수 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기번호
+     * @param devCd     장치코드
+     * @throws Exception
+     */
+    public void reqDevCollectToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String devCd ) throws Exception;
+
+    /**
+     * reqDevCollectToMacs
+     *
+     * 복수기기 대상 장치 회수 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기번집합
+     * @param devCd     장치코드
+     * @throws Exception
+     */
+    public void reqDevCollectToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String devCd ) throws Exception;
+
+    /**
+     * reqDevReturnToMac
+     *
+     * 단독기기 대상 장치 반환 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기번호
+     * @param devCd     장치코드
+     * @throws Exception
+     */
+    public void reqDevReturnToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String devCd ) throws Exception;
+
+    /**
+     * reqDevReturnToMacs
+     *
+     * 복수기기 대상 장치 반환 예약
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기번집합
+     * @param devCd     장치코드
+     * @throws Exception
+     */
+    public void reqDevReturnToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String devCd ) throws Exception;
+
 }

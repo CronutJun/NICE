@@ -878,8 +878,6 @@ public class MsgParser {
 
     public ThrData getCurrentThrData() {
 
-        currentThrData = msgThrMap.get(java.lang.Thread.currentThread().getId());
-
         return currentThrData;
 
     }

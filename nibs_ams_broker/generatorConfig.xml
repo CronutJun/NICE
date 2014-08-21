@@ -10,9 +10,8 @@
     <javaModelGenerator targetPackage="com.nicetcm.nibsplus.broker.ams.model" targetProject="nibs_ams_broker" />
     <sqlMapGenerator targetPackage="com.nicetcm.nibsplus.broker.ams.mapper" targetProject="nibs_ams_broker" />
     <javaClientGenerator targetPackage="com.nicetcm.nibsplus.broker.ams.mapper" targetProject="nibs_ams_broker" type="ANNOTATEDMAPPER" />
-    <table schema="in" tableName="t_rm_mac_env" >
+    <table schema="in" tableName="t_rm_trx" >
       <!-- <columnOverride column="as_seq" property="AsSeq" /> -->
     </table>
-    <table schema="in" tableName="t_rm_mac_env_his" ></table>
   </context>
 </generatorConfiguration>
