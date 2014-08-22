@@ -42,6 +42,11 @@ public class AMSBrokerReqJob {
     private RMIEnvValue envValue;
     private ArrayList<RMIEnvValue> envValues;
     private String devCd;
+    private String empId;
+    private String empPhone;
+    private String arrivalTime;
+    private String filePath;
+    private String fileName;
     private int timeOut;
 
     public AMSBrokerReqJob(String macNo, boolean isBlocking) {
@@ -190,6 +195,46 @@ public class AMSBrokerReqJob {
 
     public void setDevCd(String devCd) {
         this.devCd = devCd;
+    }
+
+    public String getEmpId() {
+        return empId;
+    }
+
+    public void setEmpId(String empId) {
+        this.empId = empId;
+    }
+
+    public String getEmpPhone() {
+        return empPhone;
+    }
+
+    public void setEmpPhone(String empPhone) {
+        this.empPhone = empPhone;
+    }
+
+    public String getArrivalTime() {
+        return arrivalTime;
+    }
+
+    public void setArrivalTime(String arrivalTime) {
+        this.arrivalTime = arrivalTime;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
 }

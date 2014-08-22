@@ -258,9 +258,34 @@ public class RMIClientTest {
         remoteObj.reqDevResetToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7000", "505", "test", "0202", "101" );
     }
 
+    public void reqCallNoticeToMac() throws Exception {
+        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
+        System.out.println("registry");
+        AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
+        System.out.println("lookup");
+
+        TRmTrxMapper trxMap = session.getMapper(TRmTrxMapper.class);
+
+        String key = trxMap.generateKey();
+
+        remoteObj.reqCallNoticeToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7001", "500", "test", "0202", "030101", "01074564016", "233321", 5 );
+    }
+
+    public void reqSFileDownToMac() throws Exception {
+        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
+        System.out.println("registry");
+        AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
+        System.out.println("lookup");
+
+        TRmTrxMapper trxMap = session.getMapper(TRmTrxMapper.class);
+
+        String key = trxMap.generateKey();
+
+        remoteObj.reqSFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7001", "500", "test", "0202", "C:\\", "test.zip" );
+    }
+
     public static void main(String[] args) {
         try {
-
             //new RMIClientTest().reqEnvInfToMac();
             //new RMIClientTest().reqRegInfToMac();
             //new RMIClientTest().reqIniInfToMac();
@@ -271,7 +296,9 @@ public class RMIClientTest {
             //new RMIClientTest().reqPwroffToMac();
             //new RMIClientTest().reqDevResetToMac();
             //new RMIClientTest().reqDevCollectToMac();
-            new RMIClientTest().reqDevReturnToMac();
+            //new RMIClientTest().reqDevReturnToMac();
+            new RMIClientTest().reqCallNoticeToMac();
+            //new RMIClientTest().reqSFileDownToMac();
         }
         catch( java.rmi.RemoteException e ) {
             System.out.println("Something has gone wrong during remote method call...");

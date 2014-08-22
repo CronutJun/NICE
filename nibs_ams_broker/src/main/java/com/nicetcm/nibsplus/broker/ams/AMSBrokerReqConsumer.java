@@ -68,7 +68,7 @@ public class AMSBrokerReqConsumer extends Thread {
 
             try {
                 AMSBrokerClient client = new AMSBrokerClient( reqInfo.getDestIP(), reqInfo.getDestPort(), reqJob );
-                ByteBuffer rslt = client.outboundCall( reqInfo.getMsg(), null, reqJob.getTimeOut() );
+                ByteBuffer rslt = client.outboundCall( reqInfo.getMsg(), reqInfo.getStrm(), reqJob.getTimeOut() );
 
                 ansMsg.ansMsgHandle( amsSafeData, reqJob, rslt, "9" );
                 if( reqJob.getIsBlocking() )

@@ -808,5 +808,111 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         }
     }
 
+    /**
+     * reqCallNoticeToMac
+     *
+     * 출동요청 안내문 전송
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기번호
+     * @param empId     출동예정사원ID
+     * @param empPhone  출동예정사원 전화번호
+     * @param arrivalTime 출동예정 시간
+     * @throws Exception
+     */
+    public void reqCallNoticeToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String empId, String empPhone, String arrivalTime, int timeout ) throws Exception {
+        try {
+            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, true);
+            reqJob.setTrxDate( trxDate );
+            reqJob.setTrxNo( trxNo );
+            reqJob.setTrxCd( trxCd );
+            reqJob.setActCd( actCd );
+            reqJob.setTrxUid( trxUid );
+            reqJob.setEmpId( empId );
+            reqJob.setEmpPhone( empPhone );
+            reqJob.setArrivalTime( arrivalTime );
+            reqJob.setTimeOut( 10 );
+            reqJob.requestJob();
+            waitBlocking( reqJob );
+        }
+        catch( Exception e ) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * reqSFileDownToMac
+     *
+     * 단독기기 대상 특정파일 다운로드 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기
+     * @param filePath  저장파일경로
+     * @param fileName  저장파일명
+     * @throws Exception
+     */
+    public void reqSFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String filePath, String fileName ) throws Exception {
+        try {
+            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
+            reqJob.setTrxDate( trxDate );
+            reqJob.setTrxNo( trxNo );
+            reqJob.setTrxCd( trxCd );
+            reqJob.setActCd( actCd );
+            reqJob.setTrxUid( trxUid );
+            reqJob.setFilePath( filePath );
+            reqJob.setFileName( fileName );
+            reqJob.setTimeOut( 60 );
+            reqJob.requestJob();
+        }
+        catch( Exception e ) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * reqSFileDownToMacs
+     *
+     * 복수기기 대상 특정파일 다운로드 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기기집합
+     * @param filePath  저장파일경로
+     * @param fileName  저장파일명
+     * @throws Exception
+     */
+    public void reqSFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String filePath, String fileName ) throws Exception {
+        try {
+            for( String macNo: macs ) {
+                AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
+                reqJob.setTrxDate( trxDate );
+                reqJob.setTrxNo( trxNo );
+                reqJob.setTrxCd( trxCd );
+                reqJob.setActCd( actCd );
+                reqJob.setTrxUid( trxUid );
+                reqJob.setFilePath( filePath );
+                reqJob.setFileName( fileName );
+                reqJob.setTimeOut( 60 );
+                reqJob.requestJob();
+            }
+        }
+        catch( Exception e ) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
 
 }

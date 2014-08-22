@@ -160,6 +160,20 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "4002" );
             }
+            /**
+             * 출동요청 안내문 전송
+             */
+            else if( reqJob.getTrxCd().equals("7001") && reqJob.getActCd().equals("500") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "3004" );
+            }
+            /**
+             * 특정파일 다운로드
+             */
+            else if( reqJob.getTrxCd().equals("8001") && reqJob.getActCd().equals("500") ) {
+                msg.setMsgCd( "2100" );
+                msg.setSvcCd( "5012" );
+            }
 
             OutMsgHandler outMsg = (OutMsgHandler)AMSBrokerSpringMain.sprCtx.getBean(String.format("out%s%s", msg.getMsgCd(), msg.getSvcCd()));
             reqInfo.setMsg( ByteBuffer.allocateDirect(MsgCommon.READ_BUF_SIZE) );

@@ -4,9 +4,9 @@ package com.nicetcm.nibsplus.broker.ams;
  * Copyright 2014 The NIBS Project
  *
  * AMS 기기관리시스템 - AMSBrokerClientHandler
- * 
+ *
  * 접속한 클라이언트의 요청 처리 객체
- * 
+ *
  * @author  K.D.J
  * @since   2014.05.23
  */
@@ -84,6 +84,7 @@ public class AMSBrokerClient {
             data.position(0);
             reqBuf = f.channel().alloc().buffer(data.limit());
             reqBuf.writeBytes(data);
+            logger.debug("going to send");
             f.channel().writeAndFlush(reqBuf);
             while ( strm != null && strm.available() > 0 ) {
                 read = strm.available() > MsgCommon.READ_BUF_SIZE ? new byte[MsgCommon.READ_BUF_SIZE]
@@ -94,6 +95,8 @@ public class AMSBrokerClient {
                 logger.debug("Send File size = " + read.length);
                 f.channel().writeAndFlush(reqBuf);
             }
+            if( strm != null )
+                strm.close();
             boolean interrupted = false;
             try {
                 String defTimeOut = MsgCommon.msgProps.getProperty("ams.req.defTimeout");
