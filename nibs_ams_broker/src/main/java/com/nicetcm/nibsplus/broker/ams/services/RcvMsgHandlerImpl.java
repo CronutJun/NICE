@@ -1,6 +1,16 @@
 package com.nicetcm.nibsplus.broker.ams.services;
 
-import io.netty.channel.ChannelHandlerContext;
+/**
+ * Copyright 2014 The NIBS+ Project
+ *
+ * ReqMsgHandlerImpl
+ *
+ *  수신전문 선 처리
+ *
+ *
+ * @author  K.D.J
+ * @since   2014.08.25
+ */
 
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -9,21 +19,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 
-import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerLib;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerTransaction;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvMapper;
-import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmTrxMapper;
-import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgMapper;
 import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
+import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
+import com.nicetcm.nibsplus.broker.common.MsgParser;
 
-@Service("respAckNak")
-public class RespAckNakImpl implements RespAckNakHandler {
+@Service("rcvMsg")
+public class RcvMsgHandlerImpl implements RcvMsgHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(RespAckNakImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(RcvMsgHandlerImpl.class);
 
     @Autowired protected SqlSession sqlSession;
     @Autowired protected DataSourceTransactionManager amsTX;
@@ -34,7 +44,7 @@ public class RespAckNakImpl implements RespAckNakHandler {
     @Autowired private   TRmMsgMapper                 msgMap;
 
     @Override
-    public void procAckNak( ChannelHandlerContext ctx, AMSBrokerData safeData, MsgParser parsed, TRmTrx trx, TRmMsg msg ) throws Exception {
+    public void rcvMsgHandle(AMSBrokerData safeData, MsgParser parsed, TRmTrx trx, TRmMsg msg) throws Exception {
 
         safeData.setSysDate( AMSBrokerLib.getSysDate() );
 
@@ -42,7 +52,39 @@ public class RespAckNakImpl implements RespAckNakHandler {
         safeData.setMsgDate( AMSBrokerLib.getMsgDate(safeData.getSysDate()) );
         safeData.setMsgTime( AMSBrokerLib.getMsgTime(safeData.getSysDate()) );
         try {
+            /**
+             * 거래내역 생성
+             */
+            trx.setTrxDate( safeData.getMsgDate()   );
+            trx.setTrxNo  ( trxMap.generateKey()    );
+            trx.setTrxTime(  safeData.getMsgTime()  );
+            trx.setTrxCd  ( parsed.getString( "CM._AOCServiceCode")     );
+            trx.setActCd  ( parsed.getString( "CM._AOCMsgCode" )        );
+            trx.setTrxUid(  parsed.getString( "CM__SSTNo").substring(2) );
+
+            trxMap.insert( trx );
+
             TRmMsgHis msgHis = new TRmMsgHis();
+
+            msg.setMsgSeq( msgMap.generateKey() );
+            msg.setIoCl( "I" );
+            msg.setMsgSts( "0" );
+            msg.setMsgCd( parsed.getString( "CM._AOCMsgCode" )        );
+            msg.setSvcCd( parsed.getString( "CM._AOCServiceCode")     );
+            msg.setMacNo( parsed.getString( "CM__SSTNo").substring(2) );
+
+            /**
+             * 개국
+             */
+            if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1001") ) {
+                msg.setMsgType( "SM" );
+            }
+            /**
+             * 폐국
+             */
+            else if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1007") ) {
+                msg.setMsgType( "SM" );
+            }
 
             byte[] read = new byte[parsed.getMessage().limit()];
             parsed.getMessage().position(0);
@@ -60,4 +102,5 @@ public class RespAckNakImpl implements RespAckNakHandler {
             throw e;
         }
     }
+
 }

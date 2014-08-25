@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
+import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
 
 @Service("in12002002")
 public class In12002002Impl extends InMsgHandlerImpl {
@@ -28,7 +29,15 @@ public class In12002002Impl extends InMsgHandlerImpl {
     @Override
     public void inMsgBizProc(AMSBrokerData safeData, MsgParser parsed, AMSBrokerReqJob reqJob, String fileLoc) throws Exception {
 
-        comPack.insUpdMacEnv(safeData, parsed, reqJob);
+        TRmTrx rmTrx = new TRmTrx();
+
+        rmTrx.setTrxDate( reqJob.getTrxDate() );
+        rmTrx.setTrxNo( reqJob.getTrxNo() );
+        rmTrx.setTrxCd( reqJob.getTrxCd() );
+        rmTrx.setActCd( reqJob.getActCd() );
+        rmTrx.setTrxUid( reqJob.getTrxUid() );
+
+        comPack.insUpdMacEnv(safeData, parsed, rmTrx);
 
     }
 

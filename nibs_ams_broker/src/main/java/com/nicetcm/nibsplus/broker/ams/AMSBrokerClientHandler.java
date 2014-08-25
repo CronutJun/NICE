@@ -6,10 +6,11 @@ package com.nicetcm.nibsplus.broker.ams;
  * AMSBrokerClient
  *
  * 기기로 요청을 보낼때 기기의 서버소켓과 통신을 하기위한 클라이언트 소켓 객체
- * 
+ *
  * @author  K.D.J
  * @since   2014.05.23
  */
+
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 
@@ -131,8 +132,10 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 }
 
                 biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
-                if( !isContinue )
+                if( !isContinue ) {
                     ans.put(buf);
+                    msgPsr.clearMessage();
+                }
             }
             else {
                 logger.debug("Continue.. msgPsr length = " + msgPsr.getMessageLength());
@@ -148,8 +151,10 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 if( iRemain <= 0 ) isContinue = false;
 
                 biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
-                if( !isContinue )
+                if( !isContinue ) {
                     ans.put(buf);
+                    msgPsr.clearMessage();
+                }
             }
         }
         catch( Exception e ) {

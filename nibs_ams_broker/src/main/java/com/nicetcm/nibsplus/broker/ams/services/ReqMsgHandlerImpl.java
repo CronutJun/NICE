@@ -38,6 +38,7 @@ import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnv;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnvKey;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
+import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
 
 @Service("reqMsg")
 public class ReqMsgHandlerImpl implements ReqMsgHandler {
@@ -81,12 +82,12 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             msg.setMsgSeq( msgMap.generateKey() );
             msg.setIoCl( "O" );
             msg.setMsgSts( "0" );
-            msg.setMsgType( "RC" );
 
             /**
              * 환경정보 조회
              */
             if( reqJob.getTrxCd().equals("720103") && reqJob.getActCd().equals("500") ) {
+                msg.setMsgType( "SM" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "2002" );
             }
@@ -94,6 +95,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * Registry 정보 조회
              */
             else if( reqJob.getTrxCd().equals("2000") && reqJob.getActCd().equals("1000") ) {
+                msg.setMsgType( "SM" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "2011" );
             }
@@ -101,6 +103,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * Ini 정보 조회
              */
             else if( reqJob.getTrxCd().equals("3000") && reqJob.getActCd().equals("1000") ) {
+                msg.setMsgType( "SM" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "2012" );
             }
@@ -108,6 +111,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * Env 설정 변경
              */
             else if( reqJob.getTrxCd().equals("4000") && reqJob.getActCd().equals("1000") ) {
+                msg.setMsgType( "SM" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "3002" );
             }
@@ -115,6 +119,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * Reg 설정 변경
              */
             else if( reqJob.getTrxCd().equals("5000") && reqJob.getActCd().equals("1000") ) {
+                msg.setMsgType( "SM" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "3011" );
             }
@@ -122,6 +127,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * Ini 설정 변경
              */
             else if( reqJob.getTrxCd().equals("6000") && reqJob.getActCd().equals("1000") ) {
+                msg.setMsgType( "SM" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "3012" );
             }
@@ -129,6 +135,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * Reboot 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("501") ) {
+                msg.setMsgType( "RC" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "4001" );
             }
@@ -136,6 +143,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * Poweroff 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("502") ) {
+                msg.setMsgType( "RC" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "4001" );
             }
@@ -143,6 +151,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * 장치리셋 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("503") ) {
+                msg.setMsgType( "RC" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "4002" );
             }
@@ -150,6 +159,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * 장치회수 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("504") ) {
+                msg.setMsgType( "RC" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "4002" );
             }
@@ -157,6 +167,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * 장치배출 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("505") ) {
+                msg.setMsgType( "RC" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "4002" );
             }
@@ -164,6 +175,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * 출동요청 안내문 전송
              */
             else if( reqJob.getTrxCd().equals("7001") && reqJob.getActCd().equals("500") ) {
+                msg.setMsgType( "RC" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "3004" );
             }
@@ -171,6 +183,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * 특정파일 다운로드
              */
             else if( reqJob.getTrxCd().equals("8001") && reqJob.getActCd().equals("500") ) {
+                msg.setMsgType( "RC" );
                 msg.setMsgCd( "2100" );
                 msg.setSvcCd( "5012" );
             }
@@ -197,7 +210,15 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                 msgPsr.clearMessage();
             }
 
-            comPack.insUpdMsg(safeData, reqJob, msg, msgHis);
+            TRmTrx rmTrx = new TRmTrx();
+
+            rmTrx.setTrxDate( reqJob.getTrxDate() );
+            rmTrx.setTrxNo( reqJob.getTrxNo() );
+            rmTrx.setTrxCd( reqJob.getTrxCd() );
+            rmTrx.setActCd( reqJob.getActCd() );
+            rmTrx.setTrxUid( reqJob.getTrxUid() );
+
+            comPack.insUpdMsg(safeData, reqJob.getMacNo(), rmTrx, msg, msgHis);
 
             reqJob.setOrgCreateDate( msg.getCreateDate() );
             reqJob.setOrgMsgSeq( msg.getMsgSeq() );

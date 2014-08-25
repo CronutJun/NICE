@@ -31,6 +31,7 @@ import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgMapper;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsgKey;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
+import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
 
 @Service("ansMsg")
 public class AnsMsgHandlerImpl implements AnsMsgHandler {
@@ -103,7 +104,16 @@ public class AnsMsgHandlerImpl implements AnsMsgHandler {
                 msgHis.setMsgCtx( new String(read) );
             }
 
-            comPack.insUpdMsg(safeData, reqJob, msg, msgHis);
+
+            TRmTrx rmTrx = new TRmTrx();
+
+            rmTrx.setTrxDate( reqJob.getTrxDate() );
+            rmTrx.setTrxNo( reqJob.getTrxNo() );
+            rmTrx.setTrxCd( reqJob.getTrxCd() );
+            rmTrx.setActCd( reqJob.getActCd() );
+            rmTrx.setTrxUid( reqJob.getTrxUid() );
+
+            comPack.insUpdMsg(safeData, reqJob.getMacNo(), rmTrx, msg, msgHis);
             amsTX.commit(safeData.getTXS());
         }
         catch( Exception e ) {

@@ -27,6 +27,7 @@ import com.nicetcm.nibsplus.broker.ams.model.TCmMacKey;
 import com.nicetcm.nibsplus.broker.ams.model.TCmMac;
 import com.nicetcm.nibsplus.broker.ams.model.TCmSiteKey;
 import com.nicetcm.nibsplus.broker.ams.model.TCmSite;
+import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnv;
@@ -54,21 +55,21 @@ public class CommonPackImpl implements CommonPack {
     @Autowired private TRmMacEnvHisMapper             macEnvHisMap;
 
     @Override
-    public void insUpdMsg(AMSBrokerData safeData, AMSBrokerReqJob reqJob, TRmMsg msg, TRmMsgHis msgHis) throws Exception {
+    public void insUpdMsg(AMSBrokerData safeData, String macNo, TRmTrx trx, TRmMsg msg, TRmMsgHis msgHis) throws Exception {
 
         if( msg.getCreateDate() == null )
             msg.setCreateDate( safeData.getMsgDate() );
         if( msg.getCreateTime() == null )
             msg.setCreateTime( safeData.getMsgTime() );
         if( msg.getMacNo() == null )
-            msg.setMacNo( reqJob.getMacNo() );
+            msg.setMacNo( macNo );
 
         msg.setInsertDate( safeData.getSysDate() );
-        msg.setInsertUid( reqJob.getTrxUid() );
+        msg.setInsertUid( trx.getTrxUid() );
         msg.setUpdateDate( safeData.getSysDate() );
-        msg.setUpdateUid( reqJob.getTrxUid() );
-        msg.setTrxDate( reqJob.getTrxDate() );
-        msg.setTrxNo( reqJob.getTrxNo() );
+        msg.setUpdateUid( trx.getTrxUid() );
+        msg.setTrxDate( trx.getTrxDate() );
+        msg.setTrxNo( trx.getTrxNo() );
 
         BeanUtils.copyProperties(msgHis, msg);
 
@@ -115,7 +116,7 @@ public class CommonPackImpl implements CommonPack {
      *
      */
     @Override
-    public void insUpdMacEnv(AMSBrokerData safeData, MsgParser parsed, AMSBrokerReqJob reqJob) throws Exception {
+    public void insUpdMacEnv(AMSBrokerData safeData, MsgParser parsed, TRmTrx trx) throws Exception {
 
         TRmMacEnv macEnv = new TRmMacEnv();
         TCmMacKey cmMacKey = new TCmMacKey();
@@ -123,9 +124,9 @@ public class CommonPackImpl implements CommonPack {
         macEnv.setOrgCd     ( AMSBrokerConst.NICE_ORG_CD         );
         macEnv.setBranchCd  ( AMSBrokerConst.NICE_BR_CD          );
         macEnv.setMacNo     ( parsed.getString("CM._SSTNo").substring(2) );
-        macEnv.setInsertUid ( reqJob.getTrxUid()                 );
+        macEnv.setInsertUid ( trx.getTrxUid()                    );
         macEnv.setInsertDate( safeData.getSysDate()              );
-        macEnv.setUpdateUid ( reqJob.getTrxCd()                  );
+        macEnv.setUpdateUid ( trx.getTrxCd()                     );
         macEnv.setUpdateDate( safeData.getSysDate()              );
         macEnv.setSts       ( "0"                                );
 
@@ -318,8 +319,8 @@ public class CommonPackImpl implements CommonPack {
             throw e;
         }
 
-        macEnvHis.setTrxDate( reqJob.getTrxDate() );
-        macEnvHis.setTrxNo  ( reqJob.getTrxNo()   );
+        macEnvHis.setTrxDate( trx.getTrxDate() );
+        macEnvHis.setTrxNo  ( trx.getTrxNo()   );
 
         try {
             macEnvHisMap.insertSelective( macEnvHis );

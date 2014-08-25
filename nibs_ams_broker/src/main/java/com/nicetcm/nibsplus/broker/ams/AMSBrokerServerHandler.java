@@ -5,8 +5,14 @@ package com.nicetcm.nibsplus.broker.ams;
  *
  * AMS 저널/배포/원격 관리
  *
- *           2014. 05. 23    K.D.J.
+ * AMSBrokerServerHandler
+ *
+ * 기기로 부터의 요청을 처리하기 위한 서버소켓 처리 클래스
+ *
+ * @author  K.D.J
+ * @since   2014.05.23
  */
+
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -18,6 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nicetcm.nibsplus.broker.common.*;
+import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
+import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
+import com.nicetcm.nibsplus.broker.ams.services.RespAckNakHandler;
+import com.nicetcm.nibsplus.broker.ams.services.RcvMsgHandler;
+
 /**
  * Handler implementation for the echo server.
  */
@@ -31,6 +42,9 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
     private byte[]    bMsgType = new byte[8];
     private byte[]    remainBytes;
     private int       iMsgLen, iRemain;
+    private AMSBrokerData amsSafeData = new AMSBrokerData();
+    private TRmTrx     rmTrx = null;
+    private TRmMsg     rmMsg = null;
     private MsgParser  msgPsr;
     private ByteBuffer wrkBuf;
     private boolean   isContinue = false;
@@ -106,22 +120,69 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
                 logger.debug("Continue set msgPsr length = " + msgPsr.getMessageLength());
             }
 
-            biz.classifyMessage(ctx,  msg, msgPsr, null, remainBytes, isContinue);
+            rmTrx = new TRmTrx();
+            rmMsg = new TRmMsg();
+
+            try {
+                RcvMsgHandler rcv = (RcvMsgHandler)AMSBrokerSpringMain.sprCtx.getBean("rcvMsg");
+                rcv.rcvMsgHandle( amsSafeData, msgPsr, rmTrx, rmMsg );
+
+                biz.classifyMessage(ctx, msg, msgPsr, null, remainBytes, isContinue);
+                if( !isContinue ) {
+                    if( msgPsr.getResponseInfo().getType().equals("COMMON") ) {
+                        logger.debug("resonse is COMMON");
+                    }
+                    RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg );
+                    msgPsr.clearMessage();
+                }
+            }
+            catch( Exception e ) {
+                if( !isContinue ) {
+                    if( msgPsr.getResponseInfo().getType().equals("COMMON") ) {
+                        logger.debug("resonse is COMMON");
+                    }
+                    RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg );
+                    msgPsr.clearMessage();
+                }
+            }
+
         }
         else {
-            logger.debug("Continue.. msgPsr length = " + msgPsr.getMessageLength());
-            wrkBuf = ByteBuffer.allocateDirect(buf.readableBytes());
-            buf.readBytes(wrkBuf);
-            wrkBuf.position(0);
-            remainBytes = new byte[wrkBuf.capacity() - wrkBuf.position()];
-            wrkBuf.get(remainBytes);
+            try {
+                logger.debug("Continue.. msgPsr length = " + msgPsr.getMessageLength());
+                wrkBuf = ByteBuffer.allocateDirect(buf.readableBytes());
+                buf.readBytes(wrkBuf);
+                wrkBuf.position(0);
+                remainBytes = new byte[wrkBuf.capacity() - wrkBuf.position()];
+                wrkBuf.get(remainBytes);
 
-            iRemain = iRemain - wrkBuf.capacity();
-            logger.debug("iRemain = " + iRemain);
+                iRemain = iRemain - wrkBuf.capacity();
+                logger.debug("iRemain = " + iRemain);
 
-            if( iRemain <= 0 ) isContinue = false;
+                if( iRemain <= 0 ) isContinue = false;
 
-            biz.classifyMessage(ctx,  msg, msgPsr, null, remainBytes, isContinue);
+                biz.classifyMessage(ctx, msg, msgPsr, null, remainBytes, isContinue);
+                if( !isContinue ) {
+                    if( msgPsr.getResponseInfo().getType().equals("COMMON") ) {
+                        logger.debug("resonse is COMMON");
+                    }
+                    RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg );
+                    msgPsr.clearMessage();
+                }
+            }
+            catch( Exception e ) {
+                if( !isContinue ) {
+                    if( msgPsr.getResponseInfo().getType().equals("COMMON") ) {
+                        logger.debug("resonse is COMMON");
+                    }
+                    RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg );
+                    msgPsr.clearMessage();
+                }
+            }
         }
     }
 
