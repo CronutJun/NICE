@@ -1,0 +1,44 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=30
+COL_LEN=8,12,6,40,8,6,8,6,8,6,8,6,4,60,10,1,200,10,1,1,10,1,1,100,2,10,2,2,10,63
+COL_TYPE=A,A,A,A,N,N,N,N,N,N,N,N,A,A,N,N,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT
+       ''					/* 지점코드 						*/
+      ,MAC_NO                   /* 기기코드 						*/
+      ,SITE_CD                  /* 코너코드 						*/
+      ,SITE_NM                  /* 코너명    						*/
+      ,CREATE_DATE              /* 장애발생년월일 					*/
+      ,CREATE_TIME              /* 장애발생시각 					*/
+      ,CALL_DATE                /* 출동요청년월일 					*/
+      ,CALL_TIME                /* 출동요청시각 					*/
+      ,ARRIVAL_DATE             /* 코너도착년월일	 				*/
+      ,ARRIVAL_TIME             /* 코너도착시각 					*/
+      ,REPAIR_DATE              /* 복구년월일 						*/
+      ,REPAIR_TIME              /* 복구시각							*/
+      ,MAC_MODEL                /* 기종								*/
+      ,MEMO                     /* 장애내용							*/
+      ,PENALTY_AMT              /* 패널티금액						*/
+      ,DECODE(PENALTY_YN,'Y','1','0')		            /* 패널티미대상여부					*/
+      ,PENALTY_REASON          /* 패널티미대상사유					*/
+      ,''               		/* 1차출동요청번호					*/    
+      ,''                       /* 출동요청차수						*/    
+      ,''                       /* 출동차수구분(1:1차출동요청 2:2차출동요청)		*/    
+      ,REPAIR_ELAPSE            /* 복구경과시간						*/    
+      ,'1'                      /* 통보유형							*/    
+      , ''                      /* 제외승인여부						*/
+      , ''                      /* 미승인사유						*/
+      ,PENALTY_CD                      /* 페널티적용구분					*/    
+      , ''                      /* 페널티확정금액					*/    
+      ,GROUP_ERROR_CD
+      ,STD_ERROR_CD
+      ,ERROR_CD
+      , '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',''
+FROM    T_CT_PENALTY_LIST
+WHERE   ORG_SEND_YN = '0'  
+AND		ORG_CD = '096'
+AND		BRAND_ORG_CD = '003'
+AND		PENALTY_YN IS NOT NULL
+/* AND		GROUP_ERROR_CD IS NOT NULL */
+/*AND		CREATE_DATE >= TO_CHAR( SYSDATE - 45, 'YYYYMMDD' )	*/
+	

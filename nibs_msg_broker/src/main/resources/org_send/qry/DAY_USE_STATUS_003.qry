@@ -1,0 +1,52 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=21
+COL_LEN=12,40,8,40,8,5,5,5,5,5,5,5,5,5,5,5,5,5,10,10,229
+COL_TYPE=A,A,A,A,A,A,A,A,N,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT     UDAY.MAC_NO,	                            	                            /*	기기번호		*/        
+		   NVL(SST.SITE_NM, SITE.SITE_NM),      	                                /*	코너명(코너현황에 없으면 SITE참조)*/ 
+		   UDAY.JIJUM_CD,					  							              /*	관리점코드		*/
+		   COM.CD_NM,								              /*	관리점명		*/
+		   UDAY.STD_DATE,               	                                        /*	기준월			*/        
+		   NVL(UDAY.TOTAL_WITHDRAW,'0'),	                                /*	전체고객이용건수-출금	*/
+		   NVL(UDAY.TOTAL_TRANSFER,'0'),	                                /*	전체고객이용건수-이체	*/
+		   NVL(UDAY.TOTAL_DEPOSIT, '0'),	                                /*	전체고객이용건수-입금	*/
+		   NVL(UDAY.TOTAL_WITHDRAW+TOTAL_TRANSFER+TOTAL_DEPOSIT,     '0'),	                                /*	전체고객이용건수-합계	*/
+		   NVL(UDAY.SAME_WITHDRAW, '0'),	                                /*	당행고객이용건수-출금	*/
+		   NVL(UDAY.SAME_TRANSFER, '0'),	                                /*	당행고객이용건수-이체	*/
+		   NVL(UDAY.SAME_DEPOSIT,  '0'),	                                /*	당행고객이용건수-입금	*/
+		   NVL(UDAY.SAME_WITHDRAW+SAME_TRANSFER+SAME_DEPOSIT,      '0'),	                            	/*	당행고객이용건수-합계	*/
+		   NVL(UDAY.DIFF_WITHDRAW, '0'),	                                /*	타행고객이용건수-출금	*/
+		   NVL(UDAY.DIFF_TRANSFER, '0'),	                                /*	타행고객이용건수-이체	*/
+		   NVL(UDAY.DIFF_DEPOSIT,  '0'),	                               	/*	타행고객이용건수-입금	*/
+		   NVL(UDAY.DIFF_WITHDRAW+DIFF_TRANSFER+DIFF_DEPOSIT,      '0'),	                           		/*	타행고객이용건수-합계	*/
+		   NVL(UDAY.BANKBOOK_UPDATE_CNT,   '0'),	                                /*	통장정리이용건수		*/
+		   NVL(UDAY.EARNED_FEE_ORG,        '0'),	                               	/*	수수료수입-IBK			*/
+		   NVL(UDAY.EARNED_FEE_VAN,        '0'),	                                /*	수수료수입-VAN			*/
+		   '',
+		   '', 
+		   '', 
+		   '', 
+		   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '','','','','','','','','','','',''
+	   FROM T_CT_USE_STATUS_DAILY			UDAY
+	  		, T_CM_MAC						MAC
+      		, T_CM_SITE 					SITE
+	  	    , T_CM_SITE_STATE 				SST
+		    , ( select small_cd, cd_nm 					/* 기관별 지점명 조회 서브 쿼리 */
+		    	from T_CM_COMMON 
+		    	where large_cd = '6700' 
+		    		and cd_nm1 = '003' 
+		    	) 							COM
+	WHERE UDAY.STD_DATE >= TO_CHAR(SYSDATE-65,'YYYYMMDD')
+    and UDAY.ORG_CD = '003'
+    AND MAC.ORG_CD = '096' and MAC.jijum_CD = '9600'
+    AND UDAY.MAC_NO = MAC.MAC_NO
+    AND MAC.ORG_CD = SITE.ORG_CD
+    AND MAC.JIJUM_CD = SITE.JIJUM_CD
+    AND MAC.SITE_CD = SITE.SITE_CD
+    AND MAC.ORG_CD = SST.ORG_CD
+    AND MAC.JIJUM_CD = SST.JIJUM_CD
+    AND MAC.MAC_NO = SST.MAC_NO
+    AND UDAY.JIJUM_CD = COM.SMALL_CD(+)
+    and UDAY.ORG_SEND_YN = '0'
+    AND SST.ORG_CD = '096' AND SST.JIJUM_CD = '9600'

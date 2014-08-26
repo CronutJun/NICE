@@ -286,17 +286,17 @@ public class RMIClientTest {
 
     public static void main(String[] args) {
         try {
-            //new RMIClientTest().reqEnvInfToMac();
-            //new RMIClientTest().reqRegInfToMac();
-            //new RMIClientTest().reqIniInfToMac();
-            //new RMIClientTest().reqEnvChgToMac();
-            //new RMIClientTest().reqRegChgToMac();
-            //new RMIClientTest().reqIniChgToMac();
-            //new RMIClientTest().reqRebootToMac();
-            //new RMIClientTest().reqPwroffToMac();
-            //new RMIClientTest().reqDevResetToMac();
-            //new RMIClientTest().reqDevCollectToMac();
-            //new RMIClientTest().reqDevReturnToMac();
+            new RMIClientTest().reqEnvInfToMac();
+            new RMIClientTest().reqRegInfToMac();
+            new RMIClientTest().reqIniInfToMac();
+            new RMIClientTest().reqEnvChgToMac();
+            new RMIClientTest().reqRegChgToMac();
+            new RMIClientTest().reqIniChgToMac();
+            new RMIClientTest().reqRebootToMac();
+            new RMIClientTest().reqPwroffToMac();
+            new RMIClientTest().reqDevResetToMac();
+            new RMIClientTest().reqDevCollectToMac();
+            new RMIClientTest().reqDevReturnToMac();
             new RMIClientTest().reqCallNoticeToMac();
             //new RMIClientTest().reqSFileDownToMac();
         }

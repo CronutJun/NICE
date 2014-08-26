@@ -1,0 +1,29 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=9
+COL_LEN=4,4,4,8,7,7,8,4,376
+COL_TYPE=A,A,A,A,A,A,A,A,A
+select 	org_cd,
+		jijum_cd,
+		mac_no,
+		create_date,
+		error_no,
+		recv_user_uid,
+		arrival_date,
+		arrival_time,
+		'',
+		'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	''
+from	t_ct_error_mng
+where	close_yn = 'A'
+AND		(    ARRIVAL_TIME IS NOT NULL
+          OR NVL(ERROR_STATUS, '0' ) = '7000'
+        )
+AND CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-3, 'YYYYMMDD' ))
+/*AND RECV_USER_UID IN ('0315004','0415044', '0525046') */
+/*AND RECV_USER_UID IN ('0415044', '0725048') */
+/* 강서지사만 콜 보내도록 수정 */
+/*
+AND 	DEPT_CD = '10'
+AND		OFFICE_CD = '20'
+*/
+and  org_cd||jijum_cd||site_cd IN ('0501510081', '232750062', '0501410079')

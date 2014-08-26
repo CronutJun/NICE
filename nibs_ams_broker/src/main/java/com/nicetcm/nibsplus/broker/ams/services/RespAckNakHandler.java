@@ -9,6 +9,6 @@ import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
 
 public interface RespAckNakHandler {
 
-    public void procAckNak( ChannelHandlerContext ctx, AMSBrokerData safeData, MsgParser parsed, TRmTrx trx, TRmMsg msg ) throws Exception;
+    public void procAckNak( ChannelHandlerContext ctx, AMSBrokerData safeData, MsgParser parsed, TRmTrx trx, TRmMsg msg, String ackNak, String errMessage ) throws Exception;
 
 }

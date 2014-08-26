@@ -1,0 +1,71 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=5
+COL_LEN=12,5,8,10,387
+COL_TYPE=A,A,A,A,A
+SELECT    '0442'										/*	지점코드	*/ 
+        , '9990'                                                /*	출급번호	*/ 
+        , '20130117'                                            /*	신청일자	*/ 
+        , '800'                                             /*	신청수량	*/ 
+        , ''                                                
+        , ''                                             
+        , ''                                     
+        , ''                                                  
+        , ''                                                
+        , ''                                               
+        , ''                                            
+        , ''                                                
+        , ''                                             
+        , ''                                               
+        , ''                                               
+        , ''                                               
+        , ''                                                
+        , ''                                                
+        , ''                                                
+        , ''                                          
+        , ''                                    
+        , ''                                             
+        , ''                                    
+        , ''                                          
+        , ''                                                
+        , ''                                             
+        , ''                                           
+        , ''
+        , ''
+        , '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+FROM     dual
+/*
+SELECT    chk.dd															
+        ,  CHK.CHECK_DATE                                                   
+        , CHK.JIJUM_CD                                                      
+        , CHK.SITE_CD                                                       
+        , SITE.SITE_NM                                                      
+        , CHK.MAC_FRONT_GLASS_CHECK                                         
+        , ''                                               
+        , CHK.MAC_GAP_CHECK                                                 
+        , CHK.MONITOR_CHECK                                                 
+        , CHK.BANKBOOK_GAP_CHECK                                            
+        , CHK.CARD_GAP_CHECK                                                
+        , CHK.INTERPHONE_CHECK                                              
+        , CHK.FIX_CHECK                                                     
+        , ''                                                   
+        , CHK.IN_WALL_CHECK                                                 
+        , CHK.OUT_WALL_CHECK                                                
+        , CHK.BOOTH_GLASS_CHECK                                             
+        , ''                                                      
+        , ''                                                    
+        , CHK.STICKER_CHECK                                                 
+        , CHK.GABAGE_CHECK                                                  
+        , CHK.OUTDOOR_HEATER_CHECK                                          
+        , CHK.SITE_ARROUD_CHECK                                             
+        , CHK.BIGO                                                          
+        , NVL(MBR.MEMBER_NM, '나이스')                                      
+        , OFC.OFFICE_NM                                                     
+        , CHK.PHOTO_YN                                                      
+        , to_char(to_date(CHK.CHECK_DATE, 'yyyymmdd') ,'w')
+        , ''
+        , '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+FROM     테이블
+WHERE   org_send_yn = '0'
+and org_cd = '003'
+*/

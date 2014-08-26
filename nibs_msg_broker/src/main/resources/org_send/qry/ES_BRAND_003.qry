@@ -1,0 +1,67 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=24
+COL_LEN=12,40,8,6,2,11,20,1,2,2,10,100,1,1,1,1,1,1,1,1,1,1,1,197
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT     MNG.mac_no,																/* 기기번호		*/        
+		   SST.SITE_NM,                                                         	/* 코너명		*/        
+		   MNG.CREATE_DATE,                                                         /* 발생일자		*/        
+		   MNG.CREATE_TIME,                                                         /* 발생시각		*/        
+		   SST.SET_TYPE,                                                         	/* 설치장소코드	*/        
+		   SUBSTR(SITE.OPER_START_TIME,1,2)||':'||
+							SUBSTR(SITE.OPER_START_TIME,3,2)||'~'||
+							SUBSTR(SITE.OPER_END_TIME,1,2)||':'||
+							SUBSTR(SITE.OPER_END_TIME,3,2),                          	/* 가동시간		*/        
+		   MAC.SERIAL_NO,                                                           /* 제조일련번호	*/        
+		   '2',                                                        				/* 전문구분코드(2:중지중)	*/        
+		   COM.CD_NM5,                                                        		/* 집계분류코드	*/        
+		   SUBSTR(COM.CD_NM6,1,2),                                                 	/* 표준장애코드	*/        
+		   MNG.ERROR_CD,                                                           	/* 기기장애코드	*/        
+		   ERR.ERROR_MSG,                                                           /*	장애내용	*/        
+		   SUBSTR(COM.CD_NM6,3,1),                                                  /*	장치ID		*/        
+		   COM.CD_NM4,                                                              /*	장애구분	*/        
+		   DECODE(MAC.DES_YN,'1','2','0'),                                          /*	DES보드가능구분	*/    
+		   '2',                                                                     /*	IC카드가능구분	*/    
+		   '0',                                                                     /*	EMV가능구분		*/    
+		   '0',                                                                     /* IR가능구분		*/    
+		   '0',                                                                     /* RF가능구분		*/    
+		   '0',                                                                     /*	지문인식가능구분*/    
+		   DECODE(MAC.BILL_USE_TYPE, '6', '2', '0'),         /*	현금5만원권가능구분:6(1,5만원가능)일 경우 2(사용가능), 아니면 0(사용불가)	*/
+		   'E',                                                                     /*	암호화상태		*/    
+		   SST.BOOTH_TYPE,                                                          /*	부스형태			*/
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+	  FROM T_CT_ERROR_MNG MNG,
+		   T_CM_SITE_STATE  SST,
+		   T_CM_MAC	MAC,
+		   T_CM_SITE SITE,
+		   T_CT_ERROR ERR,
+		   T_CT_NICE_MAC NMC,
+		   T_CM_COMMON COM
+	 WHERE MNG.CREATE_DATE = To_Number(TO_CHAR((SYSDATE), 'YYYYMMDD'))
+	      AND MNG.org_cd = SST.org_cd(+)
+	      AND MNG.JIJUM_CD = SST.JIJUM_CD(+)
+	      AND MNG.site_cd = SST.site_cd(+)
+	      AND MNG.MAC_NO = SST.MAC_NO(+)
+	      AND MNG.ORG_CD = MAC.ORG_CD
+	      AND MNG.JIJUM_CD = MAC.JIJUM_CD
+	      AND MNG.MAC_NO = MAC.MAC_NO
+	      AND MAC.ORG_cD = SITE.ORG_CD
+	      AND MAC.JIJUM_CD = SITE.JIJUM_CD
+	      AND MAC.SITE_CD = SITE.SITE_CD
+	      AND MNG.ORG_CD = ERR.ORG_CD
+	      AND MNG.ERROR_CD = ERR.ERROR_CD
+	      AND MNG.ORG_CD = '096'
+	      AND MAC.ORG_CD = NMC.ORG_CD
+	      AND MAC.JIJUM_CD = NMC.JIJUM_CD
+	      AND MAC.MAC_NO = NMC.MAC_NO
+	      AND NMC.join_cd = '003'										/* 브랜드제휴 기관코드 */
+	      AND COM.LARGE_CD = '1120'										/* 브랜드제휴 장애코드 관리 */
+	      AND NMC.JOIN_CD = COM.CD_NM3
+	      AND MNG.ERROR_CD = COM.CD_NM1
+	      AND COM.CD_NM2 = '1'											/* 전송용 장애만 전송 */
+    	  AND ( mng.org_send_yn IS NULL OR mng.org_send_yn = '0' ) 

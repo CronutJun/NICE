@@ -1,0 +1,61 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=25
+COL_LEN=12,8,40,40,100,100,2,1,1,40,10,1,4,4,10,1,8,11,100,2,2,4,10,12,87
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,N,A,A,A,A,A,A,A,A,A,A
+SELECT     MAC.MAC_NO,																			/*	기기번호		*/
+		   SST.mng_jijum_cd,																	/*  관리점코드		*/
+		   (SELECT SERVICE_NM FROM T_CM_SERVICE
+            WHERE ORG_CD='003' 
+            AND SERVICE_CD = SST.mng_jijum_cd),													/*  관리점명		*/
+		   NVL(SST.SITE_NM,STE.SITE_NM),                                                         /*	코너명			*/
+		   STE.SET_ADDR,                                                          				/*	코너주소		*/
+		   STE.SET_PLACE,                                                           			/*	코너특이사항	*/
+		   SST.SET_TYPE,                                                           				/*	설치유형		*/
+		   SST.MAC_TYPE,                                                             			/*	기종구분(ATM/CD)*/
+		   SST.BOOTH_TYPE,                                                      				/*	부스형태		*/
+		   COM.CD_NM1,                                                        					/*	기종명			*/
+		   SUBSTR(STE.SET_ADDR,1,2),                                            				/*	지역			*/
+		   SST.BANKBOOK_YN,  										         					/*	통장부(YN)		*/
+		   STE.OPER_START_TIME,                                                            		/*	운영시간from	*/
+		   STE.OPER_END_TIME,                                                             		/*	운영시간to		*/
+		   SST.MONTH_FEE,                                                   					/*	월비용			*/
+		   SST.STATE_CD,                                                    					/*	상태구분		*/
+		   SST.WORK_DATE,                                                            			/*	작업일자		*/
+		   SUBSTR(SST.WORK_TIME_FR,1,2)||Nvl2(SST.WORK_TIME_FR,':','')||SUBSTR(SST.WORK_TIME_FR,3,2)||Nvl2(SST.WORK_TIME_FR,'~','')
+		   ||SUBSTR(SST.WORK_TIME_TO,1,2)||Nvl2(SST.WORK_TIME_TO,':','')||SUBSTR(SST.WORK_TIME_TO,3,2),         /*	작업시간		*/
+		   SST.WORK_MEMO,                                                            			/*	작업내용		*/
+		   SST.SITE_GB,																			/*  코너구분		*/                                                          
+		   SST.SITE_CLSS,                                                             			/* 코너종류			*/
+		   SST.ENV_JIJUM_CD,                                                            		/* 환경관리점코드	*/ 
+		   NVL(SST.RENT_FEE,'0'),                                                             	/* 임차료			*/
+		   LPAD(SST.PUB_TEL_NO,12,'0'),                                          				/* 공중전화번호		*/
+		   '',                                                                 
+		   '',                                                                      
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+	  FROM 	t_cm_site_state SST
+	  		,T_CM_MAC 		MAC
+	  		,T_CM_SITE		STE
+	  		,T_CM_COMMON	COM
+	 WHERE SST.ORG_CD = MAC.ORG_CD
+	 	AND SST.JIJUM_CD = MAC.JIJUM_CD
+	 	AND SST.MAC_NO = MAC.MAC_NO
+	 	AND MAC.ORG_CD = STE.ORG_CD
+	 	AND MAC.JIJUM_CD = STE.JIJUM_CD
+	 	AND MAC.SITE_CD = STE.SITE_CD
+	 	AND	SST.ORG_CD = '096'
+	 	AND	SST.JIJUM_CD = '9600'
+	 	AND	MAC.MAC_MODEL = COM.SMALL_CD
+	 	AND COM.LARGE_CD = '2110'
+	 	AND sst.org_send_yn = '0'
+	 	AND SST.mac_no in ( SELECT MAC_NO FROM T_CT_NICE_MAC WHERE ORG_CD = '096' AND JOIN_CD = '003' )
+	 	

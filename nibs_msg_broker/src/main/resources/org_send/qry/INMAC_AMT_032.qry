@@ -1,0 +1,20 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=10
+COL_LEN=8,12,8,6,1,15,15,15,15,327
+COL_TYPE=A,A,A,A,A,A,A,A,A,A
+SELECT  JIJUM_CD,
+        MAC_NO,
+        SEND_DATE,
+        SEND_TIME,
+        '1',
+        SEND_AMT,
+        '',
+        '',
+        '',
+        '0',           
+     	'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+FROM    T_FN_SEND_BUSAN
+WHERE SEND_DATE = TO_CHAR( SYSDATE, 'YYYYMMDD' )  
+AND	  NVL(TRANS_YN, '0') = '0' 
+AND   org_cd = '032'

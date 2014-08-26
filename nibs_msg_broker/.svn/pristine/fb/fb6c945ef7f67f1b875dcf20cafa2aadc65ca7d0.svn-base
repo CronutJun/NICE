@@ -1,0 +1,93 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=34
+COL_LEN=12,40,8,40,6,2,8,2,10,1,5,5,5,5,5,5,5,5,5,5,5,5,5,10,10,10,10,32,8,32,8,20,10,78
+COL_TYPE=A,A,A,A,A,A,A,A,N,A,A,A,A,A,A,A,A,A,A,A,A,A,A,N,N,A,A,A
+SELECT  MON.MAC_NO,	                                                        /*	기기번호		*/        
+		    DECODE(MON.MAC_NO,'0000','기업경륜가상기기'
+              ,SST.SITE_NM),                               /*	코너명(코너현황에 없으면 SITE참조)*/ 
+		   MON.JIJUM_CD,														              /*	관리점코드		*/
+		   NVL(MON.JIJUM_NM, SVC.SERVICE_NM),										              /*	관리점명		*/
+		   MON.YEAR_MON,                                                        /*	기준월			*/        
+		   MON.SET_TYPE,                                                        /*	설치유형		*/        
+		   INFO.OPEN_DATE,                                                      /*	설치일			*/        
+		   MON.USE_DAY,                                                      	/*	가동일수		*/        
+		   DECODE(MON.ORG_SEND_YN,'0','0'
+		   					, SST.MONTH_FEE),                                  /*	용역료(매월5일은 금액 0,매월20일 기준용역료*/        
+		   MON.BOOTH_TYPE,                                                      /*	부스형태		*/        
+		   NVL(MON.USE_CNT_TOTAL_WITHDRAW,'0'),	                                /*	전체고객이용건수-출금	*/
+		   NVL(MON.USE_CNT_TOTAL_TRANSFER,'0'),	                                /*	전체고객이용건수-이체	*/
+		   NVL(MON.USE_CNT_TOTAL_DEPOSIT, '0'),	                                /*	전체고객이용건수-입금	*/
+		   NVL(MON.USE_CNT_TOTAL_SUM,     '0'),	                                /*	전체고객이용건수-합계	*/
+		   NVL(MON.USE_CNT_SAME_WITHDRAW, '0'),	                                /*	당행고객이용건수-출금	*/
+		   NVL(MON.USE_CNT_SAME_TRANSFER, '0'),	                                /*	당행고객이용건수-이체	*/
+		   NVL(MON.USE_CNT_SAME_DEPOSIT,  '0'),	                                /*	당행고객이용건수-입금	*/
+		   NVL(MON.USE_CNT_SAME_SUM,      '0'),	                            	/*	당행고객이용건수-합계	*/
+		   NVL(MON.USE_CNT_DIFF_WITHDRAW, '0'),	                                /*	타행고객이용건수-출금	*/
+		   NVL(MON.USE_CNT_DIFF_TRANSFER, '0'),	                                /*	타행고객이용건수-이체	*/
+		   NVL(MON.USE_CNT_DIFF_DEPOSIT,  '0'),	                               	/*	타행고객이용건수-입금	*/
+		   NVL(MON.USE_CNT_DIFF_SUM,      '0'),	                           		/*	타행고객이용건수-합계	*/
+		   NVL(MON.BANKBOOK_UPDATE_CNT,   '0'),	                                /*	통장정리이용건수		*/
+		   NVL(MON.EARNED_FEE_IBK,        '0'),	                               	/*	수수료수입-IBK			*/
+		   NVL(MON.EARNED_FEE_VAN,        '0') 
+		   	+ NVL(MON.EARNED_FEE_IBK,        '0'),	                                /*	수수료수입-VAN, 20131231 기업은행측에서 고객수수료로 넣어달라고 함.	*/
+		   NVL(INFO.FIN_PENALTY_AMT,'0'),                                        /*	페널티확정금액			*/
+		   DECODE(MON.ORG_SEND_YN,'0','0'
+		   				,NVL(SST.MONTH_FEE,'0') - NVL(INFO.FIN_PENALTY_AMT,'0')),	/*	청구용역료(매월5일은 금액 0,매월20일 청구용역료)*/        
+      (SELECT FC_FN_SECURITY( ACCOUNT , '2') FROM T_CM_ACCOUNT
+		   		WHERE ORG_CD = MON.ORG_CD
+		   			AND SERVICE_GB = '1'
+		   			AND USE_TYPE = '1'),										/*	수수료입금계좌			*/
+		   TO_CHAR(LAST_DAY(SYSDATE),'yyyymmdd'),								/*	수수료납입기한			*/
+		   (SELECT FC_FN_SECURITY( ACCOUNT , '2') FROM T_CM_ACCOUNT
+		   		WHERE ORG_CD = MON.ORG_CD
+		   			AND SERVICE_GB = '1'
+		   			AND USE_TYPE = '0'),										/*	용역료입금계좌			*/
+		   TO_CHAR(LAST_DAY(SYSDATE),'yyyymmdd'),								/*	용역료납입기한			*/
+		 	'',											/*	문서번호				*/
+		   mon.updatE_uid, 															/*	발송자					*/
+       		'',
+		   '', 
+		   '', 
+		   '', 
+		   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+
+FROM 
+(
+select 
+substr(pnt.create_date, 1, 6) year_mon
+, mac.mac_no mac_no
+, site.site_nm
+, site.open_date
+, min(pnt.org_send_yn) org_send_yn
+, SUM(pnt.fin_penalty_amt) FIN_PENALTY_AMT
+from t_cm_mac mac
+    ,t_cm_site site
+    ,t_ct_penalty_list  pnt 
+    ,t_ct_nice_mac nmc
+where
+    mac.org_cd = site.org_cd
+and mac.jijum_cd = site.jijum_cd
+and mac.site_cd = site.site_cd
+and mac.org_cd = pnt.org_cd(+)
+and mac.jijum_cd = pnt.jijum_cd(+)
+and mac.mac_no = pnt.mac_no(+)
+and mac.org_cd =nmc.org_cd
+and mac.jijum_cd = nmc.jijum_cd
+and mac.mac_no = nmc.mac_no
+and nmc.org_cd = '096' and nmc.jijum_cd = '9600' and nmc.join_cd = '003'
+AND PNT.create_date(+) >= to_char(to_char(sysdate,'yyyymm')-1)||'01'
+and PNT.org_cd(+) = '096' and PNT.jijum_cd(+) = '9600' and PNT.brand_org_cd(+) = '003'
+group by substr(pnt.create_date, 1, 6), mac.mac_no , site.site_nm, site.open_date
+) INFO
+, T_CT_USE_STATUS_MONTHLY MON
+, T_CM_SITE_STATE SST
+, T_CM_SERVICE SVC
+WHERE MON.MAC_NO = INFO.MAC_NO(+)
+AND MON.YEAR_MON = to_char(to_char(sysdate-28,'yyyymm'))
+AND MON.MAC_NO = SST.MAC_NO(+)
+AND MON.JIJUM_CD = SVC.SERVICE_CD(+)
+AND SVC.ORG_CD(+) = '003'
+and MON.ORG_SEND_YN = '0'	
+ --( MON.ORG_SEND_YN = '1' AND PNT.ORG_SEND_YN = '2' )		/* 20일(2차) 전송 조건 - 초기전송완료 && 최종페널티수신완료		*/
+

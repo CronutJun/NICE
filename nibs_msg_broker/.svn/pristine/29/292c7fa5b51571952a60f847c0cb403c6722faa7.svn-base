@@ -1,0 +1,30 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=21
+COL_LEN=8,6,8,12,6,8,9,9,9,9,9,9,40,40,40,40,40,40,9,40,31
+COL_TYPE=A,A,A,A,A,A,N,N,N,N,N,N,A,A,A,A,A,A,N,A,A
+SELECT 	DEAL_DATE        ,
+      DEAL_TIME          ,
+      JIJUM_CD           ,
+      MAC_NO             ,
+      MEMBER_ID          ,
+      CLOSE_DATE         ,
+      CHECK_AMT          ,
+      CASH_AMT           ,
+      SELF_AMT           ,
+      ETC_AMT            ,
+      CUPON_AMT          ,
+      CASH_CUPON_AMT     ,
+      CHECK_BIGO         ,
+      CASH_BIGO          ,
+      SELF_BIGO          ,
+      ETC_BIGO           ,
+      CUPON_BIGO         ,
+      CASH_CUPON_BIGO	,
+	  RATE_CUPON_CNT	, 
+	  RATE_CUPON_BIGO	,
+	  '','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+FROM T_FN_NOTEND_EMART
+WHERE org_cd = '0EM'
+ /* AND jijum_cd = '4700' */
+ AND ORG_SEND_YN = '0'

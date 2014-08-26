@@ -92,6 +92,7 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
 
             msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + ".json");
             logger.debug("readableBytes#2  = " + buf.readableBytes() + ", schema_length = " + msgPsr.getSchemaLength());
+            logger.debug("msgPsr's response type = {}", msgPsr.getResponseInfo().getType());
             /**
              *  전문파싱 완료 대기
              */
@@ -108,7 +109,9 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
             catch ( Exception err) {
                 logger.error(err.getMessage());
                 msgPsr.clearMessage();
+                throw err;
             }
+            logger.debug("msgPsr's response type = {}", msgPsr.getResponseInfo().getType());
 
             iRemain = iMsgLen - wrkBuf.capacity();
 
@@ -129,22 +132,17 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
 
                 biz.classifyMessage(ctx, msg, msgPsr, null, remainBytes, isContinue);
                 if( !isContinue ) {
-                    if( msgPsr.getResponseInfo().getType().equals("COMMON") ) {
-                        logger.debug("resonse is COMMON");
-                    }
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
-                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg );
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "9", null );
                     msgPsr.clearMessage();
                 }
             }
             catch( Exception e ) {
                 if( !isContinue ) {
-                    if( msgPsr.getResponseInfo().getType().equals("COMMON") ) {
-                        logger.debug("resonse is COMMON");
-                    }
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
-                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg );
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "5", e.getMessage() );
                     msgPsr.clearMessage();
+                    throw e;
                 }
             }
 
@@ -165,22 +163,17 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
 
                 biz.classifyMessage(ctx, msg, msgPsr, null, remainBytes, isContinue);
                 if( !isContinue ) {
-                    if( msgPsr.getResponseInfo().getType().equals("COMMON") ) {
-                        logger.debug("resonse is COMMON");
-                    }
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
-                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg );
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "9", null );
                     msgPsr.clearMessage();
                 }
             }
             catch( Exception e ) {
                 if( !isContinue ) {
-                    if( msgPsr.getResponseInfo().getType().equals("COMMON") ) {
-                        logger.debug("resonse is COMMON");
-                    }
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
-                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg );
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "5", e.getMessage() );
                     msgPsr.clearMessage();
+                    throw e;
                 }
             }
         }

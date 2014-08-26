@@ -1,0 +1,28 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=20
+COL_LEN=8,12,6,4,4,60,8,15,15,15,15,15,15,8,15,15,2,1,20,169
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT jijum_cd,
+	 mac_no,
+	 '',
+	 '',
+	 '',
+	 '',
+	 close_date,        
+	 before_cash_amt,   
+	 in_amt,            
+	 out_amt,           
+	 close_amt,         
+	 '',     
+	 '',      
+	 '',     
+	 collect_amt,       
+	 '',    
+	 '',    
+	 DECODE(report_yn, '1', 'Y', '0', 'N', report_yn ),
+	 '',         
+	 '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+FROM T_FN_ATMS_COLLECT  
+WHERE org_send_yn = '0'  
+ AND org_cd = '035' 

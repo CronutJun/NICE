@@ -1,0 +1,72 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=28
+COL_LEN=8,6,8,6,8,10,4,4,4,4,60,4,8,60,4,4,1,8,10,8,10,13,100,50,4,20,2,22
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,N,A,A,A,A,A,A,A,A,A,A,A
+SELECT 
+	 '',
+	 '',
+	 CASE WHEN ERR.arrival_est_time IS NOT NULL
+	 	  THEN CASE WHEN ERR.send_time < ERR.arrival_est_time
+		            THEN ERR.send_date
+					ELSE TO_CHAR(TO_DATE(ERR.send_date, 'YYYYMMDD') + 1, 'YYYYMMDD')
+					END
+		  ELSE TO_CHAR(TO_DATE(ERR.SEND_DATE||ERR.SEND_TIME, 'YYYYMMDDHH24MI') + (30/24/60), 'YYYYMMDD')
+		  END AS est_date,
+	 CASE WHEN ERR.arrival_est_time IS NOT NULL
+	 	  THEN ERR.arrival_est_time || '00'
+		  ELSE TO_CHAR(TO_DATE(ERR.SEND_DATE||ERR.SEND_TIME, 'YYYYMMDDHH24MI') + (30/24/60), 'HH24MI') || '00'
+		  END AS est_time,
+	 DECODE( NVL( ERR.format_type, '0' ), '21', ERR.trans_date, 
+	 									  '11', ERR.trans_date, 
+	 									        ERR.create_date ),
+	 DECODE( NVL( ERR.format_type, '0' ), '21', ERR.org_msg_no, 
+	 									  '11', ERR.org_msg_no,
+	 									        ERR.create_time||'00' ),
+	 ERR.jijum_cd,
+	 '',
+	 '',
+	 '',
+	 '',
+	 ERR.mac_no,
+	 DECODE( ERR.ERROR_CD, 'NE100', 'WWONE',             /* 1 현금부족예보 */
+					  'NE200', 'WWWWW',             /* 1 현금부족 WWOEE*/
+					  'NE103', 'WWINE',             /* 2 현금입금 예보Full */
+					  'NE203', 'WWIEE',             /* 2 현금입금 Full */
+					  'NE101', 'CCONE',             /* 3 수표부족예보 */
+					  'NE201', 'CCCCC',             /* 3 수표부족 CCOEE*/
+					  'NE104', 'CCINE',             /* 4 수표입금 Full */
+					  'NE204', 'CCIEE',             /* 4 수표입금 Full */
+					  'NE205', 'WWBEE',             /* 5 현금회수 Full */
+					  'NE102', 'JJONE',             /* 7 명세표부족예보 */
+					  'NE202', 'JJJJJ',             /* 7 명세표부족 */
+					  'NE113', 'PPINE',             /* 8 저널용지 부족예보 */
+					  'NE213', 'PPIEE',             /* 8 저널용지 부족 */
+					  'NE207', 'KKBEE',             /* 9 카드회수 Full */
+					           ERR.ERROR_CD ) AS error_cd,
+	 '',
+	 DECODE( NVL( ERR.format_type, '0' ), '21', '1', '0' ),
+	 '',
+	 '',
+	 '',
+	 '',
+	 '',
+	 DECODE(ERR.recv_user_nm, NULL, '나이스', ERR.recv_user_nm),
+	 DECODE(ERR.recv_tele_no, NULL, '0800228252', ERR.recv_tele_no),
+	 '',
+	 '',
+	 '',
+	 '',
+	 '', 
+	 '', 
+	 '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+FROM T_CT_ERROR_MNG ERR
+  WHERE ERR.CREATE_DATE > TO_CHAR((SYSDATE - 3), 'YYYYMMDD')
+    AND ERR.org_cd = '32'
+	AND ERR.send_time IS NOT NULL
+	AND ERR.arrival_est_time IS NOT NULL 
+	AND nvl(ERR.org_send_yn,'0') = '0'
+	/* 부산은행의 경우 FORMAT_TYPE을 상태전문은 '11' 출동요청 은 '21'로 저장 */
+	/* 우선 상태전문과 출동요청 전문에대해 송신 */
+	AND ERR.format_type IN ( '11', '21' )
+	AND substr(ERR.error_cd, 1, 3 ) <> 'ERR'

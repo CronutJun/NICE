@@ -1,0 +1,43 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=7
+COL_LEN=4,8,6,12,8,7,377
+COL_TYPE=A,A,A,A,A,A,A
+select 	mng.org_cd,
+		CASE WHEN mng.org_cd = '031'
+			 THEN '0'||mng.jijum_cd
+		     ELSE mng.jijum_cd
+		END as jijum_cd,
+		mng.site_cd,		
+		MNG.mac_no,
+		mng.create_date,
+		mng.error_no,
+		'',
+		'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	''
+/*
+from	t_ct_error_mng mng,
+		t_cm_site_01	site
+where	nvl(mng.close_yn, '0') = '0'
+AND		mng.ARRIVAL_TIME IS NULL
+AND		NVL(mng.ERROR_STATUS, '0' ) <> '7000'
+AND		mng.ORG_CUST_RECV_YN = 'Y'
+AND 	mng.CREATE_DATE > TO_CHAR( SYSDATE-3, 'YYYYMMDD' )
+and      nvl(site.alarm, '0') = '1' 
+and		mng.org_cd = site.org_cd
+and 	mng.jijum_cd = site.jijum_cd
+and		mng.site_cd = site.site_cd
+*/
+from    t_ct_error_mng mng,
+        T_CT_ERROR  ERR,
+        t_cm_site_01    site
+where    nvl(mng.close_yn, '0') = '0'
+AND        mng.ARRIVAL_TIME IS NULL
+AND        NVL(mng.ERROR_STATUS, '0' ) <> '7000'
+AND        ( mng.ORG_CUST_RECV_YN = 'Y' OR ERR.ALARM_MON_YN = 'Y')
+AND     mng.CREATE_DATE > TO_CHAR( SYSDATE-1, 'YYYYMMDD' )
+and      nvl(site.alarm, '0') = '1' 
+and        mng.org_cd = site.org_cd
+and     mng.jijum_cd = site.jijum_cd
+and        mng.site_cd = site.site_cd
+AND     MNG.ORG_CD = ERR.ORG_CD(+)
+AND     MNG.ERROR_CD = ERR.ERROR_CD(+)

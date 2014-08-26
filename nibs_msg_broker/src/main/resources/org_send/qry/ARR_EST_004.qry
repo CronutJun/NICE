@@ -1,0 +1,52 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=29
+COL_LEN=8,6,8,6,8,10,8,12,6,4,4,60,8,60,4,4,1,8,10,8,10,13,100,50,4,20,3,15,52
+COL_TYPE=N,N,N,N,N,A,A,A,A,A,A,A,A,A,A,A,N,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT send_date,
+	 send_time ,
+	 CASE WHEN arrival_est_time IS NOT NULL
+	 	  THEN CASE WHEN send_time < arrival_est_time
+		            THEN send_date
+					ELSE TO_CHAR(TO_DATE(send_date, 'YYYYMMDD') + 1, 'YYYYMMDD')
+					END
+		  ELSE TO_CHAR(TO_DATE(SEND_DATE||SEND_TIME, 'YYYYMMDDHH24MISS') + (30/24/60/60), 'YYYYMMDD')
+		  END AS est_date,
+	 CASE WHEN arrival_est_time IS NOT NULL
+	 	  THEN arrival_est_time || '00'
+		  ELSE TO_CHAR(TO_DATE(SEND_DATE||SEND_TIME, 'YYYYMMDDHH24MISS') + (30/24/60/60), 'HH24MISS')
+		  END AS est_time,
+	 trans_date,
+	 org_msg_no,
+	 jijum_cd,
+	 mac_no,
+	 '',
+	 '',
+	 '',
+	 '',
+	 error_cd,
+	 '',
+	 '',
+	 decode(error_cd, 'KB906', '6' ,SUBSTR(format_type, 2, 1)),
+	 '',
+	 accept_uid,
+	 accept_nm,
+	 DECODE(recv_user_uid, NULL, 'nice', recv_user_uid),
+	 DECODE(recv_user_nm, NULL, '나이스', recv_user_nm),
+	 DECODE(recv_tele_no, NULL, '0800228252', recv_tele_no),
+	 substr(msg, 1, 100),
+	 substr(org_msg, 1, 50),
+	 '', 
+	 '', 
+	 '', 
+	 crt_no, 
+	 '', 
+	 '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+FROM T_CT_ERROR_MNG
+  WHERE CREATE_DATE > TO_NUMBER(TO_CHAR(SYSDATE - 3, 'YYYYMMDD'))
+	AND org_cd = '004'
+	AND SEND_DATE IS NOT NULL
+	AND send_time IS NOT NULL
+	AND org_msg_no IS NOT NULL
+	AND org_send_yn = '0'
+	AND format_type = '21'

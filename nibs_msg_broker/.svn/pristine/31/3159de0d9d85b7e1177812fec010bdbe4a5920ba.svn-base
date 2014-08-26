@@ -1,0 +1,32 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=12
+COL_LEN=8,12,6,60,4,1,1,1,1,300,8,20
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A
+SELECT CHK.JIJUM_CD,
+       MAC.MAC_NO,
+       CHK.SITE_CD,
+       SITE.SITE_NM,
+       '',
+       DECODE(CHK.ENV_GARBAGE, '0020', '0', '1'),
+       DECODE(CHK.ENV_AUTO, '0020', '0', '1'),    
+       DECODE(CHK.ENV_UP, '0020', '0', '1'),
+       DECODE(CHK.ENV_STICKER, '0020', '0', '1'),
+       CHK.BIGO,
+       TO_CHAR( SYSDATE, 'YYYYMMDD') AS CHECK_DATE, /* 매일 점검한것으로 보내기위해 양대리 요청 */
+       '',
+       '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+  from T_CM_SITE_CHECK CHK,
+       T_CM_MAC MAC,
+       T_CM_SITE SITE 
+ where CHK.check_date >= TO_CHAR( SYSDATE-31, 'YYYYMMDD') 
+   and CHK.org_cd = '045'
+   AND MAC.ORG_CD = '045'
+   AND MAC.OPEN_DATE <= TO_CHAR( SYSDATE, 'YYYYMMDD')
+   AND (MAC.CLOSE_DATE IS NULL OR MAC.CLOSE_DATE >= TO_CHAR( SYSDATE, 'YYYYMMDD') )
+   AND CHK.ORG_CD = MAC.ORG_CD
+   AND CHK.JIJUM_CD = MAC.JIJUM_CD
+   AND CHK.SITE_CD = MAC.SITE_CD
+   AND CHK.ORG_CD = SITE.ORG_CD
+   AND CHK.JIJUM_CD = SITE.JIJUM_CD
+   AND CHK.SITE_CD = SITE.SITE_CD

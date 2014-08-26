@@ -1,0 +1,96 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=6
+COL_LEN=8,10,100,10,10,72
+COL_TYPE=A,A,A,A,A,A
+SELECT  A.gw_DATE,
+        A.TRANS_SEQ_NO,
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '','','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+FROM          
+     (
+        SELECT  gw_DATE,
+                TRANS_SEQ_NO
+        FROM     T_IF_LOG_EXTIF@eland
+        WHERE     gw_DATE between TO_CHAR(SYSDATE - 1, 'YYYYMMDD') and TO_CHAR(SYSDATE , 'YYYYMMDD')  
+        AND     TRANS_TYPE = 'S'
+        AND     REQ_TYPE = 'Q'
+        AND     EXT_COM_CD = '096'
+        AND     FORMAT_TYPE = 'CM'
+       MINUS
+        SELECT     TRANS_DATE as gw_date, lpad(TO_CHAR(TRANS_SEQ_NO), 7, '0') 
+        FROM     T_IF_DATA_LOG 
+        WHERE     ORG_CD = '0EL' 
+        AND     TRANS_DATE between TO_CHAR(SYSDATE - 1, 'YYYYMMDD') and TO_CHAR(SYSDATE , 'YYYYMMDD')  
+        AND     TRANS_TYPE = 'QR'
+    ) A   
+ORDER BY A.GW_DATE||A.TRANS_SEQ_NO
+/*
+with YD as ( select To_Char(SYSDATE-1, 'yyyymmdd') trans_date
+                    , case when (level-1 + min) > 9999999
+                          then (level-1 + min - ( 9999999 - 0  ))
+                          else (level-1 + min )
+                    end seq 
+            from  
+              (
+              select min(trans_seq_no) min  from t_if_data_log
+              where org_cd = '0EL'
+              and trans_type = 'QR'
+              and trans_date = to_char(SYSDATE-1, 'yyyymmdd')
+              )
+            connect by  level <= (select count(1) 
+                                  from t_if_data_log
+                                  where org_cd = '0EL'
+                                  and trans_type = 'QR'
+                                  and trans_date = to_char(SYSDATE-1, 'yyyymmdd') )
+)
+, TD as ( select  To_Char(SYSDATE, 'yyyymmdd') trans_date
+                  , case when (level-1 + min) > 9999999
+                          then (level-1 + min - ( 9999999 - 0  ))
+                          else (level-1 + min )
+                    end seq 
+            from  
+              (
+              select min(trans_seq_no) min  from t_if_data_log
+              where org_cd = '0EL'
+              and trans_type = 'QR'
+              and trans_date = to_char(sysdate, 'yyyymmdd')
+              )
+            connect by  level <= (select count(1) 
+                                  from t_if_data_log
+                                  where org_cd = '0EL'
+                                  and trans_type = 'QR'
+                                  and trans_date = to_char(sysdate, 'yyyymmdd') )
+)
+SELECT  trans_date,
+        SEQ,
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '','','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+FROM (
+	( select trans_date, seq from TD
+  UNION ALL
+  SELECT trans_date, seq FROM YD )
+	minus
+	select trans_date, trans_seq_no 
+		from t_if_data_log
+		where org_cd = '0EL'
+		and trans_type = 'QR'
+		and trans_date BETWEEN  to_char(SYSDATE-1, 'yyyymmdd') AND  to_char(sysdate, 'yyyymmdd')
+)
+*/

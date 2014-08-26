@@ -1,0 +1,32 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+#CLOSE_YN을 참조하기 위해 FILLER 1BYTE 임의 사용
+USE_COL_CNT=11
+COL_LEN=4,4,4,4,8,7,7,8,4,1,1,370
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A
+select 	org_cd,
+		jijum_cd,
+		site_cd,
+		mac_no,
+		create_date,
+		error_no,
+		recv_user_uid,
+		arrival_est_date,
+		arrival_est_time,
+		DECODE( close_yn, '1', '0', 
+						  'A', 'P', 
+						  'B', 'A', 
+						  'X', 'A', 
+						       '0' ) AS EST_FLAG,
+		CLOSE_YN,
+		'',	
+		'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	''
+from	t_ct_error_mng
+where	arrival_est_time is not null
+and		close_yn = '0'
+AND		ARRIVAL_TIME IS NULL
+AND		NVL(ERROR_STATUS, '0' ) <> '7000'
+AND		FINISH_TIME IS NULL
+AND 	CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-3, 'YYYYMMDD' ))
+AND		ORG_CUST_RECV_YN = 'Y'
+and  org_cd||jijum_cd||site_cd IN ('00501510081', '00501410079'/*, '232750062'*/)

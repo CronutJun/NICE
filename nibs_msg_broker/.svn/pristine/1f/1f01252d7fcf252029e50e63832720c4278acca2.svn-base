@@ -1,0 +1,32 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=22
+COL_LEN=8,12,6,4,60,4,3,15,8,8,4,3,4,20,1,15,10,10,12,20,50,145
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,N,A,A,A,A,A,A,A,A,A,A,A
+SELECT jijum_cd,  
+	 mac_no,   
+	 '',  
+	 '',  
+	 '',  
+	 '', 
+	 serial_no,  
+	 unattended_amt,    
+	 notend_date,  
+	 trade_date,  
+	 trade_no,  
+	 trade_org,  
+	 '',  
+	 FC_FN_SECURITY( account_no , '2'),  
+	 trade_type,  
+	 trade_amt,  
+	 finish_nm,  
+	 customer_nm,  
+	 tele_no,  
+	 office_nm,  
+	 memo,
+	 '',
+	 '','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+FROM T_FN_ATMS_REPORT  
+WHERE org_send_yn = '0'  
+ and notend_date = pkg_fn_common.sf_getPreActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
+ AND org_cd = '011'

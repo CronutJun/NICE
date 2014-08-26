@@ -1,0 +1,46 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=27
+COL_LEN=8,6,8,8,12,6,60,4,4,4,4,8,4,1,1,1,1,1,1,1,80,4,300,20,20,40,8
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,N,N,N,N,N,N,N,A,A,A,A,A,A,A
+select CHK.CHECK_DATE,
+       '',
+       CHK.JIJUM_CD,
+       '',
+       '',
+       CHK.SITE_CD,
+       SITE.SITE_NM,
+       '',
+       '',
+       '',
+       '',
+       '',
+       '',
+       DECODE(CHK.PIC_DEVICE, '0050', '0', '1'),
+       DECODE(CHK.PIC_STATUS, '0030', '0', '1'),
+       '',
+       '',
+       '',
+       '',
+       '',
+       CHK.BIGO,
+       '',
+       '',
+       MBR.MEMBER_NM,
+       '',
+       OFC.OFFICE_NM,
+       CHK.CHECK_DATE,
+       '','','','','','','','','','','','','','','','','','','','','','',''
+from T_CM_SITE_CCTV CHK,
+     T_CM_SITE      SITE,
+     T_CM_MEMBER    MBR,
+     T_CM_OFFICE    OFC
+WHERE SITE.ORG_CD = '020'
+AND   CHK.ORG_CD = '020'
+AND   CHK.CHECK_DATE >= TO_CHAR( SYSDATE-31, 'YYYYMMDD')
+AND   CHK.ORG_CD = SITE.ORG_CD
+AND   CHK.JIJUM_CD = SITE.JIJUM_CD
+AND   CHK.SITE_CD = SITE.SITE_CD
+AND   SITE.MNG_MEMBER_UID = MBR.MEMBER_ID
+AND   SITE.DEPT_CD = OFC.DEPT_CD
+AND   SITE.OFFICE_CD = OFC.OFFICE_CD

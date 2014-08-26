@@ -1,0 +1,36 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=26
+COL_LEN=8,12,6,4,4,60,8,6,1,15,15,5,5,5,5,20,4,5,5,5,5,5,5,5,5,199
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT jijum_cd,
+	 mac_no,  
+	 '',  
+	 '',  
+	 '',  
+	 '',  
+	 cash_date,  
+	 '',  
+	 '',  
+	 cash_amt,  
+	 '',  
+	 '',
+	 '',
+	 '',
+	 '',
+	 office_nm,  
+	 '', 
+	 confirm_cash_amt/10000,
+	 '',
+	 '',
+	 '',
+	 '',
+	 '',
+	 '',
+	 org_cash_amt/50000,/* 오만원권 현송금액 수정 필요 */
+	 '',
+	 '','','','','','','','','','','','','','','','','','','','','','','',''
+FROM T_FN_ATMS_CASH_PLAN  
+WHERE org_send_confirm_yn = '0'  
+ AND CASH_DATE = pkg_fn_common.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
+ AND org_cd = '011'

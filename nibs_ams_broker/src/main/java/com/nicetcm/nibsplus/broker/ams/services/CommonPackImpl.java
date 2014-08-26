@@ -162,105 +162,109 @@ public class CommonPackImpl implements CommonPack {
             logger.info("T_CM_MAC Select error. [{}]", e.getLocalizedMessage() );
             throw e;
         }
-        int fCnt = parsed.getInt("FieldCount");
-        String fID;
-        for( int i = 0; i < fCnt; i++ ) {
-            fID   = parsed.getString(String.format("FD[%d].FieldID", i));
-            if( fID.equals("003") ) {         // 기기제조번호
-                macEnv.setPrdcNo( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("004") ) {   // 기기제조사코드
-                macEnv.setMkrCd( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("005") ) {   // 기기종류코드
-                macEnv.setModelCd( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("006") ) {   // 기기설치장소
-                macEnv.setSetPlace( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("007") ) {   // ATM IP 주소1
-                macEnv.setPriIpAddr( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("008") ) {   // ATM IP 주소2
-                macEnv.setPubIpAddr( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("009") ) {   // Host IP 주소
-                macEnv.setHostIpAddr( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("010") ) {   // Host IP 포트
-                macEnv.setHostIpPort( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("011") ) {   // AOC IP 주소
-                macEnv.setAocIpAddr( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("012") ) {   // AOC IP 포트
-                macEnv.setAocIpPort( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("013") ) {   // 리부팅 예약시간
-                macEnv.setRebootTime( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("014") ) {   // ATM IP 포트
-                macEnv.setIpPort( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("100") ) {   // 자행최대출금가능금액
-                macEnv.setOurMaxWdrAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("101") ) {   // 타행최대출금가능금액
-                macEnv.setThrMaxWdrAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("102") ) {   // 자행최대입금가능금액
-                macEnv.setOurMaxDpsAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("103") ) {   // 타행최대입금가능금액
-                macEnv.setThrMaxDpsAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("104") ) {   // 자행최대이체가능금액
-                macEnv.setOurMaxTsfAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("105") ) {   // 타행최대이체가능금액
-                macEnv.setThrMaxTsfAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("106") ) {   // 최대서비스출금가능금액
-                macEnv.setMaxSvcWdrAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("107") ) {   // 최대출금가능현금매수
-                macEnv.setMaxCashWdrCnt( parsed.getShort(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("108") ) {   // 최대입금가능현금매수
-                macEnv.setMaxCashDpsCnt( parsed.getShort(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("109") ) {   // 최대서비스출금가능현금매수
-                macEnv.setMaxCashSvcWdrCnt( parsed.getShort(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("200") ) {   // 모뎀릴레이 사용여부
-                macEnv.setModemRelayYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("201") ) {   // RPC 사용여부
-                macEnv.setRpcYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("202") ) {   // 신용카드 거래사용 설정
-                macEnv.setCreditCardYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("203") ) {   // 카드론 거래사용 설정
-                macEnv.setCardLoanYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("204") ) {   // 하이패스 충전사용 설정
-                macEnv.setChrgHipassYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("205") ) {   // 해외카드 설정
-                macEnv.setFrgnTranType( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("300") ) {   // OS
-                macEnv.setMacOs( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("301") ) {   // CPU
-                macEnv.setMacCpu( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("302") ) {   // Memory
-                macEnv.setMacMem( parsed.getString(String.format("FD[%d].FieldData", i)) );
-            }
-            else if( fID.equals("303") ) {   // HDD
-                macEnv.setMacHdd( parsed.getString(String.format("FD[%d].FieldData", i)) );
+
+        /* 개국전문 이면 Skip */
+        if( !parsed.getString( "CM._AOCServiceCode").equals("1001") ) {
+            int fCnt = parsed.getInt("FieldCount");
+            String fID;
+            for( int i = 0; i < fCnt; i++ ) {
+                fID   = parsed.getString(String.format("FD[%d].FieldID", i));
+                if( fID.equals("003") ) {         // 기기제조번호
+                    macEnv.setPrdcNo( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("004") ) {   // 기기제조사코드
+                    macEnv.setMkrCd( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("005") ) {   // 기기종류코드
+                    macEnv.setModelCd( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("006") ) {   // 기기설치장소
+                    macEnv.setSetPlace( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("007") ) {   // ATM IP 주소1
+                    macEnv.setPriIpAddr( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("008") ) {   // ATM IP 주소2
+                    macEnv.setPubIpAddr( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("009") ) {   // Host IP 주소
+                    macEnv.setHostIpAddr( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("010") ) {   // Host IP 포트
+                    macEnv.setHostIpPort( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("011") ) {   // AOC IP 주소
+                    macEnv.setAocIpAddr( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("012") ) {   // AOC IP 포트
+                    macEnv.setAocIpPort( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("013") ) {   // 리부팅 예약시간
+                    macEnv.setRebootTime( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("014") ) {   // ATM IP 포트
+                    macEnv.setIpPort( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("100") ) {   // 자행최대출금가능금액
+                    macEnv.setOurMaxWdrAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("101") ) {   // 타행최대출금가능금액
+                    macEnv.setThrMaxWdrAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("102") ) {   // 자행최대입금가능금액
+                    macEnv.setOurMaxDpsAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("103") ) {   // 타행최대입금가능금액
+                    macEnv.setThrMaxDpsAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("104") ) {   // 자행최대이체가능금액
+                    macEnv.setOurMaxTsfAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("105") ) {   // 타행최대이체가능금액
+                    macEnv.setThrMaxTsfAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("106") ) {   // 최대서비스출금가능금액
+                    macEnv.setMaxSvcWdrAmt( parsed.getLong(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("107") ) {   // 최대출금가능현금매수
+                    macEnv.setMaxCashWdrCnt( parsed.getShort(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("108") ) {   // 최대입금가능현금매수
+                    macEnv.setMaxCashDpsCnt( parsed.getShort(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("109") ) {   // 최대서비스출금가능현금매수
+                    macEnv.setMaxCashSvcWdrCnt( parsed.getShort(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("200") ) {   // 모뎀릴레이 사용여부
+                    macEnv.setModemRelayYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("201") ) {   // RPC 사용여부
+                    macEnv.setRpcYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("202") ) {   // 신용카드 거래사용 설정
+                    macEnv.setCreditCardYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("203") ) {   // 카드론 거래사용 설정
+                    macEnv.setCardLoanYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("204") ) {   // 하이패스 충전사용 설정
+                    macEnv.setChrgHipassYn( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("205") ) {   // 해외카드 설정
+                    macEnv.setFrgnTranType( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("300") ) {   // OS
+                    macEnv.setMacOs( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("301") ) {   // CPU
+                    macEnv.setMacCpu( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("302") ) {   // Memory
+                    macEnv.setMacMem( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
+                else if( fID.equals("303") ) {   // HDD
+                    macEnv.setMacHdd( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                }
             }
         }
 

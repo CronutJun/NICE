@@ -1,0 +1,25 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=8
+COL_LEN=8,12,1,1,1,1,1,397
+COL_TYPE=A,A,A,A,A,A,A,A
+SELECT FC_GET_MAP_JIJUM_CD(0, INF.ORG_CD, INF.JIJUM_CD, INF.MAC_NO),
+	   FC_GET_MAP_MAC_NO(0, INF.ORG_CD, INF.JIJUM_CD, INF.MAC_NO),
+	   INF.mon_send_yn,
+	   INF.the_send_yn,
+	   INF.wed_send_yn,
+	   INF.thu_send_yn,
+	   INF.fri_send_yn,
+	   '',
+	   '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+  FROM t_fn_mac_info INF,
+	   t_cm_mac		 MAC
+ WHERE INF.org_cd = '039'
+   /* AND INF.UPDATE_DATE >= ORG_SEND_DATE */
+   AND INF.org_cd = MAC.org_cd
+   AND MAC.open_date <= TO_CHAR(SYSDATE, 'YYYYMMDD')
+   AND (MAC.close_date IS NULL OR MAC.close_date >= TO_CHAR(SYSDATE, 'YYYYMMDD'))
+   AND INF.jijum_cd = MAC.jijum_cd
+   AND INF.mac_no = MAC.mac_no
+   AND FC_GET_MAP_MAC_NO(0, INF.ORG_CD, INF.JIJUM_CD, INF.MAC_NO) IS NOT NULL
+   

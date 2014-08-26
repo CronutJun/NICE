@@ -1,0 +1,32 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=19
+COL_LEN=5,8,8,6,12,4,1,10,10,1,1,8,6,6,100,100,4,7,125
+COL_TYPE=N,A,A,A,A,A,N,A,A,N,N,A,A,A,A,A,A,A,A
+SELECT
+	     CHK.SEQ        
+	    ,f_get_org_jijum_cd('092', CHK.jijum_cd, '', CHK.mac_no)
+	    ,CHK.JIJUM_CD         
+	    ,f_get_org_site_cd('092', CHK.jijum_cd, '', CHK.mac_no)          
+	    ,CHK.MAC_NO           
+	    ,''
+	    ,CHK.CHECK_COM_CD
+	    ,CHK.CHECK_NM    
+	    ,MBR.MEMBER_NM       
+	    ,'2'
+	    ,CHK.CHECK_GB         
+	    ,CHK.CHECK_DATE       
+	    ,CHK.CHECK_START_TIME 
+	    ,CHK.CHECK_END_TIME  
+	    ,CHK.CHECK_CONTENT   
+	    ,CHK.BIGO      
+	    ,''
+	    ,'',
+	    '',
+	    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+FROM 	T_CT_MAC_CHECK_RSLT CHK,
+     	T_CM_MEMBER MBR
+WHERE 	CHK.ORG_CD = '092'
+AND   	CHK.ORG_SEND_YN = '0'
+AND     CHK.CHECK_DATE > TO_CHAR( SYSDATE - 31, 'YYYYMMDD' )
+AND     CHK.CONFIRM_ID = MBR.MEMBER_ID(+)

@@ -1,0 +1,24 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=14
+COL_LEN=1,8,8,6,6,4,1,8,7,8,7,5,5,348
+COL_TYPE=A,A,A,A,A,N,A,A,A,A,A,N,N,A
+SELECT   '1' /* 1:upload */
+		,DEAL_DATE
+		,JIJUM_CD
+		,COUPON_CD
+		,VOLUME_CD
+		,QUANTITY
+		,CONFIRM
+		,to_char(INSERT_DATE, 'yyyymmdd')
+		,INSERT_UID
+		,to_char(UPDATE_DATE, 'yyyymmdd')
+        ,UPDATE_UID
+        ,''
+        ,''
+        ,''
+        ,'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+FROM  T_FN_ELAND_COUPON 
+WHERE DEAL_DATE >= TO_CHAR( SYSDATE -61, 'YYYYMMDD' )
+AND   confirm = 'Y' 
+and   nvl(org_send_yn , '0') = '0'

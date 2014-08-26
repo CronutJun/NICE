@@ -1,0 +1,59 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+#CLOSE_YN을 참조하기 위해 FILLER 1BYTE 임의 사용
+USE_COL_CNT=12
+COL_LEN=4,8,6,12,8,7,7,8,4,1,1,356
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A
+select 	mng.org_cd,
+		CASE WHEN mng.org_cd = '031'
+			 THEN '0'||mng.jijum_cd
+		     ELSE mng.jijum_cd
+		END as jijum_cd,
+		mng.site_cd,		
+		mng.mac_no,
+		mng.create_date,
+		mng.error_no,
+		mng.recv_user_uid,
+		mng.arrival_est_date,
+		mng.arrival_est_time,
+		DECODE( mng.close_yn, '1', '0', /* 고객대기접수완료 			'1' -> '3'	*/
+							  '2', '0', /* 고객대기접수완료 후 예정입력 '2' -> '3'	*/
+							  'A', 'P', /* PDA 재입력 10분이내 			'A' -> '3'	*/
+							  'C', 'P', /* PDA 재입력 10분초과 			'C' -> 'D'	*/ 
+							  'B', 'A', /* 관제 재입력 15분이하 		'B' -> '3'	*/
+							  'X', 'A', /* 관제 재입력 15분초과 		'X' -> 'Y'	*/
+							       '0' ) AS EST_FLAG,
+		mng.CLOSE_YN,
+		'',	
+		'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	''
+/*
+from	t_ct_error_mng	mng,
+		t_cm_site_01		site
+where	mng.arrival_est_time is not null
+and		nvl(mng.close_yn, '0') IN ( '1', '2', 'A', 'B', 'X', 'C' )
+AND		mng.ARRIVAL_TIME IS NULL
+AND		NVL(mng.ERROR_STATUS, '0' ) <> '7000'
+AND		mng.FINISH_TIME IS NULL
+AND 	mng.CREATE_DATE > TO_CHAR( SYSDATE-3, 'YYYYMMDD' )
+AND		mng.ORG_CUST_RECV_YN = 'Y'
+and      nvl(site.alarm, '0') = '1' 
+and		mng.org_cd = site.org_cd
+and 	mng.jijum_cd = site.jijum_cd
+and		mng.site_cd = site.site_cd
+*/
+from    t_ct_error_mng    mng,
+        T_CT_ERROR          ERR,
+        t_cm_site_01        site
+where    mng.arrival_est_time is not null
+and        nvl(mng.close_yn, '0') IN ( '1', '2', 'A', 'B', 'X', 'C' )
+AND        mng.ARRIVAL_TIME IS NULL
+AND        NVL(mng.ERROR_STATUS, '0' ) <> '7000'
+AND        mng.FINISH_TIME IS NULL
+AND     mng.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-1, 'YYYYMMDD' ))
+AND        ( mng.ORG_CUST_RECV_YN = 'Y' OR ERR.ALARM_MON_YN = 'Y' )
+and      nvl(site.alarm, '0') = '1' 
+and        mng.org_cd = site.org_cd
+and     mng.jijum_cd = site.jijum_cd
+and        mng.site_cd = site.site_cd
+AND     MNG.ORG_CD = ERR.ORG_CD(+)
+AND     MNG.ERROR_CD = ERR.ERROR_CD(+)

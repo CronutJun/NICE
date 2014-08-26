@@ -1,0 +1,31 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=11
+COL_LEN=8,12,8,60,4,1,1,1,300,8,20
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT CHK.JIJUM_CD,											/*	영업점코드		*/              
+       MAC.MAC_NO,                                              /*	단말번호		*/      
+       CHK.SITE_CD,                                             /*	코너코드		*/          
+       SITE.SITE_NM,                                            /*	코너명			*/  
+       '',                                                                                             
+       DECODE(CHK.ENV_GARBAGE, '0020', '0', '1'),             	/*	주변청소		*/          
+       DECODE(CHK.ENV_AUTO, '0020', '0', '1'),         	    	/*	대청소			*/                  
+       DECODE(CHK.ENV_UP, '0020', '0', '1'),                 	/*	벽면게시물		*/          
+       DECODE(CHK.ENV_STICKER, '0020', '0', '1'),             	/*	조치내용		*/      
+       CHK.BIGO,                                                /*	관리일자		*/  
+       '', 
+       '',
+       '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+  from T_CM_SITE_CHECK CHK,
+       T_CM_MAC MAC,
+       T_CM_SITE SITE 
+ WHERE  CHK.check_date >= TO_CHAR( SYSDATE-31, 'YYYYMMDD')   
+   AND CHK.org_cd = '003'
+  /* AND MAC.OPEN_DATE <= TO_CHAR( SYSDATE, 'YYYYMMDD')
+   AND (MAC.CLOSE_DATE IS NULL OR MAC.CLOSE_DATE >= TO_CHAR( SYSDATE, 'YYYYMMDD') ) */
+   AND CHK.ORG_CD = MAC.ORG_CD
+   AND CHK.JIJUM_CD = MAC.JIJUM_CD
+   AND CHK.SITE_CD = MAC.SITE_CD
+   AND CHK.ORG_CD = SITE.ORG_CD
+   AND CHK.JIJUM_CD = SITE.JIJUM_CD
+   AND CHK.SITE_CD = SITE.SITE_CD

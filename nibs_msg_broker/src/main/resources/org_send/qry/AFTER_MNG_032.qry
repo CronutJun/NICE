@@ -1,0 +1,42 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=13
+COL_LEN=8,12,6,6,8,6,20,20,200,1,8,1,126
+COL_TYPE=A,A,A,N,N,N,A,A,A,A,A,A,A
+SELECT MNG.jijum_cd,
+     MNG.mac_no,
+     MNG.site_cd,
+     MNG.org_msg_no, MNG.CREATE_DATE, MNG.ERROR_NO,
+     DECODE( MNG.ORG_SEND_YN, '0', DECODE( NVL(MNG.ARRIVAL_EST_TIME, '0'), '0', MNG.finish_date, MNG.arrival_est_date), MNG.finish_date),
+     DECODE( MNG.ORG_SEND_YN, '0', DECODE( NVL(MNG.ARRIVAL_EST_TIME, '0'), '0', MNG.finish_time, MNG.arrival_est_time||00), MNG.finish_time),
+     DECODE(MNG.finish_nm, NULL, '나이스', MNG.finish_nm),
+     '15774655',
+     RTRIM( MNG.msg ),
+     /* '2' 조치예정, '3'-완료 */
+     DECODE( MNG.ORG_SEND_YN, '0', DECODE( NVL(MNG.ARRIVAL_EST_TIME, '0'), '0', '3', '2'), '3'),
+     MNG.CREATE_DATE,
+	 DECODE( MNG.ORG_SEND_YN, '0', DECODE( NVL(MNG.ARRIVAL_EST_TIME, '0'), '0', 
+	                                       DECODE( TRD.FINISH_TYPE, '1000', '1', '1001', '2', '1002', '3', 
+	                                                                '1003', '4', '1004', '5', '1005', '6', 
+	                                                                '1006', '7', '8' ), ''), 
+	                               DECODE( TRD.FINISH_TYPE, '1000', '1', '1001', '2', '1002', '3', 
+	                                                        '1003', '4', '1004', '5', '1005', '6', 
+	                                                        '1006', '7', '8' )) AS FIN_TYPE,
+	 '',
+	 '','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+FROM T_CT_ERROR_MNG MNG,
+     T_CT_TRADE TRD
+WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 10), 'YYYYMMDD'))
+    AND MNG.org_cd = '032'
+    /*
+    AND send_date IS NOT NULL
+    AND send_time IS NOT NULL
+    */
+    /*AND arrival_est_time IS NOT NULL */
+    AND (	(	MNG.org_send_yn = '0' AND MNG.arrival_est_time IS NOT NULL )
+    	 OR	(	MNG.org_send_yn = '0' AND MNG.arrival_est_time IS  NULL AND MNG.FINISH_TIME IS NOT NULL )
+    	 OR (	MNG.org_send_yn = '1' AND MNG.FINISH_TIME IS NOT NULL )
+    	)
+    AND MNG.ERROR_CD = 'AFTMNG'
+    AND MNG.CREATE_DATE = TRD.CREATE_DATE
+    AND MNG.ERROR_NO = TRD.ERROR_NO

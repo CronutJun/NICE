@@ -1,0 +1,46 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=28
+COL_LEN=12,1,6,1,1,4,1,8,8,6,38,50,20,20,60,20,4,4,10,8,2,2,2,1,2,2,1,6
+COL_TYPE=A,N,A,N,N,A,N,N,N,N,A,A,A,A,A,A,A,A,A,N,A,N,N,N,N,N,A,A
+SELECT  MAC.MAC_NO,
+        '1',
+        '',
+        MCOM.CD_NM2 AS MADE_COM,
+        '',
+        '',
+        MAC.DES_YN,
+        MAC.SET_DATE,
+        MAC.OPEN_DATE,
+        SITE.ZIP_NO,
+        SITE.SET_ADDR,
+        SITE.SITE_NM,
+        MAC.SERIAL_NO,
+        SITE.SITE_ENG_NM,
+        SITE.SET_PLACE,
+        SITE.POLICE_NM,
+        '',
+        '',
+        '',
+        TO_CHAR(SITE.UPDATE_DATE, 'YYYYMMDD'),
+        '',
+        '',
+        'IN',
+        '',
+        '',
+        '',
+        BILL_USE_TYPE,
+        '',
+        '','','','','','','','','','','','','','','','','','','','','',''
+FROM    T_CM_SITE   SITE,
+        T_CM_MAC    MAC,
+        T_CM_COMMON MCOM
+WHERE   MAC.ORG_CD = '096'
+AND     MAC.OPEN_DATE <= TO_CHAR(SYSDATE, 'YYYYMMDD')
+AND    (MAC.CLOSE_DATE IS NULL OR MAC.CLOSE_DATE >= TO_CHAR(SYSDATE, 'YYYYMMDD') )
+AND     MAC.ORG_CD = SITE.ORG_CD
+AND     MAC.JIJUM_CD = SITE.JIJUM_CD
+AND     MAC.SITE_CD = SITE.SITE_CD
+AND     MCOM.LARGE_CD(+) = '2100'
+AND     MCOM.SMALL_CD(+) = MAC.MADE_COM_CD
+AND     SITE.DETAIL_AREA1 = '8111'

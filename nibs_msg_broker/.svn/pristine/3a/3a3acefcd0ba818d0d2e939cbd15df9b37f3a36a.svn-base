@@ -1,0 +1,52 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=23
+COL_LEN=8,10,8,12,15,2,2,61,8,6,8,6,4,10,13,100,4,4,20,3,6,1,111
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT     MNG.trans_date,
+           MNG.org_msg_no,
+           MNG.JIJUM_CD,
+           /* DECODE( substr( MNG.sec, 1, 1 ), '2', '',  DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no ) ), 민원출동은 기번 없이 feedback */
+     	   MNG.MAC_NO,
+           mng.crt_no,
+           LPAD(MNG.org_call_cnt, 2, '0'),
+           MNG.group_error_cd,
+           '',
+           MNG.send_date,
+		   MNG.send_time,
+		   MNG.arrival_date,
+		   DECODE( LENGTH(MNG.arrival_time), 4 , MNG.arrival_time||'00', MNG.arrival_time ),
+		   SUBSTR(MNG.sec, 1, 1)||DECODE(SUBSTR(MNG.sec, 3, 1), NULL, '1', SUBSTR(MNG.sec, 3, 1)),
+		   DECODE(MNG.recv_user_nm, NULL,
+				DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+						MNG.recv_user_nm),
+		   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp),
+		   MNG.org_msg,
+		   SUBSTR(MNG.sec, 2, 1),
+		   '', 
+		   '', 
+		   '', 
+		   MNG.SITE_CD,
+		   '', 
+		   '', 
+           '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+      FROM T_CT_ERROR_MNG MNG,
+		   T_CM_MEMBER	  MBR
+     WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 15), 'YYYYMMDD'))
+       AND MNG.org_cd = '020' 
+       AND MNG.arrival_time IS NOT NULL
+       /* AND MNG.send_time IS NOT NULL */
+       AND (    MNG.org_send_yn = '1'
+            OR (    MNG.arrival_est_time IS NULL
+                AND MNG.org_send_yn = '0'
+               )
+            /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */   
+            OR MNG.org_send_yn = 'a'
+            )
+       /*AND (MNG.format_type = '21' OR MNG.format_type = '31')*/
+	   /* sec : 출동요청구분 + 사유로 구성 */
+	   AND MNG.sec IS NOT NULL
+	   AND MNG.recv_user_uid = MBR.member_id(+)
+       /* 2차출동요청에대한 키지원일경우 제외 */
+   	   AND substr(MNG.sec, 3, 1) || MNG.ERROR_CD <> '2WR903'
+   

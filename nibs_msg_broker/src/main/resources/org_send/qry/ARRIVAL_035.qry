@@ -1,0 +1,43 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=20
+COL_LEN=8,10,8,12,80,8,6,8,6,4,10,13,100,4,4,20,3,6,1,111
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT   MNG.trans_date,
+		   MNG.org_msg_no,
+		   MNG.jijum_cd,
+		   MNG.mac_no,
+		   ERR.error_msg,
+		   '',
+		   '',
+		   MNG.arrival_date,
+		   MNG.arrival_time,
+		   '3',
+		   DECODE(MNG.recv_user_nm, NULL,
+				DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+						MNG.recv_user_nm),
+		   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp),
+		   MNG.org_msg,
+		   '1',
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+	  FROM T_CT_ERROR_MNG MNG,
+		   T_CM_MEMBER	  MBR,
+		   T_CT_ERROR	  ERR
+	 WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
+	   AND MNG.org_cd = '035'
+	   AND MNG.arrival_time IS NOT NULL
+	   AND MNG.send_time IS NOT NULL
+       AND (    (NVL(MNG.org_send_yn, '0') = '0'
+              OR NVL(MNG.org_send_yn, '0') = '1' )
+            )
+	   AND SUBSTR(MNG.error_cd, 1, 3) <> 'ERR'
+	   AND SUBSTR(MNG.error_cd, 1, 3) <> 'USR'
+	   AND MNG.org_cd = ERR.org_cd(+)
+	   AND MNG.error_cd = ERR.error_cd(+)
+	   AND MNG.recv_user_uid = MBR.member_id(+)

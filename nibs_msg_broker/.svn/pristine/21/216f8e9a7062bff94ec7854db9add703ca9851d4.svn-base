@@ -1,0 +1,49 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=29
+COL_LEN=8,4,4,40,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,200,20,40,1,73
+COL_TYPE=N,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT     DISTINCT
+          CHK.CHECK_DATE
+        , F_GET_ORG_JIJUM_CD( CHK.ORG_CD, CHK.JIJUM_CD, CHK.SITE_CD, '' ) AS ORG_JIJUM_CD
+        , F_GET_ORG_SITE_CD( CHK.ORG_CD, CHK.JIJUM_CD, CHK.SITE_CD, '' ) AS ORG_SITE_CD
+        , SITE.SITE_NM
+        , CHK.MAC_IN_CLEAN
+        , CHK.MAC_OUT_CLEAN
+        , CHK.INTERPHONE_CLEAN
+        , CHK.GROUND_CLEAN
+        , CHK.GARBAGE_CLEAN
+        , CHK.GLASS_CLEAN
+        , CHK.PORTFOLIO_CNT
+        , CHK.JUNUL_CNT
+        , CHK.RIBBON_CNT
+        , CHK.GUIDE_STATE
+        , CHK.STICKER_STATE
+        , CHK.INTERPHONE_STATE
+        , CHK.DVR_STATE
+        , CHK.LAMP_STATE
+        , CHK.AIRCON_STATE
+        , CHK.HEATER_STATE
+        , CHK.BOOTH_CHECK
+        , CHK.CHECK_REMAIN
+        , CHK.COLLECTION_CHECK
+        , CHK.SIGN_LAMP_CHECK
+        , CHK.BIGO
+        , NVL(MBR.MEMBER_NM, '나이스')
+        , OFC.OFFICE_NM
+        , '0'/*CHK.PHOTO_YN*/
+        , ''
+        , '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+FROM     T_CM_SITE_CHECK_DAY    CHK,
+         T_CM_SITE              SITE,
+         T_CM_MEMBER            MBR,
+         T_CM_OFFICE            OFC
+WHERE   CHK.CHECK_DATE   BETWEEN '20081031' AND '20081031'
+AND     NVL(CHK.ORG_SEND_YN, '0') = '0'
+AND     CHK.ORG_CD        = SITE.ORG_CD
+AND     CHK.JIJUM_CD    = SITE.JIJUM_CD
+AND     CHK.SITE_CD        = SITE.SITE_CD
+AND     SITE.DEPT_CD    = OFC.DEPT_CD
+AND     SITE.OFFICE_CD    = OFC.OFFICE_CD
+AND     CHK.MEMBER_ID    = MBR.MEMBER_ID(+)
+AND		CHK.SITE_CD BETWEEN '0601' AND '0700'

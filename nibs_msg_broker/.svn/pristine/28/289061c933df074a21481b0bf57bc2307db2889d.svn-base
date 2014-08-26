@@ -1,0 +1,47 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=19
+COL_LEN=3,8,8,15,8,15,8,15,8,15,8,15,8,15,8,15,8,15,227
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT     demand_date             ,										/*	기관코드			*/ 				
+			org_cd                 ,										/*	자금청구일자		*/ 	
+		   intime_withdraw_cnt     ,                                        /*	일반시간내인출건수1	*/    
+		   intime_withdraw_amt     ,                                        /*	일반시간내인출금액1	*/    
+		   outtime_withdraw_cnt    ,                                        /*	일반시간외인출건수1	*/    
+		   outtime_withdraw_amt    ,                                        /*	일반시간외인출금액1	*/    
+		   intime_deposit_cnt      ,                                        /*	일반시간내입금건수1	*/    
+		   intime_deposit_amt      ,                                        /*	일반시간내입금금액1	*/    
+		   outtime_deposit_cnt     ,                                        /*	일반시간외입금건수1	*/    
+		   outtime_deposit_amt     ,                                        /*	일반시간외입금금액1	*/    
+		   br_intime_withdraw_cnt  ,                                        /*	제휴시간내인출건수1	*/    
+		   br_intime_withdraw_amt  ,                                        /*	제휴시간내인출금액1	*/    
+		   br_outtime_withdraw_cnt ,                                        /*	제휴시간외인출건수1	*/    
+		   br_outtime_withdraw_amt ,                                        /*	제휴시간외인출금액1	*/    
+		   br_intime_deposit_cnt   ,                                        /*	제휴시간내입금건수1	*/    
+		   br_intime_deposit_amt   ,                                        /*	제휴시간내입금금액1	*/    
+		   br_outtime_deposit_cnt  ,                                        /*	제휴시간외입금건수1	*/    
+		   br_outtime_deposit_amt  ,                                        /*	제휴시간외입금금액1	*/     
+		   '',                                                    
+		   '',                                                    
+		   '',                                                    
+		   '',                                                    
+		   '',                                                    
+		   '',                                                    
+		   '',                                                    
+		   '',                                                                 
+		   '',                                                                      
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', 
+		   '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+	  FROM T_FN_VAN_DEMAND_DETAIL
+	 WHERE DEMAND_DATE = TO_CHAR(SYSDATE , 'YYYYMMDD')
+	   AND org_cd = '003'
+	   and org_send_yn = '0'
+

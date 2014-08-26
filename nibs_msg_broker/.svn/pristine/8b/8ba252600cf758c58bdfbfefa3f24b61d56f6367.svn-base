@@ -1,0 +1,45 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=28
+COL_LEN=8,6,8,10,6,8,12,6,4,4,4,4,8,5,200,8,6,8,1,2,2,1,50,50,15,5,3,146
+COL_TYPE=N,N,N,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,N,A,A,A,A,A,A,A,A,A
+select mng.send_date as send_date,
+	   mng.send_time as send_time,
+	   mng.as_acpt_date,
+	   mng.org_msg_no,
+	   mng.create_time,
+	   mng.jijum_cd,
+	   mng.mac_no,
+	   mng.site_cd,
+	   mng.mac_model,
+	   mng.made_com_cd,
+	   mng.call_class,
+	   mng.call_type,
+	   mng.error_cd,
+	   mng.lc_cd,
+	   mng.ORG_MSG,
+	   '',
+	   '',
+	   '',
+	   '',
+	   mng.org_call_cnt,
+	   '',
+	   '',
+	   site.site_nm,
+	   jij.jijum_nm,
+	   mng.mtc_cd,
+	   mng.org_error_cd,
+	   mng.org_cd,
+	   '',
+	   '','','','','','','','','','','','','','','','','','','','','',''
+from   t_ct_error_mng_made_com mng,
+	   t_cm_site			site,
+	   t_cm_jijum			jij
+where  mng.org_send_yn = '0'
+AND	   mng.as_acpt_date > to_char( sysdate - 5, 'yyyymmdd' )
+and	   mng.org_cd 	= site.org_cd(+)
+and	   mng.jijum_cd = site.jijum_cd(+)
+and	   mng.site_cd	= site.site_cd(+)
+and	   mng.org_cd = jij.org_cd
+and	   mng.jijum_cd = jij.jijum_cd
+and	   mng.made_com_cd = '1200' /*효성-1200*/

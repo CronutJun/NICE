@@ -46,6 +46,7 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
     @Override
     public void rcvMsgHandle(AMSBrokerData safeData, MsgParser parsed, TRmTrx trx, TRmMsg msg) throws Exception {
 
+        logger.debug("Start...");
         safeData.setSysDate( AMSBrokerLib.getSysDate() );
 
         safeData.setTXS( amsTX.getTransaction( AMSBrokerTransaction.defAMSTX ));
@@ -53,25 +54,30 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
         safeData.setMsgTime( AMSBrokerLib.getMsgTime(safeData.getSysDate()) );
         try {
             /**
-             * 거래내역 생성
+             * 거래내역 생성하지 않고 기기관련 정보 셋
              */
             trx.setTrxDate( safeData.getMsgDate()   );
-            trx.setTrxNo  ( trxMap.generateKey()    );
+            trx.setTrxNo  ( null    );
             trx.setTrxTime(  safeData.getMsgTime()  );
             trx.setTrxCd  ( parsed.getString( "CM._AOCServiceCode")     );
             trx.setActCd  ( parsed.getString( "CM._AOCMsgCode" )        );
-            trx.setTrxUid(  parsed.getString( "CM__SSTNo").substring(2) );
+            trx.setTrxUid(  parsed.getString( "CM._SSTNo").substring(2) );
 
+            /**
             trxMap.insert( trx );
+            */
 
             TRmMsgHis msgHis = new TRmMsgHis();
 
             msg.setMsgSeq( msgMap.generateKey() );
-            msg.setIoCl( "I" );
-            msg.setMsgSts( "0" );
-            msg.setMsgCd( parsed.getString( "CM._AOCMsgCode" )        );
-            msg.setSvcCd( parsed.getString( "CM._AOCServiceCode")     );
-            msg.setMacNo( parsed.getString( "CM__SSTNo").substring(2) );
+            msg.setIoCl    ( "I" );
+            msg.setMsgSts  ( "0" );
+            msg.setMsgCd   ( parsed.getString( "CM._AOCMsgCode" )        );
+            msg.setSvcCd   ( parsed.getString( "CM._AOCServiceCode")     );
+            msg.setMacNo   ( parsed.getString( "CM._SSTNo").substring(2) );
+            msg.setMacSerNo( parsed.getString( "CM._AOCMsgSerialNo")     );
+            msg.setBranchCd( parsed.getString( "CM._BranchCode")         );
+            msg.setOrgCd   ( parsed.getString( "CM._BankCode")           );
 
             /**
              * 개국
@@ -91,7 +97,7 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
             parsed.getMessage().get(read);
             logger.debug(new String(read));
 
-            msgHis.setMsgCd( new String(read) );
+            msgHis.setMsgCtx( new String(read) );
 
             comPack.insUpdMsg(safeData, msg.getMacNo(), trx, msg, msgHis);
 
@@ -99,6 +105,7 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
         }
         catch( Exception e ) {
             amsTX.rollback(safeData.getTXS());
+            logger.debug("rcvMsgHandle raise error [{}]", e.getMessage() );
             throw e;
         }
     }

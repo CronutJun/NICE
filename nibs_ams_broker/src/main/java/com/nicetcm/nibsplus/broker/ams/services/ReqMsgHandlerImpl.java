@@ -82,6 +82,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             msg.setMsgSeq( msgMap.generateKey() );
             msg.setIoCl( "O" );
             msg.setMsgSts( "0" );
+            msg.setOrgCd( AMSBrokerConst.NICE_ORG_CD );
+            msg.setBranchCd( AMSBrokerConst.NICE_BR_CD );
 
             /**
              * 환경정보 조회

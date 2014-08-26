@@ -1,0 +1,53 @@
+#USE_COL_CNT, COL_LEN, COL_TYPE 순으로 정의되어 져야 하며 SELECT 절 내부를 제외하고는 라인을 띄우면 안된다.
+#SELECT 문의 COLUMN은 반드시 50개를 채워줘야 한다.(USE_COL_CNT 만큼 제외한 컬럼은 '' 등 으로 정의
+USE_COL_CNT=20
+COL_LEN=8,10,8,12,80,8,6,8,6,4,10,13,100,4,4,20,3,6,1,111
+COL_TYPE=A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A,A
+SELECT  /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/   MNG.create_date,					/* 1차통지 거래일자	->장애발생일자	*/
+		   MNG.create_time,                                                         /* 1차통지 전문번호	->장애발생시간	*/
+		   '',                                                            
+		   MNG.mac_no,                                                              /* 기기번호						*/
+		   MNG.ERROR_CD,                                                           /* 장애코드명 ->MTC코드			*/
+		   '',                                                           
+		   '',                                                           
+		   MNG.arrival_date,                                                        /* 도착일자						*/
+		   MNG.arrival_time,                                                        /* 도착시간						*/
+		   '',                                                   
+		   '',                                         
+		   '',                    
+		   STE.site_nm,                                                             /* 메모사항	->코너명			*/ 
+		   '',                                                   
+		   '',                                                                      
+		   '',                                                                      
+		   '',                                                                      
+		   '',                                                                      
+		   '', 
+		   '', 
+		   '', 														/*	도착통보구분				*/
+		   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+	  FROM  
+    	  T_CT_ERROR_MNG MNG,
+		  T_CM_SITE	  STE ,
+          T_CT_NICE_MAC  NMC,
+          T_CM_COMMON	COM
+	 WHERE 
+	       MNG.ORG_CD = STE.ORG_CD
+	     AND MNG.JIJUM_CD = STE.JIJUM_CD
+	     AND MNG.SITE_CD = STE.SITE_CD
+	     AND MNG.ORG_CD = NMC.ORG_CD
+	     AND MNG.JIJUM_CD = NMC.JIJUM_CD
+	     AND MNG.MAC_NO = NMC.MAC_NO
+	     AND MNG.CREATE_DATE >= To_Number(TO_CHAR((SYSDATE-1), 'YYYYMMDD'))
+         AND MNG.ORG_CD = '096'
+	     /* AND NMC.join_cd = '003' */
+       	 AND ( MNG.ORG_SEND_YN = '1'  ) 
+    	 AND MNG.arrival_time IS NOT NULL
+    	 AND COM.LARGE_CD = '1120'
+    	 AND COM.CD_NM3 = '003'
+    	 AND MNG.ERROR_CD = COM.CD_NM1
+	  	 AND COM.CD_NM2 = '1'
+	  	 /* and ( MNG.format_type <> '11' or MNG.format_type is null ) */
+	  	 /*AND MNG.ERROR_CD 		NOT IN ( 'NI102', 'NI112','NI118','NI123','NI130','NI133','NI134',
+															'NI140','NI141','NI142','NI143','NI144')
+		 AND MNG.ERROR_CD 		NOT LIKE 'NI9%'
+		 AND MNG.ERROR_CD     NOT LIKE 'ERR%' 20130705170500에 주석처리했음*/
