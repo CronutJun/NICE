@@ -80,15 +80,22 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
             msg.setOrgCd   ( parsed.getString( "CM._BankCode")           );
 
             /**
+             * POLL Skip
+             */
+            if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1000") ) {
+                amsTX.rollback(safeData.getTXS());
+                return;
+            }
+            /**
              * 개국
              */
-            if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1001") ) {
+            else if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1001") ) {
                 msg.setMsgType( "SM" );
             }
             /**
              * 폐국
              */
-            else if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1007") ) {
+            else if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1003") ) {
                 msg.setMsgType( "SM" );
             }
 

@@ -3,9 +3,9 @@ package com.nicetcm.nibsplus.broker.ams.services;
 /**
  * Copyright 2014 The NIBS+ Project
  *
- * In11001001Impl
+ * In11001003Impl
  *
- *  개국전문 수신처리
+ *  폐국전문 수신처리
  *
  *
  * @author  K.D.J
@@ -23,10 +23,10 @@ import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmTrxMapper;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 
-@Service("in11001001")
-public class In11001001Impl extends InMsgHandlerImpl {
+@Service("in11001003")
+public class In11001003Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(In11001001Impl.class);
+    private static final Logger logger = LoggerFactory.getLogger(In11001003Impl.class);
 
     @Autowired TRmTrxMapper rmTrxMap;
 

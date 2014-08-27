@@ -46,15 +46,22 @@ public class RespAckNakHandlerImpl implements RespAckNakHandler {
         safeData.setMsgTime( AMSBrokerLib.getMsgTime(safeData.getSysDate()) );
         msg.setMsgSts( ackNak );
         /**
+         * POLL
+         */
+        if( msg.getSvcCd().equals("1000")) {
+            amsTX.rollback(safeData.getTXS());
+            return;
+        }
+        /**
          * 개국
          */
-        if( msg.getSvcCd().equals("1001")) {
+        else if( msg.getSvcCd().equals("1001")) {
             msg.setMsgCd( "2200" );
         }
         /**
          * 폐국
          */
-        else if( msg.getSvcCd().equals("1007")) {
+        else if( msg.getSvcCd().equals("1003")) {
             msg.setMsgCd( "2200" );
         }
         try {

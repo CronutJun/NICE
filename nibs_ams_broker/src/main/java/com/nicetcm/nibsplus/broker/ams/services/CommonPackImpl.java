@@ -74,22 +74,23 @@ public class CommonPackImpl implements CommonPack {
         BeanUtils.copyProperties(msgHis, msg);
 
         try {
-            msgMap.insert( msg );
-        }
-        catch( org.springframework.dao.DataIntegrityViolationException de ) {
-            try {
-                msg.setInsertUid ( null );
-                msg.setInsertDate( null );
-                msgMap.updateByPrimaryKeySelective( msg );
-            }
-            catch( Exception e ) {
-                logger.info( String.format("T_RM_MSG update error, CreateDate = %s, MsgSeq = %s, error = %s",
-                                             msg.getCreateDate(), msg.getMsgSeq(), e.getLocalizedMessage()) );
-                throw e;
+            msg.setInsertUid ( null );
+            msg.setInsertDate( null );
+            if( msgMap.updateByPrimaryKeySelective( msg ) == 0 ) {
+                try {
+                    msg.setInsertDate( safeData.getSysDate() );
+                    msg.setInsertUid( trx.getTrxUid() );
+                    msgMap.insert( msg );
+                }
+                catch( Exception e ) {
+                    logger.info( String.format("T_RM_MSG Insert error, CreateDate = %s, MsgSeq = %s, error = %s",
+                                                 msg.getCreateDate(), msg.getMsgSeq(), e.getLocalizedMessage()) );
+                    throw e;
+                }
             }
         }
         catch( Exception e ) {
-            logger.info( String.format("T_RM_MSG insert error, CreateDate = %s, MsgSeq = %s, error = %s",
+            logger.info( String.format("T_RM_MSG Update error, CreateDate = %s, MsgSeq = %s, error = %s",
                     msg.getCreateDate(), msg.getMsgSeq(), e.getLocalizedMessage()) );
             throw e;
         }
@@ -128,7 +129,6 @@ public class CommonPackImpl implements CommonPack {
         macEnv.setInsertDate( safeData.getSysDate()              );
         macEnv.setUpdateUid ( trx.getTrxCd()                     );
         macEnv.setUpdateDate( safeData.getSysDate()              );
-        macEnv.setSts       ( "0"                                );
 
         cmMacKey.setOrgCd   ( macEnv.getOrgCd()                  );
         cmMacKey.setBranchCd( macEnv.getBranchCd()               );
@@ -163,8 +163,9 @@ public class CommonPackImpl implements CommonPack {
             throw e;
         }
 
-        /* 개국전문 이면 Skip */
-        if( !parsed.getString( "CM._AOCServiceCode").equals("1001") ) {
+        /* 개국, 폐국 전문 이면 Skip */
+        if( !parsed.getString( "CM._AOCServiceCode").equals("1001")
+        &&  !parsed.getString( "CM._AOCServiceCode").equals("1003") ) {
             int fCnt = parsed.getInt("FieldCount");
             String fID;
             for( int i = 0; i < fCnt; i++ ) {
@@ -266,6 +267,21 @@ public class CommonPackImpl implements CommonPack {
                     macEnv.setMacHdd( parsed.getString(String.format("FD[%d].FieldData", i)) );
                 }
             }
+            macEnv.setSts       ( null                              );
+                   }
+        else {
+            if( parsed.getString( "CM._AOCServiceCode").equals("1001") ) {
+                macEnv.setSts      ( "0"                                     );
+                macEnv.setApVer    ( parsed.getString("NT._APVersion")       ); // 프로그램 버전
+                macEnv.setMkrCd    ( parsed.getString("NT._SSTMakerCode")    ); // 기기제조사코드
+                macEnv.setPrdcNo   ( parsed.getString("NT._SSTMaufactureNo") ); // 기기제조일련번호
+                macEnv.setModelCd  ( parsed.getString("NT._SSTType")         ); // 기종코드
+                macEnv.setPriIpAddr( parsed.getString("NT._SSTIp")           ); // 접속 IP
+                macEnv.setPubIpAddr( parsed.getString("NT._SSTSubIp")        ); // 접속 공인IP
+                macEnv.setIpPort   ( parsed.getString("NT._AOCListenPort")   ); // 접속 Port
+            }
+            else
+                macEnv.setSts   ( "9"                                );
         }
 
         if( macEnv.getModemRelayYn() != null ) {
@@ -304,22 +320,23 @@ public class CommonPackImpl implements CommonPack {
         BeanUtils.copyProperties( macEnvHis, macEnv );
 
         try {
-            macEnvMap.insertSelective( macEnv );
-        }
-        catch( org.springframework.dao.DataIntegrityViolationException de ) {
             macEnv.setInsertDate( null );
             macEnv.setInsertUid ( null );
-            macEnv.setSts       ( null );
-            try {
-                macEnvMap.updateByPrimaryKeySelective( macEnv );
+            if( macEnvMap.updateByPrimaryKeySelective( macEnv ) == 0 ) {
+                try {
+                    macEnv.setInsertUid ( trx.getTrxUid()                    );
+                    macEnv.setInsertDate( safeData.getSysDate()              );
+                    macEnvMap.insertSelective( macEnv );
+                }
+                catch( Exception e ) {
+                    logger.info("T_RM_MAC_ENV Insert error {}", e.getLocalizedMessage() );
+                    throw e;
+                }
             }
-            catch( Exception e ) {
-                logger.info("T_RM_MAC_ENV Update error {}", e.getLocalizedMessage() );
-                throw e;
-            }
+
         }
         catch( Exception e ) {
-            logger.info("T_RM_MAC_ENV Insert error {}", e.getLocalizedMessage() );
+            logger.info("T_RM_MAC_ENV Update error {}", e.getLocalizedMessage() );
             throw e;
         }
 
