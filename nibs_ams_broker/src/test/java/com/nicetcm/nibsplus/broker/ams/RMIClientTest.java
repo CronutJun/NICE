@@ -281,24 +281,38 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqSFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7001", "500", "test", "0202", "C:\\", "test.zip" );
+        remoteObj.reqSFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8002", "500", "test", "0202", "9", "test.zip" );
+    }
+
+    public void reqGFileDownToMac() throws Exception {
+        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
+        System.out.println("registry");
+        AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
+        System.out.println("lookup");
+
+        TRmTrxMapper trxMap = session.getMapper(TRmTrxMapper.class);
+
+        String key = trxMap.generateKey();
+
+        remoteObj.reqSFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8001", "500", "test", "0202", "C:\\", "test.zip" );
     }
 
     public static void main(String[] args) {
         try {
-            new RMIClientTest().reqEnvInfToMac();
-            new RMIClientTest().reqRegInfToMac();
-            new RMIClientTest().reqIniInfToMac();
-            new RMIClientTest().reqEnvChgToMac();
-            new RMIClientTest().reqRegChgToMac();
-            new RMIClientTest().reqIniChgToMac();
-            new RMIClientTest().reqRebootToMac();
-            new RMIClientTest().reqPwroffToMac();
-            new RMIClientTest().reqDevResetToMac();
-            new RMIClientTest().reqDevCollectToMac();
-            new RMIClientTest().reqDevReturnToMac();
-            new RMIClientTest().reqCallNoticeToMac();
-            //new RMIClientTest().reqSFileDownToMac();
+            //new RMIClientTest().reqEnvInfToMac();
+            //new RMIClientTest().reqRegInfToMac();
+            //new RMIClientTest().reqIniInfToMac();
+            //new RMIClientTest().reqEnvChgToMac();
+            //new RMIClientTest().reqRegChgToMac();
+            //new RMIClientTest().reqIniChgToMac();
+            //new RMIClientTest().reqRebootToMac();
+            //new RMIClientTest().reqPwroffToMac();
+            //new RMIClientTest().reqDevResetToMac();
+            //new RMIClientTest().reqDevCollectToMac();
+            //new RMIClientTest().reqDevReturnToMac();
+            //new RMIClientTest().reqCallNoticeToMac();
+            new RMIClientTest().reqSFileDownToMac();
+            //new RMIClientTest().reqGFileDownToMac();
         }
         catch( java.rmi.RemoteException e ) {
             System.out.println("Something has gone wrong during remote method call...");

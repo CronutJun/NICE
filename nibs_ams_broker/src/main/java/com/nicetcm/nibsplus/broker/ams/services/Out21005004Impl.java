@@ -5,11 +5,11 @@ package com.nicetcm.nibsplus.broker.ams.services;
  *
  * Out21005012Impl
  *
- *   일반파일 다운로드 요청
+ *   특정파일 다운로드 요청 (프로그램)
  *
  *
  * @author  K.D.J
- * @since   2014.08.21
+ * @since   2014.08.28
  */
 
 import java.io.FileInputStream;
@@ -25,10 +25,10 @@ import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
 
-@Service("out21005012")
-public class Out21005012Impl implements OutMsgHandler {
+@Service("out21005004")
+public class Out21005004Impl implements OutMsgHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(Out21005012Impl.class);
+    private static final Logger logger = LoggerFactory.getLogger(Out21005004Impl.class);
 
     @Override
     public void outMsgHandle(MsgParser outMsg, AMSBrokerData safeData, AMSBrokerReqJob reqJob, AMSBrokerReqInfo reqInfo, TRmMsg msg) throws Exception {
@@ -42,7 +42,7 @@ public class Out21005012Impl implements OutMsgHandler {
               .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
               .setLong  ( "CM._AOCMsgLen",            outMsg.getMessageLength() - 9 )
               .setString( "CM._AOCTranNo",            msg.getMsgSeq() )
-              .setString( "_AOCDownFileSavePath",     reqJob.getFilePath() )
+              .setString( "_AOCDownFileType",         reqJob.getFileType() )
               .setString( "_AOCDownFileName",         reqJob.getFileName() )
               .setLong  ( "_AOCDownFileSize",         f.length()  )
               .syncMessage();

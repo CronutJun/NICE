@@ -45,6 +45,7 @@ public class AMSBrokerReqJob {
     private String empId;
     private String empPhone;
     private String arrivalTime;
+    private String fileType;
     private String filePath;
     private String fileName;
     private int timeOut;
@@ -219,6 +220,14 @@ public class AMSBrokerReqJob {
 
     public void setArrivalTime(String arrivalTime) {
         this.arrivalTime = arrivalTime;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 
     public String getFilePath() {

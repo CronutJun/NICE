@@ -89,105 +89,113 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
              * 환경정보 조회
              */
             if( reqJob.getTrxCd().equals("720103") && reqJob.getActCd().equals("500") ) {
-                msg.setMsgType( "SM" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "2002" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_SM );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_INQ_ENV );
             }
             /**
              * Registry 정보 조회
              */
             else if( reqJob.getTrxCd().equals("2000") && reqJob.getActCd().equals("1000") ) {
-                msg.setMsgType( "SM" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "2011" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_SM );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_INQ_REG );
             }
             /**
              * Ini 정보 조회
              */
             else if( reqJob.getTrxCd().equals("3000") && reqJob.getActCd().equals("1000") ) {
-                msg.setMsgType( "SM" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "2012" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_SM );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_INQ_INI );
             }
             /**
              * Env 설정 변경
              */
             else if( reqJob.getTrxCd().equals("4000") && reqJob.getActCd().equals("1000") ) {
-                msg.setMsgType( "SM" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "3002" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_SM  );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_CHG_ENV );
             }
             /**
              * Reg 설정 변경
              */
             else if( reqJob.getTrxCd().equals("5000") && reqJob.getActCd().equals("1000") ) {
-                msg.setMsgType( "SM" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "3011" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_SM );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_CHG_REG );
             }
             /**
              * Ini 설정 변경
              */
             else if( reqJob.getTrxCd().equals("6000") && reqJob.getActCd().equals("1000") ) {
-                msg.setMsgType( "SM" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "3012" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_SM );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_CHG_INI );
             }
             /**
              * Reboot 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("501") ) {
-                msg.setMsgType( "RC" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "4001" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_RC );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_CMD_RBT );
             }
             /**
              * Poweroff 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("502") ) {
-                msg.setMsgType( "RC" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "4001" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_RC );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_CMD_PWO );
             }
             /**
              * 장치리셋 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("503") ) {
-                msg.setMsgType( "RC" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "4002" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_RC );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_CMD_DEV );
             }
             /**
              * 장치회수 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("504") ) {
-                msg.setMsgType( "RC" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "4002" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_RC );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_CMD_DEV );
             }
             /**
              * 장치배출 예약
              */
             else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("505") ) {
-                msg.setMsgType( "RC" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "4002" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_RC );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_CMD_DEV );
             }
             /**
              * 출동요청 안내문 전송
              */
             else if( reqJob.getTrxCd().equals("7001") && reqJob.getActCd().equals("500") ) {
-                msg.setMsgType( "RC" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "3004" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_RC );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_NTI_CLL );
             }
             /**
-             * 특정파일 다운로드
+             * 일반파일 다운로드
              */
             else if( reqJob.getTrxCd().equals("8001") && reqJob.getActCd().equals("500") ) {
-                msg.setMsgType( "RC" );
-                msg.setMsgCd( "2100" );
-                msg.setSvcCd( "5012" );
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_RC );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_DWL_GEN );
+            }
+            /**
+             * 배포파일 다운로드 요청
+             */
+            else if( reqJob.getTrxCd().equals("8002") && reqJob.getActCd().equals("500") ) {
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_PM );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_DWL_UPD );
             }
 
             OutMsgHandler outMsg = (OutMsgHandler)AMSBrokerSpringMain.sprCtx.getBean(String.format("out%s%s", msg.getMsgCd(), msg.getSvcCd()));
