@@ -71,18 +71,27 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
             logger.debug("capacity       = " + buf.capacity());
             logger.debug("readableBytes  = " + buf.readableBytes());
             logger.debug("isContinue     = " + isContinue);
+            logger.debug("readIndex = {}", buf.readerIndex() );
+
 
             if( !isContinue) {
+                //byte tData[] = new byte[buf.readableBytes()];
+                //buf.readBytes(tData);
+                //logger.debug("data = {}", new String(tData));
+                //buf.resetReaderIndex();
                 /**
                  * 선두의 전체 전문길이 정보가 들어오기를 대기한다.
                  */
-                if( buf.readableBytes() < 9 ) return;
+                if( buf.readableBytes() < AMSBrokerConst.MSG_LEN_INFO_LEN ) {
+                    buf.resetReaderIndex();
+                    return;
+                }
 
                 buf.markReaderIndex();
 
                 buf.readBytes(bMsgLen);
                 logger.debug("First 9 Bytes = " + new String(bMsgLen));
-                iMsgLen = Integer.parseInt(new String(bMsgLen)) + 9;
+                iMsgLen = Integer.parseInt(new String(bMsgLen)) + AMSBrokerConst.MSG_LEN_INFO_LEN;
 
                 /**
                  *  전문타입 정보 대기
@@ -97,9 +106,15 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
 
                 msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + ".json");
                 logger.debug("readableBytes#2  = " + buf.readableBytes() + ", schema_length = " + msgPsr.getSchemaLength());
+                logger.debug("msgPsr's response type = {}", msgPsr.getResponseInfo().getType());
+                buf.resetReaderIndex();
                 /**
                  *  전문파싱 완료 대기
                  */
+                if( buf.readableBytes() < msgPsr.getSchemaLength() ) {
+                    buf.resetReaderIndex();
+                    return;
+                }
                 try {
                     buf.resetReaderIndex();
                     wrkBuf = ByteBuffer.allocateDirect(buf.readableBytes());

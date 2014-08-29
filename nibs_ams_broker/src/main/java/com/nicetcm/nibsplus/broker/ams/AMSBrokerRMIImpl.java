@@ -12,11 +12,19 @@ package com.nicetcm.nibsplus.broker.ams;
  * @since   2014.08.18
  */
 
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.io.*;
 
+import org.quartz.CronTrigger;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,6 +97,41 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             Thread.currentThread().interrupt();
         }
 
+    }
+
+    /**
+     * makeUpdatesSchedule
+     *
+     * 배포그룹별 배포스케쥴 작성
+     *
+     * @param grpCd         그룹코드
+     * @param verId         버전ID
+     * @param deployDate    배포일자
+     * @param deployTime    배포시간
+     * @throws Exception
+     */
+    public void makeUpdatesSchedule( String grpCd, String verId, String deployDate, String deployTime ) throws Exception {
+
+        AMSBrokerMain.sched.unscheduleJob( TriggerKey.triggerKey( verId, grpCd) );
+        //JobDetail updJob = AMSBrokerMain.sched.getJobDetail(JobKey.jobKey("UPDATES", "UPDATES"));
+
+        JobDetail updJob = newJob(AMSBrokerUpdSchedJob.class)
+                         .withIdentity("UPDATES",  "UPDATES")
+                         .build();
+
+        CronTrigger updTrig = newTrigger()
+                            .withIdentity( verId, grpCd )
+                            .withSchedule( cronSchedule(String.format("%s %s %s %s %s ? %s",
+                                                                      deployTime.substring(4),
+                                                                      deployTime.substring(2, 4),
+                                                                      deployTime.substring(0, 2),
+                                                                      deployDate.substring(6),
+                                                                      deployDate.substring(4, 6),
+                                                                      deployDate.substring(0, 4))) )
+                            .build();
+        AMSBrokerMain.sched.scheduleJob( updJob, updTrig );
+        logger.info("Job is successfully scheduled [Group = {}, Version = {}, deployDate = {}, deployTime = {}",
+                    grpCd, verId, deployDate, deployTime);
     }
 
     /**
@@ -879,7 +922,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         }
     }
 
-    /**
+   /**
      * reqSFileDownToMacs
      *
      * 복수기기 대상 특정파일 다운로드 요청
@@ -904,6 +947,76 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                 reqJob.setActCd( actCd );
                 reqJob.setTrxUid( trxUid );
                 reqJob.setFileType( fileType );
+                reqJob.setFileName( fileName );
+                reqJob.setTimeOut( 60 );
+                reqJob.requestJob();
+            }
+        }
+        catch( Exception e ) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * reqGFileUpToMac
+     *
+     * 단독기기 대상 일반파일 업로드 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기
+     * @param filePath  대상파일경로
+     * @param fileName  대상파일명
+     * @throws Exception
+     */
+    public void reqGFileUpToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String filePath, String fileName ) throws Exception {
+        try {
+            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
+            reqJob.setTrxDate( trxDate );
+            reqJob.setTrxNo( trxNo );
+            reqJob.setTrxCd( trxCd );
+            reqJob.setActCd( actCd );
+            reqJob.setTrxUid( trxUid );
+            reqJob.setFilePath( filePath );
+            reqJob.setFileName( fileName );
+            reqJob.setTimeOut( 60 );
+            reqJob.requestJob();
+        }
+        catch( Exception e ) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * reqGFileUpToMacs
+     *
+     * 복수기기 대상 일반파일 다운로드 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기기집합
+     * @param filePath  대상파일경로
+     * @param fileName  대상파일명
+     * @throws Exception
+     */
+    public void reqGFileUpToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String filePath, String fileName ) throws Exception {
+        try {
+            for( String macNo: macs ) {
+                AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
+                reqJob.setTrxDate( trxDate );
+                reqJob.setTrxNo( trxNo );
+                reqJob.setTrxCd( trxCd );
+                reqJob.setActCd( actCd );
+                reqJob.setTrxUid( trxUid );
+                reqJob.setFilePath( filePath );
                 reqJob.setFileName( fileName );
                 reqJob.setTimeOut( 60 );
                 reqJob.requestJob();

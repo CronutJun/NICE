@@ -40,7 +40,7 @@ public class Out21005012Impl implements OutMsgHandler {
               .setString( "CM._AOCServiceCode",       msg.getSvcCd())
               .setString( "CM._AOCMsgSendDate",       safeData.getMsgDate() )
               .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
-              .setLong  ( "CM._AOCMsgLen",            outMsg.getMessageLength() - 9 )
+              .setLong  ( "CM._AOCMsgLen",            (outMsg.getMessageLength() + f.length()) - 9 )
               .setString( "CM._AOCTranNo",            msg.getMsgSeq() )
               .setString( "_AOCDownFileSavePath",     reqJob.getFilePath() )
               .setString( "_AOCDownFileName",         reqJob.getFileName() )

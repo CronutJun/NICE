@@ -9,9 +9,11 @@ import java.text.ParseException;
 
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +59,8 @@ public class QuartzTest {
             //CronTrigger trigger2 = new CronTrigger("trigger2", "group2", "30 * * * * ?");
             //sched.scheduleJob(job2, trigger2); // Job2 삭제 (30초 후)<br>   // Thread.sleep(30000);<br>   // sched.deleteJob("job2", "group2");<br><br><br>  <br><br>  } catch (SchedulerException e) {
             //e.printStackTrace();
+            //sched.deleteJob(JobKey.jobKey("job1", "group1"));
+            sched.unscheduleJob(TriggerKey.triggerKey("trigger3", "group1"));
         }
         catch (Exception e) {
             e.printStackTrace();

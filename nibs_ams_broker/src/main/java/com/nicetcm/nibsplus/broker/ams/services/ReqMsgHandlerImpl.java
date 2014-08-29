@@ -182,6 +182,14 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                 msg.setSvcCd( AMSBrokerConst.SVC_CD_NTI_CLL );
             }
             /**
+             * 일반파일 업로드
+             */
+            else if( reqJob.getTrxCd().equals("8003") && reqJob.getActCd().equals("500") ) {
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_RC );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_UPL_GEN );
+            }
+            /**
              * 일반파일 다운로드
              */
             else if( reqJob.getTrxCd().equals("8001") && reqJob.getActCd().equals("500") ) {
@@ -236,6 +244,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             amsTX.commit(safeData.getTXS());
         }
         catch( Exception e ) {
+            logger.debug("reqMsgHandle has error [{}]", e.getMessage() );
             amsTX.rollback(safeData.getTXS());
             throw e;
         }

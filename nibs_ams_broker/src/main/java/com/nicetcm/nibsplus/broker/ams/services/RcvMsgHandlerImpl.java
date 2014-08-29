@@ -20,6 +20,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerLib;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerTransaction;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvMapper;
@@ -79,24 +80,38 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
             msg.setBranchCd( parsed.getString( "CM._BranchCode")         );
             msg.setOrgCd   ( parsed.getString( "CM._BankCode")           );
 
-            /**
-             * POLL Skip
-             */
-            if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1000") ) {
-                amsTX.rollback(safeData.getTXS());
-                return;
-            }
-            /**
-             * 개국
-             */
-            else if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1001") ) {
-                msg.setMsgType( "SM" );
-            }
-            /**
-             * 폐국
-             */
-            else if( msg.getMsgCd().equals("1100") && msg.getSvcCd().equals("1003") ) {
-                msg.setMsgType( "SM" );
+            if( msg.getMsgCd().equals(AMSBrokerConst.MSG_CD_RCV) ) {
+                /**
+                 * POLL Skip
+                 */
+                if( msg.getSvcCd().equals(AMSBrokerConst.SVC_CD_NTI_POL) ) {
+                    amsTX.rollback(safeData.getTXS());
+                    return;
+                }
+                /**
+                 * 개국
+                 */
+                else if( msg.getSvcCd().equals(AMSBrokerConst.SVC_CD_NTI_OPN) ) {
+                    msg.setMsgType( "SM" );
+                }
+                /**
+                 * 폐국
+                 */
+                else if( msg.getSvcCd().equals(AMSBrokerConst.SVC_CD_NTI_CLS) ) {
+                    msg.setMsgType( "SM" );
+                }
+                /**
+                 * 특정파일 자동 UPLOAD
+                 */
+                else if( msg.getSvcCd().equals(AMSBrokerConst.SVC_CD_AUP_SPC) ) {
+                    msg.setMsgType( "PM" );
+                }
+                /**
+                 * 배포파일 DOWNLOAD 요청
+                 */
+                else if( msg.getSvcCd().equals(AMSBrokerConst.SVC_CD_INQ_DWL) ) {
+                    msg.setMsgType( "PM" );
+                }
             }
 
             byte[] read = new byte[parsed.getMessage().limit()];

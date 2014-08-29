@@ -48,21 +48,24 @@ public class RespAckNakHandlerImpl implements RespAckNakHandler {
         /**
          * POLL
          */
-        if( msg.getSvcCd().equals("1000")) {
+        if( msg.getSvcCd().equals(AMSBrokerConst.SVC_CD_NTI_POL)) {
             amsTX.rollback(safeData.getTXS());
             return;
         }
         /**
          * 개국
          */
-        else if( msg.getSvcCd().equals("1001")) {
-            msg.setMsgCd( "2200" );
+        else if( msg.getSvcCd().equals(AMSBrokerConst.SVC_CD_NTI_OPN)) {
+            msg.setMsgCd( AMSBrokerConst.MSG_CD_RSP );
         }
         /**
          * 폐국
          */
-        else if( msg.getSvcCd().equals("1003")) {
-            msg.setMsgCd( "2200" );
+        else if( msg.getSvcCd().equals(AMSBrokerConst.SVC_CD_NTI_OPN)) {
+            msg.setMsgCd( AMSBrokerConst.MSG_CD_RSP );
+        }
+        else {
+            msg.setMsgCd( AMSBrokerConst.MSG_CD_RSP );
         }
         try {
             TRmMsgHis msgHis = new TRmMsgHis();
@@ -77,6 +80,11 @@ public class RespAckNakHandlerImpl implements RespAckNakHandler {
                   &&  parsed.getResponseInfo().getType().equals("SELF") ) {
                 read = new byte[parsed.getMessage().limit()];
             }
+            else if( parsed.getResponseInfo().getType() != null
+                    &&  parsed.getResponseInfo().getType().equals("JSON") ) {
+                //MsgParser msgPsr = MsgParser.getInstance(incFile)
+                  read = new byte[parsed.getMessage().limit()];
+              }
             else {
                 throw new Exception("Response Type is Invalid [" + parsed.getResponseInfo().getType() + "]" );
             }

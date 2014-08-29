@@ -25,6 +25,9 @@ public class AMSBrokerLib {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerLib.class);
 
+    public static String ROOT_FILE_PATH;
+    public static String TEMP_FILE_PATH;
+
     public static Date getSysDate() throws Exception {
         logger.debug("getSysDate");
         return Calendar.getInstance().getTime();

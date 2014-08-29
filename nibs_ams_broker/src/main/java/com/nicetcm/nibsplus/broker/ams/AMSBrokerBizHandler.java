@@ -1,5 +1,7 @@
 package com.nicetcm.nibsplus.broker.ams;
 
+import static com.nicetcm.nibsplus.broker.ams.AMSBrokerLib.TEMP_FILE_PATH;
+
 import io.netty.channel.ChannelHandlerContext;
 
 import java.io.*;
@@ -20,7 +22,7 @@ public class AMSBrokerBizHandler {
     public void classifyMessage(ChannelHandlerContext ctx, Object msg, MsgParser parsed, AMSBrokerReqJob reqJob, byte[] remain, boolean beContinue) throws Exception {
 
         logger.debug("remain bytes = " + remain.length + ", befBeContinue = " + befBeContinue + ", beContinue = " + beContinue);
-        String fileName = "tmp_" + Thread.currentThread().getId() + "_in";
+        String fileName = String.format( "%stmp_%s_in", TEMP_FILE_PATH,  Thread.currentThread().getId() );
         if( (!befBeContinue) && (beContinue) ) {
             logger.debug("file open");
             fOut = new FileOutputStream(fileName);

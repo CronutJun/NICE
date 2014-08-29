@@ -18,21 +18,41 @@ import java.io.*;
 import com.nicetcm.nibsplus.broker.common.*;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
 
+import org.quartz.Scheduler;
+import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public class AMSBrokerMain extends Thread {
 
+    private static final Logger logger = LoggerFactory.getLogger(AMSBrokerMain.class);
+
+    private static AMSBrokerServer svr;
+    private static AMSBrokerRMIServer rmi;
+
+    public  static Scheduler sched;
+
     private String jobName;
-    private AMSBrokerServer svr;
-    private AMSBrokerRMIServer rmi;
 
     public AMSBrokerMain(String job) {
 
-        System.out.println("properties = " + MsgCommon.msgProps.getProperty("schema_path"));
         this.jobName = job;
         if( jobName.equals("SERVER") ) {
+            logger.debug("properties = " + MsgCommon.msgProps.getProperty("schema_path"));
             svr = new AMSBrokerServer(Integer.parseInt(MsgCommon.msgProps.getProperty("ams.port")));
         }
         else if( jobName.equals("RMI") ) {
             rmi = new AMSBrokerRMIServer();
+        }
+        else if( jobName.equals("SCHEDULE") ) {
+            try {
+                sched = new StdSchedulerFactory().getScheduler();
+            }
+            catch( SchedulerException se ) {
+                logger.debug( "Schedule Exception: {}", se.getMessage() );
+            }
         }
     }
 
@@ -41,6 +61,7 @@ public class AMSBrokerMain extends Thread {
         if( jobName.equals("SERVER") ) {
             try {
                 svr.run();
+                logger.debug("SERVER Going to stop..");
             }
             catch( Exception err) {
                 err.printStackTrace();
@@ -49,6 +70,14 @@ public class AMSBrokerMain extends Thread {
         else if( jobName.equals("RMI") ) {
             try {
                 rmi.bind();
+            }
+            catch( Exception err) {
+                err.printStackTrace();
+            }
+        }
+        else if( jobName.equals("SCHEDULE") ) {
+            try {
+                sched.start();
             }
             catch( Exception err) {
                 err.printStackTrace();
@@ -66,13 +95,16 @@ public class AMSBrokerMain extends Thread {
                     String.format("/%s/ams.properties", AMSBrokerConst.SVR_TYPE));
             MsgCommon.msgProps.load(is);
             MsgCommon.READ_BUF_SIZE = Integer.parseInt(MsgCommon.msgProps.getProperty("read_buf_size"));
+            AMSBrokerLib.ROOT_FILE_PATH  = MsgCommon.msgProps.getProperty("root.file.path", "");
+            AMSBrokerLib.TEMP_FILE_PATH  = MsgCommon.msgProps.getProperty("temp.file.path", "");
         }
         catch (Exception err) {
             err.printStackTrace();
         }
 
-        AMSBrokerMain svr = new AMSBrokerMain("SERVER");
-        AMSBrokerMain rmi = new AMSBrokerMain("RMI");
+        AMSBrokerMain svr   = new AMSBrokerMain("SERVER");
+        AMSBrokerMain rmi   = new AMSBrokerMain("RMI");
+        AMSBrokerMain sched = new AMSBrokerMain("SCHEDULE");
 
         AMSBrokerSpringMain.sprCtx.register(AMSBrokerAppConfig.class);
         //AMSBrokerSpringMain.sprCtx.scan("com.nicetcm.nibsplus.broker.ams.services"); AppConfig @ComponentScan으로 대체
@@ -80,6 +112,7 @@ public class AMSBrokerMain extends Thread {
 
         svr.start();
         rmi.start();
+        sched.start();
     }
 
 }

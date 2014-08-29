@@ -9,6 +9,19 @@ public interface AMSBrokerRMI extends Remote {
     public void dataUploadToBroker( byte[] data, boolean isFirst, boolean hasNext ) throws Exception;
 
     /**
+     * makeUpdatesSchedule
+     *
+     * 배포그룹별 배포스케쥴 작성
+     *
+     * @param grpCd         그룹코드
+     * @param verId         버전ID
+     * @param deployDate    배포일자
+     * @param deployTime    배포시간
+     * @throws Exception
+     */
+    public void makeUpdatesSchedule( String grpCd, String verId, String deployDate, String deployTime ) throws Exception;
+
+    /**
      * reqEnvInfToMac
      *
      * 단독기기 대상 환경정보 요청
@@ -403,7 +416,41 @@ public interface AMSBrokerRMI extends Remote {
     public void reqSFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String fileType, String fileName ) throws Exception;
 
     /**
-     * reqSFileDownToMac
+     * reqGFileUpToMac
+     *
+     * 단독기기 대상 일반파일 업로드 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기
+     * @param filePath  대상파일경로
+     * @param fileName  대상파일명
+     * @throws Exception
+     */
+    public void reqGFileUpToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String filePath, String fileName ) throws Exception;
+
+    /**
+     * reqGFileUpToMacs
+     *
+     * 복수기기 대상 일반파일 다운로드 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기기집합
+     * @param filePath  대상파일경로
+     * @param fileName  대상파일명
+     * @throws Exception
+     */
+    public void reqGFileUpToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String filePath, String fileName ) throws Exception;
+
+    /**
+     * reqGFileDownToMac
      *
      * 단독기기 대상 일반파일 다운로드 요청
      *
@@ -420,7 +467,7 @@ public interface AMSBrokerRMI extends Remote {
     public void reqGFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String filePath, String fileName ) throws Exception;
 
     /**
-     * reqSFileDownToMacs
+     * reqGFileDownToMacs
      *
      * 복수기기 대상 일반파일 다운로드 요청
      *

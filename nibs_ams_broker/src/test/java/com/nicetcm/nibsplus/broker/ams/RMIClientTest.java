@@ -76,6 +76,16 @@ public class RMIClientTest {
         System.out.println("Upload complete");
     }
 
+    public void makeUpdatesSchedule() throws Exception {
+
+        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
+        System.out.println("registry");
+        AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
+        System.out.println("lookup");
+
+        remoteObj.makeUpdatesSchedule("UPD1", "VER1", "20140829", "175000");
+    }
+
     public void reqEnvInfToMac() throws Exception {
         Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
         System.out.println("registry");
@@ -284,6 +294,19 @@ public class RMIClientTest {
         remoteObj.reqSFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8002", "500", "test", "0202", "9", "test.zip" );
     }
 
+    public void reqGFileUpToMac() throws Exception {
+        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
+        System.out.println("registry");
+        AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
+        System.out.println("lookup");
+
+        TRmTrxMapper trxMap = session.getMapper(TRmTrxMapper.class);
+
+        String key = trxMap.generateKey();
+
+        remoteObj.reqGFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8003", "500", "test", "0202", "C:\\", "test.zip" );
+    }
+
     public void reqGFileDownToMac() throws Exception {
         Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
         System.out.println("registry");
@@ -294,11 +317,12 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqSFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8001", "500", "test", "0202", "C:\\", "test.zip" );
+        remoteObj.reqGFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8001", "500", "test", "0202", "C:\\", "test.zip" );
     }
 
     public static void main(String[] args) {
         try {
+            //new RMIClientTest().makeUpdatesSchedule();
             //new RMIClientTest().reqEnvInfToMac();
             //new RMIClientTest().reqRegInfToMac();
             //new RMIClientTest().reqIniInfToMac();
@@ -311,7 +335,8 @@ public class RMIClientTest {
             //new RMIClientTest().reqDevCollectToMac();
             //new RMIClientTest().reqDevReturnToMac();
             //new RMIClientTest().reqCallNoticeToMac();
-            new RMIClientTest().reqSFileDownToMac();
+            //new RMIClientTest().reqSFileDownToMac();
+            new RMIClientTest().reqGFileUpToMac();
             //new RMIClientTest().reqGFileDownToMac();
         }
         catch( java.rmi.RemoteException e ) {

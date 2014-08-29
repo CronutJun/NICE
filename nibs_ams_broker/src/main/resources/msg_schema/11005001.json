@@ -1,4 +1,5 @@
 {
+  "response" : { "code" : "22005001",     "type" : "COMMON",    "schema" : "comm_ams_header.json" },
   "columns" : [
      { "name" : "CM",                "kname" : "공통헤더"            "type" : "INC", "include" : "comm_ams_header.json" },
      { "name" : "_AOCUpFileType",    "kname" : "파일 타입",          "type" : "AN",  "length" : 1 },
