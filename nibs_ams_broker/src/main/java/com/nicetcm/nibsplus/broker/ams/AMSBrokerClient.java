@@ -99,9 +99,7 @@ public class AMSBrokerClient {
                 strm.close();
             boolean interrupted = false;
             try {
-                String defTimeOut = MsgCommon.msgProps.getProperty("ams.req.defTimeout");
-                if( defTimeOut == null )
-                    defTimeOut = "60";
+                String defTimeOut = MsgCommon.msgProps.getProperty("ams.req.defTimeout", "60");
                 rslt = ans.poll(timeOut == 0 ? Integer.parseInt(defTimeOut) : timeOut, TimeUnit.SECONDS);
                 if( rslt == null ) {
                     throw new AMSBrokerTimeoutException("timeout");

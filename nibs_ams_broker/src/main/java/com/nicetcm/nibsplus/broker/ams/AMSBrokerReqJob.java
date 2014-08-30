@@ -50,16 +50,6 @@ public class AMSBrokerReqJob {
     private String fileName;
     private int timeOut;
 
-    public AMSBrokerReqJob(String macNo, boolean isBlocking) {
-
-        this.macNo = macNo;
-        this.isBlocking = isBlocking;
-        if( isBlocking )
-            this.ans = new LinkedBlockingQueue<ByteBuffer>();
-        else this.ans = null;
-
-    }
-
     private static BlockingQueue<AMSBrokerReqJob> getQueue(String macNo) throws Exception {
 
         BlockingQueue<AMSBrokerReqJob> queue;
@@ -73,6 +63,16 @@ public class AMSBrokerReqJob {
             queue = outQ.getOutQ();
         }
         return queue;
+    }
+
+    public AMSBrokerReqJob(String macNo, boolean isBlocking) {
+
+        this.macNo = macNo;
+        this.isBlocking = isBlocking;
+        if( isBlocking )
+            this.ans = new LinkedBlockingQueue<ByteBuffer>();
+        else this.ans = null;
+
     }
 
     public void requestJob() throws Exception {
