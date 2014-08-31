@@ -28,20 +28,27 @@ import org.slf4j.LoggerFactory;
 public class AMSBrokerMain extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerMain.class);
-
+    
     private static AMSBrokerServer svr;
     private static AMSBrokerRMIServer rmi;
-
-    public  static Scheduler sched;
+    private static Scheduler sched;
 
     private String jobName;
+
+    public static AMSBrokerRMIServer getRMI() {
+        return rmi;
+    }
+    
+    public static Scheduler getScheduler() {
+        return sched;
+    }
 
     public AMSBrokerMain(String job) {
 
         this.jobName = job;
         if( jobName.equals("SERVER") ) {
             logger.debug("properties = " + MsgCommon.msgProps.getProperty("schema_path"));
-            svr = new AMSBrokerServer(Integer.parseInt(MsgCommon.msgProps.getProperty("ams.port")));
+            svr = AMSBrokerServer.getServer(Integer.parseInt(MsgCommon.msgProps.getProperty("ams.port")));
         }
         else if( jobName.equals("RMI") ) {
             rmi = new AMSBrokerRMIServer();
@@ -61,7 +68,7 @@ public class AMSBrokerMain extends Thread {
         if( jobName.equals("SERVER") ) {
             try {
                 svr.run();
-                logger.debug("SERVER Going to stop..");
+                logger.debug("Soket Server Going to stop..");
             }
             catch( Exception err) {
                 err.printStackTrace();

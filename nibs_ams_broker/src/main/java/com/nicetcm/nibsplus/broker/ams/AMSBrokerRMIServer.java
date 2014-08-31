@@ -16,6 +16,7 @@ public class AMSBrokerRMIServer {
     public static final Logger logger = LoggerFactory.getLogger(AMSBrokerRMIServer.class);
 
     private Registry registry;
+    private AMSBrokerRMI stub;
 
     public AMSBrokerRMIServer() {
     }
@@ -26,7 +27,7 @@ public class AMSBrokerRMIServer {
             logger.debug("Going to bind..");
             AMSBrokerRMIImpl remoteObj = new AMSBrokerRMIImpl();
 
-            AMSBrokerRMI stub = (AMSBrokerRMI)UnicastRemoteObject.exportObject(remoteObj, Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
+            stub = (AMSBrokerRMI)UnicastRemoteObject.exportObject(remoteObj, Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
 
             LocateRegistry.createRegistry(Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
             // Bind the remote object's stub in the registry

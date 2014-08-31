@@ -45,16 +45,13 @@ public class RMIClientTest {
         session = factory.openSession();
     }
 
-    public void threadTest() throws Exception {
-        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
+    public void serverShutdown() throws Exception {
+        Registry registry = LocateRegistry.getRegistry("192.168.16.2", 10299);
         System.out.println("registry");
         AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
         System.out.println("lookup");
-        Calendar c = Calendar.getInstance();
-        java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("HH:mm:ss.SSS");
-        String tm = fmt.format(c.getTime());
-        System.out.println(remoteObj.threadTest(tm));
-        System.out.println(remoteObj.threadTest(tm));
+        
+        remoteObj.serverShutdown();
     }
 
     public void dataUpload() throws Exception {
@@ -322,6 +319,7 @@ public class RMIClientTest {
 
     public static void main(String[] args) {
         try {
+            new RMIClientTest().serverShutdown();
             //new RMIClientTest().makeUpdatesSchedule();
             //new RMIClientTest().reqEnvInfToMac();
             //new RMIClientTest().reqRegInfToMac();
@@ -336,7 +334,7 @@ public class RMIClientTest {
             //new RMIClientTest().reqDevReturnToMac();
             //new RMIClientTest().reqCallNoticeToMac();
             //new RMIClientTest().reqSFileDownToMac();
-            new RMIClientTest().reqGFileUpToMac();
+            //new RMIClientTest().reqGFileUpToMac();
             //new RMIClientTest().reqGFileDownToMac();
         }
         catch( java.rmi.RemoteException e ) {

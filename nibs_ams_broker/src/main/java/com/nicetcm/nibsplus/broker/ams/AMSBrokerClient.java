@@ -14,6 +14,8 @@ package com.nicetcm.nibsplus.broker.ams;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.nio.ByteBuffer;
 import java.io.InputStream;
@@ -37,7 +39,8 @@ import io.netty.buffer.ByteBuf;
 public class AMSBrokerClient {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerClient.class);
-//    private static final Map<String, AMSBrokerClient> clientPool = new HashMap<String, AMSBrokerClient>();
+    
+    private static final ConcurrentMap<String, AMSBrokerClient> clientPool = new ConcurrentHashMap<String, AMSBrokerClient>();
 
     private final String host;
     private final int port;
@@ -45,7 +48,22 @@ public class AMSBrokerClient {
     private final BlockingQueue<ByteBuf> ans;
     private ByteBuf reqBuf;
 
-    public AMSBrokerClient(String host, int port, AMSBrokerReqJob reqJob) {
+    public static AMSBrokerClient getInstance(String host, int port, AMSBrokerReqJob reqJob) {
+        
+        AMSBrokerClient client = null;
+        
+        if( clientPool.containsKey(host) ) {
+            client =  clientPool.get(host);
+        }
+        else {
+            client = new AMSBrokerClient( host, port, reqJob );
+            clientPool.put( host, client );
+        }
+        return client;
+        
+    }
+    
+    private AMSBrokerClient(String host, int port, AMSBrokerReqJob reqJob) {
         this.host = host;
         this.port = port;
         this.reqJob = reqJob;

@@ -58,7 +58,7 @@ public class AMSClientTest {
             buf.get(read);
             System.out.println(new String(read));
 
-            AMSBrokerClient client = new AMSBrokerClient( "10.3.28.180", 33001, null );
+            AMSBrokerClient client = AMSBrokerClient.getInstance( "10.3.28.180", 33001, null );
             ByteBuffer rslt = client.outboundCall( buf, null, 10 );
         }
         finally {

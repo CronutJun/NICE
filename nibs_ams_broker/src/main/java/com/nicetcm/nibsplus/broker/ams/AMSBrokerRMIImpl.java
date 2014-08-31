@@ -40,16 +40,19 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         /*super();*/
     }
 
-    public String threadTest(String data) throws java.rmi.RemoteException {
-        logger.debug("Thread " + Thread.currentThread().getId() + "'s data = " + data);
-        try {
-            Thread.sleep(10000);
-            logger.debug("Thread " + Thread.currentThread().getId() + "call complete");
-        }
-        catch ( Exception err ) {
-            logger.debug("Exception raised " + err.getMessage());
-        }
-        return data;
+    public void serverShutdown() throws Exception {
+        AMSBrokerMain.getScheduler().shutdown();
+        AMSBrokerMain.getRMI().unbind();
+        AMSBrokerServer.getServer().close();
+        
+        logger.debug("Thread's count = {}", Thread.activeCount() );
+        //for (Thread t : Thread.getAllStackTraces().keySet()) {
+        //    if (t.getState()==Thread.State.RUNNABLE) {
+        //        logger.debug("Thread id = {},{}", t.getId(), t.getName());
+        //        t.interrupt();
+        //    }
+        //}
+        System.exit(0);
     }
 
     public void dataUploadToBroker( byte[] data, boolean isFirst, boolean hasNext ) {
@@ -90,10 +93,6 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch (InterruptedException e) {
-            interrupted = true;
-        }
-
-        if (interrupted) {
             Thread.currentThread().interrupt();
         }
 
@@ -112,7 +111,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      */
     public void makeUpdatesSchedule( String grpCd, String verId, String deployDate, String deployTime ) throws Exception {
 
-        AMSBrokerMain.sched.unscheduleJob( TriggerKey.triggerKey( verId, grpCd) );
+        AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey( verId, grpCd) );
         //JobDetail updJob = AMSBrokerMain.sched.getJobDetail(JobKey.jobKey("UPDATES", "UPDATES"));
 
         JobDetail updJob = newJob(AMSBrokerUpdSchedJob.class)
@@ -129,7 +128,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                                                                       deployDate.substring(4, 6),
                                                                       deployDate.substring(0, 4))) )
                             .build();
-        AMSBrokerMain.sched.scheduleJob( updJob, updTrig );
+        AMSBrokerMain.getScheduler().scheduleJob( updJob, updTrig );
         logger.info("Job is successfully scheduled [Group = {}, Version = {}, deployDate = {}, deployTime = {}",
                     grpCd, verId, deployDate, deployTime);
     }

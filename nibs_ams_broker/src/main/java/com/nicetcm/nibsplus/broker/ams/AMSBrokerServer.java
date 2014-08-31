@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 public class AMSBrokerServer {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerServer.class);
+    private static AMSBrokerServer sockServer;
 
     private final int port;
     private EventLoopGroup bossGroup;
@@ -22,7 +23,19 @@ public class AMSBrokerServer {
     private ServerBootstrap serverBs;
     private ChannelFuture channelFuture;
 
-    public AMSBrokerServer(int port) {
+    public static AMSBrokerServer getServer(int Port) {
+        if( sockServer == null )
+            sockServer = new AMSBrokerServer( Port );
+        
+        return sockServer;
+    }
+    
+    public static AMSBrokerServer getServer() {
+        
+        return sockServer;
+    }
+    
+    private AMSBrokerServer(int port) {
         this.port = port;
 
         bossGroup = new NioEventLoopGroup(1);
@@ -52,7 +65,7 @@ public class AMSBrokerServer {
 
     public void close() {
         try {
-            channelFuture.sync().channel().close();
+            channelFuture.channel().close();
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
         }
