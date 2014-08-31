@@ -45,13 +45,13 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
 
     private AMSBrokerBizHandler biz = new AMSBrokerBizHandler();
 
-    private final AMSBrokerReqJob        reqJob;
-    private final BlockingQueue<ByteBuf> ans;
+    private final AMSBrokerReqJob reqJob;
+    private final BlockingQueue<AMSBrokerClientQData> ans;
 
     /**
      * Creates a client-side handler.
      */
-    public AMSBrokerClientHandler(AMSBrokerReqJob reqJob, BlockingQueue<ByteBuf> ans) {
+    public AMSBrokerClientHandler(AMSBrokerReqJob reqJob, BlockingQueue<AMSBrokerClientQData> ans) {
         this.reqJob = reqJob;
         this.ans = ans;
     }
@@ -147,8 +147,8 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 }
 
                 biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
+                ans.put(new AMSBrokerClientQData(isContinue, buf));
                 if( !isContinue ) {
-                    ans.put(buf);
                     msgPsr.clearMessage();
                 }
             }
@@ -166,15 +166,15 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 if( iRemain <= 0 ) isContinue = false;
 
                 biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
+                ans.put(new AMSBrokerClientQData(isContinue, buf));
                 if( !isContinue ) {
-                    ans.put(buf);
                     msgPsr.clearMessage();
                 }
             }
         }
         catch( Exception e ) {
             logger.debug("read Exception: {}", e.getMessage());
-            ans.put(buf);
+            ans.put(new AMSBrokerClientQData(false, buf));
             throw e;
         }
     }

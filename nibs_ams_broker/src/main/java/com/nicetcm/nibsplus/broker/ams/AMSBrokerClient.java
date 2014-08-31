@@ -43,9 +43,9 @@ public class AMSBrokerClient {
     private static final ConcurrentMap<String, AMSBrokerClient> clientPool = new ConcurrentHashMap<String, AMSBrokerClient>();
 
     private final String host;
-    private final int port;
-    private final AMSBrokerReqJob        reqJob;
-    private final BlockingQueue<ByteBuf> ans;
+    private final int    port;
+    private final AMSBrokerReqJob reqJob;
+    private final BlockingQueue<AMSBrokerClientQData> ans;
     private ByteBuf reqBuf;
 
     public static AMSBrokerClient getInstance(String host, int port, AMSBrokerReqJob reqJob) {
@@ -67,12 +67,12 @@ public class AMSBrokerClient {
         this.host = host;
         this.port = port;
         this.reqJob = reqJob;
-        this.ans  = new LinkedBlockingQueue<ByteBuf>();
+        this.ans  = new LinkedBlockingQueue<AMSBrokerClientQData>();
     }
 
     public ByteBuffer outboundCall(ByteBuffer data, InputStream strm, int timeOut) throws Exception {
         // Configure the client.
-        ByteBuf rslt = null;
+        AMSBrokerClientQData lstRslt = null;
         ByteBuffer ret = null;
         EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -115,20 +115,22 @@ public class AMSBrokerClient {
             }
             if( strm != null )
                 strm.close();
-            boolean interrupted = false;
-            try {
-                String defTimeOut = MsgCommon.msgProps.getProperty("ams.req.defTimeout", "60");
-                rslt = ans.poll(timeOut == 0 ? Integer.parseInt(defTimeOut) : timeOut, TimeUnit.SECONDS);
-                if( rslt == null ) {
-                    throw new AMSBrokerTimeoutException("timeout");
+            
+            String defTimeOut = MsgCommon.msgProps.getProperty("ams.req.defTimeout", "60");
+            for (;;) {
+                try {
+                    lstRslt = ans.poll(timeOut == 0 ? Integer.parseInt(defTimeOut) : timeOut, TimeUnit.SECONDS);
+                    if( lstRslt == null ) {
+                        throw new AMSBrokerTimeoutException("timeout");
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
-            } catch (InterruptedException e) {
-                interrupted = true;
+                // 필요하다면 바로 밑에 콜백함수를 사용하여 이벤트 처리(Read)할 수 있다.
+                if( !lstRslt.isContinue() )
+                    break;
             }
 
-            if (interrupted) {
-                Thread.currentThread().interrupt();
-            }
             f.channel().close().sync();
             //f.channel().closeFuture().sync();
             logger.debug("answer count = " + ans.size());
@@ -141,9 +143,10 @@ public class AMSBrokerClient {
             // Shut down the event loop to terminate all threads.
             group.shutdownGracefully();
         }
-        rslt.resetReaderIndex();
-        ret = ByteBuffer.allocateDirect(rslt.readableBytes());
-        rslt.readBytes(ret);
+        lstRslt.getClientData().resetReaderIndex();
+        ret = ByteBuffer.allocateDirect(lstRslt.getClientData().readableBytes());
+        lstRslt.getClientData().readBytes(ret);
+        
         return ret;
     }
  }
