@@ -14,6 +14,8 @@ package com.nicetcm.nibsplus.broker.ams;
 import java.util.concurrent.*;
 import java.util.ArrayList;
 import java.nio.ByteBuffer;
+import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqRegInfo;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqIniInfo;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIEnvValue;
@@ -30,6 +32,7 @@ public class AMSBrokerReqJob {
     private final String macNo;
     private final boolean isBlocking;
     private final BlockingQueue<ByteBuffer> ans;
+
     private String trxDate;
     private String trxNo;
     private String trxCd;
@@ -48,6 +51,8 @@ public class AMSBrokerReqJob {
     private String fileType;
     private String filePath;
     private String fileName;
+    private FileInputStream fIn;
+    private FileOutputStream fOut;
     private int timeOut;
 
     private static BlockingQueue<AMSBrokerReqJob> getQueue(String macNo) throws Exception {
@@ -244,6 +249,22 @@ public class AMSBrokerReqJob {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public FileInputStream getfIn() {
+        return fIn;
+    }
+
+    public void setfIn(FileInputStream fIn) {
+        this.fIn = fIn;
+    }
+
+    public FileOutputStream getfOut() {
+        return fOut;
+    }
+
+    public void setfOut(FileOutputStream fOut) {
+        this.fOut = fOut;
     }
 
 }

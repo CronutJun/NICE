@@ -50,7 +50,7 @@ public class RMIClientTest {
         System.out.println("registry");
         AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
         System.out.println("lookup");
-        
+
         remoteObj.serverShutdown();
     }
 
@@ -319,7 +319,7 @@ public class RMIClientTest {
 
     public static void main(String[] args) {
         try {
-            new RMIClientTest().serverShutdown();
+            //new RMIClientTest().serverShutdown();
             //new RMIClientTest().makeUpdatesSchedule();
             //new RMIClientTest().reqEnvInfToMac();
             //new RMIClientTest().reqRegInfToMac();
@@ -334,7 +334,7 @@ public class RMIClientTest {
             //new RMIClientTest().reqDevReturnToMac();
             //new RMIClientTest().reqCallNoticeToMac();
             //new RMIClientTest().reqSFileDownToMac();
-            //new RMIClientTest().reqGFileUpToMac();
+            new RMIClientTest().reqGFileUpToMac();
             //new RMIClientTest().reqGFileDownToMac();
         }
         catch( java.rmi.RemoteException e ) {

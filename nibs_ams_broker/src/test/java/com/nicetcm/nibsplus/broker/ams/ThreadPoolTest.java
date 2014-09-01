@@ -23,7 +23,7 @@ public class ThreadPoolTest {
        catch( Exception e ) {
            MsgCommon.READ_BUF_SIZE = 2000;
        }
-        for( int i = 0; i < 30; i++ ) {
+        for( int i = 0; i < 100; i++ ) {
 
             logger.debug("i = {}", i);
             try {

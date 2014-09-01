@@ -43,6 +43,7 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
     private byte[]    remainBytes;
     private int       iMsgLen, iRemain;
     private AMSBrokerData amsSafeData = new AMSBrokerData();
+    private AMSBrokerReqJob reqJob = new AMSBrokerReqJob("server", false);
     private TRmTrx     rmTrx = null;
     private TRmMsg     rmMsg = null;
     private MsgParser  msgPsr;
@@ -142,7 +143,7 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
                 RcvMsgHandler rcv = (RcvMsgHandler)AMSBrokerSpringMain.sprCtx.getBean("rcvMsg");
                 rcv.rcvMsgHandle( amsSafeData, msgPsr, rmTrx, rmMsg );
 
-                biz.classifyMessage(ctx, msg, msgPsr, null, remainBytes, isContinue);
+                biz.classifyMessage(ctx, msg, msgPsr, reqJob, remainBytes, isContinue);
                 if( !isContinue ) {
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
                     resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "9", null );
@@ -173,7 +174,7 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
 
                 if( iRemain <= 0 ) isContinue = false;
 
-                biz.classifyMessage(ctx, msg, msgPsr, null, remainBytes, isContinue);
+                biz.classifyMessage(ctx, msg, msgPsr, reqJob, remainBytes, isContinue);
                 if( !isContinue ) {
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
                     resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "9", null );

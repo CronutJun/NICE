@@ -3,20 +3,20 @@ package com.nicetcm.nibsplus.broker.ams;
 import static com.nicetcm.nibsplus.broker.ams.AMSBrokerLib.TEMP_FILE_PATH;
 
 import io.netty.channel.ChannelHandlerContext;
-
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nicetcm.nibsplus.broker.common.*;
 import com.nicetcm.nibsplus.broker.ams.services.InMsgHandler;
+import com.nicetcm.nibsplus.broker.ams.services.FileSaver;
 
 public class AMSBrokerBizHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerBizHandler.class);
     private boolean befBeContinue = false;
-    private FileOutputStream fOut = null;
     private AMSBrokerData amsSafeData = new AMSBrokerData();
 
     public void classifyMessage(ChannelHandlerContext ctx, Object msg, MsgParser parsed, AMSBrokerReqJob reqJob, byte[] remain, boolean beContinue) throws Exception {
@@ -25,18 +25,18 @@ public class AMSBrokerBizHandler {
         String fileName = String.format( "%stmp_%s_in", TEMP_FILE_PATH,  Thread.currentThread().getId() );
         if( (!befBeContinue) && (beContinue) ) {
             logger.debug("file open");
-            fOut = new FileOutputStream(fileName);
+            reqJob.setfOut(new FileOutputStream(fileName));
 
         }
         if( remain.length > 0 ) {
-            fOut.write(remain);
+            reqJob.getfOut().write(remain);
             logger.debug("file write length : " + remain.length);
         }
 
         if( (befBeContinue) && (!beContinue) ) {
-            fOut.flush();
-            fOut.close();
-            fOut = null;
+            reqJob.getfOut().flush();
+            reqJob.getfOut().close();
+            reqJob.setfOut( null );
             logger.debug("file close");
         }
         if( !beContinue ) {
@@ -47,6 +47,10 @@ public class AMSBrokerBizHandler {
             if( tg.exists() && tg.length() == 0) fileName = "";
             if( !tg.exists() ) fileName = "";
             try {
+                if( tg.exists() ) {
+                    FileSaver file = (FileSaver)AMSBrokerSpringMain.sprCtx.getBean("fileSaver");
+                    fileName = file.tempFileToClassify(amsSafeData, parsed, reqJob, fileName);
+                }
                 InMsgHandler bizBranch = (InMsgHandler)AMSBrokerSpringMain
                         .sprCtx.getBean("in" + parsed.getString("CM._AOCMsgCode") + parsed.getString("CM._AOCServiceCode"));
                 bizBranch.inMsgHandle(amsSafeData, parsed, reqJob, fileName);

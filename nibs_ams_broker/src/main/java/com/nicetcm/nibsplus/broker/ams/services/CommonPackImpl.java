@@ -23,10 +23,14 @@ import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgHisMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvHisMapper;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmFileMapper;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmFileHisMapper;
 import com.nicetcm.nibsplus.broker.ams.model.TCmMacKey;
 import com.nicetcm.nibsplus.broker.ams.model.TCmMac;
 import com.nicetcm.nibsplus.broker.ams.model.TCmSiteKey;
 import com.nicetcm.nibsplus.broker.ams.model.TCmSite;
+import com.nicetcm.nibsplus.broker.ams.model.TRmFile;
+import com.nicetcm.nibsplus.broker.ams.model.TRmFileHis;
 import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
@@ -53,6 +57,8 @@ public class CommonPackImpl implements CommonPack {
     @Autowired private TRmMsgHisMapper                msgHisMap;
     @Autowired private TRmMacEnvMapper                macEnvMap;
     @Autowired private TRmMacEnvHisMapper             macEnvHisMap;
+    @Autowired private TRmFileMapper                  fileMap;
+    @Autowired private TRmFileHisMapper               fileHisMap;
 
     @Override
     public void insUpdMsg(AMSBrokerData safeData, String macNo, TRmTrx trx, TRmMsg msg, TRmMsgHis msgHis) throws Exception {
@@ -351,6 +357,54 @@ public class CommonPackImpl implements CommonPack {
             throw e;
         }
 
+    }
+
+    /**
+    *
+    *  File의 업로드/다운로드 내역을 처리한다.
+    *
+    * @param safeData  Thread Safe 데이터
+    * @param TRmFile   T_RM_FILE테이블의 모델
+    * @param acdCd     업/다운로드 코드
+    * @throws Exception
+    *
+    */
+    @Override
+    public void insUpdFile(AMSBrokerData safeData, TRmFile file, String actCd) throws Exception {
+
+        TRmFileHis fileHis = new TRmFileHis();
+
+        BeanUtils.copyProperties( fileHis, file );
+
+        try {
+            file.setInsertDate( null );
+            file.setInsertUid( null );
+            if( fileMap.updateByPrimaryKeySelective( file ) == 0 ) {
+                try {
+                    file.setInsertDate( file.getUpdateDate() );
+                    file.setInsertUid( file.getUpdateUid() );
+                    fileMap.insert( file );
+                }
+                catch( Exception e ) {
+                    logger.info("T_RM_FILE Insert error {}", e.getLocalizedMessage() );
+                    throw e;
+                }
+            }
+        }
+        catch( Exception e ) {
+            logger.info("T_RM_FILE Update error {}", e.getLocalizedMessage() );
+            throw e;
+        }
+
+        fileHis.setHisSeq( fileHisMap.generateKey( fileHis ) );
+        fileHis.setActCd ( actCd );
+        try {
+            fileHisMap.insert( fileHis );
+        }
+        catch( Exception e ) {
+            logger.info("T_RM_FILE_HIS Insert error {}", e.getLocalizedMessage() );
+            throw e;
+        }
     }
 
 }

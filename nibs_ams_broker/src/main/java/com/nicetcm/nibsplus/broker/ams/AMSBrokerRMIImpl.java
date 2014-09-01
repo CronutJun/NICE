@@ -44,7 +44,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         AMSBrokerMain.getScheduler().shutdown();
         AMSBrokerMain.getRMI().unbind();
         AMSBrokerServer.getServer().close();
-        
+
         logger.debug("Thread's count = {}", Thread.activeCount() );
         //for (Thread t : Thread.getAllStackTraces().keySet()) {
         //    if (t.getState()==Thread.State.RUNNABLE) {
@@ -112,9 +112,8 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
     public void makeUpdatesSchedule( String grpCd, String verId, String deployDate, String deployTime ) throws Exception {
 
         AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey( verId, grpCd) );
-        //JobDetail updJob = AMSBrokerMain.sched.getJobDetail(JobKey.jobKey("UPDATES", "UPDATES"));
 
-        JobDetail updJob = newJob(AMSBrokerUpdSchedJob.class)
+        JobDetail updJob = newJob(AMSBrokerSchedJob.class)
                          .withIdentity("UPDATES",  "UPDATES")
                          .build();
 
@@ -1017,7 +1016,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                 reqJob.setTrxUid( trxUid );
                 reqJob.setFilePath( filePath );
                 reqJob.setFileName( fileName );
-                reqJob.setTimeOut( 60 );
+                reqJob.setTimeOut( 30 );
                 reqJob.requestJob();
             }
         }
@@ -1052,7 +1051,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setTrxUid( trxUid );
             reqJob.setFilePath( filePath );
             reqJob.setFileName( fileName );
-            reqJob.setTimeOut( 60 );
+            reqJob.setTimeOut( 30 );
             reqJob.requestJob();
         }
         catch( Exception e ) {

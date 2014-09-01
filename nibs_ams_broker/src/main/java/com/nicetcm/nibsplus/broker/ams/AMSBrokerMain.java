@@ -17,6 +17,7 @@ import java.io.*;
 
 import com.nicetcm.nibsplus.broker.common.*;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
+import com.nicetcm.nibsplus.broker.ams.services.InitScheduler;
 
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
@@ -28,7 +29,7 @@ import org.slf4j.LoggerFactory;
 public class AMSBrokerMain extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerMain.class);
-    
+
     private static AMSBrokerServer svr;
     private static AMSBrokerRMIServer rmi;
     private static Scheduler sched;
@@ -38,7 +39,7 @@ public class AMSBrokerMain extends Thread {
     public static AMSBrokerRMIServer getRMI() {
         return rmi;
     }
-    
+
     public static Scheduler getScheduler() {
         return sched;
     }
@@ -92,6 +93,18 @@ public class AMSBrokerMain extends Thread {
         }
     }
 
+    public void initSchedule() {
+
+        AMSBrokerData safeData = new AMSBrokerData();
+        InitScheduler initSched = (InitScheduler)AMSBrokerSpringMain.sprCtx.getBean("initScheduler");
+        try {
+            initSched.initSchedule(safeData);
+        }
+        catch( Exception e ) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
 
         try {
@@ -120,6 +133,7 @@ public class AMSBrokerMain extends Thread {
         svr.start();
         rmi.start();
         sched.start();
+        sched.initSchedule();
     }
 
 }

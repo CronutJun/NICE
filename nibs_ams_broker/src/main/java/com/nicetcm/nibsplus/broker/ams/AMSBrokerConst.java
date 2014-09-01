@@ -3,6 +3,7 @@ package com.nicetcm.nibsplus.broker.ams;
 public class AMSBrokerConst {
 
     public static final String SVR_TYPE = System.getProperty("server.type", "dev");
+    public static final String MAX_CONCURRENT_THREAD  = "10";         // 스케쥴 동시 처리 쓰레드 기본 갯수
 
     public static final int   COMMON_LEN              = 121;          // Common헤더 길이
     public static final int   MSG_LEN_INFO_LEN        = 9;            // 전문헤더의 전체전문길이 정보 길이

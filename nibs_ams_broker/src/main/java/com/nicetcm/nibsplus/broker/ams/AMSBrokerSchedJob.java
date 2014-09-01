@@ -18,9 +18,9 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AMSBrokerUpdSchedJob implements Job {
+public class AMSBrokerSchedJob implements Job {
 
-    private static final Logger logger = LoggerFactory.getLogger(AMSBrokerUpdSchedJob.class);
+    private static final Logger logger = LoggerFactory.getLogger(AMSBrokerSchedJob.class);
 
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
@@ -28,6 +28,18 @@ public class AMSBrokerUpdSchedJob implements Job {
                                                                      arg0.getJobDetail().getKey().getName(),
                                                                      arg0.getTrigger().getKey().getGroup(),
                                                                      arg0.getTrigger().getKey().getName() );
+        /**
+         * 배포 스케쥴
+         */
+        if( arg0.getJobDetail().getKey().getName().equals("UPDATES") ) {
+
+        }
+        /**
+         * 저널업로드 스케쥴
+         */
+        else if(  arg0.getJobDetail().getKey().getName().equals("JOURNAL") ) {
+
+        }
     }
 
 }

@@ -39,7 +39,7 @@ import io.netty.buffer.ByteBuf;
 public class AMSBrokerClient {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerClient.class);
-    
+
     private static final ConcurrentMap<String, AMSBrokerClient> clientPool = new ConcurrentHashMap<String, AMSBrokerClient>();
 
     private final String host;
@@ -49,9 +49,9 @@ public class AMSBrokerClient {
     private ByteBuf reqBuf;
 
     public static AMSBrokerClient getInstance(String host, int port, AMSBrokerReqJob reqJob) {
-        
+
         AMSBrokerClient client = null;
-        
+
         if( clientPool.containsKey(host) ) {
             client =  clientPool.get(host);
         }
@@ -60,9 +60,9 @@ public class AMSBrokerClient {
             clientPool.put( host, client );
         }
         return client;
-        
+
     }
-    
+
     private AMSBrokerClient(String host, int port, AMSBrokerReqJob reqJob) {
         this.host = host;
         this.port = port;
@@ -72,7 +72,7 @@ public class AMSBrokerClient {
 
     public ByteBuffer outboundCall(ByteBuffer data, InputStream strm, int timeOut) throws Exception {
         // Configure the client.
-        AMSBrokerClientQData lstRslt = null;
+        AMSBrokerClientQData lstRslt = null, fstRslt = null;
         ByteBuffer ret = null;
         EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -115,14 +115,19 @@ public class AMSBrokerClient {
             }
             if( strm != null )
                 strm.close();
-            
+
             String defTimeOut = MsgCommon.msgProps.getProperty("ams.req.defTimeout", "60");
             for (;;) {
                 try {
                     lstRslt = ans.poll(timeOut == 0 ? Integer.parseInt(defTimeOut) : timeOut, TimeUnit.SECONDS);
                     if( lstRslt == null ) {
+                        if( reqJob.getfOut() != null )
+                            reqJob.getfOut().close();
                         throw new AMSBrokerTimeoutException("timeout");
                     }
+                    if( fstRslt == null )
+                        fstRslt = lstRslt;
+
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -143,10 +148,10 @@ public class AMSBrokerClient {
             // Shut down the event loop to terminate all threads.
             group.shutdownGracefully();
         }
-        lstRslt.getClientData().resetReaderIndex();
-        ret = ByteBuffer.allocateDirect(lstRslt.getClientData().readableBytes());
-        lstRslt.getClientData().readBytes(ret);
-        
+        fstRslt.getClientData().resetReaderIndex();
+        ret = ByteBuffer.allocateDirect(fstRslt.getClientData().readableBytes());
+        fstRslt.getClientData().readBytes(ret);
+
         return ret;
     }
  }

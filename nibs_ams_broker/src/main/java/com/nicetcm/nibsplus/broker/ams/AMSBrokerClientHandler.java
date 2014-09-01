@@ -65,13 +65,15 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf buf = (ByteBuf)msg;
         try {
+            logger.debug("================================================================");
             logger.debug("Channel Read ");
             logger.debug("Thread ID = " + Thread.currentThread().getId());
             logger.debug("className      = " + msg.getClass().getName());
             logger.debug("capacity       = " + buf.capacity());
             logger.debug("readableBytes  = " + buf.readableBytes());
+            logger.debug("readerIndex    = {}", buf.readerIndex() );
             logger.debug("isContinue     = " + isContinue);
-            logger.debug("readIndex = {}", buf.readerIndex() );
+            logger.debug("================================================================");
 
 
             if( !isContinue) {

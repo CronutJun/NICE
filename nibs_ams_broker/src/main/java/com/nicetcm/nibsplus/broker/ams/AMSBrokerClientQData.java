@@ -18,18 +18,18 @@ public class AMSBrokerClientQData {
 
     private boolean isContinue;
     private ByteBuf clientData;
-    
+
     public AMSBrokerClientQData( boolean isContinue, ByteBuf clientData ) {
         this.isContinue = isContinue;
         this.clientData = clientData;
     }
-    
+
     public boolean isContinue() {
         return isContinue;
     }
-    
+
     public ByteBuf getClientData() {
         return clientData;
     }
-    
+
 }

@@ -39,7 +39,8 @@ public class AMSBrokerSchedWorkGroup {
     }
 
     private static final ExecutorService svc = new ThreadPoolExecutor(0,
-                                                      Integer.parseInt(MsgCommon.msgProps.getProperty("schedule.max.conn.thread")),
+                                                      Integer.parseInt(MsgCommon.msgProps.getProperty("schedule.max.concurrent.thread",
+                                                                                                      AMSBrokerConst.MAX_CONCURRENT_THREAD)),
                                                       60L, TimeUnit.SECONDS,
                                                       new SynchronousQueue<Runnable>(),
                                                       new BlockingQueuePut());
