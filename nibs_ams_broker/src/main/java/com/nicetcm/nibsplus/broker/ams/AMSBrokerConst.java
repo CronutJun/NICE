@@ -8,6 +8,10 @@ public class AMSBrokerConst {
     public static final int   COMMON_LEN              = 121;          // Common헤더 길이
     public static final int   MSG_LEN_INFO_LEN        = 9;            // 전문헤더의 전체전문길이 정보 길이
 
+    public static final String GENERAL_FILE_PATH      = "macs/general/";  // 일반파일 저장 경로
+    public static final String SPECIFIC_FILE_PATH     = "macs/specific/"; // 특정파일 저장 경로
+    public static final String JOURNAL_FILE_PATH      = "macs/journal/";  // 저널파일 저장 경로
+
     public static final String NICE_ORG_CD            = "096";
     public static final String NICE_BR_CD             = "9600";
 

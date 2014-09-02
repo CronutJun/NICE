@@ -11,37 +11,27 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd"
 >
-
-    <!-- Job Detail-->
-    <bean name="FirstJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
+    <bean name="JOB_ARR_EST_004" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass" value="com.nicetcm.nibsplus.orgsend.service.impl.OrgSendImpl"/>
         <property name="applicationContextJobDataKey" value="applicationContext" />
         <property name="group" value="JobGroup"/>
+        <property name="durability" value="true"/>
         <property name="jobDataAsMap">
             <map>
-                <entry key="orgCd" value="041" />
-                <entry key="transferType" value-ref="AUTO_SEND" />
-
+                <entry key="queryName" value="ARR_EST" />           <!-- msg_type -->
+                <entry key="orgCd" value="004" />                   <!-- org_cd -->
+                <entry key="transferType" value-ref="ONLY_SEND" />  <!-- AUTO_SEND / ONLY-SEND -->
+            </map>
+        </property>
+    </bean>
+    <bean id="TR_ARR_EST_004" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="JOB_ARR_EST_004" />
+        <property name="cronExpression" value="* * * * * ?" />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="transferType" value-ref="AUTO_SEND" />  <!-- AUTO_SEND / ONLY-SEND -->
             </map>
         </property>
     </bean>
 
-    <!-- Cron Trigger -->
-    <bean id="SimpleTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">
-        <property name="jobDetail" ref="FirstJobDetail" />
-        <property name="cronExpression" value="* * * * * ?" />
-    </bean>
-
-    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-        <property name="jobDetails">
-           <list>
-              <ref bean="FirstJobDetail" />
-           </list>
-        </property>
-        <property name="triggers">
-           <list>
-              <ref bean="SimpleTrigger" />
-           </list>
-        </property>
-    </bean>
 </beans>

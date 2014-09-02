@@ -1,0 +1,150 @@
+
+# 장애전문 전송 배치 파일
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_04.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_03.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_05.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_81.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_32.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_88.sh > /dev/null 2>&1
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_31.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_11.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_35.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_20.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_39.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_em_WC.sh
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_guard_err_canl.sh > /dev/null 2>&1
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_guard_err.sh > /dev/null 2>&1
+0-59 * * * * /nibs_dev/app/batch/sh/org_send_guard_cust.sh > /dev/null 2>&1
+
+
+#설치관련 전문
+0 10 30 * * *  /nibs_dev/app/batch/sh/org_send_sm_set_fac_03.sh
+0 10 30 * * *  /nibs_dev/app/batch/sh/org_send_sm_set_env_03.sh
+
+
+0 13,15,17,18,19,22 * * * /nibs_dev/app/batch/sh/org_send_notend_0em.sh
+5 2 * * * /nibs_dev/app/batch/sh/org_send_cashier_info_0em.sh
+20 6 * * * /nibs_dev/app/batch/sh/org_send_cash_cycle_0em.sh
+30,40,50 1 * * * /nibs_dev/app/batch/sh/org_send_cm_miss_no_0em.sh
+30 15 * * * /nibs_dev/app/batch/sh/org_send_cm_miss_no_0em.sh
+
+
+15,30 19 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_force_close_23.sh
+0,10,20 19 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_force_close_32.sh
+5 19,20 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_re_close_HD.sh
+
+# 현송 및 운영자금보고 등 시재전문 전송 배치
+40 5 * * * /nibs_dev/app/batch/sh/org_send_cm_03.sh
+30 9 * * * /nibs_dev/app/batch/sh/org_send_cm_27.sh
+5 9 * * * /nibs_dev/app/batch/sh/org_resend_cm_03.sh
+30 8 * * * /nibs_dev/app/batch/sh/org_send_cm_inq_check_05.sh
+50 6 * * * /nibs_dev/app/batch/sh/org_send_cm_04.sh
+25 6 * * * /nibs_dev/app/batch/sh/org_send_cm_05.sh
+3 9 * * * /nibs_dev/app/batch/sh/org_send_cm_81.sh
+0 8-10 * * * /nibs_dev/app/batch/sh/org_send_cm_11.sh
+0 7-10 * * * /nibs_dev/app/batch/sh/org_send_cm_35.sh
+30 8-10 * * * /nibs_dev/app/batch/sh/org_send_cm_20.sh
+8 7-10 * * * /nibs_dev/app/batch/sh/org_send_cm_39.sh
+0 7-10 * * * /nibs_dev/app/batch/sh/org_send_cm_32.sh
+20 8 * * * /nibs_dev/app/batch/sh/org_send_cm_WC.sh
+20 8 * * * /nibs_dev/app/batch/sh/org_send_cm_TR.sh
+0,30 1-2 * * * /nibs_dev/app/batch/sh/org_send_cm_day_close_TR.sh
+0 9 * * * /nibs_dev/app/batch/sh/org_send_cm_oper_funds_van_03.sh
+# 대구은행 ( 오픈시 주석 해제 )
+10 6 * * * /nibs_dev/app/batch/sh/org_send_cm_31.sh
+
+10,40 7-10 * * * /nibs_dev/app/batch/sh/org_send_cm_oper_funds_39.sh
+15 8-9 * * * /nibs_dev/app/batch/sh/org_send_cm_oper_funds_Resp_39.sh
+30 6 * * * /nibs_dev/app/batch/sh/org_send_cm_cash_cycle.sh
+5 10,11,12 * * * /nibs_dev/app/batch/sh/org_send_oper_funds_81.sh
+45 6-10 * * * /nibs_dev/app/batch/sh/org_send_cm_45.sh
+35 6 * * * /nibs_dev/app/batch/sh/org_send_cm_1_88.sh
+0 9 * * * /nibs_dev/app/batch/sh/org_send_cm_2_88.sh
+
+
+# 마감조회 및 강제마감
+10 15,17,19-21 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_04.sh
+20 15,18-19 * * * /nibs_dev/app/batch/sh/org_send_cm_close_03.sh
+0 18,19,21 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_05.sh
+0 18,19 * * * /nibs_dev/app/batch/sh/org_send_cm_close_20.sh
+25 18,19,22 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_23.sh
+0 17 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_27.sh
+0 18,19 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_34.sh
+30 19 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_32.sh
+0 18,19,23 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_39.sh
+0 18,19 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_81.sh
+0 15,19 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_88.sh
+0 22 * * * /nibs_dev/app/batch/sh/org_send_cm_close_DJ.sh
+30 22 * * * /nibs_dev/app/batch/sh/org_send_cm_close_20.sh
+35 16 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_WC.sh
+0 22 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_WC.sh
+# 대구은행 ( 오픈시 주석 해제 )
+0 16 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_cur_amt_31.sh
+0 16 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_31.sh
+
+30 16 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_force_close_39.sh
+
+# 일반 강제마감
+30,45 17 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_force_close_03.sh
+0 16 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_force_close_11.sh
+0 18 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_force_11.sh
+0 19 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_force_close_27.sh
+0 17 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_notice_WC.sh
+30 10 * * * /nibs_dev/app/batch/sh/org_send_cm_mac_close_39.sh
+
+# 미현송기기 강제마감
+#30 16 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_notcash_39.sh
+0 16 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_notcash_sl.sh
+0,30,50 12-13 * * 1-5 /nibs_dev/app/batch/sh/org_send_cm_close_notcash_03.sh
+
+43 3 * * * /nibs_dev/app/batch/sh/org_send_ni_96.sh
+20 16 * * * /nibs_dev/app/batch/sh/org_send_cm_conf_cash.sh
+32 18 * * * /nibs_dev/app/batch/sh/org_send_cm_conf_cash.sh
+30 16 * * * /nibs_dev/app/batch/sh/org_send_cm_conf_cash.sh
+20 10,18-23 * * * /nibs_dev/app/batch/sh/org_send_iq_88.sh
+
+# 이랜드 정산관리시스템 반영
+0,10,20,30,40,50 10-22 * * * /nibs_dev/app/batch/sh/org_send_iq_sap_0EL.sh
+55 23 * * * /nibs_dev/app/batch/sh/org_send_iq_close_coupon_0EL.sh
+
+30 21 * * * /nibs_dev/app/batch/sh/org_send_sm_set_env_20.sh
+0,30 0-23 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt_0HD.sh
+12 6-22 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt.sh
+15,45 6-22 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt_031.sh
+20 9-23 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt_088.sh
+20 9-23 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt_011.sh
+20 5 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt_088.sh
+25,55 6-22 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt_027.sh
+35 6-22 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt_003.sh
+45 6-22 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt_005.sh
+0 7,10,13,16,19,22 * * * /nibs_dev/app/batch/sh/org_send_cm_cur_amt_020.sh
+
+15,50 2 * * * /nibs_dev/app/batch/sh/org_send_nq_nice_rslt_96.sh
+0 12,16 * * * /nibs_dev/app/batch/sh/org_send_cm_funds_info_88.sh
+30 8 * * * /nibs_dev/app/batch/sh/org_send_cm_funds_info_88.sh
+30 18 * * * /nibs_dev/app/batch/sh/org_send_cm_close_conf_88.sh
+50 18 * * * /nibs_dev/app/batch/sh/org_send_cm_close_conf_88.sh
+20 19 * * * /nibs_dev/app/batch/sh/org_send_cm_close_conf_88.sh
+
+
+#기업은행 브랜드제휴 전문전송
+## 페널티 제외사유 제출
+0 10 * * * /nibs_dev/app/batch/sh/org_send_iq_rsp_pen_03.sh
+## 용역료 전송
+0 10 * * * /nibs_dev/app/batch/sh/org_send_cm_month_fee_03.sh
+
+## 용도품신청
+0 10-18 * * * /nibs_dev/app/batch/sh/org_send_iq_apply_good_03.sh
+## 환경점검
+0 6 * * *  /nibs_dev/app/batch/sh/org_send_iq_env_chk_brand_03.sh
+## 코너현황
+0 8 * * * /nibs_dev/app/batch/sh/org_send_sm_site_state_03.sh
+
+## 브랜드제휴 대행수수료 청구내역 제출
+0 9 * * * /nibs_dev/app/batch/sh/org_send_cm_brand_commission_fee_03.sh
+## 브랜드제휴 최종청구용역료 제출
+0 9 * * * /nibs_dev/app/batch/sh/org_send_iq_svc_fee_03.sh
+
+
+#이랜드 결번요청
+10 2 * * * /nibs_dev/app/batch/sh/org_send_cm_miss_no_0el.sh

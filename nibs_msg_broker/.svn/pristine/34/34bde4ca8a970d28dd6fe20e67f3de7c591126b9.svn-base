@@ -1,6 +1,8 @@
-package com.nicetcm.nibsplus.orgsend.service.model;
+package com.nicetcm.nibsplus.orgsend.model;
 
 import org.springframework.context.ApplicationContext;
+
+import com.nicetcm.nibsplus.orgsend.constant.TransferType;
 
 public class OrgSendExternalVO
 {
@@ -8,6 +10,7 @@ public class OrgSendExternalVO
 
     private String queryName;
     private String orgCd;
+    private TransferType transferType;
 
     public OrgSendExternalVO() {
         super();
@@ -22,12 +25,13 @@ public class OrgSendExternalVO
      * @param queryName
      * @param orgCd
      */
-    public OrgSendExternalVO(ApplicationContext applicationContext, String queryName, String orgCd)
+    public OrgSendExternalVO(ApplicationContext applicationContext, String queryName, String orgCd, TransferType transferType)
     {
         super();
         this.applicationContext = applicationContext;
         this.queryName = queryName;
         this.orgCd = orgCd;
+        this.transferType = transferType;
     }
 
     /**
@@ -71,5 +75,21 @@ public class OrgSendExternalVO
     public void setOrgCd(String orgCd)
     {
         this.orgCd = orgCd;
+    }
+
+    /**
+     * @return the transferType
+     */
+    public TransferType getTransferType()
+    {
+        return transferType;
+    }
+
+    /**
+     * @param transferType the transferType to set
+     */
+    public void setTransferType(TransferType transferType)
+    {
+        this.transferType = transferType;
     }
 }

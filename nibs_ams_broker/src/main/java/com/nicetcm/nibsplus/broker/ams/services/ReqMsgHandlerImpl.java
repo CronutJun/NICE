@@ -198,12 +198,20 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                 msg.setSvcCd( AMSBrokerConst.SVC_CD_DWL_GEN );
             }
             /**
-             * 배포파일 다운로드 요청
+             * 배포(특정)파일 다운로드 요청
              */
             else if( reqJob.getTrxCd().equals("8002") && reqJob.getActCd().equals("500") ) {
                 msg.setMsgType( AMSBrokerConst.BIZ_CL_PM );
                 msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
                 msg.setSvcCd( AMSBrokerConst.SVC_CD_DWL_UPD );
+            }
+            /**
+             * 특정파일 업로드 요청
+             */
+            else if( reqJob.getTrxCd().equals("8004") && reqJob.getActCd().equals("500") ) {
+                msg.setMsgType( AMSBrokerConst.BIZ_CL_PM );
+                msg.setMsgCd( AMSBrokerConst.MSG_CD_REQ );
+                msg.setSvcCd( AMSBrokerConst.SVC_CD_UPL_SPC );
             }
 
             OutMsgHandler outMsg = (OutMsgHandler)AMSBrokerSpringMain.sprCtx.getBean(String.format("out%s%s", msg.getMsgCd(), msg.getSvcCd()));

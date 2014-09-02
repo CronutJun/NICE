@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.2.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd"
+>
+    <bean id="orgSend" class="com.nicetcm.nibsplus.orgsend.common.OrgSend">
+
+        <!--
+            Header의 format_type 설정
+            순서를 보장하는 LinkedHashMap으로 관리됨
+
+            AS-IS
+                key  : 전문구분 Code 정의
+                value: Message Type Code 정의
+        -->
+        <property name="orgSendFtype" >
+            <util:map map-class="java.util.LinkedHashMap">
+                <entry key="0100" value="EM" />
+                <entry key="0200" value="SM" />
+                <entry key="0300" value="CM" />
+                <entry key="0400" value="IQ" />
+                <entry key="0500" value="ES" />
+                <entry key="N200" value="NS" />
+                <entry key="N300" value="NC" />
+                <entry key="N400" value="NI" />
+                <entry key="N500" value="NQ" />
+                <entry key="M100" value="MM" />
+                <entry key="N100" value="NT" />
+            </util:map>
+        </property>
+
+        <!--
+            전문의 QueryName과 Code를 관리
+            순서를 보장하는 LinkedHashMap으로 관리됨
+
+            AS-IS
+                *ORGSEND_MTYPE_NM[MAX_TOTAL_MSG_CNT]
+                *ORGSEND_MTYPE_CD[MAX_TOTAL_MSG_CNT]
+        -->
+        <property name="orgSendMtype" >
+            <util:map map-class="java.util.LinkedHashMap">
+
+                <!-- EM -->
+                <entry key="GUARD_ERR"              value="01000130" />     <!-- 14. 경비사출동요청통보-->
+                <entry key="GUARD_ERR_CANL"         value="01000140" />     <!-- 15. 경비사출동요청통보-->
+                <entry key="GUARD_CUST"             value="01000180" />     <!-- 16. 경비사고객대기통보-->
+                <entry key="ACPTERR_RTN"            value="01000210" />     <!-- 10. 업체접수장애통보-->
+                <entry key="NICE_ACPT"              value="01001111" />     <!-- 32. 나이스접수장애통보-->
+                <entry key="ARR_EST"                value="01001150" />     <!-- 01. 도착예정-->
+                <entry key="ARRIVAL"                value="01001160" />     <!-- 02. 도착-->
+                <entry key="ARRIVAL_BRAND"          value="01001160" />     <!-- 48. 브랜드기기도착통보-->
+                <entry key="FIN_RSLT"               value="01001170" />     <!-- 03. 조치결과-->
+                <entry key="AFTER_MNG"              value="01001320" />     <!-- 35. 후처리조치예정_완료-->
+
+                <!-- SM -->
+                <entry key="SET_RSLT"               value="02001150" />     <!-- 53. 처리결과-->
+                <entry key="SET_FAC"                value="02001230" />     <!-- 40. 우리은행시설물관리-->
+                <entry key="SET_ENV"                value="02001240" />     <!-- 39. 우리은행환경관리-->
+                <entry key="SITE_STATE"             value="02001340" />     <!-- 49. 코너(기기)현황-->
+
+                <!-- CM -->
+                <entry key="DAY_CLOSE"              value="03000320" />     <!-- 59. 일마감-->
+                <entry key="CUR_AMT"                value="03001110" />     <!-- 27. 현재시재조회-->
+                <entry key="INQ_CHECK"              value="03001112" />     <!-- 29. 수표명세데이터요청-->
+                <entry key="CLOSE"                  value="03001130" />     <!-- 11. 마감조회-->
+                <entry key="FORCE_CLOSE"            value="03001130" />     <!-- 12. 강제마감요청(마감조회와동일)-->
+                <entry key="MAC_CLOSE"              value="03001130" />     <!-- 23. 기기철수요청(마감조회와동일)-->
+                <entry key="CLOSE_CONF"             value="03001130" />     <!-- 42. 계리마감조회-->
+                <entry key="CLOSE_NOTCASH"          value="03001130" />     <!-- 45. 미현송기기마감-->
+                <entry key="INMAC_AMT"              value="03001133" />     <!-- 28. 현금인도(장전)통보-->
+                <entry key="CLOSE_NOTICE"           value="03001134" />     <!-- 47. 마감내역통보-->
+                <entry key="COLLECT"                value="03001140" />     <!-- 07. 회수자금-->
+                <entry key="NOT_MNG"                value="03001150" />     <!-- 08. 미처리-->
+                <entry key="ADD_CASH"               value="03001160" />     <!-- 06. 추가현송-->
+                <entry key="ADD_REAL"               value="03001160" />     <!-- 44. 실시간추가현송(농협)-->
+                <entry key="CASH_PLAN"              value="03001170" />     <!-- 05. 현송계획-->
+                <entry key="OPER_FUNDS"             value="03001190" />     <!-- 09. 운영자금청구서통보-->
+                <entry key="FUNDS_INFO"             value="03001192" />     <!-- 41. 운영자금청구정보-->
+                <entry key="OPER_FUNDS_VAN"         value="03001193" />     <!-- 50. CD-VAN운영자금청구-->
+                <entry key="OPER_FUNDS_VAN_DETAIL"  value="03001194" />     <!-- 55. CD_VAN운영자금상세-->
+                <entry key="NOTEND_EMART"           value="03001206" />     <!-- 34. 이마트미마감내역통보-->
+                <entry key="NOTEND_EMART_FRGN"      value="03001207" />     <!-- 64. 미마감내역(외화-->
+                <entry key="COLLECT_EMART_FRGN"     value="03001208" />     <!-- 65. 회수금내역(외화)-->
+                <entry key="CASH_CYCLE"             value="03001210" />     <!-- 04. 현송주기-->
+                <entry key="JUM_CLOSE"              value="03001220" />     <!-- 26. 지점일괄마감시재요청-->
+                <entry key="FUND_MON"               value="03001290" />     <!-- 13. 월자금관리통보-->
+                <entry key="MONTH_USE_STATUS"       value="03001400" />     <!-- 51. 월이용현황-->
+                <entry key="DAY_USE_STATUS"         value="03001401" />     <!-- 60. 일일이용현황-->
+                <entry key="BRAND_SVC_FEE"          value="03001403" />     <!-- 62. 확정청구용역료제출-->
+                <entry key="BRAND_COM_FEE"          value="03001404" />     <!-- 63. 수수료내역제출-->
+
+                <!-- IQ -->
+                <entry key="RSP_PEN"                value="04000220" />     <!-- 22. 페널티명세통보-->
+                <entry key="RSP_PEN_BRAND"          value="04000220" />     <!-- 56. 페널티명세통보(브랜드)-->
+                <entry key="MONTH_FEE"              value="04001130" />     <!-- 30. 용역료관리-->
+                <entry key="MAC_CHK"                value="04001140" />     <!-- 21. 기기점검결과통보-->
+                <entry key="CASHIER_EMART"          value="04001210" />     <!-- 33. 이마트캐셔정보요청-->
+                <entry key="SITE_CHK"               value="04001240" />     <!-- 17. 코너일일점검결과통보-->
+                <entry key="SITE_URL"               value="04001250" />     <!-- 18. 코너일일점검사진정보-->
+                <entry key="ENV_CHK"                value="04001260" />     <!-- 19. 코너환경점검결과통보-->
+                <entry key="ENV_CHK_BRAND"          value="04001261" />     <!-- 52. 환경점검-->
+                <entry key="ENV_URL"                value="04001270" />     <!-- 20. 코너환경점검사진정보-->
+                <entry key="SAP_MASTER"             value="04001300" />     <!-- 37. 이랜드SAPMASTER-->
+                <entry key="SAP_DETAIL"             value="04001301" />     <!-- 38. 이랜드SAPDETAIL-->
+                <entry key="CLOSE_COUPON"           value="04001310" />     <!-- 46. 이랜드상품권마감자료-->
+                <entry key="APPLY_GOOD"             value="04001400" />     <!-- 54. 용도(소모)품신청-->
+                <entry key="MISS_NO"                value="04002110" />     <!-- 36. 결번요청-->
+                <entry key="POLL"                   value="04002200" />     <!-- 61. POLL-->
+
+                <!-- ES -->
+                <entry key="ES_BRAND_ERR"           value="05001130" />     <!-- 57. 브랜드제휴상태전문(장애)-->
+                <entry key="ES_BRAND_FIN"           value="05001130" />     <!-- 58. 브랜드제휴상태전문(복구)-->
+
+                <!-- NI -->
+                <entry key="SVC_CLOSE"              value="N4001600" />     <!-- 24. 나이스서비스철수-->
+                <entry key="MST_CLOSE"              value="N4001500" />     <!-- 25. 나이스마스터철수-->
+                <entry key="MST_INFO"               value="N4001500" />     <!-- 43. 나이스마스터정보등록(삼성생명)-->
+
+                <!-- NQ -->
+                <entry key="NICE_RSLT"              value="N5001400" />     <!-- 31. 처리결과조회(나이스트란)-->
+
+            </util:map>
+        </property>
+
+        <property name="orgSendMtypeBrand" >
+            <util:list list-class="java.util.LinkedList">
+                <value>ARRIVAL_BRAND</value>
+                <value>SITE_STATE</value>
+                <value>OPER_FUNDS_VAN</value>
+                <value>MONTH_USE_STATUS</value>
+                <value>ENV_CHK_BRAND</value>
+                <value>OPER_FUNDS_VAN_DETAIL</value>
+                <value>RSP_PEN_BRAND</value>
+                <value>ES_BRAND_ERR</value>
+                <value>ES_BRAND_FIN</value>
+                <value>DAY_USE_STATUS</value>
+                <value>BRAND_SVC_FEE</value>
+                <value>BRAND_COM_FEE</value>
+            </util:list>
+        </property>
+    </bean>
+</beans>

@@ -12,6 +12,7 @@ package com.nicetcm.nibsplus.broker.ams.services;
  */
 
 import static com.nicetcm.nibsplus.broker.ams.AMSBrokerLib.ROOT_FILE_PATH;
+import static com.nicetcm.nibsplus.broker.ams.AMSBrokerConst.*;
 
 import java.io.File;
 
@@ -59,7 +60,32 @@ public class FileSaverImpl implements FileSaver {
              * 특정파일 업로드
              */
             if( parsed.getString("CM._AOCServiceCode").equals("5003") ) {
+                TRmFile file = new TRmFile();
 
+                file.setCreateDate( safeData.getMsgDate() );
+                file.setFileSeq   ( fileMap.generateKey() );
+                file.setInsertDate( safeData.getSysDate() );
+                file.setInsertUid ( parsed.getString("CM._SSTNo").substring(2) );
+                file.setUpdateDate( safeData.getSysDate() );
+                file.setUpdateUid ( file.getInsertUid() );
+                file.setMacNo     ( file.getInsertUid() );
+                file.setComprssYn ( parsed.getString("_AOCUpFileCompress").equals("1") ? "Y" : "N" );
+                file.setFileCl    ( parsed.getString("_AOCUpFileType")  );
+                file.setOrgFileNm ( parsed.getString("_AOCUpFileName") );
+                file.setFilePath  ( String.format("%s%s/%s/%s/", SPECIFIC_FILE_PATH, file.getCreateDate(), file.getInsertUid(), file.getOrgFileNm()) );
+                file.setFileNm    ( String.format("%s.%s", file.getOrgFileNm(), file.getFileSeq()) );
+                if( file.getOrgFileNm().indexOf(".") >= 0 )
+                    file.setFileExt( file.getOrgFileNm().substring(file.getOrgFileNm().indexOf(".")) );
+
+                comPack.insUpdFile( safeData, file, "800" );
+                File d = new File( ROOT_FILE_PATH + file.getFilePath() );
+                FileUtils.forceMkdir(d);
+
+                fileName = ROOT_FILE_PATH + file.getFilePath() + file.getFileNm();
+                File srcFile  = new File( fileLoc );
+                File destFile = new File( fileName );
+
+                FileUtils.copyFile( srcFile, destFile );
             }
             /**
              * 일반파일 업로드
@@ -77,7 +103,7 @@ public class FileSaverImpl implements FileSaver {
                 file.setComprssYn ( "N" );
                 file.setFileCl    ( "0" );
                 file.setOrgFileNm ( parsed.getString("_AOCUpFileName") );
-                file.setFilePath  ( String.format("macs/general/%s/%s/%s/", file.getCreateDate(), file.getInsertUid(), file.getOrgFileNm()) );
+                file.setFilePath  ( String.format("%s%s/%s/%s/", GENERAL_FILE_PATH, file.getCreateDate(), file.getInsertUid(), file.getOrgFileNm()) );
                 file.setFileNm    ( String.format("%s.%s", file.getOrgFileNm(), file.getFileSeq()) );
                 if( file.getOrgFileNm().indexOf(".") >= 0 )
                     file.setFileExt( file.getOrgFileNm().substring(file.getOrgFileNm().indexOf(".")) );
@@ -86,8 +112,9 @@ public class FileSaverImpl implements FileSaver {
                 File d = new File( ROOT_FILE_PATH + file.getFilePath() );
                 FileUtils.forceMkdir(d);
 
+                fileName = ROOT_FILE_PATH + file.getFilePath() + file.getFileNm();
                 File srcFile  = new File( fileLoc );
-                File destFile = new File( ROOT_FILE_PATH + file.getFilePath() + file.getFileNm() );
+                File destFile = new File( fileName );
 
                 FileUtils.copyFile( srcFile, destFile );
             }

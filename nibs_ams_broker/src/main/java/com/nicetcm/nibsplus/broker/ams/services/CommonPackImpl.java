@@ -12,10 +12,14 @@ package com.nicetcm.nibsplus.broker.ams.services;
  * @since   2014.08.18
  */
 
+import java.io.File;
+import java.util.Scanner;
+
 import org.apache.commons.beanutils.BeanUtils;
 
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerLib;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
 import com.nicetcm.nibsplus.broker.ams.mapper.TCmMacMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TCmSiteMapper;
@@ -25,6 +29,7 @@ import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvHisMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmFileMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TRmFileHisMapper;
+import com.nicetcm.nibsplus.broker.ams.mapper.TJmTrxMapper;
 import com.nicetcm.nibsplus.broker.ams.model.TCmMacKey;
 import com.nicetcm.nibsplus.broker.ams.model.TCmMac;
 import com.nicetcm.nibsplus.broker.ams.model.TCmSiteKey;
@@ -36,6 +41,7 @@ import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnv;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnvHis;
+import com.nicetcm.nibsplus.broker.ams.model.TJmTrx;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 
 import org.slf4j.Logger;
@@ -59,7 +65,20 @@ public class CommonPackImpl implements CommonPack {
     @Autowired private TRmMacEnvHisMapper             macEnvHisMap;
     @Autowired private TRmFileMapper                  fileMap;
     @Autowired private TRmFileHisMapper               fileHisMap;
+    @Autowired private TJmTrxMapper                   jmTrxMap;
 
+    /**
+     *
+     *  In/Outbound 전문의 수,발신과 응답내역을 DB에 저장
+     *
+     * @param safeData  Thread Safe 데이터
+     * @param macNo     기기번호
+     * @param TRmTrx    NIBS 거래내역 모델 클래스
+     * @param TRmMsg    전문 모델 클래스
+     * @param TRmMsgHis 전문이력 모델 클래스
+     * @throws Exception
+     *
+     */
     @Override
     public void insUpdMsg(AMSBrokerData safeData, String macNo, TRmTrx trx, TRmMsg msg, TRmMsgHis msgHis) throws Exception {
 
@@ -360,15 +379,15 @@ public class CommonPackImpl implements CommonPack {
     }
 
     /**
-    *
-    *  File의 업로드/다운로드 내역을 처리한다.
-    *
-    * @param safeData  Thread Safe 데이터
-    * @param TRmFile   T_RM_FILE테이블의 모델
-    * @param acdCd     업/다운로드 코드
-    * @throws Exception
-    *
-    */
+     *
+     *  File의 업로드/다운로드 내역을 처리한다.
+     *
+     * @param safeData  Thread Safe 데이터
+     * @param TRmFile   T_RM_FILE테이블의 모델
+     * @param acdCd     업/다운로드 코드
+     * @throws Exception
+     *
+     */
     @Override
     public void insUpdFile(AMSBrokerData safeData, TRmFile file, String actCd) throws Exception {
 
@@ -407,4 +426,148 @@ public class CommonPackImpl implements CommonPack {
         }
     }
 
+    /**
+     *
+     *  특정파일의 CSV를 파싱하여 DB에 저장
+     *
+     * @param safeData  Thread Safe 데이터
+     * @param parsed    전문파싱내역
+     * @param csv       CSV파일
+     * @throws Exception
+     *
+     */
+    @Override
+    public void parseCSV(AMSBrokerData safeData, MsgParser parsed, File csv) throws Exception {
+
+        try {
+            Scanner scan = new Scanner(csv);
+            try {
+                scan.useDelimiter(",");
+
+                logger.debug("Begin parsing");
+                String macTrxDate = null, macTrxTime = null, macTrxCl = null, macNo = null, num = null, str = null;
+                TJmTrx jmTrx = new TJmTrx();
+
+                while( scan.hasNext() ) {
+                    macTrxDate = scan.next();
+                    try {
+                        AMSBrokerLib.toDate(macTrxDate, "yyyyMMdd");
+                    }
+                    catch( Exception e ) {
+                        scan.nextLine();
+                        continue;
+                    }
+                    macTrxTime = scan.next();
+                    try {
+                        AMSBrokerLib.toDate(macTrxTime, "HHmmss");
+                    }
+                    catch( Exception e ) {
+                        scan.nextLine();
+                        continue;
+                    }
+                    macTrxCl = scan.next();
+                    macNo = scan.next();
+                    if( macNo == null || macNo.length() == 0 ) {
+                        scan.nextLine();
+                        continue;
+                    }
+
+                    jmTrx.setMacTrxDate  ( macTrxDate );
+                    jmTrx.setMacTrxTime  ( macTrxTime );
+                    jmTrx.setTrxCl       ( macTrxCl   );
+                    jmTrx.setMacNo       ( macNo.substring(2) );
+                    jmTrx.setOrgCd       ( AMSBrokerConst.NICE_ORG_CD );
+                    jmTrx.setBranchCd    ( AMSBrokerConst.NICE_BR_CD  );
+                    jmTrx.setTrxOrgCd    ( scan.next() );
+                    jmTrx.setTrxSeqNo    ( scan.next() );
+                    jmTrx.setTrxMdCd     ( scan.next() );
+                    jmTrx.setTrxAcctNo   ( scan.next() );
+                    jmTrx.setTrsfAcctNo  ( scan.next() );
+                    num = scan.next();
+                    jmTrx.setTrxAmt      ( Long.parseLong((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxFee      ( Integer.parseInt((num == null || num.length() == 0) ? "0" : num) );
+                    jmTrx.setHostSeqNo   ( scan.next() );
+                    jmTrx.setHostRespCd  ( scan.next() );
+                    num = scan.next();
+                    jmTrx.setProcCnt     ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote1Cnt ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote2Cnt ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote3Cnt ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote4Cnt ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote5Cnt ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote6Cnt ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote7Cnt ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote8Cnt ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote9Cnt ( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setTrxNote10Cnt( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
+                    jmTrx.setTrxRslt     ( scan.next() );
+                    num = scan.next();
+                    jmTrx.setErrCd       ( scan.next() );
+                    str = scan.next();
+                    jmTrx.setMdTknYn     ( (str != null && scan.equals("1")) ? "Y" : "N" );
+                    str = scan.next();
+                    jmTrx.setItmTknYn    ( (str != null && scan.equals("1")) ? "Y" : "N" );
+                    jmTrx.setTrxImg1Nm   ( scan.next() );
+                    jmTrx.setTrxImg2Nm   ( scan.next() );
+                    jmTrx.setTrxImg3Nm   ( scan.next() );
+                    jmTrx.setTrxImg4Nm   ( scan.next() );
+                    jmTrx.setTrxImg5Nm   ( scan.next() );
+                    jmTrx.setTrxImg6Nm   ( scan.next() );
+                    jmTrx.setTrxImg7Nm   ( scan.next() );
+                    jmTrx.setTrxImg8Nm   ( scan.next() );
+                    jmTrx.setTrxImg9Nm   ( scan.next() );
+                    jmTrx.setTrxImg10Nm  ( scan.next() );
+                    jmTrx.setEtc1        ( scan.next() );
+                    jmTrx.setEtc2        ( scan.next() );
+                    jmTrx.setEtc3        ( scan.next() );
+                    jmTrx.setEtc4        ( scan.next() );
+                    jmTrx.setEtc5        ( scan.nextLine() );
+                    logger.debug("Data = {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
+                            macTrxDate, macTrxTime, macTrxCl, macNo,
+                            jmTrx.getOrgCd(), jmTrx.getBranchCd(), jmTrx.getTrxOrgCd(), jmTrx.getTrxSeqNo(), jmTrx.getTrxMdCd(),
+                            jmTrx.getTrxAcctNo(), jmTrx.getTrsfAcctNo(), jmTrx.getTrxAmt(), jmTrx.getTrxFee(),
+                            jmTrx.getHostSeqNo(), jmTrx.getHostRespCd(), jmTrx.getProcCnt(),
+                            jmTrx.getTrxNote1Cnt(), jmTrx.getTrxNote2Cnt(), jmTrx.getTrxNote3Cnt(), jmTrx.getTrxNote4Cnt(), jmTrx.getTrxNote5Cnt(),
+                            jmTrx.getTrxNote6Cnt(), jmTrx.getTrxNote7Cnt(), jmTrx.getTrxNote8Cnt(), jmTrx.getTrxNote9Cnt(), jmTrx.getTrxNote10Cnt(),
+                            jmTrx.getTrxRslt(), jmTrx.getErrCd(), jmTrx.getMdTknYn(), jmTrx.getItmTknYn(),
+                            jmTrx.getTrxImg1Nm(), jmTrx.getTrxImg2Nm(), jmTrx.getTrxImg3Nm(), jmTrx.getTrxImg4Nm(), jmTrx.getTrxImg5Nm(),
+                            jmTrx.getTrxImg6Nm(), jmTrx.getTrxImg7Nm(), jmTrx.getTrxImg8Nm(), jmTrx.getTrxImg9Nm(), jmTrx.getTrxImg10Nm(),
+                            jmTrx.getEtc1(), jmTrx.getEtc2(), jmTrx.getEtc3(), jmTrx.getEtc4(), jmTrx.getEtc5() );
+                    try {
+                        if( jmTrxMap.updateByPrimaryKeySelective( jmTrx ) == 0 ) {
+                            try {
+                                jmTrxMap.insert( jmTrx );
+                            }
+                            catch( Exception e ) {
+                                logger.debug("T_JM_TRX INSERT ERROR [{}]", e.getLocalizedMessage());
+                                throw e;
+                            }
+                        }
+                    }
+                    catch( Exception e ) {
+                        logger.debug("T_JM_TRX UPDATE ERROR [{}]", e.getLocalizedMessage());
+                        throw e;
+                    }
+                }
+            }
+            finally {
+                scan.close();
+            }
+        }
+        catch ( Exception e ) {
+            logger.debug("parseCSV has error : {}", e.getMessage() );
+            throw e;
+        }
+    }
 }

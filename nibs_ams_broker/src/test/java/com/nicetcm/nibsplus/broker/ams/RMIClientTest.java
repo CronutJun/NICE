@@ -278,6 +278,19 @@ public class RMIClientTest {
         remoteObj.reqCallNoticeToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7001", "500", "test", "0202", "030101", "01074564016", "233321", 5 );
     }
 
+    public void reqSFileUpToMac() throws Exception {
+        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
+        System.out.println("registry");
+        AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
+        System.out.println("lookup");
+
+        TRmTrxMapper trxMap = session.getMapper(TRmTrxMapper.class);
+
+        String key = trxMap.generateKey();
+
+        remoteObj.reqSFileUpToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8004", "500", "test", "0202", "20140901", "1" );
+    }
+
     public void reqSFileDownToMac() throws Exception {
         Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
         System.out.println("registry");
@@ -301,7 +314,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqGFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8003", "500", "test", "0202", "C:\\", "test.zip" );
+        remoteObj.reqGFileUpToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8003", "500", "test", "0202", "C:\\", "test.zip" );
     }
 
     public void reqGFileDownToMac() throws Exception {
@@ -333,8 +346,9 @@ public class RMIClientTest {
             //new RMIClientTest().reqDevCollectToMac();
             //new RMIClientTest().reqDevReturnToMac();
             //new RMIClientTest().reqCallNoticeToMac();
+            new RMIClientTest().reqSFileUpToMac();
             //new RMIClientTest().reqSFileDownToMac();
-            new RMIClientTest().reqGFileUpToMac();
+            //new RMIClientTest().reqGFileUpToMac();
             //new RMIClientTest().reqGFileDownToMac();
         }
         catch( java.rmi.RemoteException e ) {

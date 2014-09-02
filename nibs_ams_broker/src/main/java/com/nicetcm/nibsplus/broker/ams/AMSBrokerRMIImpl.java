@@ -887,6 +887,74 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
     }
 
     /**
+     * reqSFileUpToMac
+     *
+     * 단독기기 대상 특정파일 업로드 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기
+     * @param fileType  파일타입
+     * @throws Exception
+     */
+    public void reqSFileUpToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String fileDate, String fileType ) throws Exception {
+        try {
+            AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
+            reqJob.setTrxDate( trxDate );
+            reqJob.setTrxNo( trxNo );
+            reqJob.setTrxCd( trxCd );
+            reqJob.setActCd( actCd );
+            reqJob.setTrxUid( trxUid );
+            reqJob.setFileDate( fileDate );
+            reqJob.setFileType( fileType );
+            reqJob.setTimeOut( 120 );
+            reqJob.requestJob();
+        }
+        catch( Exception e ) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
+     * reqSFileUpToMacs
+     *
+     * 복수기기 대상 특정파일 업로드 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기기집합
+     * @param fileType  파일타입
+     * @throws Exception
+     */
+    public void reqSFileUpToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String fileDate, String fileType ) throws Exception {
+        try {
+            for( String macNo: macs ) {
+                AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
+                reqJob.setTrxDate( trxDate );
+                reqJob.setTrxNo( trxNo );
+                reqJob.setTrxCd( trxCd );
+                reqJob.setActCd( actCd );
+                reqJob.setTrxUid( trxUid );
+                reqJob.setFileDate( fileDate );
+                reqJob.setFileType( fileType );
+                reqJob.setTimeOut( 60 );
+                reqJob.requestJob();
+            }
+        }
+        catch( Exception e ) {
+            logger.debug(e.getMessage());
+            throw e;
+        }
+    }
+
+    /**
      * reqSFileDownToMac
      *
      * 단독기기 대상 특정파일 다운로드 요청
@@ -993,7 +1061,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
     /**
      * reqGFileUpToMacs
      *
-     * 복수기기 대상 일반파일 다운로드 요청
+     * 복수기기 대상 일반파일 업로드 요청
      *
      * @param trxDate   거래일
      * @param trxNo     거래번호
