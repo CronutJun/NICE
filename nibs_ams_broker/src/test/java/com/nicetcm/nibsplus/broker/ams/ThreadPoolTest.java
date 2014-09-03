@@ -27,7 +27,7 @@ public class ThreadPoolTest {
 
             logger.debug("i = {}", i);
             try {
-                AMSBrokerSchedWorkGroup.getInstance().execute(new AMSBrokerSchedWorker(Integer.toString(i)));
+//                AMSBrokerSchedWorkGroup.getInstance().execute(new AMSBrokerSchedWorker(Integer.toString(i)));
             }
             catch( Exception e ) {
                 logger.debug("error occured = {}", e.getMessage());

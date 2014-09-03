@@ -56,6 +56,29 @@ public class AMSBrokerLib {
     }
 
     /**
+     * 현재 날짜를 기준으로 amount만큼 가감한 날짜를 구한다
+     * @param int  amount
+     * @return String  가감한 날짜
+     */
+    public static String getMsgDate(int amount) {
+        Date calcDay = DateUtils.addDays(new Date(), amount);
+
+        FastDateFormat fdt = FastDateFormat.getInstance("yyyyMMdd", Locale.getDefault());
+        return fdt.format(calcDay);
+    }
+
+    /**
+     * 해당 날짜를 기준으로 amount만큼 가감한 날짜를 구한다
+     * @param date
+     * @param amount
+     * @return
+     */
+    public static String getMsgDate(Date date, int amount) {
+        FastDateFormat fdt = FastDateFormat.getInstance("yyyyMMdd", Locale.getDefault());
+        return fdt.format(DateUtils.addDays(date, amount));
+    }
+
+    /**
      * 시간을 HHmmss format의 string으로 변환한다.
      *
      * @param dt    시간

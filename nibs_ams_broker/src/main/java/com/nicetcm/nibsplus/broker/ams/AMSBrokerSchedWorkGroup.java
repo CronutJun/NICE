@@ -38,6 +38,8 @@ public class AMSBrokerSchedWorkGroup {
         }
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(AMSBrokerSchedWorkGroup.class);
+
     private static final ExecutorService svc = new ThreadPoolExecutor(0,
                                                       Integer.parseInt(MsgCommon.msgProps.getProperty("schedule.max.concurrent.thread",
                                                                                                       AMSBrokerConst.MAX_CONCURRENT_THREAD)),
@@ -46,8 +48,6 @@ public class AMSBrokerSchedWorkGroup {
                                                       new BlockingQueuePut());
 
     private static AMSBrokerSchedWorkGroup schedGrp = null;
-
-    private static final Logger logger = LoggerFactory.getLogger(AMSBrokerSchedWorkGroup.class);
 
     private AMSBrokerSchedWorkGroup() {
 

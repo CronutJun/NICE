@@ -51,16 +51,27 @@ public class In12005003Impl extends InMsgHandlerImpl {
             try {
                 AMSBrokerLib.unZip(fileLoc, extractDir);
                 File[] paths = new File(extractDir).listFiles();
-                File dir  = new File(String.format("%simages",journalPath));
+                File dirImg  = new File(String.format("%simages",journalPath));
+                File dirJnl  = new File(String.format("%s",      journalPath));
                 for( File path: paths ) {
                     logger.debug("Extracted file: {}", path.getName());
                     /**
                      * JPG파일은 저널폴더로 이동
                      */
                     if( path.isFile() && path.getName().matches("(?i).*\\.jpg") ) {
-                        File exist = new File(String.format("%s/%s", dir, path.getName()));
-                        FileUtils.forceDelete(exist);
-                        FileUtils.moveFileToDirectory(path, dir, true);
+                        File exist = new File(String.format("%s/%s", dirImg, path.getName()));
+                        if( exist.exists())
+                            FileUtils.forceDelete(exist);
+                        FileUtils.moveFileToDirectory(path, dirImg, true);
+                    }
+                    /**
+                     * 저널파일은 저널폴더로 이동
+                     */
+                    if( path.isFile() && path.getName().matches("(?i).*\\.jnl") ) {
+                        File exist = new File(String.format("%s/%s", dirJnl, path.getName()));
+                        if( exist.exists())
+                            FileUtils.forceDelete(exist);
+                        FileUtils.moveFileToDirectory(path, dirJnl, true);
                     }
                     /**
                      * CSV파일은 파싱하여 DB저장

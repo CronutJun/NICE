@@ -18,6 +18,9 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
+import com.nicetcm.nibsplus.broker.ams.services.SchedWorker;
+
 public class AMSBrokerSchedJob implements Job {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerSchedJob.class);
@@ -28,17 +31,35 @@ public class AMSBrokerSchedJob implements Job {
                                                                      arg0.getJobDetail().getKey().getName(),
                                                                      arg0.getTrigger().getKey().getGroup(),
                                                                      arg0.getTrigger().getKey().getName() );
-        /**
-         * 배포 스케쥴
-         */
-        if( arg0.getJobDetail().getKey().getName().equals("UPDATES") ) {
 
+        AMSBrokerData amsSafeData = new AMSBrokerData();
+
+        SchedWorker schedWkr = (SchedWorker)AMSBrokerSpringMain.sprCtx.getBean("schedWorker");
+
+        try {
+            /**
+             * 배포 스케쥴
+             */
+            if( arg0.getJobDetail().getKey().getName().equals("UPDATES") ) {
+                schedWkr.doWork( amsSafeData,
+                                 arg0.getJobDetail().getKey().getName(),
+                                 arg0.getTrigger().getKey().getGroup(),
+                                 arg0.getTrigger().getKey().getName()
+                               );
+            }
+            /**
+             * 저널업로드 스케쥴
+             */
+            else if(  arg0.getJobDetail().getKey().getName().equals("JOURNAL") ) {
+                schedWkr.doWork( amsSafeData,
+                        arg0.getJobDetail().getKey().getName(),
+                        arg0.getTrigger().getKey().getGroup(),
+                        arg0.getTrigger().getKey().getName()
+                      );
+            }
         }
-        /**
-         * 저널업로드 스케쥴
-         */
-        else if(  arg0.getJobDetail().getKey().getName().equals("JOURNAL") ) {
-
+        catch( Exception e ) {
+            throw new JobExecutionException(e.getCause());
         }
     }
 

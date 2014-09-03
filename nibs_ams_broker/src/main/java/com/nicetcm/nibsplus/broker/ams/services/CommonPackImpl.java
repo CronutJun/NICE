@@ -292,7 +292,7 @@ public class CommonPackImpl implements CommonPack {
                     macEnv.setMacHdd( parsed.getString(String.format("FD[%d].FieldData", i)) );
                 }
             }
-            macEnv.setSts       ( null                              );
+            macEnv.setSts       ( "0"                              );
                    }
         else {
             if( parsed.getString( "CM._AOCServiceCode").equals("1001") ) {
@@ -478,6 +478,8 @@ public class CommonPackImpl implements CommonPack {
                     jmTrx.setMacNo       ( macNo.substring(2) );
                     jmTrx.setOrgCd       ( AMSBrokerConst.NICE_ORG_CD );
                     jmTrx.setBranchCd    ( AMSBrokerConst.NICE_BR_CD  );
+                    jmTrx.setInsertDate  ( safeData.getSysDate() );
+                    jmTrx.setInsertUid   ( "BROKER"    );
                     jmTrx.setTrxOrgCd    ( scan.next() );
                     jmTrx.setTrxSeqNo    ( scan.next() );
                     jmTrx.setTrxMdCd     ( scan.next() );
@@ -487,6 +489,8 @@ public class CommonPackImpl implements CommonPack {
                     jmTrx.setTrxAmt      ( Long.parseLong((num == null || num.length() == 0) ? "0" : num) );
                     num = scan.next();
                     jmTrx.setTrxFee      ( Integer.parseInt((num == null || num.length() == 0) ? "0" : num) );
+                    num = scan.next();
+                    jmTrx.setBalAmt      ( Long.parseLong((num == null || num.length() == 0) ? "0" : num) );
                     jmTrx.setHostSeqNo   ( scan.next() );
                     jmTrx.setHostRespCd  ( scan.next() );
                     num = scan.next();
@@ -512,12 +516,11 @@ public class CommonPackImpl implements CommonPack {
                     num = scan.next();
                     jmTrx.setTrxNote10Cnt( Short.parseShort((num == null || num.length() == 0) ? "0" : num) );
                     jmTrx.setTrxRslt     ( scan.next() );
-                    num = scan.next();
                     jmTrx.setErrCd       ( scan.next() );
                     str = scan.next();
-                    jmTrx.setMdTknYn     ( (str != null && scan.equals("1")) ? "Y" : "N" );
+                    jmTrx.setMdTknYn     ( (str != null && str.equals("1")) ? "Y" : "N" );
                     str = scan.next();
-                    jmTrx.setItmTknYn    ( (str != null && scan.equals("1")) ? "Y" : "N" );
+                    jmTrx.setItmTknYn    ( (str != null && str.equals("1")) ? "Y" : "N" );
                     jmTrx.setTrxImg1Nm   ( scan.next() );
                     jmTrx.setTrxImg2Nm   ( scan.next() );
                     jmTrx.setTrxImg3Nm   ( scan.next() );
@@ -532,7 +535,7 @@ public class CommonPackImpl implements CommonPack {
                     jmTrx.setEtc2        ( scan.next() );
                     jmTrx.setEtc3        ( scan.next() );
                     jmTrx.setEtc4        ( scan.next() );
-                    jmTrx.setEtc5        ( scan.nextLine() );
+                    jmTrx.setEtc5        ( scan.nextLine().replaceAll(",", "") );
                     logger.debug("Data = {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
                             macTrxDate, macTrxTime, macTrxCl, macNo,
                             jmTrx.getOrgCd(), jmTrx.getBranchCd(), jmTrx.getTrxOrgCd(), jmTrx.getTrxSeqNo(), jmTrx.getTrxMdCd(),

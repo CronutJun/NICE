@@ -48,6 +48,8 @@ public class AMSBrokerReqJob {
     private String empId;
     private String empPhone;
     private String arrivalTime;
+    private String fileCreateDate;
+    private String fileSeq;
     private String fileDate;
     private String fileType;
     private String filePath;
@@ -226,6 +228,22 @@ public class AMSBrokerReqJob {
 
     public void setArrivalTime(String arrivalTime) {
         this.arrivalTime = arrivalTime;
+    }
+
+    public String getFileCreateDate() {
+        return fileCreateDate;
+    }
+
+    public void setFileCreateDate(String fileCreateDate) {
+        this.fileCreateDate = fileCreateDate;
+    }
+
+    public String getFileSeq() {
+        return fileSeq;
+    }
+
+    public void setFileSeq(String fileSeq) {
+        this.fileSeq = fileSeq;
     }
 
     public String getFileDate() {

@@ -151,10 +151,10 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, true);
             reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
+            reqJob.setTrxNo  ( trxNo );
+            reqJob.setTrxCd  ( trxCd );
+            reqJob.setActCd  ( actCd );
+            reqJob.setTrxUid ( trxUid );
             reqJob.setTimeOut( timeOut );
             reqJob.requestJob();
             waitBlocking( reqJob );
@@ -183,10 +183,10 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
                 reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
+                reqJob.setTrxNo  ( trxNo );
+                reqJob.setTrxCd  ( trxCd );
+                reqJob.setActCd  ( actCd );
+                reqJob.setTrxUid ( trxUid );
                 reqJob.setTimeOut( 0 );
                 reqJob.requestJob();
             }
@@ -214,13 +214,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
     public void reqRegInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo, int timeOut ) throws Exception {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqRegInfo.getMacNo(), true);
-            reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
+            reqJob.setTrxDate   ( trxDate );
+            reqJob.setTrxNo     ( trxNo );
+            reqJob.setTrxCd     ( trxCd );
+            reqJob.setActCd     ( actCd );
+            reqJob.setTrxUid    ( trxUid );
             reqJob.setReqRegInfo( reqRegInfo );
-            reqJob.setTimeOut( timeOut );
+            reqJob.setTimeOut   ( timeOut );
             reqJob.requestJob();
             waitBlocking( reqJob );
         }
@@ -247,13 +247,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             for( RMIReqRegInfo reqRegInfo: reqRegInfos ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqRegInfo.getMacNo(), false);
-                reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
+                reqJob.setTrxDate   ( trxDate );
+                reqJob.setTrxNo     ( trxNo );
+                reqJob.setTrxCd     ( trxCd );
+                reqJob.setActCd     ( actCd );
+                reqJob.setTrxUid    ( trxUid );
                 reqJob.setReqRegInfo( reqRegInfo );
-                reqJob.setTimeOut( 0 );
+                reqJob.setTimeOut   ( 0 );
                 reqJob.requestJob();
             }
         }
@@ -280,13 +280,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
     public void reqIniInfToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqIniInfo reqIniInfo, int timeOut ) throws Exception {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqIniInfo.getMacNo(), true);
-            reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
+            reqJob.setTrxDate   ( trxDate );
+            reqJob.setTrxNo     ( trxNo );
+            reqJob.setTrxCd     ( trxCd );
+            reqJob.setActCd     ( actCd );
+            reqJob.setTrxUid    ( trxUid );
             reqJob.setReqIniInfo( reqIniInfo );
-            reqJob.setTimeOut( timeOut );
+            reqJob.setTimeOut   ( timeOut );
             reqJob.requestJob();
             waitBlocking( reqJob );
         }
@@ -313,13 +313,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             for( RMIReqIniInfo reqIniInfo: reqIniInfos ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqIniInfo.getMacNo(), false);
-                reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
+                reqJob.setTrxDate   ( trxDate );
+                reqJob.setTrxNo     ( trxNo );
+                reqJob.setTrxCd     ( trxCd );
+                reqJob.setActCd     ( actCd );
+                reqJob.setTrxUid    ( trxUid );
                 reqJob.setReqIniInfo( reqIniInfo );
-                reqJob.setTimeOut( 0 );
+                reqJob.setTimeOut   ( 0 );
                 reqJob.requestJob();
             }
         }
@@ -347,12 +347,12 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
 
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
-            reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
-            reqJob.setTimeOut( 0 );
+            reqJob.setTrxDate  ( trxDate );
+            reqJob.setTrxNo    ( trxNo );
+            reqJob.setTrxCd    ( trxCd );
+            reqJob.setActCd    ( actCd );
+            reqJob.setTrxUid   ( trxUid );
+            reqJob.setTimeOut  ( 0 );
             reqJob.setEnvValues( envValues );
             reqJob.requestJob();
         }
@@ -383,11 +383,11 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
                 reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
-                reqJob.setTimeOut( 0 );
+                reqJob.setTrxNo   ( trxNo );
+                reqJob.setTrxCd   ( trxCd );
+                reqJob.setActCd   ( actCd );
+                reqJob.setTrxUid  ( trxUid );
+                reqJob.setTimeOut ( 0 );
                 reqJob.setEnvValue( envValue );
                 reqJob.requestJob();
             }
@@ -415,13 +415,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
     public void reqRegChgToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, RMIReqRegInfo reqRegInfo ) throws Exception {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqRegInfo.getMacNo(), false);
-            reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
+            reqJob.setTrxDate   ( trxDate );
+            reqJob.setTrxNo     ( trxNo );
+            reqJob.setTrxCd     ( trxCd );
+            reqJob.setActCd     ( actCd );
+            reqJob.setTrxUid    ( trxUid );
             reqJob.setReqRegInfo( reqRegInfo );
-            reqJob.setTimeOut( 0 );
+            reqJob.setTimeOut   ( 0 );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -447,13 +447,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             for( RMIReqRegInfo reqRegInfo: reqRegInfos ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqRegInfo.getMacNo(), false);
-                reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
+                reqJob.setTrxDate   ( trxDate );
+                reqJob.setTrxNo     ( trxNo );
+                reqJob.setTrxCd     ( trxCd );
+                reqJob.setActCd     ( actCd );
+                reqJob.setTrxUid    ( trxUid );
                 reqJob.setReqRegInfo( reqRegInfo );
-                reqJob.setTimeOut( 0 );
+                reqJob.setTimeOut   ( 0 );
                 reqJob.requestJob();
             }
         }
@@ -480,12 +480,12 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqIniInfo.getMacNo(), false);
             reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
+            reqJob.setTrxNo     ( trxNo );
+            reqJob.setTrxCd     ( trxCd );
+            reqJob.setActCd     ( actCd );
+            reqJob.setTrxUid    ( trxUid );
             reqJob.setReqIniInfo( reqIniInfo );
-            reqJob.setTimeOut( 0 );
+            reqJob.setTimeOut   ( 0 );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -511,13 +511,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             for( RMIReqIniInfo reqIniInfo: reqIniInfos ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(reqIniInfo.getMacNo(), false);
-                reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
+                reqJob.setTrxDate   ( trxDate );
+                reqJob.setTrxNo     ( trxNo );
+                reqJob.setTrxCd     ( trxCd );
+                reqJob.setActCd     ( actCd );
+                reqJob.setTrxUid    ( trxUid );
                 reqJob.setReqIniInfo( reqIniInfo );
-                reqJob.setTimeOut( 0 );
+                reqJob.setTimeOut   ( 0 );
                 reqJob.requestJob();
             }
         }
@@ -544,10 +544,10 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
+            reqJob.setTrxNo  ( trxNo );
+            reqJob.setTrxCd  ( trxCd );
+            reqJob.setActCd  ( actCd );
+            reqJob.setTrxUid ( trxUid );
             reqJob.setTimeOut( 0 );
             reqJob.requestJob();
         }
@@ -575,10 +575,10 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
                 reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
+                reqJob.setTrxNo  ( trxNo );
+                reqJob.setTrxCd  ( trxCd );
+                reqJob.setActCd  ( actCd );
+                reqJob.setTrxUid ( trxUid );
                 reqJob.setTimeOut( 0 );
                 reqJob.requestJob();
             }
@@ -606,10 +606,10 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
+            reqJob.setTrxNo  ( trxNo );
+            reqJob.setTrxCd  ( trxCd );
+            reqJob.setActCd  ( actCd );
+            reqJob.setTrxUid ( trxUid );
             reqJob.setTimeOut( 0 );
             reqJob.requestJob();
         }
@@ -637,10 +637,10 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
                 reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
+                reqJob.setTrxNo  ( trxNo );
+                reqJob.setTrxCd  ( trxCd );
+                reqJob.setActCd  ( actCd );
+                reqJob.setTrxUid ( trxUid );
                 reqJob.setTimeOut( 0 );
                 reqJob.requestJob();
             }
@@ -669,11 +669,11 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
-            reqJob.setDevCd( devCd );
+            reqJob.setTrxNo  ( trxNo );
+            reqJob.setTrxCd  ( trxCd );
+            reqJob.setActCd  ( actCd );
+            reqJob.setTrxUid ( trxUid );
+            reqJob.setDevCd  ( devCd );
             reqJob.setTimeOut( 0 );
             reqJob.requestJob();
         }
@@ -702,11 +702,11 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
                 reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
-                reqJob.setDevCd( devCd );
+                reqJob.setTrxNo  ( trxNo );
+                reqJob.setTrxCd  ( trxCd );
+                reqJob.setActCd  ( actCd );
+                reqJob.setTrxUid ( trxUid );
+                reqJob.setDevCd  ( devCd );
                 reqJob.setTimeOut( 0 );
                 reqJob.requestJob();
             }
@@ -735,11 +735,11 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
-            reqJob.setDevCd( devCd );
+            reqJob.setTrxNo  ( trxNo );
+            reqJob.setTrxCd  ( trxCd );
+            reqJob.setActCd  ( actCd );
+            reqJob.setTrxUid ( trxUid );
+            reqJob.setDevCd  ( devCd );
             reqJob.setTimeOut( 0 );
             reqJob.requestJob();
         }
@@ -768,11 +768,11 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
                 reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
-                reqJob.setDevCd( devCd );
+                reqJob.setTrxNo  ( trxNo );
+                reqJob.setTrxCd  ( trxCd );
+                reqJob.setActCd  ( actCd );
+                reqJob.setTrxUid ( trxUid );
+                reqJob.setDevCd  ( devCd );
                 reqJob.setTimeOut( 0 );
                 reqJob.requestJob();
             }
@@ -801,11 +801,11 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
-            reqJob.setDevCd( devCd );
+            reqJob.setTrxNo  ( trxNo );
+            reqJob.setTrxCd  ( trxCd );
+            reqJob.setActCd  ( actCd );
+            reqJob.setTrxUid ( trxUid );
+            reqJob.setDevCd  ( devCd );
             reqJob.setTimeOut( 0 );
             reqJob.requestJob();
         }
@@ -834,11 +834,11 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
                 reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
-                reqJob.setDevCd( devCd );
+                reqJob.setTrxNo  ( trxNo );
+                reqJob.setTrxCd  ( trxCd );
+                reqJob.setActCd  ( actCd );
+                reqJob.setTrxUid ( trxUid );
+                reqJob.setDevCd  ( devCd );
                 reqJob.setTimeOut( 0 );
                 reqJob.requestJob();
             }
@@ -869,14 +869,14 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, true);
             reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
-            reqJob.setEmpId( empId );
-            reqJob.setEmpPhone( empPhone );
+            reqJob.setTrxNo      ( trxNo );
+            reqJob.setTrxCd      ( trxCd );
+            reqJob.setActCd      ( actCd );
+            reqJob.setTrxUid     ( trxUid );
+            reqJob.setEmpId      ( empId );
+            reqJob.setEmpPhone   ( empPhone );
             reqJob.setArrivalTime( arrivalTime );
-            reqJob.setTimeOut( 10 );
+            reqJob.setTimeOut    ( 10 );
             reqJob.requestJob();
             waitBlocking( reqJob );
         }
@@ -903,14 +903,14 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
     public void reqSFileUpToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String fileDate, String fileType ) throws Exception {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
-            reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
+            reqJob.setTrxDate ( trxDate );
+            reqJob.setTrxNo   ( trxNo );
+            reqJob.setTrxCd   ( trxCd );
+            reqJob.setActCd   ( actCd );
+            reqJob.setTrxUid  ( trxUid );
             reqJob.setFileDate( fileDate );
             reqJob.setFileType( fileType );
-            reqJob.setTimeOut( 120 );
+            reqJob.setTimeOut ( 120 );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -938,13 +938,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
                 reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
+                reqJob.setTrxNo   ( trxNo );
+                reqJob.setTrxCd   ( trxCd );
+                reqJob.setActCd   ( actCd );
+                reqJob.setTrxUid  ( trxUid );
                 reqJob.setFileDate( fileDate );
                 reqJob.setFileType( fileType );
-                reqJob.setTimeOut( 60 );
+                reqJob.setTimeOut ( 60 );
                 reqJob.requestJob();
             }
         }
@@ -959,27 +959,32 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      *
      * 단독기기 대상 특정파일 다운로드 요청
      *
-     * @param trxDate   거래일
-     * @param trxNo     거래번호
-     * @param trxCd     거래코드
-     * @param actCd     실행코드
-     * @param trxUid    거래처리자코드
-     * @param macNo     대상기기
-     * @param fileType  파일타입
-     * @param fileName  저장파일명
+     * @param trxDate       거래일
+     * @param trxNo         거래번호
+     * @param trxCd         거래코드
+     * @param actCd         실행코드
+     * @param trxUid        거래처리자코드
+     * @param macNo         대상기기
+     * @param createDate    파일생성일 (기기로 다운로드할 파일키)
+     * @param fileSeq       파일순번   (기기로 다운로드할 파일키)
+     * @param fileType      파일타입   (생략 가능)
+     * @param fileName      저장파일명 (생략 가능)
      * @throws Exception
      */
-    public void reqSFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String fileType, String fileName ) throws Exception {
+    public void reqSFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String createDate, String fileSeq, String fileType, String fileName ) throws Exception {
+
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
-            reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
-            reqJob.setFileType( fileType );
-            reqJob.setFileName( fileName );
-            reqJob.setTimeOut( 60 );
+            reqJob.setTrxDate       ( trxDate );
+            reqJob.setTrxNo         ( trxNo );
+            reqJob.setTrxCd         ( trxCd );
+            reqJob.setActCd         ( actCd );
+            reqJob.setTrxUid        ( trxUid );
+            reqJob.setFileCreateDate( createDate );
+            reqJob.setFileSeq       ( fileSeq );
+            reqJob.setFileType      ( fileType );
+            reqJob.setFileName      ( fileName );
+            reqJob.setTimeOut       ( 60 );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -988,33 +993,37 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         }
     }
 
-   /**
+    /**
      * reqSFileDownToMacs
      *
      * 복수기기 대상 특정파일 다운로드 요청
      *
-     * @param trxDate   거래일
-     * @param trxNo     거래번호
-     * @param trxCd     거래코드
-     * @param actCd     실행코드
-     * @param trxUid    거래처리자코드
-     * @param macs      대상기기집합
-     * @param fileType  파일타입
-     * @param fileName  저장파일명
+     * @param trxDate       거래일
+     * @param trxNo         거래번호
+     * @param trxCd         거래코드
+     * @param actCd         실행코드
+     * @param trxUid        거래처리자코드
+     * @param macs          대상기기집합
+     * @param createDate    파일생성일 (기기로 다운로드할 파일키)
+     * @param fileSeq       파일순번   (기기로 다운로드할 파일키)
+     * @param fileType      파일타입   (생략 가능)
+     * @param fileName      저장파일명 (생략 가능)
      * @throws Exception
      */
-    public void reqSFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String fileType, String fileName ) throws Exception {
+    public void reqSFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String createDate, String fileSeq, String fileType, String fileName ) throws Exception {
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
-                reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
-                reqJob.setFileType( fileType );
-                reqJob.setFileName( fileName );
-                reqJob.setTimeOut( 60 );
+                reqJob.setTrxDate       ( trxDate );
+                reqJob.setTrxNo         ( trxNo );
+                reqJob.setTrxCd         ( trxCd );
+                reqJob.setActCd         ( actCd );
+                reqJob.setTrxUid        ( trxUid );
+                reqJob.setFileCreateDate( createDate );
+                reqJob.setFileSeq       ( fileSeq );
+                reqJob.setFileType      ( fileType );
+                reqJob.setFileName      ( fileName );
+                reqJob.setTimeOut       ( 60 );
                 reqJob.requestJob();
             }
         }
@@ -1043,13 +1052,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
+            reqJob.setTrxNo   ( trxNo );
+            reqJob.setTrxCd   ( trxCd );
+            reqJob.setActCd   ( actCd );
+            reqJob.setTrxUid  ( trxUid );
             reqJob.setFilePath( filePath );
             reqJob.setFileName( fileName );
-            reqJob.setTimeOut( 60 );
+            reqJob.setTimeOut ( 60 );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -1078,13 +1087,13 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
                 reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
+                reqJob.setTrxNo   ( trxNo );
+                reqJob.setTrxCd   ( trxCd );
+                reqJob.setActCd   ( actCd );
+                reqJob.setTrxUid  ( trxUid );
                 reqJob.setFilePath( filePath );
                 reqJob.setFileName( fileName );
-                reqJob.setTimeOut( 30 );
+                reqJob.setTimeOut ( 30 );
                 reqJob.requestJob();
             }
         }
@@ -1099,27 +1108,31 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      *
      * 단독기기 대상 일반파일 다운로드 요청
      *
-     * @param trxDate   거래일
-     * @param trxNo     거래번호
-     * @param trxCd     거래코드
-     * @param actCd     실행코드
-     * @param trxUid    거래처리자코드
-     * @param macNo     대상기기
-     * @param filePath  저장파일경로
-     * @param fileName  저장파일명
+     * @param trxDate       거래일
+     * @param trxNo         거래번호
+     * @param trxCd         거래코드
+     * @param actCd         실행코드
+     * @param trxUid        거래처리자코드
+     * @param macNo         대상기기
+     * @param createDate    파일생성일 (기기로 다운로드할 파일키)
+     * @param fileSeq       파일순번   (기기로 다운로드할 파일키)
+     * @param filePath      저장파일경로
+     * @param fileName      저장파일명
      * @throws Exception
      */
-    public void reqGFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String filePath, String fileName ) throws Exception {
+    public void reqGFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String createDate, String fileSeq, String filePath, String fileName ) throws Exception {
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
-            reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo( trxNo );
-            reqJob.setTrxCd( trxCd );
-            reqJob.setActCd( actCd );
-            reqJob.setTrxUid( trxUid );
-            reqJob.setFilePath( filePath );
-            reqJob.setFileName( fileName );
-            reqJob.setTimeOut( 30 );
+            reqJob.setTrxDate       ( trxDate );
+            reqJob.setTrxNo         ( trxNo );
+            reqJob.setTrxCd         ( trxCd );
+            reqJob.setActCd         ( actCd );
+            reqJob.setTrxUid        ( trxUid );
+            reqJob.setFileCreateDate( createDate );
+            reqJob.setFileSeq       ( fileSeq );
+            reqJob.setFilePath      ( filePath );
+            reqJob.setFileName      ( fileName );
+            reqJob.setTimeOut       ( 30 );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -1133,28 +1146,32 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      *
      * 복수기기 대상 일반파일 다운로드 요청
      *
-     * @param trxDate   거래일
-     * @param trxNo     거래번호
-     * @param trxCd     거래코드
-     * @param actCd     실행코드
-     * @param trxUid    거래처리자코드
-     * @param macs      대상기기집합
-     * @param filePath  저장파일경로
-     * @param fileName  저장파일명
+     * @param trxDate       거래일
+     * @param trxNo         거래번호
+     * @param trxCd         거래코드
+     * @param actCd         실행코드
+     * @param trxUid        거래처리자코드
+     * @param macs          대상기기집합
+     * @param createDate    파일생성일 (기기로 다운로드할 파일키)
+     * @param fileSeq       파일순번   (기기로 다운로드할 파일키)
+     * @param filePath      저장파일경로
+     * @param fileName      저장파일명
      * @throws Exception
      */
-    public void reqGFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String filePath, String fileName ) throws Exception {
+    public void reqGFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String createDate, String fileSeq, String filePath, String fileName ) throws Exception {
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
-                reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo( trxNo );
-                reqJob.setTrxCd( trxCd );
-                reqJob.setActCd( actCd );
-                reqJob.setTrxUid( trxUid );
-                reqJob.setFilePath( filePath );
-                reqJob.setFileName( fileName );
-                reqJob.setTimeOut( 60 );
+                reqJob.setTrxDate       ( trxDate );
+                reqJob.setTrxNo         ( trxNo );
+                reqJob.setTrxCd         ( trxCd );
+                reqJob.setActCd         ( actCd );
+                reqJob.setTrxUid        ( trxUid );
+                reqJob.setFileCreateDate( createDate );
+                reqJob.setFileSeq       ( fileSeq );
+                reqJob.setFilePath      ( filePath );
+                reqJob.setFileName      ( fileName );
+                reqJob.setTimeOut       ( 60 );
                 reqJob.requestJob();
             }
         }

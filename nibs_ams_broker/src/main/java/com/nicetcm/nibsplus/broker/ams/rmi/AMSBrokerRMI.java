@@ -418,34 +418,38 @@ public interface AMSBrokerRMI extends Remote {
      *
      * 단독기기 대상 특정파일 다운로드 요청
      *
-     * @param trxDate   거래일
-     * @param trxNo     거래번호
-     * @param trxCd     거래코드
-     * @param actCd     실행코드
-     * @param trxUid    거래처리자코드
-     * @param macNo     대상기기
-     * @param fileType  파일타입
-     * @param fileName  저장파일명
+     * @param trxDate       거래일
+     * @param trxNo         거래번호
+     * @param trxCd         거래코드
+     * @param actCd         실행코드
+     * @param trxUid        거래처리자코드
+     * @param macNo         대상기기
+     * @param createDate    파일생성일 (기기로 다운로드할 파일키)
+     * @param fileSeq       파일순번   (기기로 다운로드할 파일키)
+     * @param fileType      파일타입   (생략 가능)
+     * @param fileName      저장파일명 (생략 가능)
      * @throws Exception
      */
-    public void reqSFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String fileType, String fileName ) throws Exception;
+    public void reqSFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String createDate, String fileSeq, String fileType, String fileName ) throws Exception;
 
     /**
      * reqSFileDownToMacs
      *
      * 복수기기 대상 특정파일 다운로드 요청
      *
-     * @param trxDate   거래일
-     * @param trxNo     거래번호
-     * @param trxCd     거래코드
-     * @param actCd     실행코드
-     * @param trxUid    거래처리자코드
-     * @param macs      대상기기집합
-     * @param fileType  파일타입
-     * @param fileName  저장파일명
+     * @param trxDate       거래일
+     * @param trxNo         거래번호
+     * @param trxCd         거래코드
+     * @param actCd         실행코드
+     * @param trxUid        거래처리자코드
+     * @param macs          대상기기집합
+     * @param createDate    파일생성일 (기기로 다운로드할 파일키)
+     * @param fileSeq       파일순번   (기기로 다운로드할 파일키)
+     * @param fileType      파일타입   (생략 가능)
+     * @param fileName      저장파일명 (생략 가능)
      * @throws Exception
      */
-    public void reqSFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String fileType, String fileName ) throws Exception;
+    public void reqSFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String createDate, String fileSeq, String fileType, String fileName ) throws Exception;
 
     /**
      * reqGFileUpToMac
@@ -486,33 +490,37 @@ public interface AMSBrokerRMI extends Remote {
      *
      * 단독기기 대상 일반파일 다운로드 요청
      *
-     * @param trxDate   거래일
-     * @param trxNo     거래번호
-     * @param trxCd     거래코드
-     * @param actCd     실행코드
-     * @param trxUid    거래처리자코드
-     * @param macNo     대상기기
-     * @param filePath  저장파일경로
-     * @param fileName  저장파일명
+     * @param trxDate       거래일
+     * @param trxNo         거래번호
+     * @param trxCd         거래코드
+     * @param actCd         실행코드
+     * @param trxUid        거래처리자코드
+     * @param macNo         대상기기
+     * @param createDate    파일생성일 (기기로 다운로드할 파일키)
+     * @param fileSeq       파일순번   (기기로 다운로드할 파일키)
+     * @param filePath      저장파일경로
+     * @param fileName      저장파일명
      * @throws Exception
      */
-    public void reqGFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String filePath, String fileName ) throws Exception;
+    public void reqGFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String createDate, String fileSeq, String filePath, String fileName ) throws Exception;
 
     /**
      * reqGFileDownToMacs
      *
      * 복수기기 대상 일반파일 다운로드 요청
      *
-     * @param trxDate   거래일
-     * @param trxNo     거래번호
-     * @param trxCd     거래코드
-     * @param actCd     실행코드
-     * @param trxUid    거래처리자코드
-     * @param macs      대상기기집합
-     * @param filePath  저장파일경로
-     * @param fileName  저장파일명
+     * @param trxDate       거래일
+     * @param trxNo         거래번호
+     * @param trxCd         거래코드
+     * @param actCd         실행코드
+     * @param trxUid        거래처리자코드
+     * @param macs          대상기기집합
+     * @param createDate    파일생성일 (기기로 다운로드할 파일키)
+     * @param fileSeq       파일순번   (기기로 다운로드할 파일키)
+     * @param filePath      저장파일경로
+     * @param fileName      저장파일명
      * @throws Exception
      */
-    public void reqGFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String filePath, String fileName ) throws Exception;
+    public void reqGFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String createDate, String fileSeq, String filePath, String fileName ) throws Exception;
 
 }

@@ -46,4 +46,16 @@ public class AMSBrokerConst {
     public static final String SVC_CD_UPL_GEN         = "5011";       // 일반파일 업로드   요청
     public static final String SVC_CD_DWL_GEN         = "5012";       // 일반파일 다운로드 요청
 
+
+    public static final String TRX_CD_INQ_ENV         = "720103";
+    public static final String TRX_CD_INQ_ENV_M       = "720104";
+
+    public static final String ACT_CD_EXEC            = "500";
+    public static final String ACT_CD_EXEC1           = "501";
+    public static final String ACT_CD_EXEC2           = "502";
+    public static final String ACT_CD_EXEC3           = "503";
+    public static final String ACT_CD_EXEC4           = "504";
+    public static final String ACT_CD_EXEC5           = "505";
+    public static final String ACT_CD_INQ             = "600";
+
 }

@@ -24,6 +24,7 @@ import com.nicetcm.nibsplus.broker.ams.AMSBrokerTransaction;
 import com.nicetcm.nibsplus.broker.ams.mapper.TPmUpdsSchedMapper;
 import com.nicetcm.nibsplus.broker.ams.model.TPmUpdsSchedSpec;
 import com.nicetcm.nibsplus.broker.ams.model.TPmUpdsSched;
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 /*
  * Copyright 2014 The NIBS Project
@@ -88,6 +89,31 @@ public class InitSchedulerImpl implements InitScheduler {
             /**
              * 저널스케쥴 초기화
              */
+            String uploadTime = MsgCommon.msgProps.getProperty("schedule.journal.upload.time");
+            if( uploadTime != null && uploadTime.length() == 6 ) {
+                AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey("JOURNAL", "JOURNAL") );
+
+                JobDetail jnlJob = newJob(AMSBrokerSchedJob.class)
+                                 .withIdentity("JOURNAL",  "JOURNAL")
+                                 .build();
+
+                CronTrigger jnlTrig = newTrigger()
+                                    .withIdentity( "JOURNAL", "JOURNAL" )
+                                    .withSchedule( cronSchedule(String.format("%s %s %s %s %s ?",
+                                                                              uploadTime.substring(4),
+                                                                              uploadTime.substring(2, 4),
+                                                                              uploadTime.substring(0, 2),
+                                                                              "*",
+                                                                              "*")) )
+                                    .build();
+                AMSBrokerMain.getScheduler().scheduleJob( jnlJob, jnlTrig );
+                logger.info("Job is successfully scheduled [uploadTime = {}]", String.format("%s %s %s %s %s ?",
+                                                                                        uploadTime.substring(4),
+                                                                                        uploadTime.substring(2, 4),
+                                                                                        uploadTime.substring(0, 2),
+                                                                                        "*",
+                                                                                        "*"));
+            }
 
             amsTX.commit(safeData.getTXS());
         }
