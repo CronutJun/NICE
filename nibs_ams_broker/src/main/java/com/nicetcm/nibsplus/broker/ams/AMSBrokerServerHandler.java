@@ -43,7 +43,7 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
     private byte[]    remainBytes;
     private int       iMsgLen, iRemain;
     private AMSBrokerData amsSafeData = new AMSBrokerData();
-    private AMSBrokerReqJob reqJob = new AMSBrokerReqJob("server", false);
+    private AMSBrokerReqJob reqJob = new AMSBrokerReqJob("SERVER", false);
     private TRmTrx     rmTrx = null;
     private TRmMsg     rmMsg = null;
     private MsgParser  msgPsr;
@@ -146,14 +146,14 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
                 biz.classifyMessage(ctx, msg, msgPsr, reqJob, remainBytes, isContinue);
                 if( !isContinue ) {
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
-                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "9", null );
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, reqJob, rmTrx, rmMsg, "9", null );
                     msgPsr.clearMessage();
                 }
             }
             catch( Exception e ) {
                 if( !isContinue ) {
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
-                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "5", e.getMessage() );
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, reqJob, rmTrx, rmMsg, "5", e.getMessage() );
                     msgPsr.clearMessage();
                     throw e;
                 }
@@ -177,14 +177,14 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
                 biz.classifyMessage(ctx, msg, msgPsr, reqJob, remainBytes, isContinue);
                 if( !isContinue ) {
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
-                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "9", null );
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, reqJob, rmTrx, rmMsg, "9", null );
                     msgPsr.clearMessage();
                 }
             }
             catch( Exception e ) {
                 if( !isContinue ) {
                     RespAckNakHandler resp = (RespAckNakHandler)AMSBrokerSpringMain.sprCtx.getBean("respAckNak");
-                    resp.procAckNak( ctx,  amsSafeData, msgPsr, rmTrx, rmMsg, "5", e.getMessage() );
+                    resp.procAckNak( ctx,  amsSafeData, msgPsr, reqJob, rmTrx, rmMsg, "5", e.getMessage() );
                     msgPsr.clearMessage();
                     throw e;
                 }

@@ -897,6 +897,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @param actCd     실행코드
      * @param trxUid    거래처리자코드
      * @param macNo     대상기기
+     * @param fileDate  대상파일기준일
      * @param fileType  파일타입
      * @throws Exception
      */
@@ -930,6 +931,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @param actCd     실행코드
      * @param trxUid    거래처리자코드
      * @param macs      대상기기집합
+     * @param fileDate  대상파일기준일
      * @param fileType  파일타입
      * @throws Exception
      */

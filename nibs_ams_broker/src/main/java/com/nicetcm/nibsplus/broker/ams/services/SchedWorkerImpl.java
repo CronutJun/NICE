@@ -78,8 +78,8 @@ public class SchedWorkerImpl implements SchedWorker {
                 for( TPmUpdsMac updsMac: updsMacs ) {
                     AMSBrokerReqJob reqJob = new AMSBrokerReqJob(updsMac.getMacNo(), true); // 요청거래는 Blocking하여 순차적으로 결과를 받는다.(성능이슈)
                     try {
-                        reqJob.setTrxCd         ( "8004" );
-                        reqJob.setActCd         ( ACT_CD_EXEC );
+                        reqJob.setTrxCd         ( TRX_CD_UPL_DWL );
+                        reqJob.setActCd         ( ACT_CD_SPC_DWL );
                         reqJob.setTrxUid        ( "Schedule" );
                         reqJob.setFileCreateDate( pgmVer.getCreateDate() );
                         reqJob.setFileSeq       ( pgmVer.getFileSeq()    );
@@ -110,8 +110,8 @@ public class SchedWorkerImpl implements SchedWorker {
                 List<TRmMacEnv> macEnvs = macEnvMap.selectBySpec( macEnvSpec );
                 for( TRmMacEnv macEnv: macEnvs ) {
                     AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macEnv.getMacNo(), true); // 요청거래는 Blocking하여 순차적으로 결과를 받는다.(성능이슈)
-                    reqJob.setTrxCd   ( "8004" );
-                    reqJob.setActCd   ( ACT_CD_EXEC );
+                    reqJob.setTrxCd   ( TRX_CD_UPL_DWL );
+                    reqJob.setActCd   ( ACT_CD_SPC_UPL );
                     reqJob.setTrxUid  ( "Schedule" );
                     //reqJob.setFileDate( AMSBrokerLib.getMsgDate(-1) ); // 전일자로 요청 해야 함.
                     reqJob.setFileDate( "20140901" );

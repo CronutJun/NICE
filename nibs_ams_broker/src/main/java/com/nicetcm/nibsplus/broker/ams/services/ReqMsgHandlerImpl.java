@@ -98,7 +98,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * Registry 정보 조회
              */
-            else if( reqJob.getTrxCd().equals("2000") && reqJob.getActCd().equals("1000") ) {
+            else if( reqJob.getTrxCd().equals(TRX_CD_REG)
+                  &&  reqJob.getActCd().equals(ACT_CD_INQ) ) {
                 msg.setMsgType( BIZ_CL_SM );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_INQ_REG );
@@ -106,7 +107,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * Ini 정보 조회
              */
-            else if( reqJob.getTrxCd().equals("3000") && reqJob.getActCd().equals("1000") ) {
+            else if( reqJob.getTrxCd().equals(TRX_CD_INI)
+                  &&  reqJob.getActCd().equals(ACT_CD_INQ) ) {
                 msg.setMsgType( BIZ_CL_SM );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_INQ_INI );
@@ -114,7 +116,9 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * Env 설정 변경
              */
-            else if( reqJob.getTrxCd().equals("4000") && reqJob.getActCd().equals("1000") ) {
+            else if( (reqJob.getTrxCd().equals(TRX_CD_INQ_ENV)
+                    || reqJob.getTrxCd().equals(TRX_CD_INQ_ENV_M))
+                  && reqJob.getActCd().equals(ACT_CD_EXEC) ) {
                 msg.setMsgType( BIZ_CL_SM  );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_CHG_ENV );
@@ -122,7 +126,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * Reg 설정 변경
              */
-            else if( reqJob.getTrxCd().equals("5000") && reqJob.getActCd().equals("1000") ) {
+            else if( reqJob.getTrxCd().equals(TRX_CD_REG)
+                  &&  reqJob.getActCd().equals(ACT_CD_EXEC) ) {
                 msg.setMsgType( BIZ_CL_SM );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_CHG_REG );
@@ -130,7 +135,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * Ini 설정 변경
              */
-            else if( reqJob.getTrxCd().equals("6000") && reqJob.getActCd().equals("1000") ) {
+            else if( reqJob.getTrxCd().equals(TRX_CD_INI)
+                  &&  reqJob.getActCd().equals(ACT_CD_EXEC) ) {
                 msg.setMsgType( BIZ_CL_SM );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_CHG_INI );
@@ -138,7 +144,9 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * Reboot 예약
              */
-            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("501") ) {
+            else if( (reqJob.getTrxCd().equals(TRX_CD_DEV_CTL)
+                    || reqJob.getTrxCd().equals(TRX_CD_DEV_CTL_ERR))
+                  &&  reqJob.getActCd().equals(ACT_CD_EXEC2) ) {
                 msg.setMsgType( BIZ_CL_RC );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_CMD_RBT );
@@ -146,7 +154,9 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * Poweroff 예약
              */
-            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("502") ) {
+            else if( (reqJob.getTrxCd().equals(TRX_CD_DEV_CTL)
+                    || reqJob.getTrxCd().equals(TRX_CD_DEV_CTL_ERR))
+                  &&  reqJob.getActCd().equals(ACT_CD_EXEC1) ) {
                 msg.setMsgType( BIZ_CL_RC );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_CMD_PWO );
@@ -154,7 +164,9 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * 장치리셋 예약
              */
-            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("503") ) {
+            else if( (reqJob.getTrxCd().equals(TRX_CD_DEV_CTL)
+                    || reqJob.getTrxCd().equals(TRX_CD_DEV_CTL_ERR))
+                  &&  reqJob.getActCd().equals(ACT_CD_EXEC3) ) {
                 msg.setMsgType( BIZ_CL_RC );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_CMD_DEV );
@@ -162,7 +174,9 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * 장치회수 예약
              */
-            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("504") ) {
+            else if( (reqJob.getTrxCd().equals(TRX_CD_DEV_CTL)
+                    || reqJob.getTrxCd().equals(TRX_CD_DEV_CTL_ERR))
+                  &&  reqJob.getActCd().equals(ACT_CD_EXEC4) ) {
                 msg.setMsgType( BIZ_CL_RC );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_CMD_DEV );
@@ -170,7 +184,9 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * 장치배출 예약
              */
-            else if( reqJob.getTrxCd().equals("7000") && reqJob.getActCd().equals("505") ) {
+            else if( (reqJob.getTrxCd().equals(TRX_CD_DEV_CTL)
+                    || reqJob.getTrxCd().equals(TRX_CD_DEV_CTL_ERR))
+                  &&  reqJob.getActCd().equals(ACT_CD_EXEC5) ) {
                 msg.setMsgType( BIZ_CL_RC );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_CMD_DEV );
@@ -178,7 +194,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * 출동요청 안내문 전송
              */
-            else if( reqJob.getTrxCd().equals("7001") && reqJob.getActCd().equals("500") ) {
+            else if( reqJob.getTrxCd().equals(TRX_CD_NTI_CLL)
+                  &&  reqJob.getActCd().equals(ACT_CD_EXEC) ) {
                 msg.setMsgType( BIZ_CL_RC );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_NTI_CLL );
@@ -186,7 +203,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * 일반파일 업로드
              */
-            else if( reqJob.getTrxCd().equals("8003") && reqJob.getActCd().equals("500") ) {
+            else if( reqJob.getTrxCd().equals(TRX_CD_UPL_DWL)
+                  &&  reqJob.getActCd().equals(ACT_CD_GEN_UPL) ) {
                 msg.setMsgType( BIZ_CL_RC );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_UPL_GEN );
@@ -194,7 +212,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * 일반파일 다운로드
              */
-            else if( reqJob.getTrxCd().equals("8001") && reqJob.getActCd().equals("500") ) {
+            else if( reqJob.getTrxCd().equals(TRX_CD_UPL_DWL)
+                  &&  reqJob.getActCd().equals(ACT_CD_GEN_DWL) ) {
                 msg.setMsgType( BIZ_CL_RC );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_DWL_GEN );
@@ -202,15 +221,17 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * 배포(특정)파일 다운로드 요청
              */
-            else if( reqJob.getTrxCd().equals("8002") && reqJob.getActCd().equals("500") ) {
+            else if( reqJob.getTrxCd().equals(TRX_CD_UPL_DWL)
+                  &&  reqJob.getActCd().equals(ACT_CD_SPC_DWL) ) {
                 msg.setMsgType( BIZ_CL_PM );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_DWL_UPD );
             }
             /**
-             * 특정파일 업로드 요청
+             * 배포(특정)파일 업로드 요청
              */
-            else if( reqJob.getTrxCd().equals("8004") && reqJob.getActCd().equals("500") ) {
+            else if( reqJob.getTrxCd().equals(TRX_CD_UPL_DWL)
+                  &&  reqJob.getActCd().equals(ACT_CD_SPC_UPL) ) {
                 msg.setMsgType( BIZ_CL_PM );
                 msg.setMsgCd( MSG_CD_REQ );
                 msg.setSvcCd( SVC_CD_UPL_SPC );

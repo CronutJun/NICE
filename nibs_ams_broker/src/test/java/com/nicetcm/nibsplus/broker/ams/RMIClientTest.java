@@ -112,7 +112,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqRegInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "2000", "1000", "test", reqRegInfo, 0 );
+        remoteObj.reqRegInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720106", "600", "test", reqRegInfo, 0 );
     }
 
     public void reqIniInfToMac() throws Exception {
@@ -131,7 +131,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqIniInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "3000", "1000", "test", reqIniInfo, 0 );
+        remoteObj.reqIniInfToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720107", "600", "test", reqIniInfo, 0 );
     }
 
     public void reqEnvChgToMac() throws Exception {
@@ -156,7 +156,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqEnvChgToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "4000", "1000", "test", "0202", envValues );
+        remoteObj.reqEnvChgToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720103", "500", "test", "0202", envValues );
 
     }
 
@@ -177,7 +177,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqRegChgToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "5000", "1000", "test", reqRegInfo );
+        remoteObj.reqRegChgToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720106", "500", "test", reqRegInfo );
     }
 
     public void reqIniChgToMac() throws Exception {
@@ -197,7 +197,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqIniChgToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "6000", "1000", "test", reqIniInfo );
+        remoteObj.reqIniChgToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720107", "500", "test", reqIniInfo );
     }
 
     public void reqRebootToMac() throws Exception {
@@ -210,7 +210,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqRebootToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7000", "501", "test", "0202" );
+        remoteObj.reqRebootToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720101", "502", "test", "0202" );
     }
 
     public void reqPwroffToMac() throws Exception {
@@ -223,7 +223,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqPwroffToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7000", "502", "test", "0202" );
+        remoteObj.reqPwroffToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720101", "501", "test", "0202" );
     }
 
     public void reqDevResetToMac() throws Exception {
@@ -236,7 +236,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqDevResetToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7000", "503", "test", "0202", "101" );
+        remoteObj.reqDevResetToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720101", "503", "test", "0202", "101" );
     }
 
     public void reqDevCollectToMac() throws Exception {
@@ -249,7 +249,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqDevResetToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7000", "504", "test", "0202", "101" );
+        remoteObj.reqDevResetToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720101", "504", "test", "0202", "101" );
     }
 
     public void reqDevReturnToMac() throws Exception {
@@ -262,7 +262,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqDevResetToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7000", "505", "test", "0202", "101" );
+        remoteObj.reqDevReturnToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720101", "505", "test", "0202", "101" );
     }
 
     public void reqCallNoticeToMac() throws Exception {
@@ -275,7 +275,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqCallNoticeToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "7001", "500", "test", "0202", "030101", "01074564016", "233321", 5 );
+        remoteObj.reqCallNoticeToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720105", "500", "test", "0202", "030101", "01074564016", "233321", 5 );
     }
 
     public void reqSFileUpToMac() throws Exception {
@@ -288,7 +288,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqSFileUpToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8004", "500", "test", "0202", "20140901", "1" );
+        remoteObj.reqSFileUpToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720108", "200", "test", "0202", "20140901", "1" );
     }
 
     public void reqSFileDownToMac() throws Exception {
@@ -301,7 +301,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqSFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8002", "500", "test", "0202", "20140901", "0000001", "9", "test.zip" );
+        remoteObj.reqSFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720108", "210", "test", "0202", "20140901", "0000001", "9", "test.zip" );
     }
 
     public void reqGFileUpToMac() throws Exception {
@@ -314,7 +314,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqGFileUpToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8003", "500", "test", "0202", "C:\\", "test.zip" );
+        remoteObj.reqGFileUpToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720108", "100", "test", "0202", "C:\\", "test.zip" );
     }
 
     public void reqGFileDownToMac() throws Exception {
@@ -327,7 +327,7 @@ public class RMIClientTest {
 
         String key = trxMap.generateKey();
 
-        remoteObj.reqGFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "8001", "500", "test", "0202", "20140901", "0000001", "C:\\", "test.zip" );
+        remoteObj.reqGFileDownToMac( AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), key, "720108", "110", "test", "0202", "20140901", "0000001", "C:\\", "test.zip" );
     }
 
     public static void main(String[] args) {
