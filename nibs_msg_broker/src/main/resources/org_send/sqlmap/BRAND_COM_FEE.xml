@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BRAND_COM_FEE">
+
+<!--
+<entry key="BRAND_COM_FEE"          value="03001404" />     63. 수수료내역제출
+{
+   "name" : "03001404",                    "kname" : "수수료 청구내역 제출",
+   "response" : { "code" : "03001404",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "year_mon",               "kname" : "기준월",                 "type" : "N",   "length"  : 6   },
+      { "name" : "supply_amt",             "kname" : "공급가액",               "type" : "N",   "length"  : 10  },
+      { "name" : "vat_amt",                "kname" : "부가세액",               "type" : "N",   "length"  : 10  },
+      { "name" : "demand_amt",             "kname" : "청구금액",               "type" : "N",   "length"  : 10  },
+      { "name" : "org_cd",                 "kname" : "입금은행코드",           "type" : "AN",  "length"  : 3   },
+      { "name" : "account_no",             "kname" : "입금계좌",               "type" : "AN",  "length"  : 32  },
+      { "name" : "due_date",               "kname" : "납입기한",               "type" : "N",   "length"  : 8   },
+      { "name" : "doc_no",                 "kname" : "문서번호",               "type" : "AN",  "length"  : 20  },
+      { "name" : "send_nm",                "kname" : "발송자",                 "type" : "AN",  "length"  : 10  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 101 }
+   ]
+}
+ -->
+    <!-- 기업은행의 경우 현송이 없는 기기들은 16시에 모두 강제 마감 하도록 한다. -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT  CMS.YEAR_MON,                                   /*  기준월     */
+                CMS.SUPPLY_AMT,                                 /*  공급가액    */
+                CMS.VAT_AMT,                                /*  부가세액    */
+                CMS.DEMAND_AMT,                                 /*  청구금액    */
+                CMS.ORG_CD,                                     /*  입금계좌 은행코드   */
+                (SELECT  OP.FC_FN_SECURITY( ACCOUNT , '2') FROM OP.T_CM_ACCOUNT WHERE ORG_CD = '003'
+                                                        AND SERVICE_GB = '1'    /*  브랜드제휴   */
+                                                        AND USE_TYPE = '1'      /*  수수료     */
+                                                        ) account_no,  /*  입금계좌번호      */
+                TO_CHAR(LAST_DAY(sysdate),'yyyymmdd') due_date,      /*  입금마감기한  */
+                CMS.DOC_NO,                                     /*  문서번호        */
+                (SELECT MEMBER_NM FROM OP.T_CM_MEMBER WHERE MEMBER_ID = CMS.SEND_UID) send_nm,                                 /*  발송자         */
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM OP.T_FN_BRAND_COMMISSION_FEE CMS
+        WHERE CMS.ORG_SEND_YN = '0'
+        AND CMS.DOC_NO IS NOT NULL
+        AND CMS.UPDATE_UID IS NOT NULL
+    ]]>
+    </select>
+</mapper>

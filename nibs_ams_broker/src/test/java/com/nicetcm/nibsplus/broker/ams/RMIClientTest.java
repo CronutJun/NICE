@@ -46,7 +46,7 @@ public class RMIClientTest {
     }
 
     public void serverShutdown() throws Exception {
-        Registry registry = LocateRegistry.getRegistry("192.168.16.2", 10299);
+        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
         System.out.println("registry");
         AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
         System.out.println("lookup");
@@ -334,7 +334,7 @@ public class RMIClientTest {
         try {
             //new RMIClientTest().serverShutdown();
             //new RMIClientTest().makeUpdatesSchedule();
-            //new RMIClientTest().reqEnvInfToMac();
+            new RMIClientTest().reqEnvInfToMac();
             //new RMIClientTest().reqRegInfToMac();
             //new RMIClientTest().reqIniInfToMac();
             //new RMIClientTest().reqEnvChgToMac();
@@ -346,7 +346,7 @@ public class RMIClientTest {
             //new RMIClientTest().reqDevCollectToMac();
             //new RMIClientTest().reqDevReturnToMac();
             //new RMIClientTest().reqCallNoticeToMac();
-            new RMIClientTest().reqSFileUpToMac();
+            //new RMIClientTest().reqSFileUpToMac();
             //new RMIClientTest().reqSFileDownToMac();
             //new RMIClientTest().reqGFileUpToMac();
             //new RMIClientTest().reqGFileDownToMac();

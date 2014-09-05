@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ARRIVAL">
+
+<!--
+<entry key="ARRIVAL"                value="01001160" />     02. 도착
+{
+   "name" : "01001160",                    "kname" : "도착통보",
+   "response" : { "code" : "01001160",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "trans1_date",            "kname" : "1차통지 거래일자",       "type" : "N",   "length"  : 8   },
+      { "name" : "trans1_seq",             "kname" : "1차통지 전문번호",       "type" : "AN",  "length"  : 10  },
+      { "name" : "brch_cd",                "kname" : "지점코드",               "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "error_msg",              "kname" : "장애코드명",             "type" : "AN",  "length"  : 80  },
+      { "name" : "send_date",              "kname" : "통보일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "send_time",              "kname" : "통보시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "arrival_date",           "kname" : "도착일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "arrival_time",           "kname" : "도착시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "call_class",             "kname" : "출동요청구분",           "type" : "AN",  "length"  : 4   },
+      { "name" : "arrival_nm",             "kname" : "업체 출동자명",          "type" : "AN",  "length"  : 10  },
+      { "name" : "arrival_tel_no",         "kname" : "업체 출동자 전화번호",   "type" : "AN",  "length"  : 13  },
+      { "name" : "memo",                   "kname" : "메모",                   "type" : "AN",  "length"  : 100 },
+      { "name" : "call_type",              "kname" : "출동사유",               "type" : "AN",  "length"  : 4   },
+      { "name" : "office_cd",              "kname" : "관리지사코드",           "type" : "AN",  "length"  : 4   },
+      { "name" : "office_nm",              "kname" : "관리지사명",             "type" : "AN",  "length"  : 20  },
+      { "name" : "org_cd",                 "kname" : "경비사송신-기관코드",    "type" : "AN",  "length"  : 3   },
+      { "name" : "org_site_cd",            "kname" : "기관사이트코드",         "type" : "AN",  "length"  : 6   },
+      { "name" : "arr_com_cd",             "kname" : "도착업체코드",           "type" : "AN",  "length"  : 1   },
+      { "name" : "create_time",            "kname" : "출동요청시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "arrival_gb",             "kname" : "도착통보구분",           "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 104 }
+   ]
+}
+ -->
+
+    <select id="select0WC" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT     MNG.trans_date trans1_date,                                                          /* 1차통지 거래일자                */
+                   MNG.org_msg_no trans1_seq,                                                          /* 1차통지 전문번호                */
+                   MNG.branch_cd,                                                            /* 국코드                      */
+                   MNG.mac_no,                                                              /* 단말번호                     */
+                   '',
+                   '',
+                   '',
+                   MNG.arrival_date,                                                        /* 도착일자                     */
+                   MNG.arrival_time,                                                        /* 도착시간                     */
+                   SUBSTR(MNG.sec, 1, 1) call_class,                                                   /* 출동요청구분               */
+                   DECODE(MNG.recv_user_nm, NULL,                                           /* 업체 출동자명              */
+                        DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+                                MNG.recv_user_nm) arrival_nm,
+                   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,                    /* 업체 출동자 전화번호          */
+                   substr(MNG.org_msg,1,100) memo,                                               /* 메모사항                     */
+                   SUBSTR(MNG.sec, 2, 1) call_type,                                                   /* 출동사유                     */
+                   '',
+                   '',
+                   '',
+                   MNG.site_cd org_site_cd,                                                                      /* 코너코드                        */
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR,
+                   OP.T_CT_ERROR     ERR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
+               AND MNG.org_cd = '0WC'
+               AND MNG.arrival_time IS NOT NULL
+               AND MNG.send_time IS NOT NULL
+               AND (    MNG.org_send_yn = '1'
+                    OR (    MNG.arrival_est_time IS NULL
+                        AND MNG.org_send_yn = '0'
+                       )
+                    )
+            /*   AND (MNG.format_type = '21' OR MNG.format_type = '31') */
+               AND MNG.org_cd = ERR.org_cd(+)
+               AND MNG.error_cd = ERR.error_cd(+)
+               AND MNG.recv_user_uid = MBR.member_id(+)
+    ]]>
+    </select>
+
+    <select id="select039" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT     MNG.trans_date trans1_date,
+                   MNG.org_msg_no trans1_seq,
+                   MNG.branch_cd,
+                   DECODE( substr( MNG.sec, 1, 1 ), '2', '',  DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no ) ) mac_no, /* 민원출동은 기번 없이 feedback */
+                   mng.crt_no,
+                   LPAD(MNG.org_call_cnt, 2, '0'),
+                   MNG.group_error_cd,
+                   '',
+                   MNG.send_date,
+                   MNG.send_time,
+                   MNG.arrival_date,
+                   DECODE( LENGTH(MNG.arrival_time), 4 , MNG.arrival_time||'00', MNG.arrival_time ) arrival_time,
+                   SUBSTR(MNG.sec, 1, 1)||DECODE(SUBSTR(MNG.sec, 3, 1), NULL, '1', SUBSTR(MNG.sec, 3, 1)) call_class,
+                   DECODE(MNG.recv_user_nm, NULL,
+                        DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+                                MNG.recv_user_nm) arrival_nm,
+                   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
+                   MNG.org_msg memo,
+                   SUBSTR(MNG.sec, 2, 1) call_type,
+                   '',
+                   '',
+                   '',
+                   MNG.SITE_CD org_site_cd,
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 15), 'YYYYMMDD'))
+               AND MNG.org_cd = '039'
+               AND MNG.arrival_time IS NOT NULL
+               /* AND MNG.send_time IS NOT NULL */
+               AND (    MNG.org_send_yn = '1'
+                    OR (    MNG.arrival_est_time IS NULL
+                        AND MNG.org_send_yn = '0'
+                       )
+                    /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */
+                    OR MNG.org_send_yn = 'a'
+                    )
+               /*AND (MNG.format_type = '21' OR MNG.format_type = '31')*/
+               /* sec : 출동요청구분 + 사유로 구성 */
+               AND MNG.sec IS NOT NULL
+               AND MNG.recv_user_uid = MBR.member_id(+)
+               /* 2차출동요청에대한 키지원일경우 제외 */
+               AND substr(MNG.sec, 3, 1) || MNG.ERROR_CD <> '2WR903'
+    ]]>
+    </select>
+
+    <select id="select020" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT     MNG.trans_date trans1_date,
+                   MNG.org_msg_no trans1_seq,
+                   MNG.BRANCH_CD,
+                   /* DECODE( substr( MNG.sec, 1, 1 ), '2', '',  DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no ) ), 민원출동은 기번 없이 feedback */
+                   MNG.MAC_NO,
+                   mng.crt_no,
+                   LPAD(MNG.org_call_cnt, 2, '0'),
+                   MNG.group_error_cd,
+                   '',
+                   MNG.send_date,
+                   MNG.send_time,
+                   MNG.arrival_date,
+                   DECODE( LENGTH(MNG.arrival_time), 4 , MNG.arrival_time||'00', MNG.arrival_time ) arrival_time,
+                   SUBSTR(MNG.sec, 1, 1)||DECODE(SUBSTR(MNG.sec, 3, 1), NULL, '1', SUBSTR(MNG.sec, 3, 1)) call_class,
+                   DECODE(MNG.recv_user_nm, NULL,
+                        DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+                                MNG.recv_user_nm) arrival_nm,
+                   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
+                   MNG.org_msg memo,
+                   SUBSTR(MNG.sec, 2, 1) call_type,
+                   '',
+                   '',
+                   '',
+                   MNG.SITE_CD org_site_cd,
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 15), 'YYYYMMDD'))
+               AND MNG.org_cd = '020'
+               AND MNG.arrival_time IS NOT NULL
+               /* AND MNG.send_time IS NOT NULL */
+               AND (    MNG.org_send_yn = '1'
+                    OR (    MNG.arrival_est_time IS NULL
+                        AND MNG.org_send_yn = '0'
+                       )
+                    /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */
+                    OR MNG.org_send_yn = 'a'
+                    )
+               /*AND (MNG.format_type = '21' OR MNG.format_type = '31')*/
+               /* sec : 출동요청구분 + 사유로 구성 */
+               AND MNG.sec IS NOT NULL
+               AND MNG.recv_user_uid = MBR.member_id(+)
+               /* 2차출동요청에대한 키지원일경우 제외 */
+               AND substr(MNG.sec, 3, 1) || MNG.ERROR_CD <> '2WR903'
+    ]]>
+    </select>
+
+    <select id="select035" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT   MNG.trans_date trans1_date,
+                   MNG.org_msg_no trans1_seq,
+                   MNG.branch_cd,
+                   MNG.mac_no,
+                   ERR.error_msg,
+                   '',
+                   '',
+                   MNG.arrival_date,
+                   MNG.arrival_time,
+                   '3' call_class,
+                   DECODE(MNG.recv_user_nm, NULL,
+                        DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+                                MNG.recv_user_nm) arrival_nm,
+                   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
+                   MNG.org_msg memo,
+                   '1' call_type,
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR,
+                   OP.T_CT_ERROR     ERR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
+               AND MNG.org_cd = '035'
+               AND MNG.arrival_time IS NOT NULL
+               AND MNG.send_time IS NOT NULL
+               AND (    (NVL(MNG.org_send_yn, '0') = '0'
+                      OR NVL(MNG.org_send_yn, '0') = '1' )
+                    )
+               AND SUBSTR(MNG.error_cd, 1, 3) <> 'ERR'
+               AND SUBSTR(MNG.error_cd, 1, 3) <> 'USR'
+               AND MNG.org_cd = ERR.org_cd(+)
+               AND MNG.error_cd = ERR.error_cd(+)
+               AND MNG.recv_user_uid = MBR.member_id(+)
+    ]]>
+    </select>
+
+    <select id="select011" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT     MNG.trans_date trans1_date,
+                   MNG.org_msg_no trans1_seq,
+                   MNG.BRANCH_CD,
+                   MNG.mac_no,
+                   '',
+                   '',
+                   '',
+                   MNG.arrival_date,
+                   DECODE( LENGTH(MNG.arrival_time), 4 , MNG.arrival_time||'00', MNG.arrival_time ) arrival_time,
+                   '',
+                   DECODE(MNG.recv_user_nm, NULL,
+                        DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+                                MNG.recv_user_nm) arrival_nm,
+                   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   MNG.org_site_cd,
+                   '',
+                   MNG.create_time,
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 15), 'YYYYMMDD'))
+               AND MNG.org_cd = '011'
+               AND MNG.arrival_time IS NOT NULL
+               AND MNG.format_type = '21'
+               AND (    nvl(MNG.org_send_yn, '0') = '1'
+                    OR (    MNG.arrival_est_time IS NULL
+                        AND nvl(MNG.org_send_yn, '0') = '0'
+                       )
+                    /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */
+                    OR nvl(MNG.org_send_yn, '0') = 'a'
+                    )
+               AND MNG.org_msg_no IS NOT NULL
+               AND MNG.recv_user_uid = MBR.member_id(+)
+
+    ]]>
+    </select>
+
+    <select id="select031" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT MNG.create_date trans1_date,
+               MNG.org_msg_no trans1_seq,
+               MNG.branch_cd,
+               MNG.mac_no,
+               CASE WHEN LENGTH(MNG.ERROR_CD) = 2
+                    THEN MNG.ERROR_CD
+                    ELSE
+                    (SELECT CD_NM2 FROM OP.T_CM_COMMON WHERE LARGE_CD = '1130'
+                                        AND CD_NM3 = ERR.ORG_CD
+                                        AND CD_NM1 = ERR.GROUP_ERROR_CD)
+              END AS error_msg,
+               '',
+               '',
+               MNG.arrival_date,
+               MNG.arrival_time,
+               '' AS call_class,
+               DECODE(MNG.recv_user_nm, NULL,
+                    DECODE(MNG.recv_user_uid, NULL, 'NICE', MBR.member_nm),
+                            MNG.recv_user_nm) AS arrival_nm,
+               DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
+               REPLACE(substrb(MNG.MSG,1,100), CHR(10), ' ') memo,
+               '',
+               '',
+               '',
+               '',
+               MNG.SITE_CD org_site_cd,
+               '',
+               '',
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+          FROM OP.T_CT_ERROR_MNG MNG,
+               OP.T_CM_MEMBER      MBR,
+               OP.T_CT_ERROR       ERR
+         WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
+           AND MNG.org_cd = '031'
+           AND MNG.arrival_time IS NOT NULL
+           AND MNG.send_time IS NOT NULL
+           AND MNG.org_send_yn = '1'
+           AND MNG.org_cd = ERR.org_cd
+           AND MNG.ERROR_CD = ERR.ERROR_CD
+           AND MNG.recv_user_uid = MBR.member_id(+)
+            /* 차세대 후 FKM 기기 오류로 올라오는것 (정상이나 장애로 설정되는것 ) 제외 */
+            AND MNG.error_cd || nvl(MNG.made_err_cd, '0') <> '9900000'
+    ]]>
+    </select>
+
+    <select id="select088" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT     MNG.trans_date trans1_date,
+                   MNG.org_msg_no trans1_seq,
+                   MNG.BRANCH_CD,
+                   DECODE( substr( MNG.sec, 1, 1 ), '2', '',  DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no ) ) mac_no, /* 민원출동은 기번 없이 feedback */
+                   mng.crt_no,
+                   LPAD(MNG.org_call_cnt, 2, '0'),
+                   '',
+                   MNG.send_date,
+                   MNG.send_time,
+                   MNG.arrival_date,
+                   DECODE( LENGTH(MNG.arrival_time), 4 , MNG.arrival_time||'00', MNG.arrival_time ) arrival_time,
+                   SUBSTR(MNG.sec, 1, 1)||DECODE(SUBSTR(MNG.sec, 3, 1), NULL, '1', SUBSTR(MNG.sec, 3, 1)) call_class,
+                   DECODE(MNG.recv_user_nm, NULL,
+                        DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+                                MNG.recv_user_nm) arrival_nm,
+                   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
+                   MNG.org_msg memo,
+                   SUBSTR(MNG.sec, 2, 1) call_type,
+                   '',
+                   '',
+                   '',
+                   MNG.SITE_CD org_site_cd,
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 10), 'YYYYMMDD'))
+               AND MNG.org_cd = '088'
+               AND MNG.arrival_time IS NOT NULL
+               /* AND MNG.send_time IS NOT NULL */
+               AND (    MNG.org_send_yn = '1'
+                    OR (    MNG.arrival_est_time IS NULL
+                        AND MNG.org_send_yn = '0'
+                       )
+                    /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */
+                    OR MNG.org_send_yn = 'a'
+                    )
+               /*AND (MNG.format_type = '21' OR MNG.format_type = '31')*/
+               /* sec : 출동요청구분 + 사유로 구성 */
+               AND MNG.sec IS NOT NULL
+               AND MNG.recv_user_uid = MBR.member_id(+)
+               /* 2차출동요청에대한 키지원일경우 제외 */
+               AND substr(MNG.sec, 3, 1) || MNG.ERROR_CD <> '2SH903'
+        union all
+        SELECT TRANS_DATE trans1_date,
+               ORG_MSG_NO trans1_seq,
+               BRANCH_CD,
+               MAC_NO,
+               '',
+               LPAD(org_call_cnt, 2, '0'),
+               '',
+               send_date,
+               send_time,
+               arrival_date,
+               DECODE( LENGTH(arrival_time), 4 , arrival_time||'00', arrival_time ) arrival_time,
+               DECODE(CALL_CLASS, NULL, ' ', CALL_CLASS)||DECODE(CALL_CNT_TYPE, NULL, ' ', CALL_CNT_TYPE ) call_class,
+               DECODE(COM_MAN_NM, NULL, '나이스', COM_MAN_NM ) arrival_nm,
+               DECODE(COM_MAN_TEL_NO , NULL, '0800228252', OP.FC_FN_SECURITY(COM_MAN_TEL_NO, '2') ) arrival_tel_no,
+               substr(ORG_MSG , 1, 100) memo,
+               CALL_TYPE,
+               '',
+               '',
+               '',
+               SITE_CD org_site_cd,
+               '',
+               '',
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        FROM OP.T_CT_ERROR_MNG_MADE_COM
+        WHERE ORG_CD = '088'
+        AND   (     ORG_SEND_YN = '2'
+               OR   (   ORG_SEND_YN = '1' AND ARRIVAL_EST_TIME IS NULL )
+              )
+        AND   ARRIVAL_TIME IS NOT NULL
+        AND   ORG_MSG_NO IS NOT NULL
+
+    ]]>
+    </select>
+
+    <!-- 전문필드이상 -->
+    <select id="select032" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT     MNG.trans_date trans1_date,
+                   MNG.org_msg_no trans1_seq,
+                   MNG.BRANCH_CD,
+                   MNG.mac_no,
+                   mng.crt_no,
+                   LPAD(MNG.org_call_cnt, 2, '0'),
+                   '',
+                   MNG.send_date,
+                   MNG.send_time,
+                   MNG.arrival_date,
+                   DECODE( LENGTH(MNG.arrival_time), 4 , MNG.arrival_time||'00', MNG.arrival_time ) arrival_time,
+                   SUBSTR(MNG.sec, 1, 1)||DECODE(SUBSTR(MNG.sec, 3, 1), NULL, '1', SUBSTR(MNG.sec, 3, 1)) call_class,
+                   DECODE(MNG.recv_user_nm, NULL,
+                        DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+                                MNG.recv_user_nm) arrival_nm,
+                   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
+                   MNG.org_msg memo,
+                   SUBSTR(MNG.sec, 2, 1) call_type,
+                   '',
+                   '',
+                   '',
+                   MNG.SITE_CD org_site_cd,
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 15), 'YYYYMMDD'))
+               AND MNG.org_cd = '032'
+               AND MNG.arrival_time IS NOT NULL
+               /* AND MNG.send_time IS NOT NULL */
+               AND (    MNG.org_send_yn = '1'
+                    OR (    MNG.arrival_est_time IS NULL
+                        AND MNG.org_send_yn = '0'
+                       )
+                    /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */
+                    OR MNG.org_send_yn = 'a'
+                    )
+               /*AND (MNG.format_type = '21' OR MNG.format_type = '31')*/
+               /* sec : 출동요청구분 + 사유로 구성 */
+               AND MNG.sec IS NOT NULL
+                    /*OR MNG.ERROR_CD = 'AFTMNG') ==> 정산처리는 도착 전문 없음*/
+               AND MNG.recv_user_uid = MBR.member_id(+)
+               AND MNG.error_cd <> 'AFTMNG'
+            and LENGTH(mng.mac_no) = 3
+            and MNG.org_msg_no is not null
+    ]]>
+    </select>
+
+    <select id="select081" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT   MNG.trans_date trans1_date,
+                   MNG.org_msg_no trans1_seq,
+                   MNG.branch_cd,
+                   MNG.mac_no,
+                   ERR.error_msg,
+                   MNG.send_date,
+                   MNG.send_time,
+                   MNG.arrival_date,
+                   MNG.arrival_time,
+                   SUBSTR(MNG.sec, 1, 1) call_class,
+                   DECODE(MNG.recv_user_nm, NULL,
+                        DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+                                MNG.recv_user_nm) arrival_nm,
+                   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
+                   MNG.org_msg memo,
+                   SUBSTR(MNG.sec, 2, 1) call_type,
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR,
+                   OP.T_CT_ERROR     ERR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
+               AND MNG.org_cd = '081'
+               AND MNG.arrival_time IS NOT NULL
+               AND MNG.send_time IS NOT NULL
+               AND MNG.org_send_yn = '1'
+               AND (MNG.format_type = '21' OR MNG.format_type = '31')
+               AND MNG.org_msg_no is not null
+               AND MNG.org_cd = ERR.org_cd(+)
+               AND MNG.error_cd = ERR.error_cd(+)
+               AND MNG.recv_user_uid = MBR.member_id(+)
+    ]]>
+    </select>
+
+    <select id="select005" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT   MNG.trans_date trans1_date,
+                   MNG.org_msg_no trans1_seq,
+                   MNG.branch_cd,
+                   MNG.mac_no,
+                   ERR.error_msg,
+                   /* 도착예정없이 도착할 경우 예정시간을 도착시간과 동일하게 송신 처리 -> 외환은행 요청 */
+                   DECODE(MNG.ARRIVAL_EST_TIME, NULL, MNG.arrival_date, MNG.ARRIVAL_EST_DATE) send_date,
+                   DECODE(MNG.ARRIVAL_EST_TIME, NULL, MNG.arrival_time, MNG.ARRIVAL_EST_TIME||'00') send_time,
+                   MNG.arrival_date,
+                   MNG.arrival_time,
+                   '',
+                   DECODE(MNG.recv_user_nm, NULL,
+                        DECODE(MNG.recv_user_uid, NULL, '나이스', MBR.member_nm),
+                                MNG.recv_user_nm) arrival_nm,
+                   DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
+                   MNG.org_msg memo,
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR,
+                   OP.T_CT_ERROR     ERR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
+               AND MNG.org_cd = '005'
+               AND MNG.send_time IS NOT NULL
+               AND (   (   MNG.org_send_yn = '0'
+                       AND MNG.arrival_time is NOT NULL
+                       AND MNG.arrival_est_time IS NULL
+                       )
+                     OR
+                       (
+                            MNG.org_send_yn = '1'
+                        AND MNG.arrival_time IS NOT NULL
+                       )
+                   )
+               AND (MNG.format_type = '21' OR MNG.format_type = '31')
+               AND MNG.org_cd = ERR.org_cd(+)
+               AND MNG.error_cd = ERR.error_cd(+)
+               AND MNG.recv_user_uid = MBR.member_id(+)
+    ]]>
+    </select>
+
+    <select id="select003" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT     MNG.trans_date trans1_date,                                                          /*  장애발생일자      */
+                   MNG.org_msg_no trans1_seq,                                                          /*  출동요청일련번호    */
+                   MNG.branch_cd,                                                            /*  지점번호            */
+                   MNG.mac_no,                                                              /*  기기번호            */
+                   RPAD(NVL(MNG.CRT_NO,' '),15,' ')                                         /*  CRT(15)+출동요청차수(2)+집계분류코드(2) */
+                        ||  RPAD(MNG.ORG_CALL_CNT,2,' ')
+                        ||  RPAD(MNG.GROUP_ERROR_CD,2,' ') error_msg,
+                   '',
+                   '',
+                   MNG.arrival_date,                                                        /*  도착일자            */
+                   MNG.arrival_time,                                                        /*  도착시각            */
+                   SUBSTR(MNG.sec, 1, 1)||DECODE(SUBSTR(MNG.sec, 3, 1), NULL, '1', SUBSTR(MNG.sec, 3, 1)) call_class,  /*  출동구분(1)+출동차수구분(1)   */
+                   '',
+                   '',
+                   MNG.remark memo,                                                                /*  메모사항(BIGO전송. 운총방정호과장20130813    */
+                   '',
+                   '',
+                   '',
+                   '',
+                   MNG.ORG_SITE_CD,                                                         /*  코너코드            */
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_CT_ERROR_MNG MNG,
+                   OP.T_CM_MEMBER    MBR,
+                   OP.T_CT_ERROR     ERR
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
+               AND MNG.org_cd = '003'
+               AND MNG.arrival_time IS NOT NULL
+               AND MNG.send_time IS NOT NULL
+               AND (    MNG.org_send_yn = '1'
+                    OR (    MNG.arrival_est_time IS NULL
+                        AND MNG.org_send_yn = '0'
+                       )
+                    )
+               AND (MNG.format_type = '21' OR MNG.format_type = '31')
+               AND MNG.org_cd = ERR.org_cd(+)
+               AND MNG.error_cd = ERR.error_cd(+)
+               AND MNG.recv_user_uid = MBR.member_id(+)
+    ]]>
+    </select>
+
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+
+    ]]>
+    </select>
+
+
+</mapper>

@@ -31,11 +31,14 @@ public class AMSBrokerReqConsumer extends Thread {
     private AMSBrokerData amsSafeData = new AMSBrokerData();
     private ReqMsgHandler reqMsg;
     private AnsMsgHandler ansMsg;
+    private String        macNo;
 
-    public AMSBrokerReqConsumer( BlockingQueue<AMSBrokerReqJob> queue ) {
+    public AMSBrokerReqConsumer( BlockingQueue<AMSBrokerReqJob> queue, String macNo ) {
         listenQueue = queue;
         reqMsg = (ReqMsgHandler)AMSBrokerSpringMain.sprCtx.getBean("reqMsg");
         ansMsg = (AnsMsgHandler)AMSBrokerSpringMain.sprCtx.getBean("ansMsg");
+        this.macNo = macNo;
+        this.setName(String.format("ReqConsumer-%s", this.macNo));
     }
 
     public void run()  {

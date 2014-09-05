@@ -1,9 +1,7 @@
 package com.nicetcm.nibsplus.broker.ams;
 
-import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
-import java.rmi.Naming;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -17,6 +15,7 @@ public class AMSBrokerRMIServer {
 
     private Registry registry;
     private AMSBrokerRMI stub;
+    private AMSBrokerRMIImpl remoteObj;
 
     public AMSBrokerRMIServer() {
     }
@@ -25,7 +24,7 @@ public class AMSBrokerRMIServer {
 
         try {
             logger.debug("Going to bind..");
-            AMSBrokerRMIImpl remoteObj = new AMSBrokerRMIImpl();
+            remoteObj = new AMSBrokerRMIImpl();
 
             stub = (AMSBrokerRMI)UnicastRemoteObject.exportObject(remoteObj, Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
 
@@ -50,6 +49,7 @@ public class AMSBrokerRMIServer {
     public void unbind() {
         try {
             registry.unbind("AMSBrokerRMI");
+            UnicastRemoteObject.unexportObject(remoteObj, true);
             logger.debug("registry unbound");
         }
         catch( Exception e ) {

@@ -41,18 +41,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
     }
 
     public void serverShutdown() throws Exception {
-        AMSBrokerMain.getScheduler().shutdown();
-        AMSBrokerMain.getRMI().unbind();
-        AMSBrokerServer.getServer().close();
-
-        logger.debug("Thread's count = {}", Thread.activeCount() );
-        //for (Thread t : Thread.getAllStackTraces().keySet()) {
-        //    if (t.getState()==Thread.State.RUNNABLE) {
-        //        logger.debug("Thread id = {},{}", t.getId(), t.getName());
-        //        t.interrupt();
-        //    }
-        //}
-        System.exit(0);
+        new AMSBrokerShutdown().start();
     }
 
     public void dataUploadToBroker( byte[] data, boolean isFirst, boolean hasNext ) {

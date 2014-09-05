@@ -47,6 +47,7 @@ public class AMSBrokerMain extends Thread {
     public AMSBrokerMain(String job) {
 
         this.jobName = job;
+        this.setName(job);
         if( jobName.equals("SERVER") ) {
             logger.debug("properties = " + MsgCommon.msgProps.getProperty("schema_path"));
             svr = AMSBrokerServer.getServer(Integer.parseInt(MsgCommon.msgProps.getProperty("ams.port")));

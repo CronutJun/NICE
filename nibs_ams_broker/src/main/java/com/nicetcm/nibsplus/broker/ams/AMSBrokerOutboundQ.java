@@ -17,12 +17,16 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class AMSBrokerOutboundQ {
 
+    private String macNo;
     private BlockingQueue<AMSBrokerReqJob> outQ;
     private AMSBrokerReqConsumer consumer;
 
-    public AMSBrokerOutboundQ() {
+    public AMSBrokerOutboundQ(String macNo) {
+
+        this.macNo = macNo;
+
         outQ = new LinkedBlockingQueue<AMSBrokerReqJob>();
-        consumer = new AMSBrokerReqConsumer( outQ );
+        consumer = new AMSBrokerReqConsumer( outQ, this.macNo );
         consumer.start();
     }
 

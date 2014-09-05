@@ -66,7 +66,7 @@ public class AMSBrokerReqJob {
             queue =  macMap.get(macNo).getOutQ();
         }
         else {
-            AMSBrokerOutboundQ outQ = new AMSBrokerOutboundQ();
+            AMSBrokerOutboundQ outQ = new AMSBrokerOutboundQ(macNo);
             macMap.put( macNo,outQ );
             queue = outQ.getOutQ();
         }
