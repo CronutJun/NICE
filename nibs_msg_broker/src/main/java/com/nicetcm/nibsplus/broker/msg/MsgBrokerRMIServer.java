@@ -13,19 +13,22 @@ public class MsgBrokerRMIServer {
     
     public static final Logger logger = LoggerFactory.getLogger(MsgBrokerRMIServer.class);
     
+    private Registry registry;
+    private MsgBrokerRMIImpl remoteObj;
+    
     public MsgBrokerRMIServer() {
     }
     
     public void bind() {
         
         try { 
-            MsgBrokerRMIImpl remoteObj = new MsgBrokerRMIImpl();
+            remoteObj = new MsgBrokerRMIImpl();
             
             MsgBrokerRMI stub = (MsgBrokerRMI)UnicastRemoteObject.exportObject(remoteObj, Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
 
             LocateRegistry.createRegistry(Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
             // Bind the remote object's stub in the registry
-            Registry registry = LocateRegistry.getRegistry(Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
+            registry = LocateRegistry.getRegistry(Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
             logger.debug("rebind");
             registry.rebind("MsgBrokerRMI", stub);
             logger.debug("MsgBrokerRMI Remote Object bound to the registry and ready to service incoming client calls..."); 
@@ -38,5 +41,17 @@ public class MsgBrokerRMIServer {
             logger.error("Server exception: " + e.toString());
             e.printStackTrace();
         }
-    } 
+    }
+    
+    public void unbind() {
+        try {
+            registry.unbind("MsgBrokerRMI");
+            UnicastRemoteObject.unexportObject(remoteObj, true);
+            logger.debug("registry unbound");
+        }
+        catch( Exception e ) {
+            e.printStackTrace();
+        }
+    }
+
 }

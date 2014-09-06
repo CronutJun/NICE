@@ -1,4 +1,4 @@
-package com.nicetcm.nibsplus.broker.ams.jmx;
+package com.nicetcm.nibsplus.broker.msg.jmx;
 
 /**
  * Copyright 2014 The NIBS+ Project
@@ -17,12 +17,12 @@ import javax.management.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nicetcm.nibsplus.broker.ams.AMSBrokerShutdown;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerShutdown;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
-public class AMSBrokerManager extends NotificationBroadcasterSupport implements AMSBrokerManagerMBean {
+public class MsgBrokerManager extends NotificationBroadcasterSupport implements MsgBrokerManagerMBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(AMSBrokerManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(MsgBrokerManager.class);
     
     private long sequenceNumber = 1;
     private int RMIResTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
@@ -30,7 +30,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
     @Override
     public String shutdownServer(String operation) {
         if( operation.equals("ShutDown") ) {
-            new AMSBrokerShutdown().start();
+            new MsgBrokerShutdown().start();
             return "OK. Going to shutdown";
         }
         else {

@@ -1,6 +1,6 @@
-package com.nicetcm.nibsplus.broker.ams.jmx;
+package com.nicetcm.nibsplus.broker.msg.jmx;
 
-public interface AMSBrokerManagerMBean {
+public interface MsgBrokerManagerMBean {
 
     public String shutdownServer(String operation);
     public void reloadSchema();

@@ -1,5 +1,8 @@
 package com.nicetcm.nibsplus.broker.msg;
 
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -16,6 +19,7 @@ import javax.jms.TextMessage;
  
 
 
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +28,8 @@ public class MsgBrokerConsumer {
     
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerConsumer.class);
     
+    public static final ConcurrentMap<String, MsgBrokerConsumer> consumers = new ConcurrentHashMap<String, MsgBrokerConsumer>();
+
     private ConnectionFactory factory;
     private Connection connection;
     private Session session;
@@ -73,7 +79,21 @@ public class MsgBrokerConsumer {
     }
  
     public void close() throws JMSException {
+        consumer.close();
+        session.close();
         connection.close();
+    }
+
+    public Connection getConnection() {
+        return connection;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public MessageConsumer getConsumer() {
+        return consumer;
     }
     
 }

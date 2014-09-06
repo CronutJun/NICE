@@ -38,7 +38,9 @@ public class MsgBrokerQInitializer {
         if( obj.containsKey("consumers")) {
             JsonArray arr = obj.getJsonArray("consumers");
             for (JsonObject elem : arr.getValuesAs(JsonObject.class)) {
-                new MsgBrokerConsumer(MsgCommon.msgProps.getProperty("consumer.host"), elem.getString("name"), new MsgBrokerListener());
+                MsgBrokerConsumer.consumers
+                .put(elem.getString("name"),
+                    new MsgBrokerConsumer(MsgCommon.msgProps.getProperty("consumer.host"), elem.getString("name"), new MsgBrokerListener()));
             }
         }
         return this;

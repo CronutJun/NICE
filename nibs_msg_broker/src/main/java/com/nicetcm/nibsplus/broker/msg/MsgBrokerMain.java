@@ -1,17 +1,26 @@
 package com.nicetcm.nibsplus.broker.msg;
 
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.nicetcm.nibsplus.broker.msg.jmx.MsgBrokerManager;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 public class MsgBrokerMain {
 
-    private MsgBrokerRMIServer rmi;
+    private static MsgBrokerRMIServer rmi;
     
     public static final Logger logger = LoggerFactory.getLogger(MsgBrokerMain.class);
+    
+    public static MsgBrokerRMIServer getRMI() {
+        return rmi;
+    }
     
     public MsgBrokerMain() {
         try {
@@ -46,13 +55,25 @@ public class MsgBrokerMain {
             rmi = new MsgBrokerRMIServer();
             rmi.bind();
             
+            registerMBean();
+            
         }
         catch (Exception e) {
             logger.error(e.getMessage());
         }
     }
     
-    
+    private void registerMBean() throws Exception {
+        
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        
+        ObjectName mbeanName = new ObjectName("com.nicetcm.nibsplus.broker.msg.jmx:type=MsgBrokerManager");
+        MsgBrokerManager mbean = new MsgBrokerManager();
+     
+        mbs.registerMBean(mbean, mbeanName);
+     
+    }
+
     public static void main(String[] args) {
         
         try {
