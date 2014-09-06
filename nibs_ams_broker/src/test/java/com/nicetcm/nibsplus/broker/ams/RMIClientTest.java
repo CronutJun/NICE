@@ -45,15 +45,6 @@ public class RMIClientTest {
         session = factory.openSession();
     }
 
-    public void serverShutdown() throws Exception {
-        Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
-        System.out.println("registry");
-        AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
-        System.out.println("lookup");
-
-        remoteObj.serverShutdown();
-    }
-
     public void dataUpload() throws Exception {
         Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10299);
         System.out.println("registry");
@@ -332,7 +323,6 @@ public class RMIClientTest {
 
     public static void main(String[] args) {
         try {
-            //new RMIClientTest().serverShutdown();
             //new RMIClientTest().makeUpdatesSchedule();
             new RMIClientTest().reqEnvInfToMac();
             //new RMIClientTest().reqRegInfToMac();

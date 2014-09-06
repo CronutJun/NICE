@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public interface AMSBrokerRMI extends Remote {
 
-    public void serverShutdown() throws Exception;
     public void dataUploadToBroker( byte[] data, boolean isFirst, boolean hasNext ) throws Exception;
 
     /**

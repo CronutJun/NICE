@@ -40,10 +40,6 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         /*super();*/
     }
 
-    public void serverShutdown() throws Exception {
-        new AMSBrokerShutdown().start();
-    }
-
     public void dataUploadToBroker( byte[] data, boolean isFirst, boolean hasNext ) {
         try {
             if( isFirst && hasNext) {

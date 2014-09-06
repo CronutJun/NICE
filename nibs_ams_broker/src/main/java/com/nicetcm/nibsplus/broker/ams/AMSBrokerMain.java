@@ -14,9 +14,13 @@ package com.nicetcm.nibsplus.broker.ams;
 
 
 import java.io.*;
+import java.lang.management.ManagementFactory;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import com.nicetcm.nibsplus.broker.common.*;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
+import com.nicetcm.nibsplus.broker.ams.jmx.AMSBrokerManager;
 import com.nicetcm.nibsplus.broker.ams.services.InitScheduler;
 
 import org.quartz.Scheduler;
@@ -69,8 +73,9 @@ public class AMSBrokerMain extends Thread {
 
         if( jobName.equals("SERVER") ) {
             try {
+                registerMBean();
                 svr.run();
-                logger.debug("Soket Server Going to stop..");
+                logger.debug("Soket server going to stop..");
             }
             catch( Exception err) {
                 err.printStackTrace();
@@ -87,14 +92,26 @@ public class AMSBrokerMain extends Thread {
         else if( jobName.equals("SCHEDULE") ) {
             try {
                 sched.start();
+                initSchedule();
             }
             catch( Exception err) {
                 err.printStackTrace();
             }
         }
     }
+    
+    private void registerMBean() throws Exception {
+        
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+        
+        ObjectName mbeanName = new ObjectName("com.nicetcm.nibsplus.broker.ams.jmx:type=AMSBrokerManager");
+        AMSBrokerManager mbean = new AMSBrokerManager();
+     
+        mbs.registerMBean(mbean, mbeanName);
+     
+    }
 
-    public void initSchedule() {
+    private void initSchedule() {
 
         AMSBrokerData safeData = new AMSBrokerData();
         InitScheduler initSched = (InitScheduler)AMSBrokerSpringMain.sprCtx.getBean("initScheduler");
@@ -134,7 +151,6 @@ public class AMSBrokerMain extends Thread {
         svr.start();
         rmi.start();
         sched.start();
-        sched.initSchedule();
     }
 
 }
