@@ -7,6 +7,55 @@
       <plugins>
           <plugin>
               <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-install-plugin</artifactId>
+              <version>2.3.1</version>
+              <executions>
+                  <execution>
+                      <id>com.ibm.db2.jcc.license</id>
+                      <phase>install</phase>
+                      <goals>
+                          <goal>install-file</goal>
+                      </goals>
+                      <configuration>
+                          <file>${basedir}/db2jcc_license_cu.jar</file>
+                          <groupId>com.ibm.db2</groupId>
+                          <artifactId>db2jcc_license_cu</artifactId>
+                          <version>10.0.0</version>
+                          <packaging>jar</packaging>
+                      </configuration>
+                  </execution>
+                  <execution>
+                      <id>com.ibm.db2.jcc</id>
+                      <phase>install</phase>
+                      <goals>
+                          <goal>install-file</goal>
+                      </goals>
+                      <configuration>
+                          <file>${basedir}/db2jcc.jar</file>
+                          <groupId>com.ibm.db2</groupId>
+                          <artifactId>db2jcc</artifactId>
+                          <version>10.0.0</version>
+                          <packaging>jar</packaging>
+                      </configuration>
+                  </execution>
+                  <execution>
+                      <id>com.nicetcm.nibsplus.broker.common</id>
+                      <phase>install</phase>
+                      <goals>
+                          <goal>install-file</goal>
+                      </goals>
+                      <configuration>
+                          <file>${nibs.common.dir}/msg_common.jar</file>
+                          <groupId>com.nicetcm.nibsplus.broker.common</groupId>
+                          <artifactId>msg_common</artifactId>
+                          <version>0.0.1</version>
+                          <packaging>jar</packaging>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
+          <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-assembly-plugin</artifactId>
               <version>2.4</version>
               <configuration>
@@ -46,6 +95,7 @@
 
 		<!-- Test -->
 		<junit.version>4.11</junit.version>
+		<nibs.common.dir>${project.basedir}/../nibs_msg_broker/target/classes/com/nicetcm/nibsplus/broker/common</nibs.common.dir>
 
 	</properties>
 
@@ -173,6 +223,23 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.db2</groupId>
+            <artifactId>db2jcc_license_cu</artifactId>
+            <version>10.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ibm.db2</groupId>
+            <artifactId>db2jcc</artifactId>
+            <version>10.0.0</version>
+<!--             <scope>system</scope> -->
+<!--             <systemPath>${basedir}/db2jcc.jar</systemPath> -->
+        </dependency>
+        <dependency>
+            <groupId>com.nicetcm.nibsplus.broker.common</groupId>
+            <artifactId>msg_common</artifactId>
+            <version>0.0.1</version>
         </dependency>
 	</dependencies>
 </project>

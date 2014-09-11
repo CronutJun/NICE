@@ -27,8 +27,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="db2jcc_license_cu.jar"/>
-	<classpathentry kind="lib" path="db2jcc.jar"/>
-	<classpathentry kind="lib" path="/nibs_msg_broker/target/classes"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
