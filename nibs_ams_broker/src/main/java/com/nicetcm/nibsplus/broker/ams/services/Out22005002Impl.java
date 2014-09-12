@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.ams.AMSBrokerLib.TEMP_FILE_PATH;
+
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqInfo;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
@@ -32,9 +34,10 @@ public class Out22005002Impl implements OutMsgHandler {
 
     @Override
     public void outMsgHandle(MsgParser outMsg, AMSBrokerData safeData, AMSBrokerReqJob reqJob, AMSBrokerReqInfo reqInfo, TRmMsg msg) throws Exception {
-        File f = new File("D:\\CronutWorks\\NICE\\Documents\\Design\\05. AMS\\ams_server_src.zip");
+        File f = new File(String.format("%sams_server_src.zip", TEMP_FILE_PATH) );
         FileInputStream fIn = new FileInputStream(f);
 
+        logger.debug("reqJob = {}", reqJob.getFileName() );
         reqInfo.getMsg().position(0);
         outMsg.setString( "CM._AOCMsgCode",           msg.getMsgCd())
               .setString( "CM._AOCServiceCode",       msg.getSvcCd())

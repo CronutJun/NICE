@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GUARD_CUST">
+
+<!--
+<entry key="GUARD_CUST"             value="01000180" />      16. 경비사고객대기통보
+{
+   "name" : "01000180",                    "kname" : "고객대기정보",
+   "response" : { "code" : "01000180",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "지점코드",               "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "trans1_date",            "kname" : "1차통지 거래일자",       "type" : "N",   "length"  : 8   },
+      { "name" : "create_time",            "kname" : "출동요청시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "trans1_seq",             "kname" : "1차통지 전문번호",       "type" : "AN",  "length"  : 10  },
+      { "name" : "error_cd",               "kname" : "LC코드(장애코드)",       "type" : "AN",  "length"  : 8   },
+      { "name" : "call_date",              "kname" : "출동요청일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "call_time",              "kname" : "출동요청시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "memo",                   "kname" : "메모",                   "type" : "AN",  "length"  : 200 },
+      { "name" : "call_cnt",               "kname" : "출동요청차수",           "type" : "AN",  "length"  : 2   },
+      { "name" : "org_site_cd",            "kname" : "기관사이트코드",         "type" : "AN",  "length"  : 6   },
+      { "name" : "type_cd",                "kname" : "변경구분코드",           "type" : "AN",  "length"  : 1   },
+      { "name" : "org_cd",                 "kname" : "경비사송신-기관코드",    "type" : "AN",  "length"  : 3   },
+      { "name" : "call_class",             "kname" : "출동요청구분코드",       "type" : "AN",  "length"  : 1   },
+      { "name" : "call_cnt_type",          "kname" : "출동요청차수구분",       "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 142 }
+   ]
+}
+ -->
+    <select id="select7LG" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select
+               grd.BRANCH_CD,
+               grd.mac_no,
+               grd.trans_date trans1_date,
+               grd.create_time,
+               grd.org_msg_no trans1_seq,
+               '',
+               '',
+               '',
+               SUBSTR(grd.org_msg, 1, 190) memo,
+               grd.org_call_cnt call_cnt,
+               grd.SITE_CD org_site_cd,
+               grd.CALL_CANCEL_TYPE type_cd,
+               grd.org_cd,
+               grd.call_class,
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        from   OP.t_ct_error_mng_made_com grd
+        where  grd.org_send_yn not in ('0', 'D', 'Q' )
+        AND    grd.CHANGE_SEND_YN = '1'
+        and    grd.trans_date > to_char( sysdate - 3, 'yyyymmdd' )
+        and    grd.made_com_cd  = '1200'
+    ]]>
+    </select>
+
+    <select id="select7CH" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select
+               grd.BRANCH_CD,
+               grd.mac_no,
+               grd.trans_date trans1_date,
+               grd.create_time,
+               grd.org_msg_no trans1_seq,
+               '',
+               '',
+               '',
+               SUBSTR(grd.org_msg, 1, 190) memo,
+               grd.org_call_cnt call_cnt,
+               grd.SITE_CD org_site_cd,
+               grd.CALL_CANCEL_TYPE type_cd,
+               grd.org_cd,
+               grd.call_class,
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        from   OP.t_ct_error_mng_made_com grd
+        where  grd.org_send_yn not in ('0', 'D', 'Q' )
+        AND    grd.CHANGE_SEND_YN = '1'
+        and    grd.trans_date > to_char( sysdate - 3, 'yyyymmdd' )
+        and    grd.made_com_cd in ('1300', '1400')
+    ]]>
+    </select>
+
+    <select id="select7HS" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select
+               grd.BRANCH_CD,
+               grd.mac_no,
+               grd.trans_date trans1_date,
+               grd.create_time,
+               grd.org_msg_no trans1_seq,
+               '',
+               '',
+               '',
+               SUBSTR(grd.org_msg, 1, 190) memo,
+               grd.org_call_cnt call_cnt,
+               grd.SITE_CD org_site_cd,
+               grd.CALL_CANCEL_TYPE type_cd,
+               grd.org_cd,
+               grd.call_class,
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        from   OP.t_ct_error_mng_made_com grd
+        where  grd.org_send_yn not in ('0', 'D', 'Q' )
+        AND    grd.CHANGE_SEND_YN = '1'
+        and    grd.trans_date > to_char( sysdate - 3, 'yyyymmdd' )
+        and    grd.made_com_cd  = '1200'
+    ]]>
+    </select>
+
+    <!-- 0JE,0KT -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select
+               CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN SUBSTR(grd.BRANCH_CD, 2, 3)
+                    ELSE grd.BRANCH_CD
+                    END AS BRANCH_CD,
+        /*     grd.BRANCH_CD,*/
+               grd.mac_no,
+               grd.create_date trans1_date,
+               grd.create_time,
+               grd.error_no trans1_seq,
+               err.group_error_cd error_cd,
+               mng.send_date as call_date,
+               mng.send_time as call_time,
+               SUBSTR(grd.org_msg, 1, 190) memo,
+               SUBSTR(DECODE(MNG.org_cd, '088', '해피콜대상 '|| grd.org_msg, grd.org_msg), 1, 190) call_cnt,
+
+               CASE WHEN grd.org_cd = '031' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN CASE WHEN OP.FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL
+                              THEN grd.site_cd
+                              ELSE OP.FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd )
+                              END
+                    ELSE grd.site_cd
+                    END AS org_site_cd,
+
+        /*     grd.site_cd,         */
+               '1' type_cd,
+               grd.org_cd ,
+               '',
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        from   OP.t_ct_error_mng       mng,
+               OP.t_ct_error_mng_guard grd,
+               OP.t_ct_error           err,
+               OP.t_cm_common          co1
+        where  grd.guard_send_yn = 'C'
+        and    grd.create_date > TO_NUMBER(to_char( sysdate - 3, 'yyyymmdd' ))
+        and    grd.org_cd = err.org_cd(+)
+        and    grd.error_cd = err.error_cd(+)
+        and    grd.create_date = mng.create_date
+        and    grd.error_no = mng.error_no
+        and    co1.large_cd = '2301'
+        and    co1.small_cd = grd.recv_place
+    ]]>
+        <choose>
+            <when test='orgCd == "0JE"'>
+                and    co1.cd_nm2 = '6000' /*조은-6000*/
+            </when>
+            <when test='orgCd == "0KT"'>
+                and    co1.cd_nm2 = '7000' /*KT-7000*/
+            </when>
+        </choose>
+    </select>
+
+    <select id="select0CP" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select
+               CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN SUBSTR(grd.BRANCH_CD, 2, 3)
+                    ELSE grd.BRANCH_CD
+                    END AS BRANCH_CD,
+        /*     grd.BRANCH_CD,*/
+        /*
+               CASE WHEN grd.org_cd = '003' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN CASE WHEN OP.FC_GET_MAP_MAC_NO(1, grd.org_cd, grd.BRANCH_CD, grd.mac_no ) IS NULL
+                              THEN grd.mac_no
+                              ELSE OP.FC_GET_MAP_MAC_NO(1, grd.org_cd, grd.BRANCH_CD, grd.mac_no )
+                              END
+                    ELSE grd.mac_no
+                    END AS mac_no,
+        */
+               grd.mac_no,
+               grd.create_date trans1_date,
+               grd.create_time create_time,
+               grd.error_no trans1_seq,
+               err.group_error_cd,
+               mng.send_date as call_date,
+               mng.send_time as call_time,
+               SUBSTR(grd.org_msg, 1, 190) memo,
+               SUBSTR(DECODE(MNG.org_cd, '088', '해피콜대상 '|| grd.org_msg, grd.org_msg), 1, 190) call_cnt,
+
+               CASE WHEN grd.org_cd = '031'
+                    THEN CASE WHEN OP.FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL
+                              THEN grd.site_cd
+                              ELSE OP.FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd )
+                              END
+                    ELSE grd.site_cd
+                    END AS org_site_cd,
+
+        /*     grd.site_cd,         */
+               '1' type_cd,
+               /*DECODE( grd.org_cd, '003', '003', grd.org_cd ),*/
+               grd.org_cd,
+               '',
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        from   OP.t_ct_error_mng       mng,
+               OP.t_ct_error_mng_guard grd,
+               OP.t_ct_error           err,
+               OP.t_cm_common          co1
+        where  grd.guard_send_yn = 'C'
+        and    grd.create_date > TO_NUMBER(to_char( sysdate - 3, 'yyyymmdd' ))
+        and    grd.org_cd = err.org_cd(+)
+        and    grd.error_cd = err.error_cd(+)
+        and    grd.create_date = mng.create_date
+        and    grd.error_no = mng.error_no
+        and    co1.large_cd = '2301'
+        and    co1.small_cd = grd.recv_place
+        and    co1.cd_nm2 = '2000' /*caps-2000*/
+    ]]>
+    </select>
+
+    <select id="select0S1" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select
+        /*     CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN SUBSTR(grd.BRANCH_CD, 2, 3)
+                    ELSE grd.BRANCH_CD
+                    END AS BRANCH_CD, */
+               grd.BRANCH_CD,
+               grd.mac_no,
+               grd.create_date trans1_date,
+               grd.create_time create_time,
+               grd.error_no trans1_seq,
+               err.group_error_cd error_cd,
+               mng.send_date as call_date,
+               mng.send_time as call_time,
+               SUBSTR(grd.org_msg, 1, 190) memo,
+               SUBSTR(DECODE(MNG.org_cd, '088', '해피콜대상 '|| grd.org_msg, grd.org_msg), 1, 190) call_cnt,
+
+        /*     CASE WHEN grd.org_cd = '031' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN CASE WHEN FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL
+                              THEN grd.site_cd
+                              ELSE FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd )
+                              END
+                    ELSE grd.site_cd
+                    END AS SITE_CD, */
+               grd.site_cd org_site_cd,
+               '1' type_cd,
+               grd.org_cd,
+               '',
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        from   OP.t_ct_error_mng       mng,
+               OP.t_ct_error_mng_guard grd,
+               OP.t_ct_error           err,
+               OP.t_cm_common          co1
+        where  grd.guard_send_yn = 'C'
+        and    grd.create_date > TO_NUMBER(to_char( sysdate - 3, 'yyyymmdd' ))
+        and    grd.org_cd = err.org_cd(+)
+        and    grd.error_cd = err.error_cd(+)
+        and    grd.create_date = mng.create_date
+        and    grd.error_no = mng.error_no
+        and    co1.large_cd = '2301'
+        and    co1.small_cd = grd.recv_place
+        and    co1.cd_nm2 = '1000' /*S1-1000*/
+    ]]>
+    </select>
+</mapper>

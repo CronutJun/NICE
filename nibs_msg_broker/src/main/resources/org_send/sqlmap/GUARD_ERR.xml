@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GUARD_ERR">
+
+<!--
+<entry key="GUARD_ERR"              value="01000130" />     14. 경비사출동요청통보
+{
+   "name" : "01000130",                    "kname" : "출동요청",
+   "response" : { "code" : "01000130",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "call_date",              "kname" : "출동요청일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "call_time",              "kname" : "출동요청시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "trans1_date",            "kname" : "1차통지 거래일자",       "type" : "N",   "length"  : 8   },
+      { "name" : "trans1_seq",             "kname" : "1차통지 전문번호",       "type" : "AN",  "length"  : 10  },
+      { "name" : "create_time",            "kname" : "발생시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "brch_cd",                "kname" : "지점코드",               "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "org_site_cd",            "kname" : "기관사이트코드",         "type" : "AN",  "length"  : 6   },
+      { "name" : "mac_model",              "kname" : "기종",                   "type" : "AN",  "length"  : 4   },
+      { "name" : "mac_model_com_cd",       "kname" : "기기제조사",             "type" : "AN",  "length"  : 4   },
+      { "name" : "call_class",             "kname" : "출동요청구분",           "type" : "AN",  "length"  : 4   },
+      { "name" : "call_type",              "kname" : "출동사유",               "type" : "AN",  "length"  : 4   },
+      { "name" : "error_cd",               "kname" : "LC코드(장애코드)",       "type" : "AN",  "length"  : 8   },
+      { "name" : "error_mtc_cd",           "kname" : "MTC코드(기기장애코드1)", "type" : "AN",  "length"  : 5   },
+      { "name" : "memo",                   "kname" : "메모",                   "type" : "AN",  "length"  : 200 },
+      { "name" : "accept_date",            "kname" : "접수일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "accept_time",            "kname" : "접수시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "accept_uid",             "kname" : "접수자 사번",            "type" : "AN",  "length"  : 8   },
+      { "name" : "wait_cust_cnt",          "kname" : "고객대기 인원",          "type" : "N",   "length"  : 1   },
+      { "name" : "org_call_cnt",           "kname" : "신한ATMS에서는 출동요청차수로", "type" : "AN",  "length"  : 2   },
+      { "name" : "call_cnt_type",          "kname" : "출동차수구분(1차출동/2차출동)", "type" : "AN",  "length"  : 2   },
+      { "name" : "part_mng_yn",            "kname" : "부분관리여부",           "type" : "AN",  "length"  : 1   },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 50  },
+      { "name" : "error_msg",              "kname" : "장애명",                 "type" : "AN",  "length"  : 50  },
+      { "name" : "crt_no",                 "kname" : "CRT 번호   - 경비사에서 사용",  "type" : "AN",  "length"  : 15  },
+      { "name" : "group_error_cd",         "kname" : "집계분류코드로 사용",    "type" : "AN",  "length"  : 5   },
+      { "name" : "org_cd",                 "kname" : "기관코드 - 경비사에서 사용",    "type" : "AN",  "length"  : 3   },
+      { "name" : "update_req_date",        "kname" : "출동요청변경일",         "type" : "N",   "length"  : 8   },
+      { "name" : "update_req_time",        "kname" : "출동요청변경시간",       "type" : "N",   "length"  : 6   },
+      { "name" : "req_visit_date",         "kname" : "방문요청일",             "type" : "N",   "length"  : 8   },
+      { "name" : "req_visit_time",         "kname" : "방문요청시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "fac_yn",                 "kname" : "시설물관련여부",         "type" : "AN",  "length"  : 1   },
+      { "name" : "urgency_yn",             "kname" : "긴급여부",               "type" : "AN",  "length"  : 1   },
+      { "name" : "tel_no",                 "kname" : "출동자 연락처",          "type" : "AN",  "length"  : 13  },
+      { "name" : "mid_error_cd",           "kname" : "장애중분류",             "type" : "AN",  "length"  : 2   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 101 }
+   ]
+}
+ -->
+    <select id="select7LG" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select mng.send_date as call_date,
+               mng.send_time as call_time,
+               mng.as_acpt_date trans1_date,
+               mng.org_msg_no trans1_seq,
+               mng.create_time,
+               mng.BRANCH_CD,
+               mng.mac_no,
+               mng.site_cd org_site_cd,
+               mng.mac_model,
+               mng.made_com_cd mac_model_com_cd,
+               mng.call_class,
+               mng.call_type,
+               mng.error_cd,
+               mng.lc_cd error_mtc_cd,
+               mng.ORG_MSG memo,
+               '',
+               '',
+               '',
+               '',
+               mng.org_call_cnt,
+               '',
+               '',
+               site.site_nm,
+               jij.branch_nm error_msg,
+               mng.mtc_cd crt_no,
+               mng.org_error_cd group_error_cd,
+               mng.org_cd,
+               '',
+               '','','','','','','','','','','','','','','','','','','','','',''
+        from   OP.t_ct_error_mng_made_com mng,
+               OP.t_cm_site            site,
+               OP.t_cm_branch           jij
+        where  mng.org_send_yn = '0'
+        AND    mng.as_acpt_date > to_char( sysdate - 5, 'yyyymmdd' )
+        and    mng.org_cd   = site.org_cd(+)
+        and    mng.BRANCH_CD = site.BRANCH_CD(+)
+        and    mng.site_cd  = site.site_cd(+)
+        and    mng.org_cd = jij.org_cd
+        and    mng.BRANCH_CD = jij.BRANCH_CD
+        and    mng.made_com_cd = '1500' /*LG-1500 */
+    ]]>
+    </select>
+
+    <select id="select7CH" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select mng.send_date as call_date,
+               mng.send_time as call_time,
+               mng.as_acpt_date trans1_date,
+               mng.org_msg_no trans1_seq,
+               mng.create_time,
+               mng.BRANCH_CD,
+               mng.mac_no,
+               mng.site_cd org_site_cd,
+               mng.mac_model,
+               mng.made_com_cd mac_model_com_cd,
+               mng.call_class,
+               mng.call_type,
+               mng.error_cd,
+               mng.lc_cd error_mtc_cd,
+               mng.ORG_MSG memo,
+               '',
+               '',
+               '',
+               '',
+               mng.org_call_cnt,
+               '',
+               '',
+               site.site_nm,
+               jij.branch_nm error_msg,
+               mng.mtc_cd crt_no,
+               mng.org_error_cd group_error_cd,
+               mng.org_cd,
+               '',
+               '','','','','','','','','','','','','','','','','','','','','',''
+        from   OP.t_ct_error_mng_made_com mng,
+               OP.t_cm_site            site,
+               OP.t_cm_branch           jij
+        where  mng.org_send_yn = '0'
+        AND    mng.as_acpt_date > to_char( sysdate - 5, 'yyyymmdd' )
+        and    mng.org_cd   = site.org_cd(+)
+        and    mng.BRANCH_CD = site.BRANCH_CD(+)
+        and    mng.site_cd  = site.site_cd(+)
+        and    mng.org_cd = jij.org_cd
+        and    mng.BRANCH_CD = jij.BRANCH_CD
+        and    mng.made_com_cd IN ('1300', '1400') /*청호-1300, FKM-1400 */
+    ]]>
+    </select>
+
+    <select id="select7HS" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select mng.send_date as call_date,
+               mng.send_time as call_time,
+               mng.as_acpt_date trans1_date,
+               mng.org_msg_no trans1_seq,
+               mng.create_time,
+               mng.BRANCH_CD,
+               mng.mac_no,
+               mng.site_cd org_site_cd,
+               mng.mac_model,
+               mng.made_com_cd mac_model_com_cd,
+               mng.call_class,
+               mng.call_type,
+               mng.error_cd,
+               mng.lc_cd error_mtc_cd,
+               mng.ORG_MSG memo,
+               '',
+               '',
+               '',
+               '',
+               mng.org_call_cnt,
+               '',
+               '',
+               site.site_nm,
+               jij.branch_nm error_msg,
+               mng.mtc_cd crt_no,
+               mng.org_error_cd group_error_cd,
+               mng.org_cd,
+               '',
+               '','','','','','','','','','','','','','','','','','','','','',''
+        from   OP.t_ct_error_mng_made_com mng,
+               OP.t_cm_site            site,
+               OP.t_cm_branch           jij
+        where  mng.org_send_yn = '0'
+        AND    mng.as_acpt_date > to_char( sysdate - 5, 'yyyymmdd' )
+        and    mng.org_cd   = site.org_cd(+)
+        and    mng.BRANCH_CD = site.BRANCH_CD(+)
+        and    mng.site_cd  = site.site_cd(+)
+        and    mng.org_cd = jij.org_cd
+        and    mng.BRANCH_CD = jij.BRANCH_CD
+        and    mng.made_com_cd = '1200' /*효성-1200*/
+    ]]>
+    </select>
+
+    <!-- 0CP, 0JE, 0KT -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select mng.send_date as call_date,
+               mng.send_time as call_time,
+               grd.create_date trans1_date,
+               grd.error_no trans1_seq,
+               grd.create_time,
+               CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN SUBSTR(grd.BRANCH_CD, 2, 3)
+                    ELSE grd.BRANCH_CD
+                    END AS BRANCH_CD,
+        /*     grd.BRANCH_CD,*/
+               grd.mac_no,
+               CASE WHEN grd.org_cd = '031' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN CASE WHEN OP.FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL
+                              THEN grd.site_cd
+                              ELSE OP.FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd )
+                              END
+                    ELSE grd.site_cd
+                    END AS org_site_cd,
+
+        /*     grd.site_cd,         */
+               '',
+               '',
+               '',
+               '',
+               err.group_error_cd error_cd,
+               '',
+               '['|| DECODE( mng.org_cd, '003', '콜취소금지,문의:NICE콜센터-', '') ||RTRIM(err.error_msg) ||']' ||
+                    DECODE( mng.org_cd, '088', DECODE( NVL(mng.MADE_ERR_CD, '00000'), '00000', '', '#'||mng.MADE_ERR_CD||'#'), '') || RTRIM(grd.ORG_MSG) || ' ' || RTRIM(grd.MSG) AS memo,
+               grd.ACCEPT_DATE,
+               grd.ACCEPT_TIME,
+               '',
+               '',
+               '',
+               '',
+               '',
+               site.site_nm,
+               '',
+               mng.crt_no,
+               ckey.common_key group_error_cd,
+               /*DECODE( grd.org_cd, '003', '003', grd.org_cd ),*/
+               grd.org_cd,
+               '',
+               '','','','','','','','','','','','','','','','','','','','','',''
+        from   OP.t_ct_error_mng_guard grd,
+               OP.t_ct_error           err,
+               OP.t_ct_error_mng       mng,
+               OP.t_cm_site            site,
+               OP.t_cm_mac_common_key  ckey,
+               OP.t_cm_common          co1
+        where  grd.guard_send_yn in ( 'N', 'E')
+        AND    nvl(grd.repair_time, '999999') = '999999'
+        and    grd.create_date > TO_NUMBER(to_char( sysdate - 50, 'yyyymmdd' ))
+        and    grd.org_cd = err.org_cd(+)
+        and    grd.error_cd = err.error_cd(+)
+        and    grd.org_cd   = site.org_cd(+)
+        and    grd.BRANCH_CD = site.BRANCH_CD(+)
+        and    grd.site_cd  = site.site_cd(+)
+        and    grd.org_cd = ckey.org_cd(+)
+        and    grd.BRANCH_CD = ckey.BRANCH_CD(+)
+        and    grd.mac_no   = ckey.mac_no(+)
+        and    grd.create_date = mng.create_date
+        and    grd.error_no = mng.error_no
+        and    co1.large_cd = '2301'
+        and    co1.small_cd = grd.recv_place
+    ]]>
+        <choose>
+            <when test='orgCd == "0CP"'>
+                and    co1.cd_nm2 = '2000' /*CAPS-2000*/
+            </when>
+            <when test='orgCd == "0JE"'>
+                and    co1.cd_nm2 = '6000' /*조은-6000*/
+            </when>
+            <when test='orgCd == "0KT"'>
+                and    co1.cd_nm2 = '7000' /*KT-7000*/
+            </when>
+        </choose>
+
+    </select>
+
+    <select id="select0S1" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select mng.send_date as call_date,
+               mng.send_time as call_time,
+               grd.create_date trans1_date,
+               grd.error_no trans1_seq,
+               grd.create_time,
+        /*     CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN SUBSTR(grd.BRANCH_CD, 2, 3)
+                    ELSE grd.BRANCH_CD
+                    END AS BRANCH_CD, */
+               grd.BRANCH_CD,
+               grd. mac_no,
+        /*     CASE WHEN grd.org_cd = '031' AND LENGTH(grd.BRANCH_CD) = 4
+                    THEN CASE WHEN FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL
+                              THEN grd.site_cd
+                              ELSE FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd )
+                              END
+                    ELSE grd.site_cd
+                    END AS SITE_CD,*/
+               grd.site_cd org_site_cd,
+               '',
+               '',
+               '',
+               '',
+               err.group_error_cd error_cd,
+               '',
+               '[' || DECODE( mng.org_cd, '003', '콜취소금지,문의:NICE콜센터-', '') ||RTRIM(err.error_msg) ||']' ||
+                    DECODE( mng.org_cd, '088', DECODE( NVL(mng.MADE_ERR_CD, '00000'), '00000', '', '#'||mng.MADE_ERR_CD||'#'), '') || RTRIM(grd.ORG_MSG) || ' ' || RTRIM(grd.MSG) AS memo,
+               grd.ACCEPT_DATE,
+               grd.ACCEPT_TIME,
+               '',
+               '',
+               '',
+               '',
+               '',
+               site.site_nm,
+               '',
+               mng.crt_no,
+               ckey.common_key group_error_cd,
+               grd.org_cd,
+               '',
+               '','','','','','','','','','','','','','','','','','','','','',''
+        from   OP.t_ct_error_mng_guard grd,
+               OP.t_ct_error           err,
+               OP.t_ct_error_mng       mng,
+               OP.t_cm_site            site,
+               OP.t_cm_mac_common_key  ckey,
+               OP.t_cm_common          co1
+        where  grd.guard_send_yn in ( 'N', 'E')
+        AND    nvl(grd.repair_time, '999999') = '999999'
+        and    grd.create_date > TO_NUMBER(to_char( sysdate - 50, 'yyyymmdd' ))
+        and    grd.org_cd = err.org_cd(+)
+        and    grd.error_cd = err.error_cd(+)
+        and    grd.org_cd   = site.org_cd(+)
+        and    grd.BRANCH_CD = site.BRANCH_CD(+)
+        and    grd.site_cd  = site.site_cd(+)
+        and    grd.org_cd = ckey.org_cd(+)
+        and    grd.BRANCH_CD = ckey.BRANCH_CD(+)
+        and    grd.mac_no   = ckey.mac_no(+)
+        and    grd.create_date = mng.create_date
+        and    grd.error_no = mng.error_no
+        and    co1.large_cd = '2301'
+        and    co1.small_cd = grd.recv_place
+        and    co1.cd_nm2 = '1000' /*S1-1000*/
+    ]]>
+    </select>
+</mapper>

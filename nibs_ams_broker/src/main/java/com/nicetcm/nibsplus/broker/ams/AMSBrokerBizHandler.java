@@ -28,7 +28,7 @@ public class AMSBrokerBizHandler {
             reqJob.setfOut(new FileOutputStream(fileName));
 
         }
-        if( remain.length > 0 ) {
+        if( remain.length > 0 && reqJob.getfOut() != null) {
             reqJob.getfOut().write(remain);
             logger.debug("file write length : " + remain.length);
         }

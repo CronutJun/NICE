@@ -31,5 +31,6 @@ public class In11005002Impl extends InMsgHandlerImpl {
 
         // 여기서 버전정보와 DB버전을 비교하여 내려보낼지 말지를 처리한다.
         reqJob.setFileName("Test.zip");
+        logger.debug("reqJob FileName = {}", reqJob.getFileName());
     }
 }
