@@ -44,6 +44,10 @@ public class In12005003Impl extends InMsgHandlerImpl {
     public void inMsgBizProc(AMSBrokerData safeData, MsgParser parsed, AMSBrokerReqJob reqJob, String fileLoc) throws Exception {
 
         try {
+            if( fileLoc == null || fileLoc.length() == 0 ) {
+                logger.debug("There's no journal data. skip file processing..");
+                return;
+            }
             logger.debug("File Location = {}", fileLoc);
             String journalPath = String.format("%s%s%s/%s/",
                                                ROOT_FILE_PATH,

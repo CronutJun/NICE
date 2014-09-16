@@ -19,6 +19,7 @@
 }
  -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
         SELECT    branch_cd
                 , GOOD_CD
                 , APPLY_DATE
@@ -27,5 +28,6 @@
         WHERE  APPLY_DATE <= TO_CHAR(sysdate, 'yyyymmdd')
         and org_cd = '003'
         and  ( org_send_yn = '0' or org_send_yn is null )
+    ]]>
     </select>
 </mapper>

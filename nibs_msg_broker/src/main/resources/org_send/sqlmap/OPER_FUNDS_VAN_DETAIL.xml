@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OPER_FUNDS_VAN_DETAIL">
+
+<!--
+<entry key="OPER_FUNDS_VAN_DETAIL"  value="03001194" />     55. CD_VAN운영자금상세
+{
+   "name" : "03001194",                    "kname" : "브랜드제휴 운영자금청구상세(전일인출내역)",
+   "response" : { "code" : "03001194",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "org_cd",                 "kname" : "기관코드",               "type" : "AN",  "length"  : 3   },
+      { "name" : "demand_date",            "kname" : "자금청구일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "intime_withdraw_cnt",    "kname" : "일반시간내인출건수1",    "type" : "N",   "length"  : 8   },
+      { "name" : "intime_withdraw_amt",    "kname" : "일반시간내인출금액1",    "type" : "N",   "length"  : 15  },
+      { "name" : "outtime_withdraw_cnt",   "kname" : "일반시간외인출건수1",    "type" : "N",   "length"  : 8   },
+      { "name" : "outtime_withdraw_amt",   "kname" : "일반시간외인출금액1",    "type" : "N",   "length"  : 15  },
+      { "name" : "intime_deposit_cnt",     "kname" : "일반시간내입금건수1",    "type" : "N",   "length"  : 8   },
+      { "name" : "intime_deposit_amt",     "kname" : "일반시간내입금금액1",    "type" : "N",   "length"  : 15  },
+      { "name" : "outtime_deposit_cnt",    "kname" : "일반시간외입금건수1",    "type" : "N",   "length"  : 8   },
+      { "name" : "outtime_deposit_amt",    "kname" : "일반시간외입금금액1",    "type" : "N",   "length"  : 15  },
+      { "name" : "br_intime_withdraw_cnt", "kname" : "제휴시간내인출건수1",    "type" : "N",   "length"  : 8   },
+      { "name" : "br_intime_withdraw_amt", "kname" : "제휴시간내인출금액1",    "type" : "N",   "length"  : 15  },
+      { "name" : "br_outtime_withdraw_cnt","kname" : "제휴시간외인출건수1",    "type" : "N",   "length"  : 8   },
+      { "name" : "br_outtime_withdraw_amt","kname" : "제휴시간외인출금액1",    "type" : "N",   "length"  : 15  },
+      { "name" : "br_intime_deposit_cnt",  "kname" : "제휴시간내입금건수1",    "type" : "N",   "length"  : 8   },
+      { "name" : "br_intime_deposit_amt",  "kname" : "제휴시간내입금금액1",    "type" : "N",   "length"  : 15  },
+      { "name" : "br_outtime_deposit_cnt", "kname" : "제휴시간외입금건수1",    "type" : "N",   "length"  : 8   },
+      { "name" : "br_outtime_deposit_amt", "kname" : "제휴시간외입금금액1",    "type" : "N",   "length"  : 15  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 227 }
+   ]
+}
+ -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT     org_cd                    ,                                      /*  기관코드            */
+                    demand_date            ,                                        /*  자금청구일자      */
+                   intime_withdraw_cnt+outtime_withdraw_cnt+br_intime_withdraw_cnt+br_outtime_withdraw_cnt intime_withdraw_cnt     ,            /*  출금총건수           */
+                   intime_withdraw_amt+outtime_withdraw_amt+br_intime_withdraw_amt+br_outtime_withdraw_amt intime_withdraw_amt     ,            /*  출금총금액           */
+                   '',
+                   '',
+                   intime_deposit_cnt+outtime_deposit_cnt+br_intime_deposit_cnt+br_outtime_deposit_cnt intime_deposit_cnt      ,             /*  입금총건수           */
+                   intime_deposit_amt+outtime_deposit_amt+br_intime_deposit_amt+br_outtime_deposit_amt outtime_withdraw_amt     ,              /*  입금총금액           */
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM OP.T_FN_VAN_DEMAND_DETAIL
+             WHERE DEMAND_DATE >= TO_CHAR(SYSDATE-4 , 'YYYYMMDD')
+               AND org_cd = '003'
+               and ( org_send_yn is null
+                    or
+                     org_send_yn = '0' )
+    ]]>
+    </select>
+</mapper>

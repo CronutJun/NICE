@@ -34,6 +34,17 @@ public class SchedulerVO
         return tsb.toString();
     }
 
+    public String toPrettyString()
+    {
+        return new StringBuilder()
+        .append("[")
+        .append("NODE_NAME: ").append(quartzNodeName).append(" / ")
+        .append("JOB_GROUP: ").append(jobGroup).append(" / ")
+        .append("JOB_NAME : ").append(jobName).append(" / ")
+        .append("]")
+        .toString();
+    }
+
     /**
      * @return the quartzNodeName
      */

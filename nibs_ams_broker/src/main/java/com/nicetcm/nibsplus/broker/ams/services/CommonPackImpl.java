@@ -391,6 +391,7 @@ public class CommonPackImpl implements CommonPack {
     @Override
     public void insUpdFile(AMSBrokerData safeData, TRmFile file, String actCd) throws Exception {
 
+        TRmFile chkFile;
         TRmFileHis fileHis = new TRmFileHis();
 
         BeanUtils.copyProperties( fileHis, file );
@@ -398,7 +399,10 @@ public class CommonPackImpl implements CommonPack {
         try {
             file.setInsertDate( null );
             file.setInsertUid( null );
-            if( fileMap.updateByPrimaryKeySelective( file ) == 0 ) {
+
+            chkFile = fileMap.selectByPrimaryKey( file );
+
+            if( chkFile == null ) {
                 try {
                     file.setInsertDate( file.getUpdateDate() );
                     file.setInsertUid( file.getUpdateUid() );
@@ -408,6 +412,9 @@ public class CommonPackImpl implements CommonPack {
                     logger.info("T_RM_FILE Insert error {}", e.getLocalizedMessage() );
                     throw e;
                 }
+            }
+            else {
+                fileMap.updateByPrimaryKeySelective( file );
             }
         }
         catch( Exception e ) {

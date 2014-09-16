@@ -23,7 +23,6 @@ import java.io.*;
 
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
-import org.quartz.JobKey;
 import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,6 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
 
     private void waitBlocking( AMSBrokerReqJob reqJob ) throws Exception {
 
-        boolean interrupted = false;
         try {
             String defTimeOut = MsgCommon.msgProps.getProperty("rmi.response.timeout");
             if( defTimeOut == null )
@@ -887,6 +885,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqSFileUpToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String fileDate, String fileType ) throws Exception {
+        logger.debug("start reqSFileUpToMac");
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate ( trxDate );
@@ -921,6 +920,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqSFileUpToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String fileDate, String fileType ) throws Exception {
+        logger.debug("start reqSFileUpToMacs");
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
@@ -959,7 +959,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqSFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String createDate, String fileSeq, String fileType, String fileName ) throws Exception {
-
+        logger.debug("start reqSFileDownToMac");
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate       ( trxDate );
@@ -998,6 +998,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqSFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String createDate, String fileSeq, String fileType, String fileName ) throws Exception {
+        logger.debug("start reqSFileDownToMacs");
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
@@ -1036,6 +1037,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqGFileUpToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String filePath, String fileName ) throws Exception {
+        logger.debug("start reqGFileUpToMac");
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate( trxDate );
@@ -1070,6 +1072,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqGFileUpToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String filePath, String fileName ) throws Exception {
+        logger.debug("start reqGFileUpToMacs");
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
@@ -1108,7 +1111,14 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqGFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String createDate, String fileSeq, String filePath, String fileName ) throws Exception {
+        logger.debug("start reqGFileDownToMac");
         try {
+            if( createDate == null || createDate.length() == 0 ) {
+                throw new Exception("createDate is required.");
+            }
+            if( fileSeq == null || fileSeq.length() == 0 ) {
+                throw new Exception("fileSeq is required.");
+            }
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate       ( trxDate );
             reqJob.setTrxNo         ( trxNo );
@@ -1146,6 +1156,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqGFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String createDate, String fileSeq, String filePath, String fileName ) throws Exception {
+        logger.debug("start reqGFileDownToMacs");
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);

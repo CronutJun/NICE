@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SITE_STATE">
+
+<!--
+<entry key="SITE_STATE"             value="02001340" />      49. 코너(기기)현황
+{
+   "name" : "02001340",                    "kname" : "코너(기기)현황",
+   "response" : { "code" : "02001340",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "brch_nm",                "kname" : "관리점명",               "type" : "AN",  "length"  : 40  },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 40  },
+      { "name" : "set_addr",               "kname" : "코너주소",               "type" : "AN",  "length"  : 100 },
+      { "name" : "memo",                   "kname" : "코너특이사항",           "type" : "AN",  "length"  : 100 },
+      { "name" : "set_type",               "kname" : "설치유형",               "type" : "AN",  "length"  : 2   },
+      { "name" : "atm_cl",                 "kname" : "기종구분(ATM/CD)",       "type" : "AN",  "length"  : 1   },
+      { "name" : "booth_type",             "kname" : "부스형태",               "type" : "AN",  "length"  : 1   },
+      { "name" : "mac_model",              "kname" : "기종명",                 "type" : "AN",  "length"  : 40  },
+      { "name" : "region",                 "kname" : "지역",                   "type" : "AN",  "length"  : 10  },
+      { "name" : "bankbook_yn",            "kname" : "통장부(Y/N)",            "type" : "AN",  "length"  : 1   },
+      { "name" : "oper_time_from",         "kname" : "운영시간from",           "type" : "AN",  "length"  : 4   },
+      { "name" : "oper_time_to",           "kname" : "운영시간to",             "type" : "AN",  "length"  : 4   },
+      { "name" : "month_fee",              "kname" : "월비용",                 "type" : "N",   "length"  : 10  },
+      { "name" : "site_state",             "kname" : "상태구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "work_date",              "kname" : "작업일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "work_time",              "kname" : "작업시간",               "type" : "AN",  "length"  : 11  },
+      { "name" : "work_msg",               "kname" : "작업내용",               "type" : "AN",  "length"  : 100 },
+      { "name" : "site_cl",                "kname" : "코너구분",               "type" : "AN",  "length"  : 2   },
+      { "name" : "site_cl_detail",         "kname" : "코너종류",               "type" : "AN",  "length"  : 2   },
+      { "name" : "mng_brch_cd",            "kname" : "환경관리점코드",         "type" : "AN",  "length"  : 4   },
+      { "name" : "rent_fee",               "kname" : "임차료",                 "type" : "N",   "length"  : 10  },
+      { "name" : "pub_tel_no",             "kname" : "공중전화번호",           "type" : "AN",  "length"  : 12  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 87  }
+   ]
+}
+ -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT     MAC.MAC_NO,                                                                          /*  기기번호        */
+                   SST.mng_BRANCH_CD brch_cd,                                                                    /*  관리점코드       */
+                   (SELECT SERVICE_NM FROM OP.T_CM_SERVICE
+                    WHERE ORG_CD='003'
+                    AND SERVICE_CD = SST.mng_BRANCH_CD) brch_nm,                                                 /*  관리점명        */
+                   NVL(SST.SITE_NM,STE.SITE_NM) site_nm,                                                         /* 코너명         */
+                   STE.SET_ADDR,                                                                        /*  코너주소        */
+                   STE.SET_PLACE memo,                                                                       /*  코너특이사항  */
+                   SST.SET_TYPE,                                                                        /*  설치유형        */
+                   SST.MAC_TYPE atm_cl,                                                                        /*  기종구분(ATM/CD)*/
+                   SST.BOOTH_TYPE,                                                                      /*  부스형태        */
+                   COM.CD_NM1 mac_model,                                                                          /*  기종명         */
+                   SUBSTR(STE.SET_ADDR,1,2) region,                                                            /*  지역          */
+                   SST.BANKBOOK_YN,                                                                     /*  통장부(YN)     */
+                   STE.OPER_START_TIME oper_time_from,                                                                 /*  운영시간from    */
+                   STE.OPER_END_TIME oper_time_to,                                                                   /*  운영시간to      */
+                   SST.MONTH_FEE,                                                                       /*  월비용         */
+                   SST.STATE_CD site_state,                                                                        /*  상태구분        */
+                   SST.WORK_DATE,                                                                       /*  작업일자        */
+                   SUBSTR(SST.WORK_TIME_FR,1,2)||Nvl2(SST.WORK_TIME_FR,':','')||SUBSTR(SST.WORK_TIME_FR,3,2)||Nvl2(SST.WORK_TIME_FR,'~','')
+                   ||SUBSTR(SST.WORK_TIME_TO,1,2)||Nvl2(SST.WORK_TIME_TO,':','')||SUBSTR(SST.WORK_TIME_TO,3,2) work_time,         /*  작업시간        */
+                   SST.WORK_MEMO work_msg,                                                                       /*  작업내용        */
+                   SST.SITE_GB site_cl,                                                                         /*  코너구분        */
+                   SST.SITE_CLSS site_cl_detail,                                                                       /* 코너종류         */
+                   SST.ENV_BRANCH_CD mng_brch_cd,                                                                    /* 환경관리점코드  */
+                   NVL(SST.RENT_FEE,'0') rent_fee,                                                               /* 임차료          */
+                   LPAD(SST.PUB_TEL_NO,12,'0') pub_tel_no,                                                         /* 공중전화번호       */
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '',
+                   '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+              FROM  OP.t_cm_site_state SST
+                    ,OP.T_CM_MAC       MAC
+                    ,OP.T_CM_SITE      STE
+                    ,OP.T_CM_COMMON    COM
+             WHERE SST.ORG_CD = MAC.ORG_CD
+                AND SST.BRANCH_CD = MAC.BRANCH_CD
+                AND SST.MAC_NO = MAC.MAC_NO
+                AND MAC.ORG_CD = STE.ORG_CD
+                AND MAC.BRANCH_CD = STE.BRANCH_CD
+                AND MAC.SITE_CD = STE.SITE_CD
+                AND SST.ORG_CD = '096'
+                AND SST.BRANCH_CD = '9600'
+                AND MAC.MAC_MODEL = COM.SMALL_CD
+                AND COM.LARGE_CD = '2110'
+                AND sst.org_send_yn = '0'
+    ]]>
+    </select>
+</mapper>

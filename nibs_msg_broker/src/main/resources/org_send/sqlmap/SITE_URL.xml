@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SITE_URL">
+
+<!--
+<entry key="SITE_URL"               value="04001250" />      18. 코너일일점검사진정보
+{
+   "name" : "04001250",                    "kname" : "코너일일점검사진정보",
+   "response" : { "code" : "04001250",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "check_date",             "kname" : "점검일",                 "type" : "N",   "length"  : 8   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "site_cd",                "kname" : "기관코너코드",           "type" : "AN",  "length"  : 6   },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 40  },
+      { "name" : "photo_url",              "kname" : "사진경로",               "type" : "AN",  "length"  : 100 },
+      { "name" : "out_sign_photo",         "kname" : "외부간판사진",           "type" : "AN",  "length"  : 20  },
+      { "name" : "gate_photo",             "kname" : "출입문사진",             "type" : "AN",  "length"  : 20  },
+      { "name" : "floor_photo",            "kname" : "바닥사진",               "type" : "AN",  "length"  : 20  },
+      { "name" : "left_booth_photo",       "kname" : "부스 좌측사진",          "type" : "AN",  "length"  : 20  },
+      { "name" : "right_booth_photo",      "kname" : "부스 우측사진",          "type" : "AN",  "length"  : 20  },
+      { "name" : "up_photo",               "kname" : "천정사진",               "type" : "AN",  "length"  : 20  },
+      { "name" : "mac_up_photo",           "kname" : "전체기기 상단사진",      "type" : "AN",  "length"  : 20  },
+      { "name" : "mac_down_photo",         "kname" : "전체기기 하단사진",      "type" : "AN",  "length"  : 20  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 100 }
+   ]
+}
+ -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT DISTINCT
+                  CHK.CHECK_DATE
+                , CHK.BRANCH_CD
+                , CHK.SITE_CD
+                , SITE.SITE_NM
+                , CHK.PHOTO_URL
+                , CHK.OUT_SIGN_PHOTO
+                , CHK.GATE_PHOTO
+                , CHK.FLOOR_PHOTO
+                , CHK.LEFT_BOOTH_PHOTO
+                , CHK.RIGHT_BOOTH_PHOTO
+                , CHK.UP_PHOTO
+                , CHK.MAC_UP_PHOTO
+                , CHK.MAC_DOWN_PHOTO
+                , ''
+                , '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        FROM     OP.T_CM_SITE_CHECK_DAY    CHK,
+                 OP.T_CM_SITE              SITE,
+                 OP.T_CM_MEMBER            MBR,
+                 OP.T_CM_OFFICE            OFC
+        WHERE   CHK.CHECK_DATE  BETWEEN TO_CHAR( SYSDATE-31, 'YYYYMMDD' ) AND TO_CHAR( SYSDATE, 'YYYYMMDD' )
+        AND     CHK.ORG_CD = '088'
+        AND     CHK.ORG_SEND_YN   = '1'
+        AND     CHK.PHOTO_URL IS NOT NULL
+        AND     CHK.ORG_CD        = SITE.ORG_CD
+        AND     CHK.BRANCH_CD    = SITE.BRANCH_CD
+        AND     CHK.SITE_CD        = SITE.SITE_CD
+        AND     SITE.DEPT_CD    = OFC.DEPT_CD
+        AND     SITE.OFFICE_CD    = OFC.OFFICE_CD
+        AND     CHK.MEMBER_ID    = MBR.MEMBER_ID(+)
+    ]]>
+    </select>
+</mapper>

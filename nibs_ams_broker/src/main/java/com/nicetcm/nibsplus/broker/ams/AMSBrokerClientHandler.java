@@ -40,6 +40,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
     private byte[]    remainBytes;
     private int       iMsgLen, iRemain;
     private MsgParser  msgPsr;
+    private ByteBuffer waitBuf = null;
     private ByteBuffer wrkBuf;
     private boolean   isContinue = false;
 
@@ -63,15 +64,29 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        ByteBuf buf = (ByteBuf)msg;
+        ByteBuf buf;
+        if( waitBuf != null && waitBuf.capacity() > 0 ) {
+            buf = ctx.alloc().buffer( ((ByteBuf)msg).capacity() + waitBuf.capacity() );
+            waitBuf.rewind();
+            buf.writeBytes(waitBuf);
+            buf.writeBytes((ByteBuf)msg);
+            buf.readerIndex(0);
+            waitBuf.clear();
+            waitBuf = null;
+        }
+        else {
+            buf = (ByteBuf)msg;
+        }
+
         try {
             logger.debug("================================================================");
-            logger.debug("Channel Read ");
+            logger.debug("Channel Read - ByteBuf = {}", msg);
             logger.debug("Thread ID = " + Thread.currentThread().getId());
             logger.debug("className      = " + msg.getClass().getName());
             logger.debug("capacity       = " + buf.capacity());
             logger.debug("readableBytes  = " + buf.readableBytes());
             logger.debug("readerIndex    = {}", buf.readerIndex() );
+            logger.debug("readable       = {}", buf.isReadable() );
             logger.debug("isContinue     = " + isContinue);
             logger.debug("================================================================");
 
@@ -85,7 +100,8 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                  * 선두의 전체 전문길이 정보가 들어오기를 대기한다.
                  */
                 if( buf.readableBytes() < AMSBrokerConst.MSG_LEN_INFO_LEN ) {
-                    buf.resetReaderIndex();
+                    waitBuf = ByteBuffer.allocateDirect(buf.readableBytes());
+                    buf.readBytes(waitBuf);
                     return;
                 }
 
@@ -100,7 +116,8 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                  */
                 logger.debug("readableBytes#1  = " + buf.readableBytes());
                 if( buf.readableBytes() < 8 ) {
-                    buf.resetReaderIndex();
+                    waitBuf = ByteBuffer.allocateDirect(buf.readableBytes());
+                    buf.readBytes(waitBuf);
                     return;
                 }
 
@@ -114,7 +131,8 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                  *  전문파싱 완료 대기
                  */
                 if( buf.readableBytes() < msgPsr.getSchemaLength() ) {
-                    buf.resetReaderIndex();
+                    waitBuf = ByteBuffer.allocateDirect(buf.readableBytes());
+                    buf.readBytes(waitBuf);
                     return;
                 }
                 try {
@@ -129,13 +147,10 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                     wrkBuf.position(0);
                     msgPsr.parseMessage(wrkBuf);
                 }
-                catch ( MsgParseException me) {
-                    buf.resetReaderIndex();
-                    return;
-                }
                 catch ( Exception err) {
                     logger.error(err.getMessage());
                     msgPsr.clearMessage();
+                    throw err;
                 }
 
                 iRemain = iMsgLen - wrkBuf.capacity();

@@ -230,7 +230,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             /**
              * 배포(특정)파일 업로드 요청
              */
-            else if( reqJob.getTrxCd().equals(TRX_CD_UPL_DWL)
+            else if( (reqJob.getTrxCd().equals(TRX_CD_UPL_DWL)
+                    || reqJob.getTrxCd().equals(TRX_CD_JNL_UPL))
                   &&  reqJob.getActCd().equals(ACT_CD_SPC_UPL) ) {
                 msg.setMsgType( BIZ_CL_PM );
                 msg.setMsgCd( MSG_CD_REQ );

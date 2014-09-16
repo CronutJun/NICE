@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -35,8 +36,15 @@ public class ScheduleDBInfoProvider implements ScheduleInfoProvider
             applicationContext = applicationContextMap.get(springContextXml);
             if (applicationContext == null)
             {
-                applicationContext = new ClassPathXmlApplicationContext(trimStringArray(springContextXml.split(",")));
-                applicationContextMap.put(springContextXml, applicationContext);
+                try
+                {
+                    applicationContext = new ClassPathXmlApplicationContext(trimStringArray(springContextXml.split(",")));
+                    applicationContextMap.put(springContextXml, applicationContext);
+                } catch (BeansException e)
+                {
+                    // TODO Auto-generated catch block
+                    throw e;
+                }
             }
         }
 

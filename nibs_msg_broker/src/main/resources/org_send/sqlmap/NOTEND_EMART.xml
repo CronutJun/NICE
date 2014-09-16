@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NOTEND_EMART">
+
+<!--
+<entry key="NOTEND_EMART"           value="03001206" />     34. 이마트미마감내역통보
+{
+   "name" : "03001206",                    "kname" : "미마감내역",
+   "response" : { "code" : "03001206",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "deal_date",              "kname" : "거래일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "deal_time",              "kname" : "거래시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "casher_id",              "kname" : "캐셔  ID",               "type" : "AN",  "length"  : 6   },
+      { "name" : "close_date",             "kname" : "마감일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "check_amt",              "kname" : "수표금액",               "type" : "N",   "length"  : 9   },
+      { "name" : "cash_amt",               "kname" : "현금금액",               "type" : "N",   "length"  : 9   },
+      { "name" : "self_amt",               "kname" : "자사상품권금액",         "type" : "N",   "length"  : 9   },
+      { "name" : "etc_amt",                "kname" : "타사상품권금액",         "type" : "N",   "length"  : 9   },
+      { "name" : "cupon_amt",              "kname" : "쿠폰금액",               "type" : "N",   "length"  : 9   },
+      { "name" : "cash_cupon_amt",         "kname" : "현금쿠폰금액",           "type" : "N",   "length"  : 9   },
+      { "name" : "check_bigo",             "kname" : "수표비고",               "type" : "AN",  "length"  : 40  },
+      { "name" : "cash_bigo",              "kname" : "현금비고",               "type" : "AN",  "length"  : 40  },
+      { "name" : "self_bigo",              "kname" : "자사상품권비고",         "type" : "AN",  "length"  : 40  },
+      { "name" : "etc_bigo",               "kname" : "타사상품권비고",         "type" : "AN",  "length"  : 40  },
+      { "name" : "cupon_bigo",             "kname" : "쿠폰비고",               "type" : "AN",  "length"  : 40  },
+      { "name" : "cash_cupon_bigo",        "kname" : "현금쿠폰비고",           "type" : "AN",  "length"  : 40  },
+      { "name" : "rate_cupon_cnt",         "kname" : "정률할인권매수",         "type" : "N",   "length"  : 9   },
+      { "name" : "rate_cupon_bigo",        "kname" : "정률할인권비고",         "type" : "AN",  "length"  : 40  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 31  }
+   ]
+}
+ -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT  DEAL_DATE        ,
+              DEAL_TIME          ,
+              BRANCH_CD           ,
+              MAC_NO             ,
+              MEMBER_ID casher_id          ,
+              CLOSE_DATE         ,
+              CHECK_AMT          ,
+              CASH_AMT           ,
+              SELF_AMT           ,
+              ETC_AMT            ,
+              CUPON_AMT          ,
+              CASH_CUPON_AMT     ,
+              CHECK_REMARK      CHECK_BIGO         ,
+              CASH_REMARK       CASH_BIGO          ,
+              SELF_REMARK       SELF_BIGO          ,
+              ETC_REMARK        ETC_BIGO           ,
+              CUPON_REMARK      CUPON_BIGO         ,
+              CASH_CUPON_REMARK CASH_CUPON_BIGO   ,
+              RATE_CUPON_CNT    ,
+              RATE_CUPON_REMARK RATE_CUPON_BIGO  ,
+              '','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM OP.T_FN_NOTEND_EMART
+        WHERE org_cd = '0EM'
+         /* AND BRANCH_CD = '4700' */
+         AND ORG_SEND_YN = '0'
+    ]]>
+    </select>
+</mapper>

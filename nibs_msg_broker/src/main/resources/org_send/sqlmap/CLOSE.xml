@@ -155,6 +155,7 @@
                     MAC.branch_cd,
                 </otherwise>
             </choose>
+    <![CDATA[
                 MAC.mac_no,
                 TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
                 '1' close_type,
@@ -176,6 +177,7 @@
         AND    (    MAC.close_date IS NULL
                 OR  MAC.close_date > TO_CHAR(SYSDATE, 'YYYYMMDD')
                 )
+    ]]>
         <choose>
             <when test='orgCd == "005"'>
                 <![CDATA[ AND MAC.BRANCH_CD||MAC.MAC_NO <> '0437054' ]]>

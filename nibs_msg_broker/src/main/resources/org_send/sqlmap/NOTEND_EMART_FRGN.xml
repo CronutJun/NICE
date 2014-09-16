@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="NOTEND_EMART_FRGN">
+
+<!--
+<entry key="NOTEND_EMART_FRGN"      value="03001207" />      64. 미마감내역(외화)
+ -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT  DEAL_DATE        ,
+              DEAL_TIME          ,
+              BRANCH_CD           ,
+              MAC_NO             ,
+              MEMBER_ID casher_id         ,
+              CLOSE_DATE         ,
+              DOLLAR_AMT          ,
+              EURO_AMT           ,
+              YEN_AMT           ,
+              YUAN_AMT            ,
+              DOLLAR_REMARK DOLLAR_BIGO       ,
+              EURO_REMARK  EURO_BIGO         ,
+              YEN_REMARK   YEN_BIGO          ,
+              YUAN_REMARK  YUAN_BIGO         ,
+              '',
+              '',
+              '',
+              '',
+              '',
+              '',
+              '','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM OP.T_FN_NOTEND_EMART_FRGN
+        WHERE org_cd = '0EM'
+        /* AND jijum_cd = '4700'*/
+         AND DEAL_DATE >= TO_CHAR(SYSDATE-3, 'YYYYMMDD')
+         AND ORG_SEND_YN = '0'
+    ]]>
+    </select>
+</mapper>
