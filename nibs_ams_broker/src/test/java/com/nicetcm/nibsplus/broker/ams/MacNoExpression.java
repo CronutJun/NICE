@@ -170,7 +170,7 @@ public class MacNoExpression {
     public static void main( String args[] ) {
         try {
             MacNoExpression ex = new MacNoExpression();
-            System.out.println(ex.parseExpression("mac_no", "2343-9999, 2343, [3333,4444],5555,6666,[7777,8888],6666-8888"));
+            System.out.println(ex.parseExpression("mac_no", "2343-9999, 2343, [3333,4444],5555,6666,[7777-7999,8888],6666-8888"));
         }
         catch( Exception e ) {
             e.printStackTrace();
