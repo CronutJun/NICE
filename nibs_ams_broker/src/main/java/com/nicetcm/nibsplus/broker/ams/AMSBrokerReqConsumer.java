@@ -59,6 +59,9 @@ public class AMSBrokerReqConsumer extends Thread {
             }
             catch( Exception e ) {
                 logger.error("Consumer raise error. {}", e.getMessage() );
+                logger.error("              Class = {}", e.getClass().getName() );
+                for( StackTraceElement se: e.getStackTrace() )
+                    logger.error(se.toString());
             }
         }
     }
@@ -95,12 +98,14 @@ public class AMSBrokerReqConsumer extends Thread {
                 ansMsg.ansMsgHandle( amsSafeData, reqJob, err, "5" );
                 if( reqJob.getIsBlocking() )
                     reqJob.getAns().put(ByteBuffer.allocateDirect(1));
+                throw e;
             }
         }
         catch( Exception e ) {
             logger.debug(e.getMessage());
             if( reqJob.getIsBlocking() )
                 reqJob.getAns().put(ByteBuffer.allocateDirect(1));
+            throw e;
         }
     }
 

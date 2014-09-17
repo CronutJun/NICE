@@ -46,7 +46,8 @@ public class MsgBrokerTester {
             scan = new Scanner(srcFile);
             ActiveMQ mq = null;
             if( mode.equals("P") ) {
-                registry = LocateRegistry.getRegistry("10.3.28.180", 10199);
+                registry = LocateRegistry.getRegistry(MsgCommon.msgProps.getProperty("msgbroker.server.ip", "10.3.28.62"),
+                                                      Integer.parseInt(MsgCommon.msgProps.getProperty("msgbroker.server.port","10199")));
                 remoteObj = (MsgBrokerRMI)registry.lookup("MsgBrokerRMI");
             }
 
@@ -73,12 +74,17 @@ public class MsgBrokerTester {
                         continue;
                     bMsgType[2] = '0';
                 }
-                System.out.println(line);
                 if( mode.equals("I") || mode.equals("R") ) {
                     String qName = String.format("%s.%s", new String(bMsgType), new String(bWrkType));
                     mq = mqMap.get(qName);
                     if( mq == null ) {
-                        mq = new ActiveMQ(MsgCommon.msgProps.getProperty("consumer.host"), qName, null);
+                        try {
+                            mq = new ActiveMQ(MsgCommon.msgProps.getProperty("consumer.host"), qName, null);
+                        }
+                        catch( Exception e ) {
+                            System.out.println("Error raised..: It couldn't be found MQ." + e.getMessage());
+                            continue;
+                        }
                         mqMap.put(qName, mq);
                     }
                     BytesMessage bm = mq.getBytesMessage();
@@ -89,6 +95,7 @@ public class MsgBrokerTester {
                     //RMI 호출
                     remoteObj.callBrokerAsync(lineBytes);
                 }
+                System.out.println(line);
             }
             scan.close();
             Iterator<Map.Entry<String, ActiveMQ>>  itr = mqMap.entrySet().iterator();

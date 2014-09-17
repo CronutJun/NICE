@@ -161,7 +161,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
         ifCashInsert.setpTodayChargeAmt   (parsed.getLong("today_charge_amt"));
         ifCashInsert.setpPreChargeAmt     (parsed.getLong("pre_charge_amt"));
         ifCashInsert.setpPreAddAmt        (parsed.getLong("pre_add_amt"));
-        ifCashInsert.setpHolyAddAmt       (parsed.getLong("holy_add_amt"));
+        ifCashInsert.setpHolyAddAmt       (parsed.getLong("holi_add_amt"));
         ifCashInsert.setpTodayAddAmt      (parsed.getLong("today_add_amt"));
         ifCashInsert.setpSafeNo           (parsed.getString("safe_no"));
         ifCashInsert.setvFirstInqYN       (0);
@@ -306,7 +306,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
                     ifCashInsert3.setpTodayChargeAmt   (parsed.getLong("today_charge_amt"));
                     ifCashInsert3.setpPreChargeAmt     (parsed.getLong("pre_charge_amt"));
                     ifCashInsert3.setpPreAddAmt        (parsed.getLong("pre_add_amt"));
-                    ifCashInsert3.setpHolyAddAmt       (parsed.getLong("holy_add_amt"));
+                    ifCashInsert3.setpHolyAddAmt       (parsed.getLong("holi_add_amt"));
                     ifCashInsert3.setpTodayAddAmt      (parsed.getLong("today_add_amt"));
                     ifCashInsert3.setpSafeNo           (parsed.getString("safe_no"));
 

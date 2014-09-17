@@ -16,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqInfo;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
@@ -36,10 +37,10 @@ public class Out21004001Impl implements OutMsgHandler {
               .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
               .setInt   ( "CM._AOCMsgLen",            outMsg.getMessageLength() - 9 )
               .setString( "CM._AOCTranNo",            msg.getMsgSeq() );
-        if( reqJob.getActCd().equals("501") )
-            outMsg.setString( "CmdType",  "1" );
-        else
+        if( reqJob.getActCd().equals(AMSBrokerConst.ACT_CD_EXEC1) )
             outMsg.setString( "CmdType",  "2" );
+        else
+            outMsg.setString( "CmdType",  "1" );
         outMsg.syncMessage();
     }
 

@@ -29,7 +29,9 @@ public class In11005002Impl extends InMsgHandlerImpl {
     @Override
     public void inMsgBizProc(AMSBrokerData safeData, MsgParser parsed, AMSBrokerReqJob reqJob, String fileLoc) throws Exception {
 
-        // 여기서 버전정보와 DB버전을 비교하여 내려보낼지 말지를 처리한다.
+        // 제조사,기종 정보를 따고,
+        // parsed.getString("_APVersion") 정보 이후의 DB를 검색하여 기기버전 이후의 최초버전을 선택하여 내려보낸다.
+        // 내려보낼 수 없는 상황이면.. reqJob.setFileName("N/A")를 셋하고 out22005002Impl에서 응답처리토록 한다.
         reqJob.setFileName("Test.zip");
         logger.debug("reqJob FileName = {}", reqJob.getFileName());
     }

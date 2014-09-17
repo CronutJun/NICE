@@ -80,7 +80,8 @@ public class SchedWorkerImpl implements SchedWorker {
                     try {
                         reqJob.setTrxCd         ( TRX_CD_UPL_DWL );
                         reqJob.setActCd         ( ACT_CD_SPC_DWL );
-                        reqJob.setTrxUid        ( "Schedule" );
+                        reqJob.setTrxUid        ( "SCHEDULE" );
+                        reqJob.setFileType      ( "9" );
                         reqJob.setFileCreateDate( pgmVer.getCreateDate() );
                         reqJob.setFileSeq       ( pgmVer.getFileSeq()    );
                         reqJob.setTimeOut       ( 60 );
@@ -112,9 +113,9 @@ public class SchedWorkerImpl implements SchedWorker {
                     AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macEnv.getMacNo(), true); // 요청거래는 Blocking하여 순차적으로 결과를 받는다.(성능이슈)
                     reqJob.setTrxCd   ( TRX_CD_UPL_DWL );
                     reqJob.setActCd   ( ACT_CD_SPC_UPL );
-                    reqJob.setTrxUid  ( "Schedule" );
-                    //reqJob.setFileDate( AMSBrokerLib.getMsgDate(-1) ); // 전일자로 요청 해야 함.
-                    reqJob.setFileDate( "20140901" );
+                    reqJob.setTrxUid  ( "SCHEDULE" );
+                    reqJob.setFileDate( AMSBrokerLib.getMsgDate(-1) ); // 전일자로 요청 해야 함.
+                    //reqJob.setFileDate( "20140901" );
                     reqJob.setFileType( "1" );
                     reqJob.setTimeOut ( 60 );
                     try {

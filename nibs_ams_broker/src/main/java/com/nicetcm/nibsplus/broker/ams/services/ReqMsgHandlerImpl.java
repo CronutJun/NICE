@@ -244,7 +244,9 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                                         .newMessage(reqInfo.getMsg());
             try {
 
+                logger.debug("Going to call outbound Handler..");
                 outMsg.outMsgHandle(msgPsr, safeData, reqJob, reqInfo, msg);
+                logger.debug("Call outbound Handler successfully..");
 
                 logger.debug("Message Length = "  + msgPsr.getMessageLength());
                 logger.debug("Last Position = "   + msgPsr.lastPosition());
