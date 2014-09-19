@@ -71,7 +71,7 @@ public class RMIClientTest {
         AMSBrokerRMI remoteObj = (AMSBrokerRMI)registry.lookup("AMSBrokerRMI");
         System.out.println("lookup");
 
-        remoteObj.makeUpdatesSchedule("UPD1", "VER1", "20140829", "175000");
+        remoteObj.makeUpdatesSchedule("UPD1", "001", "002", "VER1", "20140829", "175000");
     }
 
     public void reqEnvInfToMac() throws Exception {

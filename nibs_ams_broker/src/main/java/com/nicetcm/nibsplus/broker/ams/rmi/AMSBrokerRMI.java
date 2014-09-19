@@ -18,7 +18,7 @@ public interface AMSBrokerRMI extends Remote {
      * @param deployTime    배포시간
      * @throws Exception
      */
-    public void makeUpdatesSchedule( String grpCd, String verId, String deployDate, String deployTime ) throws Exception;
+    public void makeUpdatesSchedule( String grpCd, String mkrCd, String modelCd, String verId, String deployDate, String deployTime ) throws Exception;
 
     /**
      * reqEnvInfToMac

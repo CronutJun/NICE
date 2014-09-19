@@ -69,7 +69,7 @@ public class InitSchedulerImpl implements InitScheduler {
                 AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey(updsSched.getVerId(), updsSched.getGrpCd()) );
 
                 JobDetail updJob = newJob(AMSBrokerSchedJob.class)
-                                 .withIdentity("UPDATES",  "UPDATES")
+                                 .withIdentity("UPDATES",  String.format("%-4.4s%-4.4s", updsSched.getMkrCd(), updsSched.getModelCd()))
                                  .build();
 
                 CronTrigger updTrig = newTrigger()

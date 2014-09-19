@@ -37,7 +37,6 @@ public class MsgBrokerAppConfig {
         ClassPathResource resources[] = new ClassPathResource[] {new ClassPathResource(String.format("/%s/msg.properties", MsgBrokerConst.SVR_TYPE))};
         props.setLocations(resources);
         props.setIgnoreUnresolvablePlaceholders(true);
-        System.out.println("message loading");
         return props;
     }
 
@@ -68,6 +67,16 @@ public class MsgBrokerAppConfig {
     //
     //}
 
+    /**
+     *
+     * JDBC Log를 출력하는 DataSource를 반환
+     * <pre>
+     * net.sf.log4jdbc.Log4jdbcProxyDataSource 라이브러리를 이용 SQL Execute Time 로그 출력
+     * 운영모드에서는 제거
+     * </pre>
+     *
+     * @return
+     */
     @Bean(name="dataSource")
     public DataSource dataSource() {
 

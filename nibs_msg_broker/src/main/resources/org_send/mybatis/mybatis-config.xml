@@ -5,4 +5,9 @@
         <setting name="mapUnderscoreToCamelCase" value="true" />
         <setting name="defaultExecutorType" value="REUSE" />
     </settings>
+<!--
+    <plugins>
+        <plugin interceptor="com.nicetcm.nibsplus.util.QueryInterceptor"/>
+    </plugins>
+ -->
 </configuration>

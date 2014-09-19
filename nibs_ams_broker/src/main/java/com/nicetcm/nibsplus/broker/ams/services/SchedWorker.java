@@ -16,6 +16,6 @@ import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 
 public interface SchedWorker {
 
-    public void doWork( AMSBrokerData safeData, String workType, String grpCd, String verId ) throws Exception;
+    public void doWork( AMSBrokerData safeData, String workType, String grpCd, String mkrCd, String modelCd, String verId ) throws Exception;
 
 }

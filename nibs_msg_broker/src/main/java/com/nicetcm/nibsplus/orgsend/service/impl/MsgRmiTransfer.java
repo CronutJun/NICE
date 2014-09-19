@@ -13,6 +13,17 @@ import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerCallBack;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
 import com.nicetcm.nibsplus.orgsend.service.MsgTransferService;
 
+/**
+ * MsgBroker과 RMI 통신
+ * <pre>
+ * 전문 프로토콜에 맞게 생성후 RMI 전송
+ * TransferType 에 따라 동기/비동기 구분
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 @Service("MsgRmiTransfer")
 public class MsgRmiTransfer implements MsgTransferService
 {

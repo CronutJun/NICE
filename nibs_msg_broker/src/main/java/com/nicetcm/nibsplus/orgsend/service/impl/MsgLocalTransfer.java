@@ -10,6 +10,17 @@ import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
 import com.nicetcm.nibsplus.orgsend.service.MsgTransferService;
 
+/**
+ * 단위테스트시 MsgRmiTransfer 대신 사용
+ * <pre>
+ * MsgRmiTransfer가 RMI를 이용 MsgBroker을 호출하지만
+ * MsgLocalTransfer은 Local에 Log를 출력하는것으로 끝냄 (단위 Test시 사용)
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 @Service("MsgLocalTransfer")
 public class MsgLocalTransfer implements MsgTransferService
 {

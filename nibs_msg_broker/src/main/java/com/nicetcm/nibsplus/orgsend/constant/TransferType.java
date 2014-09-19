@@ -1,5 +1,15 @@
 package com.nicetcm.nibsplus.orgsend.constant;
 
+/**
+ * AS-IS Auto Send / Only Send 에 대한 분류 코드
+ * <pre>
+ *
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 public enum TransferType
 {
     ONLY_SEND,  //[async]

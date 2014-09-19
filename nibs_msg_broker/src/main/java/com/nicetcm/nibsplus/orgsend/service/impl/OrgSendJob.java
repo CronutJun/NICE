@@ -12,11 +12,14 @@ import com.nicetcm.nibsplus.orgsend.constant.NibsDataSource;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
 import com.nicetcm.nibsplus.orgsend.model.OrgSendExternalVO;
 import com.nicetcm.nibsplus.orgsend.service.NOrgSendService;
+import com.nicetcm.nibsplus.scheduler.model.SchedulerVO;
+import com.nicetcm.nibsplus.scheduler.service.JobExecuter;
 
 /**
  *
  * 기관전송 프로그램
  * OrgSendJob (AS-IS OrgAutoSend.pc, OrgOnlySend.pc)
+ * Quartz와 외부RMI에서 호출 가능
  * <pre>
  *
  * Class Annotation
@@ -29,9 +32,18 @@ import com.nicetcm.nibsplus.orgsend.service.NOrgSendService;
  * @see
  */
 @DisallowConcurrentExecution
-public class OrgSendJob implements Job
+public class OrgSendJob implements Job, JobExecuter
 {
 
+    /**
+     * Quartz에서 실행시킴
+     * <pre>
+     *
+     * </pre>
+     *
+     * @param context
+     * @throws JobExecutionException
+     */
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException
     {
@@ -56,5 +68,33 @@ public class OrgSendJob implements Job
             e.printStackTrace();
         }
     }
+
+
+
+    /**
+     * 외부(화면WAS)에서 실행시킴
+     * <pre>
+     *
+     * </pre>
+     *
+     * @param applicationContext
+     * @param schedulerVO
+     * @throws OrgSendException
+     */
+    @Override
+    public void executeJob(ApplicationContext applicationContext, SchedulerVO schedulerVO) throws OrgSendException
+    {
+        NOrgSendService nOrgSendService = applicationContext.getBean("NOrgSendImpl", NOrgSendService.class);
+
+        String orgCd = schedulerVO.gettArg2();
+        String queryName = schedulerVO.gettArg3();
+        TransferType transferType = TransferType.valueOf(schedulerVO.gettArg1() + "_SEND");
+        NibsDataSource nibsDataSource = NibsDataSource.valueOf(schedulerVO.gettArg4());
+
+        OrgSendExternalVO orgSendExternalVO = new OrgSendExternalVO(applicationContext, queryName, orgCd, transferType, nibsDataSource);
+
+        nOrgSendService.execute(orgSendExternalVO);
+    }
+
 
 }

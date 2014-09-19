@@ -3,6 +3,16 @@ package com.nicetcm.nibsplus.scheduler.model;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+/**
+ * 스케쥴정보 DB Table Column과 동일(T_CM_SCHEDULE)
+ * <pre>
+ *
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 public class SchedulerVO
 {
     private String quartzNodeName     ;
@@ -16,7 +26,7 @@ public class SchedulerVO
     private String tArg2              ;
     private String tArg3              ;
     private String tArg4              ;
-    private int jobPriority        ;
+    private int jobPriority          ;
     private String jobClass           ;
     private String springContextXml   ;
     private String jobListenerClass   ;

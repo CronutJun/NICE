@@ -37,6 +37,7 @@ import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnvSpec;
 import com.nicetcm.nibsplus.broker.ams.model.TPmUpdsMac;
 import com.nicetcm.nibsplus.broker.ams.model.TPmUpdsMacSpec;
 import com.nicetcm.nibsplus.broker.ams.model.TPmPgmVer;
+import com.nicetcm.nibsplus.broker.ams.model.TPmPgmVerKey;
 
 @Service("schedWorker")
 public class SchedWorkerImpl implements SchedWorker {
@@ -53,7 +54,7 @@ public class SchedWorkerImpl implements SchedWorker {
     @Autowired private   TPmPgmVerMapper              pgmVerMap;
 
     @Override
-    public void doWork(AMSBrokerData safeData, String workType, String grpCd, String verId) throws Exception {
+    public void doWork(AMSBrokerData safeData, String workType, String grpCd, String mkrCd, String modelCd, String verId) throws Exception {
 
         logger.info("**********************{} SCHEDULE BEGIN *********************************", workType);
 
@@ -66,9 +67,13 @@ public class SchedWorkerImpl implements SchedWorker {
              * 배포 스케쥴
              */
             if( workType.equals("UPDATES") ) {
-                TPmPgmVer pgmVer = pgmVerMap.selectByPrimaryKey( verId );
+                TPmPgmVerKey pgmVerKey = new TPmPgmVerKey();
+                pgmVerKey.setMkrCd  ( mkrCd );
+                pgmVerKey.setModelCd( modelCd );
+                pgmVerKey.setVerId  ( verId );
+                TPmPgmVer pgmVer = pgmVerMap.selectByPrimaryKey( pgmVerKey );
                 if( pgmVer == null ) {
-                    throw new Exception(String.format("version not found : %s", verId));
+                    throw new Exception(String.format("version not found : %s,%s, %s", mkrCd, modelCd, verId));
                 }
 
                 TPmUpdsMacSpec updsMacSpec = new TPmUpdsMacSpec();

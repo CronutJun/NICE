@@ -5,6 +5,16 @@ import org.springframework.context.ApplicationContext;
 import com.nicetcm.nibsplus.orgsend.constant.NibsDataSource;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
 
+/**
+ * OrgSend모듈 실행시 필수 인자값 정의
+ * <pre>
+ *
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 public class OrgSendExternalVO
 {
     private ApplicationContext applicationContext;
@@ -18,15 +28,6 @@ public class OrgSendExternalVO
         super();
     }
 
-    /**
-     * <pre>
-     * 여기에 Constructors 설명을 삽입하십시오.
-     * </pre>
-     *
-     * @param applicationContext
-     * @param queryName
-     * @param orgCd
-     */
     public OrgSendExternalVO(ApplicationContext applicationContext, String queryName, String orgCd, TransferType transferType, NibsDataSource nibsDataSource)
     {
         super();

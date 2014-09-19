@@ -90,5 +90,13 @@
             <property name="sqlSessionFactory" ref="sqlSessionFactory_OP" />
         </bean>
 
+        <!-- rmi service -->
+        <bean class="org.springframework.remoting.rmi.RmiServiceExporter"
+            p:service-ref="NibsRmiScheduleExecuter"
+            p:serviceName="NibsRmiScheduleExecuter"
+            p:serviceInterface="com.nicetcm.nibsplus.scheduler.service.RemoteScheduleExecuter"
+            p:alwaysCreateRegistry="true">
+            <property name="registryPort"><value>#{config['execute.rmi.registry.port']}</value></property>
+        </bean>
     </beans>
 </beans>

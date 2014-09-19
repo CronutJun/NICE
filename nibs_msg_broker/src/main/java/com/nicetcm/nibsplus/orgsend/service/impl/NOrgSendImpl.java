@@ -13,7 +13,6 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.runner.RunWith;
-import org.quartz.DisallowConcurrentExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,13 +30,10 @@ import com.nicetcm.nibsplus.orgsend.service.NOrgSendService;
 
 /**
  *
- * 여기에 클래스(한글)명.
+ * OrgSend의 중요 Class
  * <pre>
- * Usage : OrgAutoSend [org_cd] [msg_type]
- *                     g_szOrgCd szMsgType
- *
- * g_class_idx 설정: ORGSEND_MTYPE_NM의 순번과 동일
- * g_brand_idx 설정: 브랜드제휴 전문 구분 (HEADER의 SERVICE_GB에 값('1')을 넣어주는 전문목록, 일괄업무전문과 브랜드제휴전문을 구분하기 위해 설정함)
+ * msg_type, org_cd를 조건으로 쿼리XML에서 SQL을 가져옴
+ * SQL을 실행하여 결과값을 MsgTransferService를 이용하여 MsgBroker모듈과 RMI통신
  *
  * </pre>
  *
@@ -164,6 +160,7 @@ public class NOrgSendImpl implements NOrgSendService
 
                 for(Map.Entry<String, Object> entry : resultMap.entrySet()) {
 
+                    //branch_cd를 brch_cd로 자동으로 바꿔줌
                     if(entry.getKey().equalsIgnoreCase("branch_cd")) {
                         msgBodyMap.put("brch_cd", String.valueOf(entry.getValue()));
                     } else {

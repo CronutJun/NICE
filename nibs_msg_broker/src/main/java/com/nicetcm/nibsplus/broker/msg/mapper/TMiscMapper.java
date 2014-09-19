@@ -133,7 +133,7 @@ public interface TMiscMapper {
         "                                   ELSE DECODE (OP.FC_GET_MAP_MAC_NO( 1, #{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}),                                         ",
         "                                                NULL, #{macNo, jdbcType=VARCHAR}, OP.FC_GET_MAP_MAC_NO( 1, #{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}) )      ",
         "                                   END                                                                                                                                                                   ",
-        "       and        CLOSE_DATE    = :suBody.close_date                                                                                                                                                     "
+        "       and        CLOSE_DATE    = #{closeDate, jdbcType=VARCHAR}                                                                                                                                         "
     })
     void updateFnAtmsCollect(TMacInfo tMacInfo);
 

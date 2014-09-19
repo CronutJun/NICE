@@ -14,6 +14,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
+import org.quartz.TriggerListener;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.scheduler.common.SchduleException;
 import com.nicetcm.nibsplus.scheduler.constant.ExceptionType;
+import com.nicetcm.nibsplus.scheduler.listener.OrgSendAllTriggerListener;
 import com.nicetcm.nibsplus.scheduler.model.SchedulerVO;
 import com.nicetcm.nibsplus.scheduler.service.ScheduleExecuter;
 import com.nicetcm.nibsplus.scheduler.service.ScheduleInfoProvider;
@@ -108,14 +110,18 @@ public class NibsQuartzScheduler implements ScheduleExecuter
                 Trigger trigger = TriggerBuilder
                                 .newTrigger()
                                 .withIdentity(schedulerVO.getJobName(), schedulerVO.getJobGroup())
-                                .withSchedule(CronScheduleBuilder.cronSchedule(schedulerVO.getCronExpression()))
-                                //.withSchedule(CronScheduleBuilder.cronSchedule("* * * * * ?"))
+                                //.withSchedule(CronScheduleBuilder.cronSchedule(schedulerVO.getCronExpression()))
+                                .withSchedule(CronScheduleBuilder.cronSchedule("* * * * * ?"))
                                 .build();
 
                 scheduler.scheduleJob(jobA, trigger);
 
                 logger.info("[" + createCnt + "]" + schedulerVO.toPrettyString() + " ==> Fired");
                 createCnt++;
+
+                //if(createCnt == 2) {
+                //    break;
+                //}
             } catch (Exception e) {
 
                 e.printStackTrace();
@@ -127,9 +133,12 @@ public class NibsQuartzScheduler implements ScheduleExecuter
         try
         {
 
+            TriggerListener orgSendAllTriggerListener = new OrgSendAllTriggerListener(OrgSendAllTriggerListener.class.getSimpleName());
+            scheduler.getListenerManager().addTriggerListener(orgSendAllTriggerListener);
+
             scheduler.start();
 
-            logger.info("총 실행대상 스케쥴: {}개중 {}개 start", scheduleList.size(), createCnt);
+            logger.info("총 실행대상 스케쥴: {}개중 {}개 start", scheduleList.size(), createCnt-1);
 
         } catch (SchedulerException e)
         {
@@ -172,8 +181,8 @@ public class NibsQuartzScheduler implements ScheduleExecuter
             ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:scheduler/spring/context-scheduler.xml");
 
 
-            NibsQuartzScheduler dbScheduler = applicationContext.getBean("NibsQuartzScheduler", NibsQuartzScheduler.class);
-            dbScheduler.startSchedule();
+            ScheduleExecuter scheduleExecuter = applicationContext.getBean("NibsQuartzScheduler", ScheduleExecuter.class);
+            scheduleExecuter.startSchedule();
 
             logger.info("Nibs Quartz Scheduler를 [정상적] 으로 실행 되었습니다.");
 
@@ -182,7 +191,7 @@ public class NibsQuartzScheduler implements ScheduleExecuter
         {
             //e.printStackTrace();
             logger.error(e.getMessage());
-            logger.error("Nibs Quartz Scheduler를 [비정상적] 으로 종료 합니다.");
+            logger.error("Nibs Quartz Scheduler를 [비정상적] 으로 종료 되었습니다.");
             System.exit(-1);
         } finally {
 

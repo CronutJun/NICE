@@ -25,6 +25,8 @@ import com.nicetcm.nibsplus.util.TableInsert;
  * OP.T_CM_SCHEDULE 에 Quartz 스케쥴 정보 로딩
  *
  * <pre>
+ * 엑셀정보를 POI 라이브러리를 이용 DB Table에 로딩
+ *
  * drop table op.T_CM_SCHEDULE;
  *
  * create table OP.T_CM_SCHEDULE (

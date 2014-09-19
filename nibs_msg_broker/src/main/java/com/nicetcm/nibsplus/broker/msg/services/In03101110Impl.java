@@ -148,8 +148,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
              if( strcmp(suBody.cash_remain_amt, "" ) == 0 )
             ***************************************************************************************************/
 
-            if(parsed.getString("cash_remain_amt").substring(0, 1).equals(" ") ||
-               parsed.getString("cash_remain_amt").equals("") ||
+            if(parsed.getString("cash_remain_amt").equals("") ||
                MsgBrokerConst.KFCC_CODE.equals(parsed.getString("CM.org_cd")) ||
                MsgBrokerConst.DGB_CODE.equals(parsed.getString("CM.org_cd")) ||
             (  MsgBrokerConst.KNATMS_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("inq_source").equals("1") )) {

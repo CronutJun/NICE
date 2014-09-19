@@ -71,6 +71,8 @@
         <!-- Spring -->
         <spring-framework.version>3.2.3.RELEASE</spring-framework.version>
 
+        <spring.batch.version>2.2.0.RELEASE</spring.batch.version>
+
         <!-- Logging -->
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.5</slf4j.version>
@@ -110,7 +112,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>2.0.6</version>
+            <version>3.1.1.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>commons-dbcp</groupId>
@@ -227,9 +229,15 @@
         </dependency>
 
         <dependency>
-            <groupId>com.ibm.db2</groupId>
-            <artifactId>db2jcc_license_cu</artifactId>
-            <version>10.0.0</version>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-core</artifactId>
+            <version>3.0.1.RELEASE</version>
+        </dependency>
+
+        <dependency>
+          <groupId>com.ibm.db2</groupId>
+          <artifactId>db2jcc_license_cu</artifactId>
+          <version>10.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.ibm.db2</groupId>

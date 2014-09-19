@@ -9,6 +9,17 @@ import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.orgsend.service.QueryParser;
 
+/**
+ * QRY파일 파싱
+ * <pre>
+ * AS-IS *.qry파일을 파싱하는 경우 사용
+ * TO-BE는 Mybatis XML로 변환되어 필요없음
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 @Service("QryFileParser")
 public class QryFileParser implements QueryParser
 {

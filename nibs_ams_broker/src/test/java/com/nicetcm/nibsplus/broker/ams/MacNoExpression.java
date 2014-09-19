@@ -7,20 +7,20 @@ public class MacNoExpression {
     public String parseExpression(String macNoColNm, String expr) throws Exception {
         if( macNoColNm == null || macNoColNm.length() == 0 ) throw new Exception("must be set macNoColNm.");
         if( expr == null || expr.length() == 0 ) throw new Exception("must be set expr.");
-        
+
         checkBracket( expr );
-        
+
         checkMacNoDigits( expr );
-        
+
         String incExpr = extractIncludeExpr( expr );
         String excExpr = extractExcludeExpr( expr );
-        
+
         System.out.println("incExpr = " + incExpr);
         System.out.println("excExpr = " + excExpr);
-        
+
         String incExprs[] = incExpr.replaceAll("\\s", "").split(",");
         String excExprs[] = excExpr.replaceAll("\\s", "").split(",");
-        
+
         StringBuffer sqlWhere = new StringBuffer();
         sqlWhere.append("(");
         sqlWhere.append("(");
@@ -59,7 +59,7 @@ public class MacNoExpression {
                     sqlWhere.append(String.format("%s OR ", sqlBetween.get(i)));
             }
         }
-        
+
         sqlIn.clear();
         sqlBetween.clear();
         for(String exc: excExprs) {
@@ -84,7 +84,7 @@ public class MacNoExpression {
                     sqlWhere.append(String.format("'%s', ", sqlIn.get(i)));
             }
             if( sqlBetween.size() > 0 )
-                sqlWhere.append(" ) OR ");
+                sqlWhere.append(" ) AND ");
             else
                 sqlWhere.append(" )");
         }
@@ -93,29 +93,29 @@ public class MacNoExpression {
                 if( (i+1) == sqlBetween.size() )
                     sqlWhere.append(String.format("%s", sqlBetween.get(i)));
                 else
-                    sqlWhere.append(String.format("%s OR ", sqlBetween.get(i)));
+                    sqlWhere.append(String.format("%s AND ", sqlBetween.get(i)));
             }
         }
-        
+
         sqlWhere.append(")");
         sqlWhere.append(")");
-        
+
         return sqlWhere.toString();
     }
-    
+
     private void checkBracket(String expr) throws Exception {
         int opnIdx = expr.indexOf("[");
         int clsIdx = expr.indexOf("]");
-        
+
         if( opnIdx < 0 && clsIdx < 0 ) return;
-        if( opnIdx < 0 || clsIdx < 0 ) 
+        if( opnIdx < 0 || clsIdx < 0 )
             throw new Exception("No pair brackets. Open = [" + opnIdx + "], Close = [" + clsIdx + "]");
-        if( clsIdx < opnIdx ) 
+        if( clsIdx < opnIdx )
             throw new Exception("Opening bracket's index is greater than Closing bracket's index. Open = [" + opnIdx + "], Close = [" + clsIdx + "]");
-        
+
         checkBracket(expr.substring(clsIdx+1));
     }
-    
+
     private void checkMacNoDigits(String expr) throws Exception {
         String exprs[] = expr. replaceAll("\\[", "")
                              .replaceAll("\\]", "")
@@ -125,7 +125,7 @@ public class MacNoExpression {
 
         for( String macCond: exprs ) {
             if( macCond.trim().length() == 0 ) continue;
-            
+
             trimedStr = macCond.trim();
             range = trimedStr.split("-");
             if( range.length > 1) {
@@ -148,29 +148,30 @@ public class MacNoExpression {
             }
         }
     }
-    
+
     private String extractIncludeExpr(String expr) {
         int opnIdx = expr.indexOf("[");
         int clsIdx = expr.indexOf("]");
 
         if( opnIdx < 0 && clsIdx < 0 ) return expr;
-        
+
         return expr.substring(0, opnIdx) + "," + extractIncludeExpr(expr.substring(clsIdx+1));
     }
-    
+
     private String extractExcludeExpr(String expr) {
         int opnIdx = expr.indexOf("[");
         int clsIdx = expr.indexOf("]");
 
         if( opnIdx < 0 && clsIdx < 0 ) return "";
-        
+
         return expr.substring(opnIdx+1, clsIdx) + "," + extractExcludeExpr(expr.substring(clsIdx+1));
     }
-    
+
     public static void main( String args[] ) {
         try {
             MacNoExpression ex = new MacNoExpression();
-            System.out.println(ex.parseExpression("mac_no", "2343-9999, 2343, [3333,4444],5555,6666,[7777-7999,8888],6666-8888"));
+            System.out.println(ex.parseExpression("mac_no", "7000-7900, 0202, [7286],9600,[7511-7566,7900]"));
+            System.out.println(String.format("%-4.4s%-4.4s", "001", "001"));
         }
         catch( Exception e ) {
             e.printStackTrace();

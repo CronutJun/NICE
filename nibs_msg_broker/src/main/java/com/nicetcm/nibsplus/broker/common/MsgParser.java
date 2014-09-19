@@ -85,12 +85,16 @@ public class MsgParser {
 
     public static MsgParser getInstance(String incFile) throws Exception {
         synchronized (instPool) {
-            if( instPool.containsKey(incFile) )
-                return instPool.get(incFile);
+            if( instPool.containsKey(incFile) ) {
+                MsgParser mp = instPool.get(incFile);
+                logger.debug("Schema Length = {}", mp.getSchemaLength());
+                return mp;
+            }
             else {
                 logger.debug("Creating Instance..[incFile:{}]", incFile);
                 MsgParser mp = new MsgParser(incFile);
                 instPool.put( incFile, mp );
+                logger.debug("Schema Length = {}", mp.getSchemaLength());
                 return mp;
             }
         }
@@ -229,6 +233,8 @@ public class MsgParser {
         int savePos, i;
         Map<String, MsgData> dMap;
         MsgData data;
+
+        logger.debug( "Data length = {}", td.msg.limit() );
 
         Set<Map.Entry<String, MsgFmtRec>> set = msgMap.entrySet();
         Iterator<Map.Entry<String, MsgFmtRec>>  itr = set.iterator();

@@ -83,7 +83,6 @@ public class In03101160Impl extends InMsgHandlerImpl {
                 throw e;
             }
 
-            msgTX.commit(safeData.getTXS());
             logger.info( "[T_FN_ATMS_ADD_CASH_REPORT] Update OK" );
 
         } else if(parsed.getString("addcash_type").equals("A")) {
@@ -130,7 +129,6 @@ public class In03101160Impl extends InMsgHandlerImpl {
                 throw e;
             }
 
-            msgTX.commit(safeData.getTXS());
             logger.info( "[T_FN_ATMS_ADD_NH_REPORT] Update OK" );
         }//endif
 

@@ -1,11 +1,20 @@
 package com.nicetcm.nibsplus.orgsend.common;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
+/**
+ * OrgSend 관련 상수 정의
+ * <pre>
+ * 값은 /org_send/spring/context-orgsend-bean.xml 에서 주입
+ * </pre>
+ *
+ * @author s7760ker@gmail.com
+ * @version 1.0
+ * @see
+ */
 public class OrgSend
 {
 
@@ -14,21 +23,6 @@ public class OrgSend
     private Map<String, String> orgSendFtype;
 
     private List<String> orgSendMtypeBrand;
-
-    public static class SpringContextXml {
-        public static String ORG_SEND = "classpath:org_send/spring/context-orgsend.xml";
-        public static String ORG_SEND_BEAN = "classpath:org_send/spring/context-orgsend-bean.xml";
-        public static List<String> QUARTZ;
-
-        static {
-            QUARTZ = Arrays.asList(
-                ORG_SEND,
-                ORG_SEND_BEAN,
-                "classpath:org_send/quartz/em/ARR_EST.xml",
-                "classpath:org_send/quartz/context-orgsend-quartz.xml"
-            );
-        }
-    }
 
     public String getMessageTypeCode(String queryName) throws OrgSendException {
         if(orgSendMtype.containsKey(queryName)) {

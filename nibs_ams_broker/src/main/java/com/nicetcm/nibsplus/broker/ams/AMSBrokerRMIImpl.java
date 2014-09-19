@@ -92,12 +92,12 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @param deployTime    배포시간
      * @throws Exception
      */
-    public void makeUpdatesSchedule( String grpCd, String verId, String deployDate, String deployTime ) throws Exception {
+    public void makeUpdatesSchedule( String grpCd, String mkrCd, String modelCd, String verId, String deployDate, String deployTime ) throws Exception {
 
         AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey( verId, grpCd) );
 
         JobDetail updJob = newJob(AMSBrokerSchedJob.class)
-                         .withIdentity("UPDATES",  "UPDATES")
+                         .withIdentity("UPDATES",  String.format("%-4.4s%-4.4s", mkrCd, modelCd))
                          .build();
 
         CronTrigger updTrig = newTrigger()

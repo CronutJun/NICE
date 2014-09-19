@@ -26,21 +26,23 @@ public class MsgBrokerWorker implements Runnable {
     }
 
     public void run() {
+        byte[] bOrgCd   = new byte[3];
         byte[] bMsgType = new byte[4];
         byte[] bWrkType = new byte[4];
         String inQNm;
 
         try {
-            logger.debug("Income message  size = " + msg.length + ", data = "+ new String(msg));
             buf = ByteBuffer.allocateDirect(msg.length);
             buf.put(msg);
+            buf.position(0);
+            buf.get(bOrgCd);
             buf.position(51);
             buf.get(bMsgType);
             buf.get(bWrkType);
             buf.position(0);
 
-            Thread.currentThread().setName(String.format("%s%s-%s", new String(bMsgType), new String(bWrkType), Thread.currentThread().getId()));
-            logger.debug("Income message  size = " + msg.length + ", data = "+ new String(msg));
+            Thread.currentThread().setName(String.format("<T>%s-%s%s-%s", new String(bOrgCd), new String(bMsgType), new String(bWrkType), Thread.currentThread().getId()));
+            logger.info("Income message  size : [{}], data : [{}]", msg.length, new String(msg));
             /*
              * 응답 전문의 경우에 스키마 파일은 원본 요청 전문에 해당하는 스키마를 읽도록 한다.
              */

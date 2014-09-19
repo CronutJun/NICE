@@ -44,6 +44,8 @@ public class AMSBrokerSchedJob implements Job {
                 schedWkr.doWork( amsSafeData,
                                  arg0.getJobDetail().getKey().getName(),
                                  arg0.getTrigger().getKey().getGroup(),
+                                 arg0.getJobDetail().getKey().getGroup().substring(0, 4).trim(),
+                                 arg0.getJobDetail().getKey().getGroup().substring(4).trim(),
                                  arg0.getTrigger().getKey().getName()
                                );
             }
@@ -54,6 +56,8 @@ public class AMSBrokerSchedJob implements Job {
                 schedWkr.doWork( amsSafeData,
                         arg0.getJobDetail().getKey().getName(),
                         arg0.getTrigger().getKey().getGroup(),
+                        null,
+                        null,
                         arg0.getTrigger().getKey().getName()
                       );
             }
