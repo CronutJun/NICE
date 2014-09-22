@@ -19,8 +19,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -34,11 +32,8 @@ import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerRMIImpl;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerSpringMain;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmCommonMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmMacMapper;
@@ -136,6 +131,110 @@ public class CommonPackImpl implements CommonPack {
     @Autowired private TMiscMapper             miscMap;
 
     @Autowired private TCtErrorMngMapper       ctErrorMngMap;
+
+    /**
+     *
+     * 오류코드 구하기
+     *
+     * @since  2005/08/30
+     * @author 방혜진
+     * @param  errSrc
+     * @param  orgCd
+     * @param  errCd
+     * @return int
+     */
+    public int getError( String errSrc, String orgCd, String errCd ) {
+
+        TCmCommonSpec   cmSpec = new TCmCommonSpec();
+        List<TCmCommon> cmRecs = null;
+        /*
+         * Host 발생 장애 일경우 Large_cd = '2017'
+         */
+        if( errSrc.substring(0,1).equals("H") ) {
+
+            cmSpec.createCriteria().andLargeCdEqualTo( "2017" )
+                                   .andCdNm2EqualTo  ( errCd.trim() );
+            try {
+                cmRecs = cmMap.selectBySpec( cmSpec );
+                if( cmRecs.size() == 0 ) {
+                    logger.debug( ">>> [getError]-정의된 HOST Error Cd 없음. [H_{}]", errCd );
+                    return -1;
+                }
+                if( cmRecs.get(0).getCdNm4() == null ) {
+                    cmRecs.get(0).setCdNm4( "0" ); /* 정상여부 */
+                }
+
+            }
+            catch( Exception e ) {
+                logger.info( ">>> [getErrort]-Host Error Cd 파악 실패 [H_{}]", errCd );
+                return -1;
+            }
+        }
+        /*
+         * Server 발생 장애 일경우 Large_cd = '2016'
+         */
+        else if( errSrc.substring(0,1).equals("S") ) {
+
+            cmSpec.createCriteria().andLargeCdEqualTo( "2016" )
+                                   .andCdNm2EqualTo  ( errCd.trim() );
+            try {
+                cmRecs = cmMap.selectBySpec( cmSpec );
+                if( cmRecs.size() == 0 ) {
+                    logger.debug( ">>> [getError]-정의된 HOST Error Cd 없음. [H_{}]", errCd );
+                    return -1;
+                }
+                if( cmRecs.get(0).getCdNm4() == null ) {
+                    cmRecs.get(0).setCdNm4( "0" ); /* 정상여부 */
+                }
+
+            }
+            catch( Exception e ) {
+                logger.info( ">>> [getErrort]-Host Error Cd 파악 실패 [H_{}]", errCd );
+                return -1;
+            }
+        }
+        /*
+         * 은행 발생 장애 일경우 Large_cd = '0020'
+         */
+        else if( errSrc.substring(0,1).equals("B") ) {
+
+            cmSpec.createCriteria().andLargeCdEqualTo( "0020" )
+                                   .andCdNm2EqualTo  ( errCd.trim() )
+                                   .andCdNm3EqualTo  ( orgCd.trim() );
+            try {
+                cmRecs = cmMap.selectBySpec( cmSpec );
+                if( cmRecs.size() == 0 ) {
+                    logger.debug( ">>> [getError]-정의된 HOST Error Cd 없음. [H_{}]", errCd );
+                    return -1;
+                }
+                if( cmRecs.get(0).getCdNm4() == null ) {
+                    cmRecs.get(0).setCdNm4( "0" ); /* 정상여부 */
+                }
+            }
+            catch( Exception e ) {
+                logger.info( ">>> [getErrort]-Host Error Cd 파악 실패 [H_{}]", errCd );
+                return -1;
+            }
+        }
+
+        if( cmRecs != null && cmRecs.size() == 1 ) {
+            if( cmRecs.get(0).getCdNm4().equals("1") ) {
+                return 0;
+            }
+            /*
+             *  정상건은 아니나 정상과 같이 이후 단을 처리 할 수 있도록 함
+             */
+            else if( cmRecs.get(0).getCdNm4().equals("9") ) {
+                return 0;
+            }
+            else {
+                return -1;
+            }
+        }
+        else {
+            return -1;
+        }
+    }
 
     /**
      *

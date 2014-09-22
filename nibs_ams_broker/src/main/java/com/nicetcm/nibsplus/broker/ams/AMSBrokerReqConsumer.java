@@ -55,6 +55,7 @@ public class AMSBrokerReqConsumer extends Thread {
             }
             catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+                logger.debug("Thread [{}] is interrupted", this.getName() );
                 break;
             }
             catch( Exception e ) {

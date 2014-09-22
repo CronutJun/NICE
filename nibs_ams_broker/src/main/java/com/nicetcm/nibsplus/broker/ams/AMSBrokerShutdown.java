@@ -25,6 +25,10 @@ public class AMSBrokerShutdown extends Thread {
 
     public void run()  {
         try {
+            logger.debug("Start MAC request listener shutdown.");
+            AMSBrokerReqJob.stopListenerAll();
+            logger.debug("Start schedule shutdown");
+            AMSBrokerSchedWorkGroup.getInstance().shutdownNow();
             logger.debug("Start scheduler shutdown..");
             AMSBrokerMain.getScheduler().shutdown();
             logger.debug("Scheduler stopped.");

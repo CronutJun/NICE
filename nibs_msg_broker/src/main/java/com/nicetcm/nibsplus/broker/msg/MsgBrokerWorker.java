@@ -6,6 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.nicetcm.nibsplus.broker.msg.services.CommonPack;
 import com.nicetcm.nibsplus.broker.msg.services.InMsgHandler;
 import com.nicetcm.nibsplus.broker.msg.services.RespAckNakHandler;
 
@@ -58,11 +59,42 @@ public class MsgBrokerWorker implements Runnable {
             try {
                 try {
                     /*
-                     *  Find and invoke method of instance of biz
+                     * 응답전문 수신 일 경우에는 오류코드 체크
                      */
-                    InMsgHandler bizBranch = (InMsgHandler)MsgBrokerSpringMain
-                            .sprCtx.getBean("in" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
-                    bizBranch.inMsgHandle( msgThrdSafeData, msgPsr );
+                    if( msgPsr.getString("CM.msg_type").substring(2, 4).equals("10") ) {
+                        if( !msgPsr.getString("CM.format_type").equals(MsgBrokerConst.EM_CODE) ) {
+
+                            CommonPack comPack = MsgBrokerSpringMain.sprCtx.getBean(CommonPack.class);
+
+                            if( comPack.getError( msgPsr.getString("CM.ret_cd_src"), msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.ret_cd") ) < 0 ) {
+                                /*
+                                 * 부산은행 현금인도(장전) 통보의경우는 은행 오류 코드로 들어오더라도 DB 저장 한다.
+                                 */
+                                if( msgPsr.getString("CM.msg_type").equals(MsgBrokerConst.CM_ANS)
+                                &&  msgPsr.getString("CM.work_type").equals("1133") ) {
+                                    if( msgPsr.getString("CM.org_cd").equals(MsgBrokerConst.BU_CODE)
+                                    ||  msgPsr.getString("CM.org_cd").equals(MsgBrokerConst.BUATMS_CODE) ) {
+                                        logger.debug("오류[{}], DB저장 안함", msgPsr.getString("CM.ret_cd_src") );
+                                    }
+                                }
+                                else {
+                                    /*
+                                     * 오류가 있는경우는 Update 하지 않고 AP로 응답 보냄.
+                                     * 응답전문일 경우는 ap로 전송하도록
+                                     */
+                                    logger.debug( "오류[{}], DB저장 안함", msgPsr.getString("CM.ret_cd_src") );
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        /*
+                         *  Find and invoke method of instance of biz
+                         */
+                        InMsgHandler bizBranch = (InMsgHandler)MsgBrokerSpringMain
+                                .sprCtx.getBean("in" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
+                        bizBranch.inMsgHandle( msgThrdSafeData, msgPsr );
+                    }
 
                     /*
                      * 요청전문에 대해서만 Ack/Nak 전송
@@ -131,5 +163,4 @@ public class MsgBrokerWorker implements Runnable {
 
         }
     }
-
 }

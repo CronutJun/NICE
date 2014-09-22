@@ -17,6 +17,7 @@ import com.nicetcm.nibsplus.broker.msg.model.*;
 
 public interface CommonPack {
 
+    public int getError( String errSrc, String orgCd, String errCd );
     public void checkBranchMacLength( TMacInfo MacInfo ) throws Exception;
             void checkBranchMacLength(MsgParser parsed) throws Exception;
     public void getMacNoIntoSite( TMacInfo MacInfo ) throws Exception;

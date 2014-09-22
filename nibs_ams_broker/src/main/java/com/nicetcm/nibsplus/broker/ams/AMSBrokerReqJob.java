@@ -12,6 +12,7 @@ package com.nicetcm.nibsplus.broker.ams;
  */
 
 import java.util.concurrent.*;
+import java.util.Map;
 import java.util.ArrayList;
 import java.nio.ByteBuffer;
 import java.io.FileOutputStream;
@@ -57,6 +58,22 @@ public class AMSBrokerReqJob {
     private FileInputStream fIn;
     private FileOutputStream fOut;
     private int timeOut;
+
+    public static void stopListener(String macNo) throws Exception {
+        if( macMap.containsKey(macNo) ) {
+            macMap.get(macNo).getConsumer().interrupt();
+            macMap.remove( macNo );
+        }
+    }
+
+    public static void stopListenerAll() throws Exception {
+        while( macMap.entrySet().iterator().hasNext() ) {
+            Map.Entry<String, AMSBrokerOutboundQ> e = (Map.Entry<String, AMSBrokerOutboundQ>)macMap.entrySet().iterator().next();
+            e.getValue().getConsumer().interrupt();
+            macMap.remove(e.getKey());
+        }
+        logger.debug("MAC request listener stopped.");
+    }
 
     private static BlockingQueue<AMSBrokerReqJob> getQueue(String macNo) throws Exception {
 
