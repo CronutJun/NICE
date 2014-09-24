@@ -28,6 +28,4 @@ public class in03101170ImplTest extends CmAllTestSuite
         final String testMsg = "005B00  HOST   0422201407160625363817421         CM03101170                               0010    063                                                                                   20140717      122000000                                          강북                                                                                                                                                                                                                                                                   ";
         inMsgHandler.inMsgHandle(new MsgBrokerData(), getMsgParser(testMsg));
     }
-
-
 }

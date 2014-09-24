@@ -126,14 +126,16 @@ public class MsgBrokerWorker implements Runnable {
                      * 요청전문에 대해서만 Ack/Nak 전송
                      */
                     if( msgPsr.getString("CM.msg_type").substring(2, 4).equals("00") ) {
-                        /*
-                         * Respond Nak Error
-                         */
-                        RespAckNakHandler resp = (RespAckNakHandler)MsgBrokerSpringMain
-                            .sprCtx.getBean("respAckNak");
-                        resp.procAckNak( msgThrdSafeData, msgPsr, me.getErrorCode() );
+                        if( me.getErrorCode() != -99 ) {
+                            /*
+                             * Respond Nak Error
+                             */
+                            RespAckNakHandler resp = (RespAckNakHandler)MsgBrokerSpringMain
+                                .sprCtx.getBean("respAckNak");
+                            resp.procAckNak( msgThrdSafeData, msgPsr, me.getErrorCode() );
 
-                        MsgBrokerProducer.putDataToPrd(msgPsr);
+                            MsgBrokerProducer.putDataToPrd(msgPsr);
+                        }
                     }
                     /*
                      * nibsplus 또는 기타 AP요청의 응답인지

@@ -482,7 +482,7 @@ public class CommonPackImpl implements CommonPack {
           || ErrBasic.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE)
           || ErrBasic.getOrgCd().equals(MsgBrokerConst.KNATMS_CODE)
           || ErrBasic.getOrgCd().equals(MsgBrokerConst.BUATMS_CODE))
-        &&   ErrBasic.getSec().length() > 0 ) {                           /* 출동요청 전문 일경우 */
+        &&   ErrBasic.getSec() != null && ErrBasic.getSec().length() > 0 ) { /* 출동요청 전문 일경우 */
             if( getDupErrorMng(ErrBasic, 0) )
                 return;
         }
@@ -765,11 +765,11 @@ public class CommonPackImpl implements CommonPack {
         ErrBasic.setRegId( ErrRcpt.getAcceptNm() );
 
         try {
-            errBasicMap.insert( ErrBasic );
-            errRcptMap.insert( ErrRcpt );
-            errNotiMap.insert( ErrNoti );
-            errTxnMap.insert( ErrTxn );
-            errCallMap.insert( ErrCall );
+            errBasicMap.insertSelective( ErrBasic );
+            errRcptMap.insertSelective( ErrRcpt );
+            errNotiMap.insertSelective( ErrNoti );
+            errTxnMap.insertSelective( ErrTxn );
+            errCallMap.insertSelective( ErrCall );
         }
         catch ( Exception e ) {
             logger.info( "Insert ErrorMng error = {}", e.getMessage() );

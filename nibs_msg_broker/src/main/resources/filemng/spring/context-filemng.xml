@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.2.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd"
+>
+    <!-- 환경설정파일 로딩 -->
+
+    <!-- 개발자 Local-PC 환경 -->
+    <beans profile="">
+        <util:properties id="config" location="classpath:/filemng/properties/context-filemng.local.properties" />
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:filemng/properties/context-filemng-log4j.local.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- DEV 환경 -->
+    <beans profile="dev">
+        <util:properties id="config" location="classpath:/filemng/properties/context-filemng.dev.properties" />
+    </beans>
+
+    <beans>
+
+        <!-- Spring Service Bean 로딩 -->
+        <context:component-scan base-package="com.nicetcm.nibsplus.filemng">
+            <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+        </context:component-scan>
+
+        <!-- OP DB Connection Pool 설정 -->
+        <bean id="dataSource_operdb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+            <property name="driverClassName"><value>#{config['jdbc.op.class']}</value></property>
+            <property name="url"><value>#{config['jdbc.op.url']}</value></property>
+            <property name="username"><value>#{config['jdbc.op.username']}</value></property>
+            <property name="password"><value>#{config['jdbc.op.password']}</value></property>
+            <property name="initialSize" value="4"/>
+            <property name="maxActive" value="4"/>
+            <property name="maxIdle" value="4"/>
+            <property name="maxWait" value="30000"/>
+            <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
+            <property name="testOnBorrow" value="true"/>
+            <property name="testOnReturn" value="false"/>
+            <property name="testWhileIdle" value="true"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        </bean>
+
+        <!-- IN DB Connection Pool 설정 -->
+        <bean id="dataSource_infodb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+            <property name="driverClassName"><value>#{config['jdbc.in.class']}</value></property>
+            <property name="url"><value>#{config['jdbc.in.url']}</value></property>
+            <property name="username"><value>#{config['jdbc.in.username']}</value></property>
+            <property name="password"><value>#{config['jdbc.in.password']}</value></property>
+            <property name="initialSize" value="4"/>
+            <property name="maxActive" value="4"/>
+            <property name="maxIdle" value="4"/>
+            <property name="maxWait" value="30000"/>
+            <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
+            <property name="testOnBorrow" value="true"/>
+            <property name="testOnReturn" value="false"/>
+            <property name="testWhileIdle" value="true"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        </bean>
+
+        <!-- OP DB Logging -->
+        <bean id="dataSource_OP" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+            <constructor-arg ref="dataSource_operdb" />
+            <property name="logFormatter">
+                <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+                    <property name="loggingType" value="MULTI_LINE" />
+                </bean>
+            </property>
+        </bean>
+
+        <!-- IN DB Logging -->
+        <bean id="dataSource_IN" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+            <constructor-arg ref="dataSource_infodb" />
+            <property name="logFormatter">
+                <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+                    <property name="loggingType" value="MULTI_LINE" />
+                </bean>
+            </property>
+        </bean>
+
+        <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+
+        <!-- OP Mybatis SQL Mapper -->
+<!--
+        <bean id="sqlSessionFactory_OP" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
+            <property name="dataSource" ref="dataSource_OP"></property>
+            <property name="configLocation" value="classpath:filemng/mybatis/mybatis-config.xml"></property>
+            <property name="mapperLocations" value="classpath*:filemng/sqlmap/**/*.xml"></property>
+        </bean>
+ -->
+        <!-- IN Mybatis SQL Mapper -->
+<!--
+        <bean id="sqlSessionFactory_IN" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
+            <property name="dataSource" ref="dataSource_IN"></property>
+            <property name="configLocation" value="classpath:filemng/mybatis/mybatis-config.xml"></property>
+            <property name="mapperLocations" value="classpath*:filemng/sqlmap/**/*.xml"></property>
+        </bean>
+ -->
+        <!-- stored job-metadata in database -->
+<!--
+        <bean id="jobRepository" class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
+            <property name="dataSource" ref="dataSource_OP" />
+            <property name="transactionManager" ref="transactionManager" />
+            <property name="databaseType" value="mysql" />
+        </bean>
+ -->
+        <!-- stored job-metadata in memory -->
+        <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
+            <property name="transactionManager" ref="transactionManager"/>
+        </bean>
+
+        <bean id="jobLauncher" class="org.springframework.batch.core.launch.support.SimpleJobLauncher">
+            <property name="jobRepository" ref="jobRepository" />
+        </bean>
+
+    </beans>
+
+</beans>

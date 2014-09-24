@@ -71,7 +71,11 @@ public class MsgBrokerMain {
 
         }
         catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("Error raised. Message = {}", e.getMessage() );
+            logger.error("              Class = {}", e.getClass().getName() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
+            new MsgBrokerShutdown().run();
         }
     }
 

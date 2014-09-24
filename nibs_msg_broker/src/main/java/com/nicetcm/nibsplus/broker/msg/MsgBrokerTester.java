@@ -1,5 +1,18 @@
 package com.nicetcm.nibsplus.broker.msg;
 
+/**
+ * Copyright 2014 The NIBS+ Project
+ *
+ * MsgBrokerTester
+ *
+ *  MsgBroker 서버의 테스트를 위한 전문을 파일에서 읽어 MQ PUT
+ *
+ *
+ * @author  K.D.J
+ * @since   2014.09.18
+ */
+
+
 import java.io.File;
 import java.io.InputStream;
 import java.rmi.registry.LocateRegistry;

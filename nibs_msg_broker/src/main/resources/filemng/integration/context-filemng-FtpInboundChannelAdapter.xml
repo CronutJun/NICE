@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:int="http://www.springframework.org/schema/integration"
+    xmlns:int-ftp="http://www.springframework.org/schema/integration/ftp"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/integration/ftp http://www.springframework.org/schema/integration/ftp/spring-integration-ftp.xsd">
+
+    <bean id="elandFtpClientFactory" class="org.springframework.integration.ftp.session.DefaultFtpSessionFactory">
+        <property name="host" ><value>#{config['eland.host']}</value></property>
+        <property name="port" ><value>#{config['eland.availableServerPort']}</value></property>
+        <property name="username" ><value>#{config['eland.userid']}</value></property>
+        <property name="password" ><value>#{config['eland.password']}</value></property>
+    </bean>
+
+    <!--
+        filename-regex=""
+        filter="myPositionsFtpFilter"
+     -->
+    <int-ftp:inbound-channel-adapter id="sapmaFtpInbound"
+            channel="sapmaFtpChannel"
+            session-factory="elandFtpClientFactory"
+            filename-pattern="*MASTER.dat"
+            auto-create-local-directory="true"
+            delete-remote-files="false"
+            local-directory="#{config['sapma.local.path']}"
+            remote-directory="#{config['sapma.remote.path']}"
+            >
+        <int:poller fixed-rate="1000"/>
+        <!-- <property name="remote-directory"><value>#{config['sapma.remote.path']}</value></property> -->
+        <!-- <property name="local-directory"><value>#{config['sapma.local.path']}</value></property> -->
+    </int-ftp:inbound-channel-adapter>
+
+    <int:channel id="sapmaFtpChannel">
+        <int:queue/>
+    </int:channel>
+</beans>

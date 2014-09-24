@@ -1,5 +1,18 @@
 package com.nicetcm.nibsplus.broker.msg;
 
+/**
+ * Copyright 2014 The NIBS+ Project
+ *
+ * MsgBrokerTestLogAppender
+ *
+ *  MsgBroker 서버의 테스트를 위해 로그를 Thread단위로 분리
+ *
+ *
+ * @author  K.D.J
+ * @since   2014.09.20
+ */
+
+
 import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.io.Writer;
