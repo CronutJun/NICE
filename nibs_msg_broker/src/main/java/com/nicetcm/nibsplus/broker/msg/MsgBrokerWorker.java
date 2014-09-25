@@ -99,7 +99,7 @@ public class MsgBrokerWorker implements Runnable {
                     /*
                      * 요청전문에 대해서만 Ack/Nak 전송
                      */
-                    if( msgPsr.getString("CM.msg_type").substring(2, 4).equals("00") ) {
+                    if( msgPsr.getString("CM.msg_type").substring(2, 4).equals(MsgBrokerConst.REQ_CODE) ) {
                         /*
                          * Respond Ack Normal
                          */
@@ -125,7 +125,7 @@ public class MsgBrokerWorker implements Runnable {
                     /*
                      * 요청전문에 대해서만 Ack/Nak 전송
                      */
-                    if( msgPsr.getString("CM.msg_type").substring(2, 4).equals("00") ) {
+                    if( msgPsr.getString("CM.msg_type").substring(2, 4).equals(MsgBrokerConst.REQ_CODE) ) {
                         if( me.getErrorCode() != -99 ) {
                             /*
                              * Respond Nak Error
@@ -150,6 +150,30 @@ public class MsgBrokerWorker implements Runnable {
                     }
                 }
                 catch (Exception e) {
+                    /*
+                     * 요청전문에 대해서만 Ack/Nak 전송
+                     */
+                    if( msgPsr.getString("CM.msg_type").substring(2, 4).equals(MsgBrokerConst.REQ_CODE) ) {
+                        /*
+                         * Respond Nak Error
+                         */
+                        RespAckNakHandler resp = (RespAckNakHandler)MsgBrokerSpringMain
+                            .sprCtx.getBean("respAckNak");
+                        resp.procAckNak( msgThrdSafeData, msgPsr, -1 );
+
+                        MsgBrokerProducer.putDataToPrd(msgPsr);
+                    }
+                    /*
+                     * nibsplus 또는 기타 AP요청의 응답인지
+                     * MsgBrokerImpl의 rmiSyncAns Map에서 전문번호로 찾아
+                     * 존재하면 응답처리 한다.
+                     */
+                    else {
+                        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(msgPsr.getString("CM.trans_seq_no"));
+                        if( waitQ != null ) {
+                            waitQ.put( msg );
+                        }
+                    }
                     throw e;
                 }
             }
