@@ -12,7 +12,7 @@
 
     <batch:job id="reportJob">
         <batch:step id="getFtp" next="dbLoad">
-            <tasklet ref="ftpInboundChannelAdapterSample" />
+            <tasklet ref="sapMaFtpTasklet" />
         </batch:step>
         <batch:step id="dbLoad">
             <batch:tasklet>
@@ -22,8 +22,6 @@
         </batch:step>
     </batch:job>
 
-    <bean id="ftpInboundChannelAdapterSample" class="org.springframework.integration.samples.ftp.FtpInboundChannelAdapterSample">
-    </bean>
 
 
     <bean id="cvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">

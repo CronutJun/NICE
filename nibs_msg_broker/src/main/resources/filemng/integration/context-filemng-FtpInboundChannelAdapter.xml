@@ -30,8 +30,6 @@
             remote-directory="#{config['sapma.remote.path']}"
             >
         <int:poller fixed-rate="1000"/>
-        <!-- <property name="remote-directory"><value>#{config['sapma.remote.path']}</value></property> -->
-        <!-- <property name="local-directory"><value>#{config['sapma.local.path']}</value></property> -->
     </int-ftp:inbound-channel-adapter>
 
     <int:channel id="sapmaFtpChannel">

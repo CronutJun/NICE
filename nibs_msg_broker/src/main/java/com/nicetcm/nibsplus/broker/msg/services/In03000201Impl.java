@@ -53,7 +53,7 @@ public class In03000201Impl extends InMsgHandlerImpl {
             tFnInoutRealtime.setDealType    (MsgBrokerLib.rtrim(parsed.getString("trade_type")));
             tFnInoutRealtime.setDealStatus  (MsgBrokerLib.rtrim(parsed.getString("trade_status")));
 
-            tFnInoutRealtime.setUpdateUid   (parsed.getString("ONLINE"));
+            tFnInoutRealtime.setUpdateUid   ( "ONLINE" );
             tFnInoutRealtime.setUpdateDate  (safeData.getDSysDate());
 
             tFnInoutRealtimeMapper.insertSelective(tFnInoutRealtime);

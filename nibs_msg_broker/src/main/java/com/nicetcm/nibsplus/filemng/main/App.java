@@ -1,7 +1,11 @@
 package com.nicetcm.nibsplus.filemng.main;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.ApplicationContext;
@@ -12,8 +16,7 @@ public class App {
 
     String[] springConfig  =
         {   "classpath:/filemng/spring/context-filemng.xml",
-            "classpath:/filemng/spring/context-filemng-jobs.xml",
-            "classpath:/filemng/integration/FtpInboundChannelAdapterSample-context.xml"
+            "classpath:/filemng/spring/context-filemng-jobs.xml"
         };
 
     ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
@@ -23,8 +26,16 @@ public class App {
 
     try {
 
-        JobExecution execution = jobLauncher.run(job, new JobParameters());
+        //  JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();
+        Map<String,JobParameter> parameters = new LinkedHashMap<String, JobParameter>();
+        parameters.put("yyyymmdd", new JobParameter("20140913"));
+        //parameters.put("branchCd", new JobParameter("8228"));
+
+        JobParameters jobParameters = new JobParameters(parameters);
+
+        JobExecution execution = jobLauncher.run(job, jobParameters);
         System.out.println("Exit Status : " + execution.getStatus());
+
 
     } catch (Exception e) {
         e.printStackTrace();

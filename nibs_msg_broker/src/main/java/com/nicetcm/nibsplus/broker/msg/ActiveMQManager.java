@@ -5,12 +5,21 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.io.File;
+
+import org.apache.activemq.command.ActiveMQBytesMessage;
+
+import sun.jvmstat.monitor.*;
+import sun.management.ConnectorAddressLink;
+import sun.tools.jconsole.LocalVirtualMachine;
 
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
@@ -30,17 +39,6 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.management.openmbean.CompositeData;
 
-/*
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-*/
-
-
-
-
-
-
 
 
 import org.slf4j.Logger;
@@ -53,11 +51,13 @@ public class ActiveMQManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ActiveMQManager.class);
 
-
     private String amqJmxUrl = "service:jmx:rmi:///jndi/rmi://10.3.28.62:1099/jmxrmi";
 
-    public ActiveMQManager() {
+    private static final String CONNECTOR_ADDRESS = "com.sun.management.jmxremote.localConnectorAddress";
+    private String runOpt;
 
+    public ActiveMQManager( String opt ) {
+        this.runOpt = opt;
     }
 
 
@@ -89,13 +89,12 @@ public class ActiveMQManager {
                 }
             });
             for(ObjectInstance que: lst ) {
-                MBeanInfo mi = getMBeanInfo(connection, que.getObjectName());
                 System.out.println(String.format("%-18s%22s%22s%20s%20s",
                                                               que.getObjectName().getKeyProperty("destinationName"),
-                                                              getMBeanAttr(connection, que.getObjectName(), mi.getAttributes()[13].getName()),
-                                                              getMBeanAttr(connection, que.getObjectName(), mi.getAttributes()[12].getName()),
-                                                              getMBeanAttr(connection, que.getObjectName(), mi.getAttributes()[7].getName()),
-                                                              getMBeanAttr(connection, que.getObjectName(), mi.getAttributes()[9].getName())
+                                                              getMBeanAttr(connection, que.getObjectName(), "ProducerCount"),
+                                                              getMBeanAttr(connection, que.getObjectName(), "ConsumerCount"),
+                                                              getMBeanAttr(connection, que.getObjectName(), "EnqueueCount"),
+                                                              getMBeanAttr(connection, que.getObjectName(), "DequeueCount")
                                                 ));
             }
         }
@@ -206,7 +205,7 @@ public class ActiveMQManager {
                         }
                         System.out.println(String.format("   Preview = [%s]", new String(mDatas)));
                     }
-                    //List<ActiveMQBytesMessages> lst = (List)connection.invoke(ques[0].getObjectName(), "browseMessages", null, null);
+                    //List<ActiveMQBytesMessage> lst = (List<ActiveMQBytesMessage>)connection.invoke(ques[0].getObjectName(), "browseMessages", null, null);
                     //System.out.println(lst.get(0).getClass().getName());
                 }
                 catch (NullPointerException e) {
@@ -244,12 +243,17 @@ public class ActiveMQManager {
         MBeanServerConnection connection = null;
 
         String username = "";
-
         String password = "";
 
         Map<String, String[]> env = new HashMap<String, String[]>();
         String[] credentials = new String[] { username, password };
         env.put(JMXConnector.CREDENTIALS, credentials);
+
+        if( runOpt.equals("-llc") || runOpt.equals("-lrc") || runOpt.equals("-lbc") ) {
+            connection = localConnect();
+            if( connection != null )
+                return connection;
+        }
 
         try {
             amqJmxUrl = String.format("service:jmx:rmi:///jndi/rmi://%s:%s/jmxrmi",
@@ -269,6 +273,82 @@ public class ActiveMQManager {
         }
 
         return connection;
+    }
+
+    private MBeanServerConnection localConnect()  throws IOException {
+        int pid = -1;
+
+        try {
+            try {
+                final Map<Integer, LocalVirtualMachine> virtualMachines = LocalVirtualMachine.getAllVirtualMachines();
+                for (final Entry<Integer, LocalVirtualMachine> entry : virtualMachines.entrySet()) {
+                    logger.debug("Currently running process : [{}]", entry.getValue().displayName() );
+                    if( entry.getValue().displayName().matches("(.*)activemq(.*)") ) {
+                        logger.debug("Found process : [{}]", entry.getValue().displayName() );
+                        pid = entry.getKey();
+                        break;
+                    }
+                }
+
+                /*
+                MonitoredHost local = MonitoredHost.getMonitoredHost(new HostIdentifier((String) null));
+                Set<Integer> vmlist = new HashSet<Integer>(local.activeVms());
+                for (Integer id : vmlist) {
+                    MonitoredVm vm = local.getMonitoredVm(new VmIdentifier("//" + id));
+                    String processname = MonitoredVmUtil.mainClass(vm, true);
+                    logger.debug("Currently running process : [{}]", processname );
+                    if( processname.matches("(.*)activemq(.*)") ) {
+                        pid = id;
+                        break;
+                    }
+                }
+                */
+                if( pid == -1 ) {
+                    logger.debug("pid is -1");
+                    return null;
+                }
+            }
+            catch( Exception e ) {
+                return null;
+            }
+
+            String address = "";
+
+            com.sun.tools.attach.VirtualMachine vm =  com.sun.tools.attach.VirtualMachine.attach(Integer.toString(pid));
+
+            try  {
+                // get the connector address
+                address = vm.getAgentProperties().getProperty(CONNECTOR_ADDRESS);
+
+                // no connector address, so we start the JMX agent
+                if (address == null) {
+                    String agent = vm.getSystemProperties().getProperty("java.home") +
+                                   File.separator + "lib" + File.separator +
+                                   "management-agent.jar";
+                    logger.debug("Agent = {}", agent);
+                    vm.loadAgent(agent, "com.sun.management.jmxremote");
+
+                    // agent is started, get the connector address
+                    address = vm.getAgentProperties().getProperty(CONNECTOR_ADDRESS);
+                }
+            }
+            finally {
+                vm.detach();
+            }
+
+            //address = ConnectorAddressLink.importFrom(pid);
+            logger.debug("address = " + address);
+            JMXServiceURL jmxUrl = new JMXServiceURL(address);
+            return JMXConnectorFactory.connect(jmxUrl).getMBeanServerConnection();
+        }
+        catch (IOException e) {
+            throw new RuntimeException("Of course you still have to implement a good connection handling");
+        }
+        catch ( Exception e ) {
+            logger.debug("Exception is raised");
+            throw new RuntimeException("Exception is raised");
+        }
+
     }
 
     private void count(MBeanServerConnection conn) throws IOException {
@@ -584,17 +664,18 @@ public class ActiveMQManager {
             printArgInfo();
             return;
         }
-        if( !args[0].equals("-lc") && !args[0].equals("-rc") && !args[0].equals("-bc") ) {
+        if( !args[0].equals("-lc") && !args[0].equals("-rc") && !args[0].equals("-bc")
+         && !args[0].equals("-llc") && !args[0].equals("-lrc") && !args[0].equals("-lbc")) {
             printArgInfo();
             return;
         }
-        if( args[0].equals("-rc") ) {
+        if( args[0].equals("-rc") || args[0].equals("-lrc") ) {
             if( args.length > 2 ) {
                 printArgInfo();
                 return;
             }
         }
-        if( args[0].equals("-bc") ) {
+        if( args[0].equals("-bc") || args[0].equals("-lbc") ) {
             if( args.length != 2 ) {
                 printArgInfo();
                 return;
@@ -606,17 +687,17 @@ public class ActiveMQManager {
             InputStream is = MsgBrokerMain.class.getResourceAsStream(
                     String.format("/%s/msg.properties", MsgBrokerConst.SVR_TYPE));
             MsgCommon.msgProps.load(is);
-            ActiveMQManager amq = new ActiveMQManager();
-            if( args[0].equals("-lc") ) {
+            ActiveMQManager amq = new ActiveMQManager( args[0] );
+            if( args[0].equals("-lc") || args[0].equals("-llc") ) {
                 amq.listAllConsumer();
             }
-            else if(args[0].equals("-rc") ) {
+            else if(args[0].equals("-rc") || args[0].equals("-lrc") ) {
                 if( args.length == 1 )
                     amq.removeAllConsumer();
                 else
                     amq.removeConsumer( args[1] );
             }
-            else if(args[0].equals("-bc") ) {
+            else if(args[0].equals("-bc") || args[0].equals("-lbc") ) {
                 amq.browseConsumer( args[1] );
             }
         }

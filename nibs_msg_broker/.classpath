@@ -29,5 +29,7 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="db2jcc_license_cu.jar"/>
 	<classpathentry kind="lib" path="db2jcc.jar"/>
+	<classpathentry kind="lib" path="tools.jar"/>
+	<classpathentry kind="lib" path="jconsole.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
