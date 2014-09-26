@@ -79,7 +79,7 @@ public class ActiveMQManager {
             Set<ObjectInstance> mbeans = queryForQueue(connection, "*");
             logger.debug(String.valueOf(mbeans.size()));
             System.out.println(String.format("------------------------------------------------------------------------------------------------------"));
-            System.out.println(String.format("%-18s%22s%22s%20s%20s", "Queue Name", "Number of Producers", "Number of Consumers", "Enque Count", "Deque Count"));
+            System.out.println(String.format("%-18s%22s%22s%20s%20s", "Queue Name", "Number of Pendings", "Number of Consumers", "Enque Count", "Deque Count"));
             System.out.println(String.format("------------------------------------------------------------------------------------------------------"));
             List<ObjectInstance> lst = new ArrayList<ObjectInstance>(mbeans);
             Collections.sort(lst, new Comparator<ObjectInstance>() {
@@ -89,9 +89,10 @@ public class ActiveMQManager {
                 }
             });
             for(ObjectInstance que: lst ) {
-                System.out.println(String.format("%-18s%22s%22s%20s%20s",
+                System.out.println(String.format("%-18s%22d%22s%20s%20s",
                                                               que.getObjectName().getKeyProperty("destinationName"),
-                                                              getMBeanAttr(connection, que.getObjectName(), "ProducerCount"),
+                                                              Integer.parseInt(getMBeanAttr(connection, que.getObjectName(), "EnqueueCount").toString()) -
+                                                              Integer.parseInt(getMBeanAttr(connection, que.getObjectName(), "DequeueCount").toString()),
                                                               getMBeanAttr(connection, que.getObjectName(), "ConsumerCount"),
                                                               getMBeanAttr(connection, que.getObjectName(), "EnqueueCount"),
                                                               getMBeanAttr(connection, que.getObjectName(), "DequeueCount")
@@ -657,6 +658,9 @@ public class ActiveMQManager {
         System.out.println("Usage: java ActiveMQManager [-lc : list consumers  ]");
         System.out.println("                            [-rc : remove consumers] [queue name]");
         System.out.println("                            [-bc : browse consumers] [queue name]");
+        System.out.println("                            [-lp : list producers  ]");
+        System.out.println("                            [-rp : remove producers] [queue name]");
+        System.out.println("                            [-bp : browse producers] [queue name]");
     }
 
     public static void main(String[] args) {
@@ -665,17 +669,18 @@ public class ActiveMQManager {
             return;
         }
         if( !args[0].equals("-lc") && !args[0].equals("-rc") && !args[0].equals("-bc")
-         && !args[0].equals("-llc") && !args[0].equals("-lrc") && !args[0].equals("-lbc")) {
+         && !args[0].equals("-llc") && !args[0].equals("-lrc") && !args[0].equals("-lbc")
+         && !args[0].equals("-lp") && !args[0].equals("-rp") && !args[0].equals("-bp")) {
             printArgInfo();
             return;
         }
-        if( args[0].equals("-rc") || args[0].equals("-lrc") ) {
+        if( args[0].equals("-rc") || args[0].equals("-lrc") || args[0].equals("-rp") ) {
             if( args.length > 2 ) {
                 printArgInfo();
                 return;
             }
         }
-        if( args[0].equals("-bc") || args[0].equals("-lbc") ) {
+        if( args[0].equals("-bc") || args[0].equals("-lbc") || args[0].equals("-bp") ) {
             if( args.length != 2 ) {
                 printArgInfo();
                 return;

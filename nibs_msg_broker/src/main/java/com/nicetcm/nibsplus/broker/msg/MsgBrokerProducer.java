@@ -41,12 +41,20 @@ public class MsgBrokerProducer {
 
     public static void putDataToPrd(MsgParser msgPsr) throws Exception {
 
-        MsgBrokerProducer prd = MsgBrokerProducer.producers.get( "ATMS." + msgPsr.getString( "CM.org_cd" ) + ".H.Q" );
+        MsgBrokerProducer prd = null;
+        if( msgPsr.getString("CM.org_cd").equals(MsgBrokerConst.NICE_CODE) ) {
+            prd = MsgBrokerProducer.producers.get( String.format("ATMS.%s.%s.Q",
+                                                                 msgPsr.getString("CM.msg_type"),
+                                                                 msgPsr.getString("CM.work_type")) );
+        }
+        else {
+            prd = MsgBrokerProducer.producers.get( String.format("ATMS.%s.H.Q", msgPsr.getString("CM.org_cd")) );
+        }
         BytesMessage respData = prd.getBytesMessage();
 
         byte[] read = new byte[msgPsr.getMessage().limit()];
         msgPsr.getMessage().get(read);
-        logger.info("Response Data = {}", new String(read) );
+        logger.info("Response Data : [{}]", new String(read) );
         respData.writeBytes(read);
         prd.produce( respData );
 

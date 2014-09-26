@@ -11,6 +11,7 @@
 
   <appender name="testAppender" class="com.nicetcm.nibsplus.broker.msg.MsgBrokerTestLogAppender">
     <param name="File" value="/test.log" />
+    <!-- <param name="Encoding" value="UTF-8" /> //-->
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="[%d{yyyyMMdd HHmmss.SSS}][%t] %-5p:[%-30c{1}] %m [%M(%L)]%n"/>
     </layout>
