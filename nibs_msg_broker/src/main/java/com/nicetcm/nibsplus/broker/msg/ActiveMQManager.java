@@ -61,13 +61,13 @@ public class ActiveMQManager {
     }
 
 
-    public void listAllConsumer() {
+    public void listAll(String dest) {
 
         MBeanServerConnection connection;
         String clientServiceName = "org.apache.activemq:brokerName=localhost,type=Broker";
         try {
             // Acquire a connection to the MBean server
-            connection = connect();
+            connection = connect(dest);
 
             // How many MBeans are running?
             count(connection);
@@ -105,14 +105,14 @@ public class ActiveMQManager {
         }
     }
 
-    public void removeAllConsumer() {
+    public void removeAll(String dest) {
         MBeanServerConnection connection;
 
         String clientServiceName = "org.apache.activemq:brokerName=localhost,type=Broker";
 
          try {
             // Acquire a connection to the MBean server
-            connection = connect();
+            connection = connect(dest);
 
             // How many MBeans are running?
             count(connection);
@@ -160,19 +160,19 @@ public class ActiveMQManager {
         }
     }
 
-    public void removeConsumer(String consumerName) {
+    public void remove(String dest, String queName) {
 
         MBeanServerConnection connection;
 
         try {
             // Acquire a connection to the MBean server
-            connection = connect();
+            connection = connect(dest);
 
-            Set<ObjectInstance> mbeans = queryForQueue(connection, consumerName);
+            Set<ObjectInstance> mbeans = queryForQueue(connection, queName);
             if( mbeans.size() == 0 )
-                System.out.println("Consumer [" + consumerName + "] is not found.");
+                System.out.println("Queue [" + queName + "] is not found.");
             else
-                removeQueue(connection, consumerName);
+                removeQueue(connection, queName);
         }
         catch (IOException e) {
             for( StackTraceElement se: e.getStackTrace() )
@@ -180,17 +180,17 @@ public class ActiveMQManager {
         }
     }
 
-    public void browseConsumer(String consumerName) {
+    public void browse(String dest, String queName) {
 
         MBeanServerConnection connection;
 
         try {
             // Acquire a connection to the MBean server
-            connection = connect();
+            connection = connect(dest);
 
-            Set<ObjectInstance> mbeans = queryForQueue(connection, consumerName);
+            Set<ObjectInstance> mbeans = queryForQueue(connection, queName);
             if( mbeans.size() == 0 )
-                System.out.println("Consumer [" + consumerName + "] is not found.");
+                System.out.println("Queue [" + queName + "] is not found.");
             else {
                 try {
                     ObjectInstance ques[] = {null};
@@ -239,7 +239,7 @@ public class ActiveMQManager {
 
     }
 
-    private MBeanServerConnection connect()  throws IOException {
+    private MBeanServerConnection connect(String dest)  throws IOException {
         JMXConnector connector = null;
         MBeanServerConnection connection = null;
 
@@ -257,9 +257,16 @@ public class ActiveMQManager {
         }
 
         try {
-            amqJmxUrl = String.format("service:jmx:rmi:///jndi/rmi://%s:%s/jmxrmi",
-                            MsgCommon.msgProps.getProperty("jmx.consumer.host", "10.3.28.62"),
-                            MsgCommon.msgProps.getProperty("jmx.consumer.port", "1099"));
+            if( dest.equals("C") ) {
+                amqJmxUrl = String.format("service:jmx:rmi:///jndi/rmi://%s:%s/jmxrmi",
+                                MsgCommon.msgProps.getProperty("jmx.consumer.host", "10.3.28.62"),
+                                MsgCommon.msgProps.getProperty("jmx.consumer.port", "1099"));
+            }
+            else {
+                amqJmxUrl = String.format("service:jmx:rmi:///jndi/rmi://%s:%s/jmxrmi",
+                        MsgCommon.msgProps.getProperty("jmx.producer.host", "10.3.28.61"),
+                        MsgCommon.msgProps.getProperty("jmx.producer.port", "1099"));
+            }
             connector = JMXConnectorFactory.newJMXConnector(new JMXServiceURL(amqJmxUrl), env);
             connector.connect();
             connection = connector.getMBeanServerConnection();
@@ -694,16 +701,22 @@ public class ActiveMQManager {
             MsgCommon.msgProps.load(is);
             ActiveMQManager amq = new ActiveMQManager( args[0] );
             if( args[0].equals("-lc") || args[0].equals("-llc") ) {
-                amq.listAllConsumer();
+                amq.listAll( "C" );
+            }
+            else if( args[0].equals("-lp") ) {
+                amq.listAll( "P" );
             }
             else if(args[0].equals("-rc") || args[0].equals("-lrc") ) {
                 if( args.length == 1 )
-                    amq.removeAllConsumer();
+                    amq.removeAll( "C" );
                 else
-                    amq.removeConsumer( args[1] );
+                    amq.remove( "C", args[1] );
             }
             else if(args[0].equals("-bc") || args[0].equals("-lbc") ) {
-                amq.browseConsumer( args[1] );
+                amq.browse( "C", args[1] );
+            }
+            else if(args[0].equals("-bp") ) {
+                amq.browse( "P", args[1] );
             }
         }
         catch( Exception e ) {
