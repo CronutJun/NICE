@@ -246,6 +246,11 @@
 <!--             <scope>system</scope> -->
 <!--             <systemPath>${basedir}/db2jcc.jar</systemPath> -->
         </dependency>
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.11</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.integration</groupId>

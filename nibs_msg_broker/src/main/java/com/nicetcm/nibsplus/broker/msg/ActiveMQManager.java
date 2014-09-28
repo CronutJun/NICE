@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.io.File;
 
 import org.apache.activemq.command.ActiveMQBytesMessage;
+import org.fusesource.jansi.AnsiConsole;
 
 import sun.jvmstat.monitor.*;
 import sun.management.ConnectorAddressLink;
@@ -53,6 +54,14 @@ public class ActiveMQManager {
 
     private String amqJmxUrl = "service:jmx:rmi:///jndi/rmi://10.3.28.62:1099/jmxrmi";
 
+    private static final String ANSI_CLS = "\u001b[2J";
+    private static final String ANSI_HOME = "\u001b[H";
+    private static final String ANSI_BOLD = "\u001b[1m";
+    private static final String ANSI_AT55 = "\u001b[10;10H";
+    private static final String ANSI_REVERSEON = "\u001b[7m";
+    private static final String ANSI_NORMAL = "\u001b[0m";
+    private static final String ANSI_WHITEONBLUE = "\u001b[37;44m";
+    
     private static final String CONNECTOR_ADDRESS = "com.sun.management.jmxremote.localConnectorAddress";
     private String runOpt;
 
@@ -66,6 +75,7 @@ public class ActiveMQManager {
         MBeanServerConnection connection;
         String clientServiceName = "org.apache.activemq:brokerName=localhost,type=Broker";
         try {
+            AnsiConsole.systemInstall();
             // Acquire a connection to the MBean server
             connection = connect(dest);
 
@@ -78,9 +88,9 @@ public class ActiveMQManager {
 
             Set<ObjectInstance> mbeans = queryForQueue(connection, "*");
             logger.debug(String.valueOf(mbeans.size()));
-            System.out.println(String.format("------------------------------------------------------------------------------------------------------"));
-            System.out.println(String.format("%-18s%22s%22s%20s%20s", "Queue Name", "Number of Pendings", "Number of Consumers", "Enque Count", "Deque Count"));
-            System.out.println(String.format("------------------------------------------------------------------------------------------------------"));
+            AnsiConsole.out.println(String.format("------------------------------------------------------------------------------------------------------"));
+            AnsiConsole.out.println(String.format("%-18s%22s%22s%20s%20s", "Queue Name", "Number of Pendings", "Number of Consumers", "Enque Count", "Deque Count"));
+            AnsiConsole.out.println(String.format("------------------------------------------------------------------------------------------------------"));
             List<ObjectInstance> lst = new ArrayList<ObjectInstance>(mbeans);
             Collections.sort(lst, new Comparator<ObjectInstance>() {
                 public int compare(ObjectInstance o1, ObjectInstance o2) {
@@ -89,7 +99,7 @@ public class ActiveMQManager {
                 }
             });
             for(ObjectInstance que: lst ) {
-                System.out.println(String.format("%-18s%22d%22s%20s%20s",
+                AnsiConsole.out.println(String.format("%-18s%22d%22s%20s%20s",
                                                               que.getObjectName().getKeyProperty("destinationName"),
                                                               Integer.parseInt(getMBeanAttr(connection, que.getObjectName(), "EnqueueCount").toString()) -
                                                               Integer.parseInt(getMBeanAttr(connection, que.getObjectName(), "DequeueCount").toString()),
@@ -98,6 +108,7 @@ public class ActiveMQManager {
                                                               getMBeanAttr(connection, que.getObjectName(), "DequeueCount")
                                                 ));
             }
+            AnsiConsole.systemUninstall();
         }
         catch (IOException e) {
             for( StackTraceElement se: e.getStackTrace() )
