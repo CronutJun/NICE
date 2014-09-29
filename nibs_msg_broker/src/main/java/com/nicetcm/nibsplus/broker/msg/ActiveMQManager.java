@@ -61,7 +61,7 @@ public class ActiveMQManager {
     private static final String ANSI_REVERSEON = "\u001b[7m";
     private static final String ANSI_NORMAL = "\u001b[0m";
     private static final String ANSI_WHITEONBLUE = "\u001b[37;44m";
-    
+
     private static final String CONNECTOR_ADDRESS = "com.sun.management.jmxremote.localConnectorAddress";
     private String runOpt;
 
@@ -108,6 +108,7 @@ public class ActiveMQManager {
                                                               getMBeanAttr(connection, que.getObjectName(), "DequeueCount")
                                                 ));
             }
+            //AnsiConsole.out.println(ANSI_CLS);
             AnsiConsole.systemUninstall();
         }
         catch (IOException e) {

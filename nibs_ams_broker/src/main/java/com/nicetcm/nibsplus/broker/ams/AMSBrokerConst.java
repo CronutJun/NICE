@@ -38,7 +38,7 @@ public class AMSBrokerConst {
     public static final String SVC_CD_CMD_RBT         = "4001";       // Reboot 명령
     public static final String SVC_CD_CMD_PWO         = "4001";       // Poweroff 명령
     public static final String SVC_CD_CMD_DEV         = "4002";       // 장치리셋,회수,배출명령
-    public static final String SVC_CD_NTI_CLL         = "4002";       // 출동요청 안내문 통지
+    public static final String SVC_CD_NTI_CLL         = "3004";       // 출동요청 안내문 통지
     public static final String SVC_CD_AUP_SPC         = "5001";       // 특정파일 자동업로드
     public static final String SVC_CD_INQ_DWL         = "5002";       // 배포파일 다운로드 요청
     public static final String SVC_CD_UPL_SPC         = "5003";       // 특정파일 업로드   요청

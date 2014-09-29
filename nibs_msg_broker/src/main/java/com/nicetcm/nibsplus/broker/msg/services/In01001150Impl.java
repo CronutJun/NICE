@@ -45,6 +45,7 @@ public class In01001150Impl extends InMsgHandlerImpl {
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
+        logger.debug("HAHAKDJ");
         if(MsgBrokerConst.SHATMS_CODE.equals(parsed.getString("CM.org_cd"))) {
 
             TCtErrorMng updateTCtErrorMng = new TCtErrorMng();
