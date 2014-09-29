@@ -7,6 +7,8 @@ import java.io.FileInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
+
 public class MsgBrokerClassLoader extends ClassLoader {
 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerClassLoader.class);
@@ -17,7 +19,7 @@ public class MsgBrokerClassLoader extends ClassLoader {
     public MsgBrokerClassLoader() throws Exception {
 
         super(MsgBrokerClassLoader.class.getClassLoader());
-        url = new URL("file:///infowas/MsgBroker/HotSwap");
+        url = new URL(String.format("file://%s", MsgCommon.msgProps.getProperty("hotswap.path", "")));
     }
 
     protected synchronized Class loadClass(String name, boolean resolve) throws ClassNotFoundException {

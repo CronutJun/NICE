@@ -24,7 +24,6 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerShutdown;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerSpringMain;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerClassLoader;
-import com.nicetcm.nibsplus.broker.msg.services.InMsgHandler;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 public class MsgBrokerManager extends NotificationBroadcasterSupport implements MsgBrokerManagerMBean {
@@ -46,19 +45,24 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     }
 
     @Override
-    public void refreshBean(String beanName) {
+    public void refreshBean(String beanName, String beanClassName) {
         try {
             MsgBrokerClassLoader classLoader = new MsgBrokerClassLoader();
-            Class changeClass = classLoader.loadClass(beanName);
-            InMsgHandler changedInstance = (InMsgHandler) changeClass.newInstance();
-            logger.debug("Going to destroyBean: {}", beanName );
-            ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).removeBeanDefinition("in01001150");
-            //((DefaultListableBeanFactory)MsgBrokerSpringMain.sprCtx.getBeanFactory()).destroySingleton("in01001150");
-            logger.debug("Going to registerBean: {}", beanName );
+            Class changeClass = classLoader.loadClass(beanClassName);
+            Object changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName);
+            logger.debug("bean {} is {}", beanName, changedInstance);
+            changedInstance = changeClass.newInstance();
+            logger.debug("Going to destroyBean: {}", beanClassName );
+            ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).removeBeanDefinition(beanName);
+            //((DefaultListableBeanFactory)MsgBrokerSpringMain.sprCtx.getBeanFactory()).destroySingleton(beanName);
+            logger.debug("Going to registerBean: {}", beanClassName );
             BeanDefinition testDef = new RootBeanDefinition(changedInstance.getClass());
             testDef.setScope(BeanDefinition.SCOPE_SINGLETON);
 
-            MsgBrokerSpringMain.sprCtx.getBeanFactory().registerSingleton("in01001150", testDef);
+            //MsgBrokerSpringMain.sprCtx.getBeanFactory().registerSingleton(beanName, testDef);
+            MsgBrokerSpringMain.sprCtx.getBeanFactory().registerSingleton(beanName, changedInstance);
+            changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName);
+            logger.debug("Is there {}? {}", beanName, changedInstance);
         }
         catch( Exception e ) {
             logger.debug("refreshBean exception is raised: {}", e.getMessage() );
