@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:batch="http://www.springframework.org/schema/batch"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <bean id="sapDeFtpTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.SapDeFtpTasklet" />
+    <bean id="sapDeFileRenameTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.SapDeFileRenameTasklet" />
+
+    <bean id="tFnSapDetailVO" class="com.nicetcm.nibsplus.filemng.model.TFnSapDetailVO" scope="prototype" />
+
+    <bean id="sapDeItemProcessor" class="com.nicetcm.nibsplus.filemng.service.impl.SapDeItemProcessor" scope="step">
+        <property name="branchCd" value="#{jobParameters['branchCd']}" />
+    </bean>
+
+    <batch:job id="sapDeJob">
+        <batch:step id="getFtp" next="dbLoad">
+            <tasklet ref="sapDeFtpTasklet" />
+        </batch:step>
+        <batch:step id="dbLoad" next="fileRename">
+            <batch:tasklet>
+                <batch:chunk reader="sapdeCvsFileItemReader" processor="sapDeItemProcessor" writer="sapdeDb2ItemWriter" commit-interval="10000">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="fileRename">
+            <tasklet ref="sapDeFileRenameTasklet" />
+        </batch:step>
+    </batch:job>
+
+    <bean id="sapdeCvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+
+        <!-- Read a csv file -->
+        <property name="resource"  value="file:#{jobExecutionContext['file.getAbsolutePath']}" />
+        <property name="encoding"  value="euc-kr" />
+
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <!-- split it -->
+                <property name="lineTokenizer">
+                    <bean class="com.nicetcm.nibsplus.util.NibsFixedByteLengthTokenizer">
+                        <property name="byteEncoding" value="euc-kr"/>
+                        <property name="names" value="workNm, dataType, dataSeq, dealDate, branchCd, memberId, cuponCd, cuponType, cuponNm, cuponAmt, filler" />
+                        <property name="columns" value="1-5, 6-7, 8-14, 15-22, 23-26, 27-34, 35-37, 38-40, 41-60, 61-71, 72-150" />
+                    </bean>
+                </property>
+                <property name="fieldSetMapper">
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+                        <property name="prototypeBeanName" value="tFnSapDetailVO" />
+                    </bean>
+                </property>
+
+            </bean>
+        </property>
+
+    </bean>
+
+    <bean id="sapdeDb2ItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource_OP" />
+        <property name="sql">
+            <value>
+            <![CDATA[
+                INSERT INTO OP.T_FN_SAP_DETAIL(DEAL_DATE
+                                           ,BRANCH_CD
+                                           ,MEMBER_ID
+                                           ,CUPON_CD
+                                           ,CUPON_NM
+                                           ,CUPON_TYPE
+                                           ,CUPON_AMT
+                                           ,UPDATE_DATE)
+                VALUES (:dealDate
+                       ,:branchCd
+                       ,:memberId
+                       ,:cuponCd
+                       ,:cuponNm
+                       ,:cuponType
+                       ,:cuponAmt
+                       ,sysdate)
+            ]]>
+            </value>
+        </property>
+        <!-- It will take care matching between object property and sql name parameter -->
+        <property name="itemSqlParameterSourceProvider">
+            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
+        </property>
+    </bean>
+</beans>

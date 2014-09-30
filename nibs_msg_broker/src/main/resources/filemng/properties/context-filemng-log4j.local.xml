@@ -39,16 +39,6 @@
         </layout>
     </appender>
 
-    <appender name="orgsend" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/orgsend_app.log"/>
-        <param name="Append" value="true"/>
-        <param name="Encoding" value="EUC-KR" />
-        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
-        <layout class="org.apache.log4j.PatternLayout">
-              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
-        </layout>
-    </appender>
-
     <logger name="com.nicetcm.nibsplus.filemng">
         <level value="debug" />
         <appender-ref ref="filemng"/>

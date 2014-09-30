@@ -1,4 +1,5 @@
 package com.nicetcm.nibsplus.broker.msg;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
@@ -6,6 +7,8 @@ import javax.jms.MapMessage;
 import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
 import javax.jms.BytesMessage;
+
+import com.nicetcm.nibsplus.broker.msg.util.ActiveMQ;
 
 public class ActiveMQTest {
      public static void main(String[] args) throws Exception {

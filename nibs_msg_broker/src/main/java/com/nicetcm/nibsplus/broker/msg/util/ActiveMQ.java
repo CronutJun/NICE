@@ -1,4 +1,4 @@
-package com.nicetcm.nibsplus.broker.msg;
+package com.nicetcm.nibsplus.broker.msg.util;
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;

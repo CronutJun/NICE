@@ -1,0 +1,12 @@
+{
+   "name" : "03001230",                    "kname" : "최종 발행수표 내역조회",
+   "response" : { "code" : "03001230",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "inq_date",               "kname" : "조회일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "check_no",               "kname" : "수표번호",               "type" : "AN",  "length"  : 20  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 374 }
+   ]
+}

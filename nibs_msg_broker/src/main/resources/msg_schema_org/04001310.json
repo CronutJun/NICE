@@ -1,0 +1,21 @@
+{
+   "name" : "04001310",                    "kname" : "이랜드 정산기 상품권마감 정보",
+   "response" : { "code" : "04001310",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "info_cl",                "kname" : "정보구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "deal_date",              "kname" : "거래일",                 "type" : "N",   "length"  : 8   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "coupon_cd",              "kname" : "상품권코드",             "type" : "AN",  "length"  : 6   },
+      { "name" : "volume_cd",              "kname" : "권종코드",               "type" : "AN",  "length"  : 6   },
+      { "name" : "quantity",               "kname" : "매수",                   "type" : "N",   "length"  : 4   },
+      { "name" : "confirm",                "kname" : "확정여부",               "type" : "AN",  "length"  : 1   },
+      { "name" : "insert_date",            "kname" : "저장일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "insert_uid",             "kname" : "저장ID",                 "type" : "AN",  "length"  : 7   },
+      { "name" : "update_date",            "kname" : "수정일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "update_uid",             "kname" : "수정ID",                 "type" : "AN",  "length"  : 7   },
+      { "name" : "tot_cnt",                "kname" : "총갯수",                 "type" : "N",   "length"  : 5   },
+      { "name" : "seqno",                  "kname" : "일련번호",               "type" : "N",   "length"  : 5   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 348 }
+   ]
+}

@@ -1,4 +1,4 @@
-package com.nicetcm.nibsplus.broker.msg;
+package com.nicetcm.nibsplus.broker.msg.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +46,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerMain;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 
 
 public class ActiveMQManager {

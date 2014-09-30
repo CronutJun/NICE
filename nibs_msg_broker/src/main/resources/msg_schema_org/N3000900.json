@@ -1,0 +1,10 @@
+{
+   "name" : "N3000900",                    "kname" : "HOST 전일자 데이터 건수 통보",
+   "response" : { "code" : "N3000900",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "deal_date",              "kname" : "거래일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "deal_no_cnt",            "kname" : "전일자거래번호건수",     "type" : "AN",  "length"  : 12  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 10  }
+   ]
+}

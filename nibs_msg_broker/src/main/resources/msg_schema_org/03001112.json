@@ -1,0 +1,20 @@
+{
+   "name" : "03001112",                    "kname" : "입금수표명세조회(다중응답)",
+   "response" : { "code" : "03001112",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "from_date",              "kname" : "입금 일자(From)",        "type" : "N",   "length"  : 8   },
+      { "name" : "to_date",                "kname" : "입금 일자(To)",          "type" : "N",   "length"  : 8   },
+      { "name" : "msg_cnt",                "kname" : "전문 건수",              "type" : "AN",  "length"  : 4   },
+      { "name" : "msg_index",              "kname" : "전문 인덱스",            "type" : "AN",  "length"  : 4   },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "own_check_cnt",          "kname" : "당행 자기앞 건수",       "type" : "N",   "length"  : 10  },
+      { "name" : "own_check_amt",          "kname" : "당행 자기앞 금액",       "type" : "N",   "length"  : 15  },
+      { "name" : "other_check_cnt",        "kname" : "타행 자기앞 건수",       "type" : "N",   "length"  : 10  },
+      { "name" : "other_check_amt",        "kname" : "타행 자기앞 금액",       "type" : "N",   "length"  : 15  },
+      { "name" : "tot_cnt",                "kname" : "합계 건수",              "type" : "N",   "length"  : 10  },
+      { "name" : "tot_amt",                "kname" : "합계 금액",              "type" : "N",   "length"  : 15  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 303 }
+   ]
+}

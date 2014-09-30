@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nicetcm.nibsplus.filemng.dao.VpnMapper">
+
+    <update id="updateTCtNiceMac" parameterType="com.nicetcm.nibsplus.filemng.model.VpnVO" >
+        UPDATE OP.T_CT_NICE_MAC
+        SET    VPN_IP = #{vpnIp}
+        WHERE  ORG_CD = '096'
+        AND    BRANCH_CD = '9600'
+        AND    MAC_NO = #{macNo}
+    </update>
+
+    <update id="updateTCmAdslInfo" parameterType="com.nicetcm.nibsplus.filemng.model.VpnVO" >
+        UPDATE OP.T_CM_ADSL_INFO
+        SET    VPN_GW      =
+                   (SELECT CD_NM2
+                    FROM   OP.T_CM_COMMON
+                    WHERE      LARGE_CD = '4600'
+                           AND CD_NM1 = #{vpnIp})
+        WHERE      ORG_CD = '096'
+               AND BRANCH_CD = '9600'
+               AND MAC_NO = #{macNo}
+    </update>
+</mapper>

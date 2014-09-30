@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="SapmaMapper">
-    <delete id="deleteTFnSapMaster" parameterType="">
-
+<mapper namespace="com.nicetcm.nibsplus.filemng.dao.SapmaMapper">
+    <delete id="deleteTFnSapMaster" parameterType="com.nicetcm.nibsplus.filemng.model.FileMngParameterVO">
+        DELETE FROM OP.T_FN_ELAND_COUPON WHERE DEAL_DATE = #{dealDate} AND BRANCH_CD = #{branchCd}
     </delete>
+
+    <select id="selectTFnSapMaster" parameterType="com.nicetcm.nibsplus.filemng.model.TFnSapMasterVO" resultType="com.nicetcm.nibsplus.filemng.model.TFnSapMasterVO">
+        SELECT OFFICE_CONFIRM
+        FROM   OP.T_FN_SAP_MASTER
+        WHERE      DEAL_DATE = #{dealDate}
+               AND BRANCH_CD = #{branchCd}
+               AND MEMBER_ID = #{memberId}
+    </select>
 </mapper>

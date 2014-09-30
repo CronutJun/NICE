@@ -85,6 +85,21 @@
             </property>
         </bean>
 
+        <bean id="txManager_OP" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+            <property name="dataSource" ref="dataSource_OP" />
+        </bean>
+
+        <tx:advice id="txAdvice_OP" transaction-manager="txManager_OP">
+            <tx:attributes>
+                <tx:method name="execute" read-only="false" propagation="REQUIRED" rollback-for="Exception"/>
+            </tx:attributes>
+        </tx:advice>
+
+        <aop:config>
+            <aop:pointcut id="txMethod_OP" expression="execution(* com.nicetcm.nibsplus.filemng..*Tasklet.*(..))" />
+            <aop:advisor advice-ref="txAdvice_OP" pointcut-ref="txMethod_OP" />
+        </aop:config>
+
         <!-- IN DB Logging -->
         <bean id="dataSource_IN" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
             <constructor-arg ref="dataSource_infodb" />
@@ -98,13 +113,18 @@
         <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
 
         <!-- OP Mybatis SQL Mapper -->
-<!--
         <bean id="sqlSessionFactory_OP" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
             <property name="dataSource" ref="dataSource_OP"></property>
             <property name="configLocation" value="classpath:filemng/mybatis/mybatis-config.xml"></property>
             <property name="mapperLocations" value="classpath*:filemng/sqlmap/**/*.xml"></property>
         </bean>
- -->
+
+        <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+            <property name="basePackage" value="com.nicetcm.nibsplus.filemng.dao" />
+            <!-- <property name="annotationClass" value="com.kt.pdfbill.foundation.annotation.DatasourceIM" /> -->
+            <property name="sqlSessionFactory" ref="sqlSessionFactory_OP" />
+        </bean>
+
         <!-- IN Mybatis SQL Mapper -->
 <!--
         <bean id="sqlSessionFactory_IN" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">

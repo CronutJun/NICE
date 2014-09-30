@@ -3,15 +3,15 @@
    "response" : { "code" : "03000260",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length"  : 8   },
-      { "name" : "carry_org_cd",           "kname" : "코너코드(나이스지사)",   "type" : "AN",  "length"  : 8   },
-      { "name" : "corner_cd",              "kname" : "지사코드(업체지사-무시)","type" : "AN",  "length"  : 8   },
-      { "name" : "work_type",              "kname" : "거래구분",               "type" : "AN",  "length"  : 1   },
-      { "name" : "sale_date",              "kname" : "매출일자",               "type" : "N",   "length"  : 8   },
-      { "name" : "user_nm",                "kname" : "사용자성명",             "type" : "AN",  "length"  : 20  },
-      { "name" : "check_amt",              "kname" : "수표매출액",             "type" : "N",   "length"  : 10  },
-      { "name" : "cash_amt",               "kname" : "현금매출액",             "type" : "N",   "length"  : 10  },
-      { "name" : "bigo",                   "kname" : "비고",                   "type" : "AN",  "length"  : 200 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 149 }
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length" :  16 },
+      { "name" : "carry_org_cd",           "kname" : "코너코드(나이스지사)",   "type" : "AN",  "length" :  16 },
+      { "name" : "corner_cd",              "kname" : "지사코드(업체지사-무시)","type" : "AN",  "length" :  16 },
+      { "name" : "work_type",              "kname" : "거래구분",               "type" : "AN",  "length" :   2 },
+      { "name" : "sale_date",              "kname" : "매출일자",               "type" : "N",   "length" :  16 },
+      { "name" : "user_nm",                "kname" : "사용자성명",             "type" : "AN",  "length" :  40 },
+      { "name" : "check_amt",              "kname" : "수표매출액",             "type" : "N",   "length" :  20 },
+      { "name" : "cash_amt",               "kname" : "현금매출액",             "type" : "N",   "length" :  20 },
+      { "name" : "bigo",                   "kname" : "비고",                   "type" : "AN",  "length" : 400 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 298 }
    ]
 }

@@ -1,0 +1,25 @@
+{
+   "name" : "04001300",                    "kname" : "이랜드 정산기 SAP File Master 정보",
+   "response" : { "code" : "04001300",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "info_cl",                "kname" : "정보구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "deal_date",              "kname" : "거래일",                 "type" : "N",   "length"  : 8   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "brch_nm",                "kname" : "영업점명",               "type" : "AN",  "length"  : 20  },
+      { "name" : "member_id",              "kname" : "회원ID",                 "type" : "AN",  "length"  : 15  },
+      { "name" : "member_nm",              "kname" : "회원명",                 "type" : "AN",  "length"  : 40  },
+      { "name" : "member_type",            "kname" : "회원구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "check_amt",              "kname" : "수표금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "cash_amt",               "kname" : "현금금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "self_cupon",             "kname" : "Self Coupon",            "type" : "N",   "length"  : 15  },
+      { "name" : "etc_cupon",              "kname" : "기타쿠폰",               "type" : "N",   "length"  : 15  },
+      { "name" : "office_confirm",         "kname" : "Office confirm",         "type" : "AN",  "length"  : 1   },
+      { "name" : "center_confirm",         "kname" : "Center confirm",         "type" : "AN",  "length"  : 1   },
+      { "name" : "update_uid",             "kname" : "update_uid",             "type" : "AN",  "length"  : 15  },
+      { "name" : "bigo",                   "kname" : "비고",                   "type" : "AN",  "length"  : 50  },
+      { "name" : "tot_cnt",                "kname" : "총갯수",                 "type" : "N",   "length"  : 5   },
+      { "name" : "seqno",                  "kname" : "일련번호",               "type" : "N",   "length"  : 5   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 192 }
+   ]
+}

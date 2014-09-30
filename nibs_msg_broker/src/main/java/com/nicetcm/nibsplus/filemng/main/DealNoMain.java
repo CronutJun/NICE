@@ -11,25 +11,24 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class App {
+public class DealNoMain {
   public static void main(String[] args) {
 
     String[] springConfig  =
         {   "classpath:/filemng/spring/context-filemng.xml",
-            "classpath:/filemng/spring/context-filemng-jobs.xml"
+            "classpath:/filemng/spring/context-filemng-dealNoJob.xml"
         };
 
     ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
 
     JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
-    Job job = (Job) context.getBean("reportJob");
+    Job job = (Job) context.getBean("dealNoJob");
 
     try {
 
         //  JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();
         Map<String,JobParameter> parameters = new LinkedHashMap<String, JobParameter>();
-        parameters.put("yyyymmdd", new JobParameter("20140913"));
-        //parameters.put("branchCd", new JobParameter("8228"));
+        parameters.put("yyyymmdd", new JobParameter("20140912"));
 
         JobParameters jobParameters = new JobParameters(parameters);
 

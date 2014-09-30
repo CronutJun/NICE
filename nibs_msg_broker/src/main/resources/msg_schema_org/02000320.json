@@ -1,0 +1,33 @@
+{
+   "name" : "02000320",                    "kname" : "기기 설치/철수기기정보",
+   "response" : { "code" : "02000320",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "work_seq",               "kname" : "작업일련번호",           "type" : "AN",  "length"  : 10  },
+      { "name" : "work_class",             "kname" : "작업구분",               "type" : "AN",  "length"  : 2   },
+      { "name" : "close_type",             "kname" : "철수구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "mac_seq_no",             "kname" : "기기일련번호",           "type" : "AN",  "length"  : 2   },
+      { "name" : "change_no",              "kname" : "변경차수",               "type" : "AN",  "length"  : 2   },
+      { "name" : "data_type",              "kname" : "전문구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "org_brch_cd",            "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "org_site_cd",            "kname" : "기관코너코드",           "type" : "AN",  "length"  : 6   },
+      { "name" : "made_com_cd",            "kname" : "기기업체코드",           "type" : "AN",  "length"  : 4   },
+      { "name" : "mac_model",              "kname" : "기종코드",               "type" : "AN",  "length"  : 4   },
+      { "name" : "mac_rent_yn",            "kname" : "임차기기구분",           "type" : "AN",  "length"  : 1   },
+      { "name" : "mac_set_type",           "kname" : "설치기기구분",           "type" : "AN",  "length"  : 1   },
+      { "name" : "mac_fee",                "kname" : "기기임차료",             "type" : "N",   "length"  : 10  },
+      { "name" : "gw_ip",                  "kname" : "Gateway IP주소",         "type" : "AN",  "length"  : 15  },
+      { "name" : "mac_ip",                 "kname" : "기기IP주소",             "type" : "AN",  "length"  : 15  },
+      { "name" : "subnet_mask",            "kname" : "기기Subnetmask주소",     "type" : "AN",  "length"  : 15  },
+      { "name" : "expect_date",            "kname" : "작업예정일",             "type" : "N",   "length"  : 8   },
+      { "name" : "expect_time",            "kname" : "작업예정시간",           "type" : "N",   "length"  : 4   },
+      { "name" : "close_org_brch_cd",      "kname" : "철수영업점코드",         "type" : "AN",  "length"  : 8   },
+      { "name" : "close_org_site_cd",      "kname" : "철수코너코드",           "type" : "AN",  "length"  : 6   },
+      { "name" : "close_mac_no",           "kname" : "철수기번",               "type" : "AN",  "length"  : 12  },
+      { "name" : "close_made_com_cd",      "kname" : "철수기기업체코드",       "type" : "AN",  "length"  : 4   },
+      { "name" : "close_mac_model",        "kname" : "철수기종코드",           "type" : "AN",  "length"  : 4   },
+      { "name" : "close_mac_rent_yn",      "kname" : "철수임차기기여부",       "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 266 }
+   ]
+}

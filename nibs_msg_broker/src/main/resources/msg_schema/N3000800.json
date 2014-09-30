@@ -3,9 +3,9 @@
    "response" : { "code" : "N3000800",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "deal_no",                "kname" : "거래고유번호",           "type" : "AN",  "length"  : 12  },
-      { "name" : "org_deal_no",            "kname" : "기관거래고유번호",       "type" : "AN",  "length"  : 12  },
-      { "name" : "deal_year",              "kname" : "거래년",                 "type" : "N",   "length"  : 4   },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 2   }
+      { "name" : "deal_no",                "kname" : "거래고유번호",           "type" : "AN",  "length" :  24 },
+      { "name" : "org_deal_no",            "kname" : "기관거래고유번호",       "type" : "AN",  "length" :  24 },
+      { "name" : "deal_year",              "kname" : "거래년",                 "type" : "N",   "length" :   8 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" :   4 }
    ]
 }

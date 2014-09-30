@@ -1,0 +1,13 @@
+{
+   "name" : "03001134",                    "kname" : "마감내역통보",
+   "response" : { "code" : "03001134",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "close_date",             "kname" : "마감년월일",             "type" : "N",   "length"  : 8   },
+      { "name" : "cash_amt",               "kname" : "현송금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "collect_amt",            "kname" : "회수금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 364 }
+   ]
+}

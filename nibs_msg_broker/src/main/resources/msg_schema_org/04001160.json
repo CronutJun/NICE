@@ -1,0 +1,20 @@
+{
+   "name" : "04001160",                    "kname" : "대원등록",
+   "response" : { "code" : "04001160",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 4   },
+      { "name" : "site_cd",                "kname" : "코너코드",               "type" : "AN",  "length"  : 4   },
+      { "name" : "site_type",              "kname" : "점포구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "oper_type",              "kname" : "운영구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "org_site_nm",            "kname" : "장소명",                 "type" : "AN",  "length"  : 60  },
+      { "name" : "crew_type",              "kname" : "대원구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "class_no",               "kname" : "구분번호",               "type" : "AN",  "length"  : 2   },
+      { "name" : "office_no",              "kname" : "팀(사무소)번호",         "type" : "AN",  "length"  : 4   },
+      { "name" : "crew_no",                "kname" : "대원번호",               "type" : "AN",  "length"  : 8   },
+      { "name" : "crew_nm",                "kname" : "대원명",                 "type" : "AN",  "length"  : 10  },
+      { "name" : "crew_tel_no",            "kname" : "대원전화번호",           "type" : "AN",  "length"  : 20  },
+      { "name" : "reg_uid",                "kname" : "등록자ID",               "type" : "AN",  "length"  : 8   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 60  }
+   ]
+}

@@ -3,10 +3,10 @@
    "response" : { "code" : "04002200",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "port_no",                "kname" : "HOST 통신서버간 PortNo", "type" : "N",   "length"  : 5   },
-      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
-      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
-      { "name" : "message",                "kname" : "정보내용",               "type" : "AN",  "length"  : 100 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 85  }
+      { "name" : "port_no",                "kname" : "HOST 통신서버간 PortNo", "type" : "N",   "length" :  10 },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length" :  16 },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
+      { "name" : "message",                "kname" : "정보내용",               "type" : "AN",  "length" : 200 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 170 }
    ]
 }

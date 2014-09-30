@@ -3,15 +3,15 @@
    "response" : { "code" : "N3000310",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "deal_date",              "kname" : "거래일자",               "type" : "N",   "length"  : 8   },
-      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
-      { "name" : "atm_deal_no",            "kname" : "거래일련번호",           "type" : "AN",  "length"  : 5   },
-      { "name" : "deal_time",              "kname" : "거래시간",               "type" : "N",   "length"  : 6   },
-      { "name" : "fault_gb",               "kname" : "장애내역구분",           "type" : "AN",  "length"  : 1   },
-      { "name" : "deal_amt",               "kname" : "거래금액",               "type" : "N",   "length"  : 10  },
-      { "name" : "part_out_amt",           "kname" : "부분방출금액",           "type" : "N",   "length"  : 10  },
-      { "name" : "field_pay_amt",          "kname" : "현장지급 금액",          "type" : "N",   "length"  : 10  },
-      { "name" : "made_error_cd",          "kname" : "제조사장애코드",         "type" : "AN",  "length"  : 20  },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 340 }
+      { "name" : "deal_date",              "kname" : "거래일자",               "type" : "N",   "length" :  16 },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length" :  24 },
+      { "name" : "atm_deal_no",            "kname" : "거래일련번호",           "type" : "AN",  "length" :  10 },
+      { "name" : "deal_time",              "kname" : "거래시간",               "type" : "N",   "length" :  12 },
+      { "name" : "fault_gb",               "kname" : "장애내역구분",           "type" : "AN",  "length" :   2 },
+      { "name" : "deal_amt",               "kname" : "거래금액",               "type" : "N",   "length" :  20 },
+      { "name" : "part_out_amt",           "kname" : "부분방출금액",           "type" : "N",   "length" :  20 },
+      { "name" : "field_pay_amt",          "kname" : "현장지급 금액",          "type" : "N",   "length" :  20 },
+      { "name" : "made_error_cd",          "kname" : "제조사장애코드",         "type" : "AN",  "length" :  40 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 680 }
    ]
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nicetcm.nibsplus.filemng.dao.DealNoMapper">
+    <delete id="deleteTFnHostDealNo" parameterType="com.nicetcm.nibsplus.filemng.model.FileMngParameterVO">
+        delete FROM OP.T_FN_HOST_DEAL_NO WHERE DEAL_DATE = #{dealDate}
+    </delete>
+
+    <update id="updateTFnHostDealNo" parameterType="com.nicetcm.nibsplus.filemng.model.FileMngParameterVO">
+        UPDATE OP.T_FN_HOST_DEAL_NO
+        SET    NOT_EXIST_YN   = '1'
+        WHERE      DEAL_DATE = #{dealDate}
+               AND DEAL_NO IN (SELECT DEAL_NO
+                               FROM   OP.T_FN_HOST_DEAL_NO
+                               WHERE  DEAL_DATE = #{dealDate}
+                               MINUS
+                               SELECT DEAL_NO
+                               FROM   OP.T_FN_NICE_TRAN
+                               WHERE  DEAL_DATE = #{dealDate})
+    </update>
+
+    <select id="selectTFnHostDealNo" parameterType="com.nicetcm.nibsplus.filemng.model.FileMngParameterVO" resultType="com.nicetcm.nibsplus.filemng.model.TFnDealNoVO">
+        SELECT  DEAL_NO
+        FROM    OP.T_FN_HOST_DEAL_NO
+        WHERE   DEAL_DATE = #{dealDate}
+        AND     NOT_EXIST_YN = '1'
+    </select>
+
+    <select id="spIfSendSMSTranCntMismatch" parameterType="string"  statementType="CALLABLE">
+    <![CDATA[
+        {CALL OP.sp_if_SendSMSTranCntMismatch(#{command, mode=IN, jdbcType=VARCHAR, javaType=String}, 0)}
+    ]]>
+    </select>
+</mapper>

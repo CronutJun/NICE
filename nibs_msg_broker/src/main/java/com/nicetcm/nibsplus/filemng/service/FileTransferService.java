@@ -9,4 +9,6 @@ import com.nicetcm.nibsplus.filemng.model.TransferVO;
 public interface FileTransferService
 {
     public File getFile(TransferVO transferVO) throws FileMngException;
+
+    public File putFile(TransferVO transferVO) throws FileMngException;
 }

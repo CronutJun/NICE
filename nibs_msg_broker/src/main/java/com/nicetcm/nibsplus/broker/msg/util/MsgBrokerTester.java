@@ -1,4 +1,4 @@
-package com.nicetcm.nibsplus.broker.msg;
+package com.nicetcm.nibsplus.broker.msg.util;
 
 /**
  * Copyright 2014 The NIBS+ Project
@@ -28,6 +28,8 @@ import javax.jms.BytesMessage;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerRMI;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgFmtRec;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerMain;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 
 public class MsgBrokerTester {
 
