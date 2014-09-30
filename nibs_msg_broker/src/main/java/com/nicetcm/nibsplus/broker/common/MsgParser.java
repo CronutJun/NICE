@@ -12,7 +12,10 @@ package com.nicetcm.nibsplus.broker.common;
  * @since   2014.04.25
  */
 
-import java.nio.*;
+import java.nio.ByteBuffer;
+import java.nio.BufferUnderflowException;
+
+import java.io.File;
 
 import javax.json.Json;
 import javax.json.JsonReader;
@@ -34,6 +37,7 @@ public class MsgParser {
 
     private static final Map<String, MsgParser> instPool = new HashMap<String, MsgParser>();
 
+    private String incFile;
     private Map<String, MsgFmtRec> msgFmtMap;
     private Map<String, String> includeMap;
     private ConcurrentMap<Long, ThrData>   msgThrMap;
@@ -69,6 +73,8 @@ public class MsgParser {
 
     private MsgParser(String incFile) throws Exception {
 
+        this.incFile = incFile;
+        
         msgFmtMap = new LinkedHashMap<String, MsgFmtRec>();
         includeMap = new HashMap<String, String>();
         msgThrMap = new ConcurrentHashMap<Long, ThrData>();
@@ -171,7 +177,9 @@ public class MsgParser {
 
             if( msgFmtRec.type.equals("INC") ) {
                 msgFmtRec.schema = new LinkedHashMap<String, MsgFmtRec>();
-                readSchema(MsgCommon.msgProps.getProperty("schema_path") + result.getString("include"), msgFmtRec.schema);
+                String filePath = incFile.substring(0, incFile.lastIndexOf("/")+1);
+                //readSchema(MsgCommon.msgProps.getProperty("schema_path") + result.getString("include"), msgFmtRec.schema);
+                readSchema(filePath + result.getString("include"), msgFmtRec.schema);
             }
 
             msgMap.put(result.getString("name"), msgFmtRec);
