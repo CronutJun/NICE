@@ -14,7 +14,6 @@ package com.nicetcm.nibsplus.broker.common;
 
 import java.nio.ByteBuffer;
 import java.nio.BufferUnderflowException;
-
 import java.io.File;
 
 import javax.json.Json;
@@ -25,7 +24,9 @@ import javax.json.JsonArray;
 
 
 
+
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.*;
 
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,7 @@ public class MsgParser {
     private MsgParser(String incFile) throws Exception {
 
         this.incFile = incFile;
-        
+
         msgFmtMap = new LinkedHashMap<String, MsgFmtRec>();
         includeMap = new HashMap<String, String>();
         msgThrMap = new ConcurrentHashMap<Long, ThrData>();
@@ -429,6 +430,53 @@ public class MsgParser {
 
         return this;
     }
+
+    public Map<String, MsgData> getAllFields() throws Exception {
+        Map<String, MsgData> all = new LinkedHashMap<String, MsgData>();
+
+        getAllFields("", getCurrentThrData().msgDatMap, all);
+
+        return all;
+    }
+
+    private void getAllFields(String structName, Map<String, MsgData> msgData, Map<String, MsgData> trg) {
+
+        String  fName = null;
+        MsgData fData = null;
+        String  aName = null;
+        MsgData aData = null;
+
+        for(Entry<String, MsgData> entry: msgData.entrySet()) {
+            fName = entry.getKey();
+            fData = entry.getValue();
+            if( fData.adata.size() > 0 ) {
+                if( fData.adata.size() == 1 && fData.refFmt.schema != null) {
+                    getAllFields(fName, fData.adata.get(0), trg);
+                }
+                else {
+                    for( int i = 0; i < fData.adata.size(); i++ ) {
+                        aName = String.format("%s[%d]", fName, i);
+                        if( fData.refFmt.schema != null ) {
+                            getAllFields(aName, fData.adata.get(i), trg);
+                        }
+                        else {
+                            aData = fData.adata.get(0).get(fName);
+                            if( structName.length() > 0 )
+                                aName = String.format("%s.%s", structName, aName);
+                            trg.put(aName, aData);
+                        }
+                    }
+                }
+            }
+            else {
+                if( structName.length() > 0 )
+                    fName = String.format("%s.%s", structName, fName);
+                trg.put(fName, fData);
+            }
+        }
+
+    }
+
 
     public MsgData getField(Map<String, MsgData> msgData, String name) throws Exception {
 

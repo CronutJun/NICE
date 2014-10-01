@@ -27,9 +27,9 @@ public class MsgBrokerWorker implements Runnable {
     }
 
     public void run() {
-        byte[] bOrgCd   = new byte[3];
-        byte[] bMsgType = new byte[4];
-        byte[] bWrkType = new byte[4];
+        byte[] bOrgCd   = new byte[6];
+        byte[] bMsgType = new byte[8];
+        byte[] bWrkType = new byte[8];
         String inQNm;
 
         try {
@@ -37,12 +37,12 @@ public class MsgBrokerWorker implements Runnable {
             buf.put(msg);
             buf.position(0);
             buf.get(bOrgCd);
-            buf.position(51);
+            buf.position(102);
             buf.get(bMsgType);
             buf.get(bWrkType);
             buf.position(0);
 
-            Thread.currentThread().setName(String.format("<T>%s-%s%s-%s", new String(bOrgCd), new String(bMsgType), new String(bWrkType), Thread.currentThread().getId()));
+            Thread.currentThread().setName(String.format("<T>%s-%s%s-%s", new String(bOrgCd).trim(), new String(bMsgType).trim(), new String(bWrkType).trim(), Thread.currentThread().getId()));
             logger.info("Income message  size : [{}], data : [{}]", msg.length, new String(msg));
             /*
              * 응답 전문의 경우에 스키마 파일은 원본 요청 전문에 해당하는 스키마를 읽도록 한다.
@@ -50,7 +50,7 @@ public class MsgBrokerWorker implements Runnable {
             if( bMsgType[2] == '1')
                 bMsgType[2] = '0';
 
-            inQNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + new String(bWrkType) + ".json";
+            inQNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType).trim() + new String(bWrkType).trim() + ".json";
             logger.debug("inQNm = " + inQNm);
 
             msgPsr = MsgParser.getInstance(inQNm).parseMessage(buf);

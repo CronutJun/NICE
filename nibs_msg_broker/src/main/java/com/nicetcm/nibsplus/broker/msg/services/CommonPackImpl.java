@@ -2843,15 +2843,15 @@ public class CommonPackImpl implements CommonPack {
         MsgParser msgPsr;
         MsgBrokerData msgThrdSafeData;
 
-        byte[] bMsgType = new byte[4];
-        byte[] bWrkType = new byte[4];
+        byte[] bMsgType = new byte[8];
+        byte[] bWrkType = new byte[8];
         String inQNm;
 
         try {
             logger.debug("Income message  size = " + msg.length + ", data = "+ new String(msg));
             buf = ByteBuffer.allocateDirect(msg.length);
             buf.put(msg);
-            buf.position(51);
+            buf.position(102);
             buf.get(bMsgType);
             buf.get(bWrkType);
             buf.position(0);
@@ -2862,7 +2862,7 @@ public class CommonPackImpl implements CommonPack {
             if( bMsgType[2] == '1')
                 bMsgType[2] = '0';
 
-            inQNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + new String(bWrkType) + ".json";
+            inQNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType).trim() + new String(bWrkType).trim() + ".json";
             logger.debug("inQNm = " + inQNm);
 
             msgPsr = MsgParser.getInstance(inQNm).parseMessage(buf);

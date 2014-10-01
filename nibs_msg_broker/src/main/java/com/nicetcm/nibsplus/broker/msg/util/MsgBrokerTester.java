@@ -13,13 +13,15 @@ package com.nicetcm.nibsplus.broker.msg.util;
  */
 
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Scanner;
 import java.util.HashMap;
 import java.nio.ByteBuffer;
 
@@ -27,7 +29,6 @@ import javax.jms.BytesMessage;
 
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerRMI;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
-import com.nicetcm.nibsplus.broker.common.MsgFmtRec;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerMain;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 
@@ -36,7 +37,7 @@ public class MsgBrokerTester {
     private File srcFile;
     private String mode;
 
-    private Scanner scan;
+    private BufferedReader rdr;
     private HashMap<String, ActiveMQ> mqMap = new HashMap<String, ActiveMQ>();
 
     private Registry registry;
@@ -53,12 +54,11 @@ public class MsgBrokerTester {
     public void sendToMQ() {
         String line    = null;
         ByteBuffer buf = null;
-        byte[] bMsgType = new byte[4];
-        byte[] bWrkType = new byte[4];
+        byte[] bMsgType = new byte[8];
+        byte[] bWrkType = new byte[8];
 
         try {
             if( !srcFile.exists() ) return;
-            scan = new Scanner(srcFile);
             ActiveMQ mq = null;
             if( mode.equals("P") ) {
                 registry = LocateRegistry.getRegistry(MsgCommon.msgProps.getProperty("msgbroker.server.ip", "10.3.28.62"),
@@ -66,12 +66,12 @@ public class MsgBrokerTester {
                 remoteObj = (MsgBrokerRMI)registry.lookup("MsgBrokerRMI");
             }
 
-            while( scan.hasNext() ) {
-                line = scan.nextLine();
+            rdr = new BufferedReader(new InputStreamReader(new FileInputStream(srcFile)));
+            while((line = rdr.readLine()) != null) {
                 byte[] lineBytes = line.getBytes();
                 buf = ByteBuffer.allocateDirect(lineBytes.length);
                 buf.put(lineBytes);
-                buf.position(51);
+                buf.position(102);
                 buf.get(bMsgType);
                 buf.get(bWrkType);
                 buf.position(0);
@@ -90,7 +90,7 @@ public class MsgBrokerTester {
                     bMsgType[2] = '0';
                 }
                 if( mode.equals("I") || mode.equals("R") ) {
-                    String qName = String.format("%s.%s", new String(bMsgType), new String(bWrkType));
+                    String qName = String.format("%s.%s", new String(bMsgType).trim(), new String(bWrkType).trim());
                     mq = mqMap.get(qName);
                     if( mq == null ) {
                         try {
@@ -112,7 +112,7 @@ public class MsgBrokerTester {
                 }
                 System.out.println(line);
             }
-            scan.close();
+            rdr.close();
             Iterator<Map.Entry<String, ActiveMQ>>  itr = mqMap.entrySet().iterator();
             while ( itr.hasNext() ){
                 Map.Entry<String, ActiveMQ> e = (Map.Entry<String, ActiveMQ>)itr.next();

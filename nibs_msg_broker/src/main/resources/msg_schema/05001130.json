@@ -26,6 +26,6 @@
       { "name" : "cash_50000_yn",          "kname" : "현금5만원권가능구분",    "type" : "AN",  "length" :   2 },
       { "name" : "encrypt_state",          "kname" : "암호화상태",             "type" : "AN",  "length" :   2 },
       { "name" : "booth_type",             "kname" : "부스형태",               "type" : "AN",  "length" :   2 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 794 }
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 394 }
    ]
 }

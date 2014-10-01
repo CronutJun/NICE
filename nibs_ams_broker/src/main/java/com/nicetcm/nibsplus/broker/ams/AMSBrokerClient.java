@@ -44,9 +44,9 @@ public class AMSBrokerClient {
 
     private final String host;
     private final int    port;
-    private final AMSBrokerReqJob reqJob;
     private final BlockingQueue<AMSBrokerClientQData> ans;
     private ByteBuf reqBuf;
+    private AMSBrokerReqJob reqJob;
 
     public static AMSBrokerClient getInstance(String host, int port, AMSBrokerReqJob reqJob) {
 
@@ -54,6 +54,7 @@ public class AMSBrokerClient {
 
         if( clientPool.containsKey(host) ) {
             client =  clientPool.get(host);
+            client.setReqJob(reqJob);
         }
         else {
             client = new AMSBrokerClient( host, port, reqJob );
@@ -68,6 +69,10 @@ public class AMSBrokerClient {
         this.port = port;
         this.reqJob = reqJob;
         this.ans  = new LinkedBlockingQueue<AMSBrokerClientQData>();
+    }
+
+    private void setReqJob( AMSBrokerReqJob reqJob ) {
+        this.reqJob = reqJob;
     }
 
     public ByteBuffer outboundCall(ByteBuffer data, InputStream strm, int timeOut) throws Exception {

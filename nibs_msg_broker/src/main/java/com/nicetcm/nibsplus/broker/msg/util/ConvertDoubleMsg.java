@@ -5,11 +5,14 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.util.Map.Entry;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
+import com.nicetcm.nibsplus.broker.common.MsgData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerMain;
 
@@ -18,8 +21,8 @@ public class ConvertDoubleMsg {
     private File srcFile;
     private File destFile;
     private BufferedReader rdr;
+    private FileOutputStream wdr;
     private MsgParser sMsgPsr;
-    private MsgParser dMsgPsr;
 
     public ConvertDoubleMsg(String srcFileNm, String destFileNm) {
 
@@ -35,15 +38,21 @@ public class ConvertDoubleMsg {
     public void convert() {
         String line    = null;
         ByteBuffer srcBuf = null;
+        ByteBuffer destBuf = null;
         byte[] bMsgType = new byte[4];
         byte[] bWrkType = new byte[4];
+        byte blf[] = new byte[1];
+        blf[0] = 0x0A;
         String inQNm;
         try {
-            rdr = new BufferedReader(new InputStreamReader(new FileInputStream(srcFile), Charset.forName("MS949")));
+            rdr = new BufferedReader(new InputStreamReader(new FileInputStream(srcFile), Charset.forName("EUC-KR")));
+            wdr = new FileOutputStream(destFile);
+
             while((line = rdr.readLine()) != null) {
                 System.out.println(line);
-                byte[] lineBytes = line.getBytes("MS949");
+                byte[] lineBytes = line.getBytes("EUC-KR");
                 srcBuf = ByteBuffer.allocateDirect(lineBytes.length);
+                destBuf = ByteBuffer.allocateDirect(lineBytes.length * 2);
                 srcBuf.put(lineBytes);
                 srcBuf.position(51);
                 srcBuf.get(bMsgType);
@@ -56,11 +65,23 @@ public class ConvertDoubleMsg {
                 System.out.println("Source QNm = " + inQNm);
 
                 sMsgPsr = MsgParser.getInstance(inQNm).parseMessage(srcBuf);
-
-                inQNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + new String(bWrkType) + ".json";
-                System.out.println("Dest QNm = " + inQNm);
-                dMsgPsr = MsgParser.getInstance(inQNm);
+                destBuf.position(0);
+                for(Entry<String, MsgData> entry: sMsgPsr.getAllFields().entrySet()) {
+                    byte cData[] = new byte[entry.getValue().length * 2];
+                    String fmt = String.format("%%-%ds", cData.length);
+                    String sData = String.format(fmt, new String(sMsgPsr.getBytes(entry.getKey()), "MS949"));
+                    System.arraycopy(sData.getBytes(), 0, cData, 0,
+                            sData.getBytes().length > cData.length ? cData.length : sData.getBytes().length);
+                    destBuf.put(cData);
+                }
+                destBuf.position(0);
+                byte dData[] = new byte[destBuf.limit()];
+                destBuf.get(dData);
+                System.out.println("Data = " + new String(dData));
+                wdr.write(dData);
+                wdr.write(blf);
             }
+            wdr.close();
             rdr.close();
         }
         catch( Exception e ) {
@@ -71,6 +92,10 @@ public class ConvertDoubleMsg {
     public static void main(String[] args) {
         if( args.length != 2) {
             System.out.println("Usage: java ConvertDoubleMsg [SrcFile] [DestFile]");
+            return;
+        }
+        if( args[0].equals(args[1]) ) {
+            System.out.println("Source file name and Destination file name is same.");
             return;
         }
         try {

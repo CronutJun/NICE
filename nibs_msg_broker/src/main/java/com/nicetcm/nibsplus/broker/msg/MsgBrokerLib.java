@@ -202,12 +202,12 @@ public class MsgBrokerLib {
     public static BufferAndQName allocAndFindSchemaName(byte[] msg) {
 
         BufferAndQName ret = new BufferAndQName();
-        byte[] bMsgType = new byte[4];
-        byte[] bWrkType = new byte[4];
+        byte[] bMsgType = new byte[8];
+        byte[] bWrkType = new byte[8];
 
         ret.buf = ByteBuffer.allocateDirect(msg.length);
         ret.buf.put(msg);
-        ret.buf.position(51);
+        ret.buf.position(102);
         ret.buf.get(bMsgType);
         ret.buf.get(bWrkType);
         ret.buf.position(0);
@@ -218,7 +218,7 @@ public class MsgBrokerLib {
         if( bMsgType[2] == '1')
             bMsgType[2] = '0';
 
-        ret.QNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + new String(bWrkType) + ".json";
+        ret.QNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType).trim() + new String(bWrkType).trim() + ".json";
 
         return ret;
     }

@@ -201,9 +201,10 @@ public class CommonPackImpl implements CommonPack {
                 else if( fID.equals("004") ) {   // 기기제조사코드
                     macEnv.setMkrCd( parsed.getString(String.format("FD[%d].FieldData", i)) );
                 }
-                else if( fID.equals("005") ) {   // 기기종류코드
-                    macEnv.setModelCd( parsed.getString(String.format("FD[%d].FieldData", i)) );
-                }
+                // '005'는 코드가 아닌 명칭이므로 SKIP, 개국에서 기기종류 처리
+                //else if( fID.equals("005") ) {   // 기기종류코드
+                //    macEnv.setModelCd( parsed.getString(String.format("FD[%d].FieldData", i)) );
+                //}
                 else if( fID.equals("006") ) {   // 기기설치장소
                     macEnv.setSetPlace( parsed.getString(String.format("FD[%d].FieldData", i)) );
                 }
