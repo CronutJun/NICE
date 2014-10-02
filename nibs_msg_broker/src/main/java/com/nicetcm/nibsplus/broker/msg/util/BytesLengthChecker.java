@@ -24,8 +24,12 @@ public class BytesLengthChecker {
         }
         if( charSet.length() == 0 )
             this.charSet = "UTF-8";
-        else
-            this.charSet = charSet;
+        else {
+            if( charSet.equals("e") )
+                this.charSet = "EUC-KR";
+            else
+                this.charSet = charSet;
+        }
     }
 
     public void checkLength() {

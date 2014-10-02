@@ -5,7 +5,7 @@ public class MsgBrokerConst {
     public static final String SVR_TYPE = System.getProperty("server.type", "dev");
 
     /* 전문헤더 길이 */
-    public static final int HEADER_LEN = 90;
+    public static final int HEADER_LEN = 180;
     /*
      * 금융결제원(KFTC)
      */

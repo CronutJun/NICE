@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
 
@@ -39,7 +40,7 @@ public class MsgBrokerCallAgent <PT> {
               .setString("CM.work_type", conf.getWorkType() )
 
               .setString("CM.trans_seq_no", conf.getWorkType() )
-              .setInt   ("CM.body_len", msgPsr.getMessageLength() - 90 )
+              .setInt   ("CM.body_len", msgPsr.getMessageLength() - MsgBrokerConst.HEADER_LEN )
               .setString("CM.trans_date", MsgBrokerLib.SysDate() )
               .setString("CM.trans_time", MsgBrokerLib.SysTime() )
               .setString("CM.service_gb", conf.getServiceGb() );

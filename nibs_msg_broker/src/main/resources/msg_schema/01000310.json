@@ -23,8 +23,8 @@
       { "name" : "account_no",             "kname" : "계좌번호",               "type" : "AN",  "length" :  40 },
       { "name" : "atm_deal_no",            "kname" : "거래일련번호",           "type" : "AN",  "length" :   8 },
       { "name" : "deal_amt",               "kname" : "거래금액",               "type" : "N",   "length" :  16 },
-      { "name" : "hart_cust_yn",           "kname" : "강성고객여부",           "type" : "AN",  "length" :   2 },
-      { "name" : "trade_org_yn",           "kname" : "거래은행명",             "type" : "AN",  "length" :  80 },
+      { "name" : "hard_cust_yn",           "kname" : "강성고객여부",           "type" : "AN",  "length" :   2 },
+      { "name" : "trade_org_nm",           "kname" : "거래은행명",             "type" : "AN",  "length" :  80 },
       { "name" : "trans1_seq_long",        "kname" : "후처리일련번호(20자리)", "type" : "AN",  "length" :  40 },
       { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 150 }
    ]

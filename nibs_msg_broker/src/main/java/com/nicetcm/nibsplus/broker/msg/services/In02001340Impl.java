@@ -54,6 +54,9 @@ public class In02001340Impl extends InMsgHandlerImpl {
                 cmSiteState.setOrgSendYn("b");
             }
         }
+        else {
+            cmSiteState.setOrgSendYn("");
+        }
         spec.createCriteria().andOrgCdEqualTo   ( "096"  )
                              .andBranchCdEqualTo( "9600" )
                              .andMacNoEqualTo   ( parsed.getString("mac_no") );

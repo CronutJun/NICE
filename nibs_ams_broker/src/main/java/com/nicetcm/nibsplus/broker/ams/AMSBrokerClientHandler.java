@@ -65,6 +65,9 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ByteBuf buf;
+
+        Thread.currentThread().setName(String.format("ReqConsumer-ANS-%s", reqJob.getMacNo()));
+
         if( waitBuf != null && waitBuf.capacity() > 0 ) {
             buf = ctx.alloc().buffer( ((ByteBuf)msg).capacity() + waitBuf.capacity() );
             waitBuf.rewind();

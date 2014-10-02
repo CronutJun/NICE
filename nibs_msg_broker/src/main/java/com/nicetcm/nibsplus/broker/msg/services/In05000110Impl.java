@@ -215,8 +215,8 @@ public class In05000110Impl extends InMsgHandlerImpl {
                    continue;
                 }
                 else if( (e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_50000
-                        && !parsed.getString("cash_5000_yn").equals("2")
-                        && parsed.getString("cash_5000_yn").length() > 0)
+                        && !parsed.getString("cash_50000_yn").equals("2")
+                        && parsed.getString("cash_50000_yn").length() > 0)
                       ||  (e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_100000
                         && !parsed.getString("cash_100000_yn").equals("2")
                         && parsed.getString("cash_100000_yn").length() > 0) ) {

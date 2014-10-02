@@ -12,11 +12,11 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
 public class TCtErrorBasicMiscProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(TCtErrorBasicMiscProvider.class);
-    
+
     public String selectByJoin1( Map<String, Object> parameter ) {
         TCtErrorBasic basic = (TCtErrorBasic) parameter.get("basic");
         TCtErrorTxn txn = (TCtErrorTxn) parameter.get("txn");
-        
+
         logger.debug("selectByJoin1");
         logger.debug("OrgCd = {}", basic.getOrgCd());
         String sql = "";
@@ -26,19 +26,22 @@ public class TCtErrorBasicMiscProvider {
              + "FROM   OP.T_CT_ERROR_BASIC BASIC                         \n"
              + "       LEFT JOIN OP.T_CT_ERROR_TXN TXN ON                \n"
              + "       BASIC.ERROR_NO = TXN.ERROR_NO AND                 \n"
-             + "       BASIC.CREATE_DATE = TXN.CREATE_DATE               \n"      
+             + "       BASIC.CREATE_DATE = TXN.CREATE_DATE               \n"
              + "       LEFT JOIN OP.T_CT_ERROR_NOTI NOTI ON              \n"
              + "       BASIC.ERROR_NO = NOTI.ERROR_NO AND                \n"
-             + "       BASIC.CREATE_DATE = NOTI.CREATE_DATE              \n"      
+             + "       BASIC.CREATE_DATE = NOTI.CREATE_DATE              \n"
+             + "       LEFT JOIN OP.T_CT_ERROR_CALL CALL ON              \n"
+             + "       BASIC.ERROR_NO = CALL.ERROR_NO AND                \n"
+             + "       BASIC.CREATE_DATE = CALL.CREATE_DATE              \n"
              + "WHERE  ORG_CD   = #{basic.orgCd, jdbcType=VARCHAR}       \n";
-        
-        if( basic.getOrgCd().equals(MsgBrokerConst.SL_CODE) ) 
+
+        if( basic.getOrgCd().equals(MsgBrokerConst.SL_CODE) )
              sql += "AND    BRANCH_CD = OP.F_GET_NICE_BRANCH_CD( #{basic.orgCd, jdbcType=VARCHAR}, \n"
                   + "  #{basic.branchCd, jdbcType=VARCHAR}, '', #{basic.macNo, jdbcType=VARCHAR} ) \n";
         else
              sql += "AND    BRANCH_CD = #{basic.branchCd, jdbcType=VARCHAR} \n";
         sql += "AND    MAC_NO   = #{basic.macNo, jdbcType=VARCHAR}  \n";
-        
+
         if( basic.getOrgCd().equals(MsgBrokerConst.KBST_CODE) )
             /*
              *  상태장애 (현금부족 등 ) 을 제외한 HW 장애만 CELAR 하도록
@@ -55,12 +58,12 @@ public class TCtErrorBasicMiscProvider {
              *          복구 - 운총 김자년 요청
              */
             sql += "AND (   (SUBSTR(ERROR_CD, 1, 2) != 'NE' AND             \n"
-                 + "          SUBSTR(ERROR_CD, 1, 2) != 'KB')               \n" 
+                 + "          SUBSTR(ERROR_CD, 1, 2) != 'KB')               \n"
                  + "      OR                                                \n"
                  + "        (SUBSTR(ERROR_CD, 1, 2) = 'NE' AND              \n"
                  + "          SUBSTR(ERROR_CD, 4, 2) IN ('10', '11', '12')) \n"
                  + "      OR (SUBSTR(ERROR_CD, 1, 2) = 'KB'    AND          \n"
-                 + "          ARRIVAL_TIME IS NOT NULL )                    \n"
+                 + "          CALL.ARRIVAL_TIME IS NOT NULL )               \n"
                  + "      OR (ERROR_CD IN ('KB906', 'KB90A', 'KB90B') )     \n"
                  + "     )                                                  \n";
         else if( basic.getOrgCd().equals(MsgBrokerConst.KIUP_CODE) )
@@ -135,7 +138,7 @@ public class TCtErrorBasicMiscProvider {
                  + "            '50', '51', '52', '53', '54', '55', '56',   \n"
                  + "            '57', '58', '59', '60', '61') )             \n"
                  + "    )                                                   \n";
-            
+
         sql += "AND    ERROR_CD <> 'ERR02'                                             \n"
              + "AND    TXN.REPAIR_TIME = '999999'                                      \n"
              + "AND    BASIC.CREATE_DATE || BASIC.CREATE_TIME <=                       \n"
@@ -143,7 +146,7 @@ public class TCtErrorBasicMiscProvider {
 //             + "AND    BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-20, 'YYYYMMDD' ))  ";
              + "AND    BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))\n";
              //+ "FOR UPDATE WITH RR                                                       ";
-        
+
         logger.debug("SQL = {}", sql );
         return sql;
     }
@@ -151,7 +154,7 @@ public class TCtErrorBasicMiscProvider {
     public String selectByJoin2( Map<String, Object> parameter ) {
         TCtErrorBasic basic = (TCtErrorBasic) parameter.get("basic");
         TCtErrorTxn txn = (TCtErrorTxn) parameter.get("txn");
-        
+
         logger.debug("selectByJoin2");
         logger.debug("OrgCd = {}", basic.getOrgCd());
         String sql = "";
@@ -161,18 +164,18 @@ public class TCtErrorBasicMiscProvider {
              + "FROM   OP.T_CT_ERROR_BASIC BASIC                         \n"
              + "       LEFT JOIN OP.T_CT_ERROR_TXN TXN ON                \n"
              + "       BASIC.ERROR_NO = TXN.ERROR_NO AND                 \n"
-             + "       BASIC.CREATE_DATE = TXN.CREATE_DATE               \n"      
+             + "       BASIC.CREATE_DATE = TXN.CREATE_DATE               \n"
              + "       LEFT JOIN OP.T_CT_ERROR_NOTI NOTI ON              \n"
              + "       BASIC.ERROR_NO = NOTI.ERROR_NO AND                \n"
-             + "       BASIC.CREATE_DATE = NOTI.CREATE_DATE              \n"      
+             + "       BASIC.CREATE_DATE = NOTI.CREATE_DATE              \n"
              + "WHERE  ORG_CD   = #{basic.orgCd, jdbcType=VARCHAR}       \n";
-        
-        if( basic.getOrgCd().equals(MsgBrokerConst.SL_CODE) ) 
+
+        if( basic.getOrgCd().equals(MsgBrokerConst.SL_CODE) )
              sql += "AND    BRANCH_CD = OP.F_GET_NICE_BRANCH_CD( #{basic.orgCd, jdbcType=VARCHAR}, \n"
                   + "  #{basic.branchCd, jdbcType=VARCHAR}, '', #{basic.macNo, jdbcType=VARCHAR} ) \n";
         else
              sql += "AND    BRANCH_CD = #{basic.branchCd, jdbcType=VARCHAR} \n";
-        
+
         sql += "AND    MAC_NO   = #{basic.macNo, jdbcType=VARCHAR}  \n";
         /*
          * [씨티은행] 실장애 복구
@@ -190,9 +193,9 @@ public class TCtErrorBasicMiscProvider {
                  + "AND     BASIC.CREATE_DATE || BASIC.CREATE_TIME <=                                                 \n"
                  + "            RTRIM(#{txn.repairDate, jdbcType=VARCHAR})||RTRIM(#{txn.repairTime, jdbcType=VARCHAR})\n"
                  + "AND     BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))                          \n";
-            
+
         //sql += "FOR UPDATE WITH RR                                                            ";
-        
+
         logger.debug("SQL = {}", sql );
         return sql;
     }
@@ -207,10 +210,10 @@ public class TCtErrorBasicMiscProvider {
              + "FROM   OP.T_CT_ERROR_BASIC BASIC                                              \n"
              + "       LEFT JOIN OP.T_CT_ERROR_TXN TXN ON                                     \n"
              + "       BASIC.ERROR_NO = TXN.ERROR_NO AND                                      \n"
-             + "       BASIC.CREATE_DATE = TXN.CREATE_DATE                                    \n"      
+             + "       BASIC.CREATE_DATE = TXN.CREATE_DATE                                    \n"
              + "       LEFT JOIN OP.T_CT_ERROR_NOTI NOTI ON                                   \n"
              + "       BASIC.ERROR_NO = NOTI.ERROR_NO AND                                     \n"
-             + "       BASIC.CREATE_DATE = NOTI.CREATE_DATE                                   \n"      
+             + "       BASIC.CREATE_DATE = NOTI.CREATE_DATE                                   \n"
              + "WHERE  BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE - 10, 'YYYYMMDD' ))     \n"
              + "AND    ORG_CD          = RTRIM(#{orgCd, jdbcType=VARCHAR})                    \n"
              + "AND    BRANCH_CD       = RTRIM(#{branchCd, jdbcType=VARCHAR})                 \n"
@@ -220,7 +223,7 @@ public class TCtErrorBasicMiscProvider {
              + "AND    (SUBSTR(FORMAT_TYPE,1,1) = '2' OR SUBSTR(FORMAT_TYPE,1,1) = '1'        \n"
              + "     OR SUBSTR(FORMAT_TYPE,1,1) = '3' )                                       \n";
              //+ "FOR UPDATE WITH RR                                                              ";
-        
+
         logger.debug("SQL = {}", sql );
         return sql;
     }

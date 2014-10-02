@@ -45,8 +45,8 @@ public class In04001261Impl extends InMsgHandlerImpl {
             TCmNiceEnvCheckSpec tCmNiceEnvCheckSpec = new TCmNiceEnvCheckSpec();
             tCmNiceEnvCheckSpec.createCriteria()
             .andCheckDateEqualTo(parsed.getString("check_date"))
-            .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
-            .andBranchCdEqualTo(parsed.getString("brch_cd"))
+            .andOrgCdEqualTo("096")
+            .andBranchCdEqualTo("9600")
             .andMacNoEqualTo(parsed.getString("mac_no"));
 
             try

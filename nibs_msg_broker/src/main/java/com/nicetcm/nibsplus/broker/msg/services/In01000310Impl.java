@@ -131,7 +131,7 @@ public class In01000310Impl extends InMsgHandlerImpl {
         tCmCommonSpec.createCriteria()
         .andLargeCdEqualTo("0122")
         .andCdNm3EqualTo(parsed.getString("CM.org_cd"))
-        .andCdNm2EqualTo(parsed.getString("deal_gb"));
+        .andCdNm2EqualTo(parsed.getString("deal_cl"));
 
         String szDealGb = "";
         List<TCmCommon> tCmCommonList = tCmCommonMapper.selectBySpec(tCmCommonSpec);
@@ -162,7 +162,7 @@ public class In01000310Impl extends InMsgHandlerImpl {
         );
 
         /* 강성고객일 경우, 해당 내용을 메세지에 추가한다. */
-        if(parsed.getString("hard_customer_yn").startsWith("1")) {
+        if(parsed.getString("hard_cust_yn").startsWith("1")) {
             szCustMsg = szCustMsg + " [강성고객]";
         }
 
@@ -177,7 +177,7 @@ public class In01000310Impl extends InMsgHandlerImpl {
 
         try
         {
-            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, null );
+            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
 
         } catch( org.springframework.dao.DataIntegrityViolationException e ) {
             isDbDupData = true;
