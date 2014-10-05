@@ -78,6 +78,19 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     }
 
     @Override
+    public void listBean() {
+        try {
+            String names[] = ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).getBeanDefinitionNames();
+            for( String nm: names ) {
+                logger.debug("Name = {}", nm);
+            }
+        } 
+        catch( Exception e ) {
+            logger.debug("exception is raised: {}", e.getMessage() );
+        }
+    }
+    
+    @Override
     public void reloadSchema() {
         // Not implemented yet.
     }
