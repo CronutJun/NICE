@@ -4,11 +4,11 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * Copyright 2014 The NIBS+ Project
  *
  * MSG Broker 정산기상태전문 수신처리
- * 
+ *
  * <pre>
  * MngES_SaveCalcMacErrState
  * </pre>
- * 
+ *
  *           2014. 07. 28    K.D.J.
  */
 
@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.lpad;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
@@ -39,14 +41,14 @@ import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 public class In05000111Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(In05000111Impl.class);
-    
+
     private static final int CNT_CALC_MAC_ATMWATCH_STATE = 6;
-    
+
     @Autowired private StoredProcMapper splMap;
-    
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        
+
         TMacInfo macInfo = new TMacInfo();
         TCtErrorBasic errBasic = new TCtErrorBasic();
         TCtErrorRcpt errRcpt = new TCtErrorRcpt();
@@ -71,7 +73,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
             throw e;
         }
         comPack.checkBranchMacLength( macInfo );
-        
+
         errBasic.setOrgCd( macInfo.getOrgCd() );
         errBasic.setCreateDate( parsed.getInt("create_date") );
         errBasic.setCreateTime( parsed.getString("create_time") );
@@ -89,14 +91,14 @@ public class In05000111Impl extends InMsgHandlerImpl {
         errBasic.setMadeErrCd( parsed.getString("mtc_cd") );
         //memcpy( suDBErr.mac_grade   , suMacInfo.mac_grade   , strlen(suMacInfo.mac_grade)   );
         errBasic.setFormatType( "11" );                                                         // 업무구분 '11'-장애관리전문
-        
+
         MsgBrokerConst.EnumCalcMacStateSkipYN enumChosen = null;;
         for( MsgBrokerConst.EnumCalcMacStateSkipYN enumSkipYN: MsgBrokerConst.EnumCalcMacStateSkipYN.values() ) {
             enumChosen = enumSkipYN;
             if( enumSkipYN.name().equals("ORG_" + parsed.getString("CM.org_cd")) )
                 break;
         }
-        
+
         ErrorState errState = new ErrorState();
         errState.setMacType( MsgBrokerConst.CURERR_CALC );
         errState.setOrgCd( errBasic.getOrgCd() );
@@ -194,7 +196,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
                         errNoti, errCall, errTxn, macInfo, retErrStates );
             }
         }
-        
+
         /*
          *  정산기 금고침투 감시 장애 처리
          */
@@ -218,17 +220,17 @@ public class In05000111Impl extends InMsgHandlerImpl {
              */
         }
         else if( parsed.getBytes("atm_monitor")[0] == MsgBrokerConst.CALC_MAC_NORMAL ) {
-            errBasic.setErrorCd( String.format("NE%c%02s", MsgBrokerConst.CALC_MAC_ERROR, MsgBrokerConst.CD_CALC_MAC_SUPERVISOR) );
+            errBasic.setErrorCd( String.format("NE%c%2s", MsgBrokerConst.CALC_MAC_ERROR, lpad(MsgBrokerConst.CD_CALC_MAC_SUPERVISOR, 2, "0")) );
 
             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, errBasic, errRcpt,
                     errNoti, errCall, errTxn, macInfo, retErrStates );
 
             if( nNormal != CNT_CALC_MAC_ATMWATCH_STATE ) {
-                errBasic.setErrorCd( String.format("NE2%02s", MsgBrokerConst.CD_CALC_MAC_WATCH_ERR) );
+                errBasic.setErrorCd( String.format("NE2%2s", lpad(MsgBrokerConst.CD_CALC_MAC_WATCH_ERR, 2, "0")) );
                 comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
             else {
-                errBasic.setErrorCd( String.format("NE2%02s", MsgBrokerConst.CD_CALC_MAC_WATCH_ERR) );
+                errBasic.setErrorCd( String.format("NE2%2s", lpad(MsgBrokerConst.CD_CALC_MAC_WATCH_ERR, 2, "0")) );
                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, errBasic, errRcpt,
                         errNoti, errCall, errTxn, macInfo, retErrStates );
             }
@@ -260,24 +262,24 @@ public class In05000111Impl extends InMsgHandlerImpl {
         }
 
     }
-    
+
     /**
      * FTP로 수신받은 파일갯수 Count
-     *  
+     *
      * @author KDJ, 2014/07/29
      * @param MMDD  월일
      * @param macNo 기기번호
      */
     private int getFtpFileCnt( String MMDD, String macNo ) {
-        
+
         int iCnt = 0;
-        
+
         File dir = new File(MsgCommon.msgProps.getProperty("file.path.casher"));
-        
+
         if( dir.isDirectory() ) {
             File[] fList = dir.listFiles();
             for( File f: fList ) {
-                if( f.getName().substring(3, 7).equals(MMDD) 
+                if( f.getName().substring(3, 7).equals(MMDD)
                 &&  f.getName().substring(16, 20).equals(macNo) ) {
                     iCnt++;
                 }

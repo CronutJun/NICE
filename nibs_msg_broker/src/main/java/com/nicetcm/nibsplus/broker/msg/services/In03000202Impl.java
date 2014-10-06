@@ -173,7 +173,7 @@ public class In03000202Impl extends InMsgHandlerImpl {
         safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
 
         /* ktTR 거래 전문일 경우 T_FN_MAC의 잔액을 UPDATE 해 준다. */
-        if(MsgBrokerConst.TAXRF_CODE.equals(parsed.getLong("CM.org_cd"))) {
+        if(MsgBrokerConst.TAXRF_CODE.equals(parsed.getString("CM.org_cd"))) {
             TFnMac tFnMac = new TFnMac();
             tFnMac.setInMacAmtCw14(parsed.getLong("out_10000_remcnt") * 10000);
             tFnMac.setInMacAmtCw54(parsed.getLong("out_50000_remcnt") * 50000);

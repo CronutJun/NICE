@@ -366,7 +366,7 @@ public interface TCtErrorBasicMapper {
 
     /**
      * GetDupErrorMng에서 호출 된다.
-     * 
+     *
      * @author KDJ on  Fri Jun 27 14:12:12 KST 2014
      */
     @Update({
@@ -386,7 +386,7 @@ public interface TCtErrorBasicMapper {
     int updateByCond1(TCtErrorBasic record);
 
     /**
-     * Called by In01000130Impl.insertErrMngMadeCom 
+     * Called by In01000130Impl.insertErrMngMadeCom
      *
      * @author KDJ on Fri Jun 27 KST 2014
      */
@@ -416,9 +416,9 @@ public interface TCtErrorBasicMapper {
         @Result(column="ERROR_CD", property="errorCd", jdbcType=JdbcType.VARCHAR, id=true)
     })
     TCtErrorBasic selectByCond1(TCtErrorBasic cond);
-    
+
     /**
-     * Called by In01000130Impl.inMsgHandle 
+     * Called by In01000130Impl.inMsgHandle
      * This method corresponds to the database table OP.T_CT_ERROR_MNG
      *
      * @author KDJ on Fri Jun 27 KST 2014
@@ -438,9 +438,9 @@ public interface TCtErrorBasicMapper {
     @Results({
         @Result(column="GROUP_ERROR_CD", property="grpErrorCd", jdbcType=JdbcType.VARCHAR)
     })
-    
+
     TCtError getErrGroupCd(TCtErrorBasic cond);
-    
+
     /**
      * CommonPackImpl.getDupError에서 호출
      *
@@ -471,7 +471,7 @@ public interface TCtErrorBasicMapper {
     })
     TCtErrorBasic selectByCond2( TCtErrorBasic cond );
 
-    
+
     /**
      * CommonPackImpl.getDupError에서 호출
      *
@@ -501,7 +501,7 @@ public interface TCtErrorBasicMapper {
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR)
     })
     TCtErrorBasic selectByCond3( TCtErrorBasic cond );
-    
+
     /**
      * CommonPackImpl.updateErrMng 에서 호출
      *
@@ -515,7 +515,7 @@ public interface TCtErrorBasicMapper {
         "AND    ORG_CD     = #{orgCd, jdbcType=VARCHAR}                      ",
         "AND    BRANCH_CD  = #{branchCd, jdbcType=VARCHAR}                   ",
         "AND    MAC_NO     = #{macNo, jdbcType=VARCHAR}                      ",
-        "AND    TRANS_DATE  = :psuDBEm->trans_date                           ",
+        "AND    TRANS_DATE = #{transDate, jdbcType=VARCHAR}                  ",
         "AND    RTRIM(ORG_MSG_NO) = RTRIM(#{orgMsgNo, jdbcType=VARCHAR})     ",
         "AND    ORG_MSG IS NOT NULL                                          "
     })
@@ -627,7 +627,7 @@ public interface TCtErrorBasicMapper {
         @Result(column="ERROR_CD",    property="errorCd",    jdbcType=JdbcType.VARCHAR)
     })
     List<TCtErrorBasicJoin> selectByJoin4( TCtErrorBasic cond );
-    
+
     /**
      * In05001130Impl에서 호출
      *
@@ -653,7 +653,7 @@ public interface TCtErrorBasicMapper {
         @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true)
     })
     List<TCtErrorBasic> selectByJoin5( TCtErrorBasic cond );
-    
+
     /**
      * In05001130Impl에서 호출
      *
@@ -680,7 +680,7 @@ public interface TCtErrorBasicMapper {
         @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true)
     })
     List<TCtErrorBasic> selectByJoin6( TCtErrorBasic cond );
-    
+
     /**
      * CommonPackImpl.updateErrMng 에서 호출
      *
@@ -699,10 +699,10 @@ public interface TCtErrorBasicMapper {
         "AND     MAC_NO = #{macNo, jdbcType=VARCHAR}                              ",
         "AND     ERROR_CD = #{errorCd, jdbcType=VARCHAR}                          ",
         "AND     NVL(ERROR_STATUS, '0')= '7000'                                   ",
-        "AND     REPAIR_TIME = '999999'                                           "        
+        "AND     REPAIR_TIME = '999999'                                           "
     })
     int countByCond1( TCtErrorBasic cond );
-    
+
     /**
      * In05001130Impl 에서 호출
      *
@@ -724,5 +724,5 @@ public interface TCtErrorBasicMapper {
         "                    AND    CD_NM2 = '1')             "
     })
     int countByCond2( TCtErrorBasic cond );
-    
+
 }

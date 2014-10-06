@@ -209,7 +209,8 @@ public class In05000110Impl extends InMsgHandlerImpl {
                  */
                 else if( (e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CHECK
                         || e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CHECKBOX)
-                      &&  (macInfo.getCheckYn().equals("0")
+                      &&  (macInfo.getCheckYn() == null
+                        || macInfo.getCheckYn().equals("0")
                         || macInfo.getCheckYn().length() == 0) ) {
                    logger.info(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
                    continue;
@@ -473,10 +474,11 @@ public class In05000110Impl extends InMsgHandlerImpl {
                             errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, retErrStates );
                 }
                 else  {
+                    logger.debug("retErrState = {}", retErrStates);
                     comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR,
                             errBasic, errRcpt, errNoti, errCall,  errTxn, macInfo, retErrStates );
                 }
-                /*
+                /*~
                  * ERRMon 에서 만든 user 정의 장애( 나이스 발생 장애 ) 라면 응답 송신하지 않는다.
                  */
                 if( errBasic.getErrorCd().equals("NE999") ) {

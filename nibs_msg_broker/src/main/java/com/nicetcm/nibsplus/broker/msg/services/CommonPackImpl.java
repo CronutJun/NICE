@@ -259,10 +259,10 @@ public class CommonPackImpl implements CommonPack {
             List<TCmCommon> rslt = cmMap.selectBySpec(spec);
             logger.debug("Result length = {}", rslt.size());
             if( rslt.size() == 0 ) {
-                throw new Exception(String.format(">>> [DBGetError]-정의된 점/기번길이 없음.기관[{}]", MacInfo.getOrgCd()));
+                throw new Exception(String.format(">>> [DBGetError]-정의된 점/기번길이 없음.기관[%s]", MacInfo.getOrgCd()));
             }
             else if( rslt.size() > 1 ) {
-                throw new Exception(String.format(">>> [DBGetErrort]-점/기번길이 파악 실패 기관[{}]", MacInfo.getOrgCd()));
+                throw new Exception(String.format(">>> [DBGetErrort]-점/기번길이 파악 실패 기관[%s]", MacInfo.getOrgCd()));
             }
 
             int iBranchLen = Integer.parseInt(rslt.get(0).getCdNm1());
@@ -1104,7 +1104,8 @@ public class CommonPackImpl implements CommonPack {
                       &&  !ErrBasic.getOrgCd().equals(MsgBrokerConst.ALARM_CODE) ) {
                     int i = 0;
                     for( i = 0 ; i < saAtmErrorList.length; i++ ) {
-                        if( ErrBasic.getErrorCd().equals(saAtmErrorList[i]) ) {
+                        if( ErrBasic.getErrorCd().length() > 0 && ErrBasic.getErrorCd().equals(saAtmErrorList[i]) ) {
+                            logger.debug("getErrorCD() = {}, i = {}", ErrBasic.getErrorCd(), i);
                             if( curMacStateError[i] == '1' )
                                 break;
                             else {

@@ -16,7 +16,6 @@ import javax.management.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -45,12 +44,47 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     }
 
     @Override
-    public void hotSwapBean(String beanName, String beanClassName) {
+    public String hotSwapBean(String beanClassName) {
+        String beanName = "";
+
         try {
             MsgBrokerClassLoader classLoader = new MsgBrokerClassLoader();
             Class changeClass = classLoader.loadClass(beanClassName);
 
-            Object changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName);
+            if( changeClass.isAnnotationPresent(org.springframework.stereotype.Component.class) ) {
+                logger.debug("Component annotation is present");
+                beanName = ((org.springframework.stereotype.Component)changeClass
+                               .getAnnotation(org.springframework.stereotype.Component.class)).value();
+            }
+            else if( changeClass.isAnnotationPresent(org.springframework.stereotype.Service.class) ) {
+                logger.debug("Service annotation is present");
+                beanName = ((org.springframework.stereotype.Service)changeClass
+                               .getAnnotation(org.springframework.stereotype.Service.class)).value();
+            }
+            else if( changeClass.isAnnotationPresent(org.springframework.stereotype.Repository.class) ) {
+                logger.debug("Repository annotation is present");
+                beanName = ((org.springframework.stereotype.Repository)changeClass
+                               .getAnnotation(org.springframework.stereotype.Repository.class)).value();
+            }
+            else if( changeClass.isAnnotationPresent(org.springframework.stereotype.Controller.class) ) {
+                logger.debug("Controller annotation is present");
+                beanName = ((org.springframework.stereotype.Controller)changeClass
+                               .getAnnotation(org.springframework.stereotype.Controller.class)).value();
+            }
+            if( beanName == null || beanName.length() == 0 ) {
+                if( changeClass.getName().lastIndexOf(".") >= 0 )
+                    beanName = changeClass.getName().substring(changeClass.getName().lastIndexOf(".")+1);
+                else
+                    beanName = changeClass.getName();
+            }
+            Object changedInstance = null;
+            try {
+                changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName);
+            }
+            catch( org.springframework.beans.factory.NoSuchBeanDefinitionException e ) {
+                beanName = beanName.substring(0,1).toLowerCase() + beanName.substring(1);
+                changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName);
+            }
             logger.debug("bean {} is {}", beanName, changedInstance);
 
             changedInstance = changeClass.newInstance();
@@ -66,14 +100,17 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
             beanDef.setAbstract(false);
             beanDef.setAutowireCandidate(true);
             beanDef.setScope(BeanDefinition.SCOPE_SINGLETON);
-
             ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).registerBeanDefinition(beanName, beanDef);
             //MsgBrokerSpringMain.sprCtx.getBeanFactory().registerSingleton(beanName, changedInstance);
+
             changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName);
             logger.debug("Is there {}? {}", beanName, changedInstance);
+
+            return "Successfully Swaped";
         }
         catch( Exception e ) {
-            logger.debug("refreshBean exception is raised: {}", e.getMessage() );
+            logger.error("hotSwapBean exception is raised: {}", e.getMessage() );
+            return e.getMessage();
         }
     }
 
@@ -82,14 +119,14 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
         try {
             String names[] = ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).getBeanDefinitionNames();
             for( String nm: names ) {
-                logger.debug("Name = {}", nm);
+                logger.info("Name = {}", nm);
             }
-        } 
+        }
         catch( Exception e ) {
-            logger.debug("exception is raised: {}", e.getMessage() );
+            logger.error("listBean exception is raised: {}", e.getMessage() );
         }
     }
-    
+
     @Override
     public void reloadSchema() {
         // Not implemented yet.
