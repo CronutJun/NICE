@@ -54,7 +54,7 @@ public class ConvertDoubleMsg {
                 srcBuf = ByteBuffer.allocateDirect(lineBytes.length);
                 destBuf = ByteBuffer.allocateDirect(lineBytes.length * 2);
                 srcBuf.put(lineBytes);
-                srcBuf.position(51);
+                srcBuf.position(MsgBrokerConst.MSG_TYPE_OFS);
                 srcBuf.get(bMsgType);
                 srcBuf.get(bWrkType);
                 srcBuf.position(0);
@@ -67,7 +67,11 @@ public class ConvertDoubleMsg {
                 sMsgPsr = MsgParser.getInstance(inQNm).parseMessage(srcBuf);
                 destBuf.position(0);
                 for(Entry<String, MsgData> entry: sMsgPsr.getAllFields().entrySet()) {
-                    byte cData[] = new byte[entry.getValue().length * 2];
+                    byte cData[] = null;
+                    if( destBuf.position() < MsgBrokerConst.HEADER_LEN )
+                        cData = new byte[entry.getValue().length];
+                    else
+                        cData = new byte[entry.getValue().length * 2];
                     String fmt = String.format("%%-%ds", cData.length);
                     String sData = String.format(fmt, new String(sMsgPsr.getBytes(entry.getKey()), "MS949"));
                     System.arraycopy(sData.getBytes(), 0, cData, 0,

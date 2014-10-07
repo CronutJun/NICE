@@ -202,12 +202,12 @@ public class MsgBrokerLib {
     public static BufferAndQName allocAndFindSchemaName(byte[] msg) {
 
         BufferAndQName ret = new BufferAndQName();
-        byte[] bMsgType = new byte[8];
-        byte[] bWrkType = new byte[8];
+        byte[] bMsgType = new byte[4];
+        byte[] bWrkType = new byte[4];
 
         ret.buf = ByteBuffer.allocateDirect(msg.length);
         ret.buf.put(msg);
-        ret.buf.position(102);
+        ret.buf.position(MsgBrokerConst.MSG_TYPE_OFS);
         ret.buf.get(bMsgType);
         ret.buf.get(bWrkType);
         ret.buf.position(0);

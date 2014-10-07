@@ -27,9 +27,9 @@ public class MsgBrokerWorker implements Runnable {
     }
 
     public void run() {
-        byte[] bOrgCd   = new byte[6];
-        byte[] bMsgType = new byte[8];
-        byte[] bWrkType = new byte[8];
+        byte[] bOrgCd   = new byte[3];
+        byte[] bMsgType = new byte[4];
+        byte[] bWrkType = new byte[4];
         String inQNm;
 
         try {
@@ -37,7 +37,7 @@ public class MsgBrokerWorker implements Runnable {
             buf.put(msg);
             buf.position(0);
             buf.get(bOrgCd);
-            buf.position(102);
+            buf.position(MsgBrokerConst.MSG_TYPE_OFS);
             buf.get(bMsgType);
             buf.get(bWrkType);
             buf.position(0);

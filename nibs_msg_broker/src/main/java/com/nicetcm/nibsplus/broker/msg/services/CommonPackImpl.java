@@ -832,6 +832,8 @@ public class CommonPackImpl implements CommonPack {
                 "NI914",
                 "NI915",
                 "NI102",
+                "NI151",
+                "NI145",
                 ""
             };
         String[] saAtmErrorList = {
@@ -2844,15 +2846,15 @@ public class CommonPackImpl implements CommonPack {
         MsgParser msgPsr;
         MsgBrokerData msgThrdSafeData;
 
-        byte[] bMsgType = new byte[8];
-        byte[] bWrkType = new byte[8];
+        byte[] bMsgType = new byte[4];
+        byte[] bWrkType = new byte[4];
         String inQNm;
 
         try {
             logger.debug("Income message  size = " + msg.length + ", data = "+ new String(msg));
             buf = ByteBuffer.allocateDirect(msg.length);
             buf.put(msg);
-            buf.position(102);
+            buf.position(MsgBrokerConst.MSG_TYPE_OFS);
             buf.get(bMsgType);
             buf.get(bWrkType);
             buf.position(0);

@@ -122,6 +122,11 @@ public class TMacInfo {
      */
     private String modelRelayYn;
 
+    /**
+     * 점주 여부
+     */
+    private String storeKeeperYn;
+
     private String tradeDate;
 
     private String reqDate;
@@ -316,6 +321,14 @@ public class TMacInfo {
 
     public void setModelRelayYn(String modelRelayYn) {
         this.modelRelayYn = modelRelayYn;
+    }
+
+    public String getStoreKeeperYn() {
+        return storeKeeperYn;
+    }
+
+    public void setStoreKeeperYn(String storeKeeperYn) {
+        this.storeKeeperYn = storeKeeperYn;
     }
 
     /**

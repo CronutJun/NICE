@@ -39,7 +39,7 @@ public class BytesLengthChecker {
             while((line = rdr.readLine()) != null) {
                 byte[] lineBytes = line.getBytes(charSet);
                 System.out.println(
-                        String.format("Length = %5d,  Data = [%-180s]", lineBytes.length, line.substring(0, 180))
+                        String.format("Length = %5d,  Data = [%-90s]", lineBytes.length, line.substring(0, 90))
                     );
             }
             rdr.close();

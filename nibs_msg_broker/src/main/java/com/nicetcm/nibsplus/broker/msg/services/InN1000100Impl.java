@@ -53,25 +53,25 @@ public class InN1000100Impl extends InMsgHandlerImpl {
 
     private enum HW_MODULE_ERR {
         HW_LINE_ERR,        /* 0 - 통신장애         */
-        HW_CASH_OUT,        /* 1 - 지폐방출기        */
-        HW_CARD_READ,       /* 2 - 카드판독기        */
-        HW_SPECS,           /* 3 - 명세표              */
+        HW_CASH_OUT,        /* 1 - 지폐방출기       */
+        HW_CARD_READ,       /* 2 - 카드판독기       */
+        HW_SPECS,           /* 3 - 명세표           */
         HW_JOURNAL,         /* 4 - 감사용지         */
-        HW_INPUT_BOX,       /* 5 - 입금함              */
+        HW_INPUT_BOX,       /* 5 - 입금함           */
         HW_SYS_DISK,        /* 6 - SYSTEM DISK      */
-        HW_BANK_BOOK,       /* 7 - 통장정리부        */
-        HW_SYS_CONTROLOR,   /* 8 - SYSTEM 제어부       */
-        HW_DEAL_LIST,       /* 9 - 거래내역출력부  */
-        HW_ENCODE_MAC,      /* 10- 암호화장비        */
-        HW_CASHIN,          /* 11- 지폐미수취        */
+        HW_BANK_BOOK,       /* 7 - 통장정리부       */
+        HW_SYS_CONTROLOR,   /* 8 - SYSTEM 제어부    */
+        HW_DEAL_LIST,       /* 9 - 거래내역출력부   */
+        HW_ENCODE_MAC,      /* 10- 암호화장비       */
+        HW_CASHIN,          /* 11- 지폐미수취       */
         HW_T_MONEY,         /* 12- T-Money 모듈상태 */
-        HW_DONGGLEI,        /* 13- 동글이              */
-        HW_DVR_ERR,         /* 14- 화상카메라        */
-        HW_INPUT_CHECK,     /* 15- 수표입금부        */
-        HW_OUT_CHECK,       /* 16- 수표출금부        */
-        HW_INPUT_BOX_50000, /* 17- 오만원입금함       */
-        HW_INPUT_BOX_100000,/* 18- 십만원입금함       */
-        HW_IMSI,            /* 19- 임시               */
+        HW_DONGGLEI,        /* 13- 동글이           */
+        HW_DVR_ERR,         /* 14- 화상카메라       */
+        HW_INPUT_CHECK,     /* 15- 수표입금부       */
+        HW_OUT_CHECK,       /* 16- 수표출금부       */
+        HW_INPUT_BOX_50000, /* 17- 오만원입금함     */
+        HW_INPUT_BOX_100000,/* 18- 십만원입금함     */
+        HW_RPC,             /* 19- RPC 모듈 상태    */
         HW_REMAIN_MONEY;    /* 20- 지폐잔류         */
     }
 

@@ -5,7 +5,10 @@ public class MsgBrokerConst {
     public static final String SVR_TYPE = System.getProperty("server.type", "dev");
 
     /* 전문헤더 길이 */
-    public static final int HEADER_LEN = 180;
+    public static final int HEADER_LEN = 90;
+
+    /* 전문종류정보 OFFSET */
+    public static final int MSG_TYPE_OFS = 51;
     /*
      * 금융결제원(KFTC)
      */
@@ -224,6 +227,10 @@ public class MsgBrokerConst {
      */
     public static final String TAXRF_CODE = "0TR";
     /*
+     * KIOSK 홈플러스
+     */
+    public static final String KIOSK_HP_CODE = "0HP";
+    /*
      * 기기사 코드-효성
      */
     public static final String ATM_HY_CODE = "7HS";
@@ -293,6 +300,7 @@ public class MsgBrokerConst {
     public static final String NICE_ERROR_INPUT_BOX_100000     = "NI138"; /* 십만원권입금부 20090701    */
     public static final String NICE_ERROR_REMAIN_MONEY         = "NI139"; /* 지폐잔류 20100129       */
 
+    public static final String  NICE_ERROR_RPC                 = "NI151"; /* RPC 모듈 상태 20140519 */
     /*
      *  ATM 감시 전문
      */
@@ -301,6 +309,7 @@ public class MsgBrokerConst {
     public static final String NICE_ERROR_URGENCY_ERROR        = "NI142"; /* 침투상태(긴급) */
     public static final String NICE_ERROR_ATMWATCH_OPEN_ERROR  = "NI143"; /* 침투상태(금고개폐) 20080109 추가 */
     public static final String NICE_ERROR_ATMWATCH_CLOSE_ERROR = "NI144"; /* 침투상태(금고잠금) 20080109 추가 */
+    public static final String NICE_ERROR_ATMWATCH_OPENDOOR_ERROR = "NI145"; /* 문열림 2014.06.30 추가 */
 
     /*
      * 나이스에서 요청한 에러
@@ -625,7 +634,7 @@ public class MsgBrokerConst {
         ORG_020("101111111011100000000000000000000000000", "우리"),
         ORG_023("000000000000000000000000000000000000000", "제일"),
         ORG_081("111110010100000000000101000000000000000", "하나"),
-        ORG_003("001000000000010000000000000000000000000", "기업"),
+        ORG_003("101000000000010000000000000000000000000", "기업"), /*현금부족 예보 발생요청 2014.07.22 운총 이원준 */
         ORG_004("101100101100011000000101000000000000000", "국민"),
         ORG_034("111101011000000000000000000000000000000", "광주"),
         ORG_027("000000000000000000000000000000000000000", "한미"),

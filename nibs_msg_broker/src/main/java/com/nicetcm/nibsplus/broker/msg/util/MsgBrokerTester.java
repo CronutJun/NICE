@@ -54,8 +54,8 @@ public class MsgBrokerTester {
     public void sendToMQ() {
         String line    = null;
         ByteBuffer buf = null;
-        byte[] bMsgType = new byte[8];
-        byte[] bWrkType = new byte[8];
+        byte[] bMsgType = new byte[4];
+        byte[] bWrkType = new byte[4];
 
         try {
             if( !srcFile.exists() ) return;
@@ -71,7 +71,7 @@ public class MsgBrokerTester {
                 byte[] lineBytes = line.getBytes();
                 buf = ByteBuffer.allocateDirect(lineBytes.length);
                 buf.put(lineBytes);
-                buf.position(102);
+                buf.position(MsgBrokerConst.MSG_TYPE_OFS);
                 buf.get(bMsgType);
                 buf.get(bWrkType);
                 buf.position(0);
