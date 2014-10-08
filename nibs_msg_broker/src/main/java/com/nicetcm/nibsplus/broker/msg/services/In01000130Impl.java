@@ -4,11 +4,11 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * Copyright 2014 The NIBS+ Project
  *
  * MSG Broker 출동요청 전문 수신처리
- * 
+ *
  * <pre>
  * MngEM_SaveErrCall
  * </pre>
- * 
+ *
  *           2014. 06. 24    K.D.J.
  */
 
@@ -32,9 +32,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class In01000130Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(In01000130Impl.class);
-    
+
     @Autowired private StoredProcMapper splMap;
-    
+
     @Autowired private TCmCommonMapper cmCommonMap;
     @Autowired private TCtErrorBasicMapper errBasicMap;
     @Autowired private TCtErrorRcptMapper errRcptMap;
@@ -42,25 +42,25 @@ public class In01000130Impl extends InMsgHandlerImpl {
     @Autowired private TCtErrorCallMapper errCallMap;
     @Autowired private TCtErrorTxnMapper errTxnMap;
     @Autowired private TCtErrorMngMadeComMapper errMngMadeComMap;
-    
+
     @Override
     public void inMsgBizProc( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
 
         logger.debug("Msg Received");
         logger.debug(parsed.getString("CM.work_type"));
-        
+
         TMacInfo macInfo = new TMacInfo();
         macInfo.setOrgCd( parsed.getString("CM.org_cd") );
         macInfo.setBranchCd( parsed.getString("brch_cd") );
         macInfo.setMacNo( parsed.getString("mac_no") );
         macInfo.setOrgSiteCd( parsed.getString("org_site_cd") );
-        
+
         /**
          * 지점코드, 기번 길이 검증
          */
         comPack.checkBranchMacLength( macInfo );
         logger.debug("BrchCd = {}, MacNo = {}", macInfo.getBranchCd(), macInfo.getMacNo());
-        
+
         if( macInfo.getMacNo().equals("0000")
         ||  macInfo.getMacNo().trim().length() == 0
         || ( macInfo.getOrgCd().equals(  MsgBrokerConst.KEB_CODE ) && macInfo.getMacNo().equals("999") )) {
@@ -85,41 +85,41 @@ public class In01000130Impl extends InMsgHandlerImpl {
         logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(),
                     macInfo.getMacNm(), macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
-        
+
         TCtErrorBasic errBasic = new TCtErrorBasic();
         TCtErrorMngMadeCom errMngMadeCom = new TCtErrorMngMadeCom();
         TCtErrorRcpt errRcpt = new TCtErrorRcpt();
         TCtErrorNoti errNoti = new TCtErrorNoti();
         TCtErrorCall errCall = new TCtErrorCall();
         TCtErrorTxn  errTxn  = new TCtErrorTxn();
-       
+
         /**
          *  macInfo의 값을 errMng로 일괄 복사
          */
         BeanUtils.copyProperties( errBasic, macInfo );
         BeanUtils.copyProperties( errMngMadeCom, macInfo );
-        
+
         errBasic.setCreateDate( parsed.getInt("call_date") );
         errBasic.setCreateTime( parsed.getString("call_time") );
         errBasic.setOrgMsgNo( parsed.getString("trans1_seq") );
         errBasic.setTransDate( parsed.getString("trans1_date") );
         errBasic.setOrgMsg( parsed.getString("memo") );
-        
+
         errMngMadeCom.setMadeComCd( parsed.getString("mac_model_com_cd") );
         errMngMadeCom.setMacModel( parsed.getString("mac_model") );
         errMngMadeCom.setCallClass( parsed.getString("call_class") );
         errMngMadeCom.setCallType( parsed.getString("call_type") );
         errMngMadeCom.setCallCntType( parsed.getString("call_cnt_type") );
-        
+
         errBasic.setGroupErrorCd( parsed.getString("group_error_cd") );
         errBasic.setMidErrorCd( parsed.getString("mid_error_cd") );
         errBasic.setMadeErrCd( parsed.getString("error_mtc_cd") );
         errBasic.setCrtNo( parsed.getString("crt_no") );
         errBasic.setOrgCallCnt( Double.parseDouble(Integer.toString(parsed.getInt("org_call_cnt"))) );
-        
+
         errMngMadeCom.setOrgCallCnt( Short.parseShort(Integer.toString(parsed.getInt("org_call_cnt"))) );
         errMngMadeCom.setMtcCd( errBasic.getCrtNo() );
-        
+
         /**
          * 2일전 전문은 취소요청 응답 전송.
          */
@@ -127,30 +127,30 @@ public class In01000130Impl extends InMsgHandlerImpl {
             logger.debug( ">>> [SaveErrCall] 재수신 전문 삭제요청 응답");
             throw new MsgBrokerException(">>> [SaveErrCall] 재수신 전문 삭제요청 응답", -8 );
         }
-        
+
         if( parsed.getString("wait_cust_cnt").equals("1")) {
             errBasic.setOrgCustRecvYn("Y");
         }
-        
+
         /**
          * 신한은행 토탈 전환에 따라 2차 출동요청도 처리 함. 2013.12.17 by B.H.J
-         * 2차 출동요청 중 키지원(출동요청사유코드 '3'-> SUBSTR(SEC, 2,1) = '3')의 경우를 제외 하고 
+         * 2차 출동요청 중 키지원(출동요청사유코드 '3'-> SUBSTR(SEC, 2,1) = '3')의 경우를 제외 하고
          * T_CT_ERROR_MNG_MADE_COM 테이블에 저장하여 기기사로 전문 전송 처리 하도록 하고
           *장애테이블에는 저장 하지 않음.
          */
-        if( macInfo.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE) 
+        if( macInfo.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE)
         &&  errMngMadeCom.getCallCntType().equals("2")
         &&  !errMngMadeCom.getCallType().equals("3") ) {
             insertErrMngMadeCom( errBasic, errMngMadeCom );
         }
-        
+
         /**
-         * 신한은행 ATMS의 경우 출동요청 차수를 기관 메모에 보여주도록 한다. 
+         * 신한은행 ATMS의 경우 출동요청 차수를 기관 메모에 보여주도록 한다.
          */
         //if( errBasic.getOrgCallCnt() > 0 ) {
         //    errBasic.setOrgMsg( errBasic.getOrgMsg() + String.format("요청차수[%s]", errBasic.getOrgCallCnt()) );
         //}
-        
+
         if( parsed.getString("req_visit_date").trim().length() > 0 ) {
             errBasic.setOrgMsg(  errBasic.getOrgMsg() + String.format("방문요청일시[%s-", parsed.getString("req_visit_date")) );
         }
@@ -163,7 +163,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
         if( parsed.getInt("urgency_yn") == 1 ) {
             errBasic.setOrgMsg(  errBasic.getOrgMsg() + "긴급건 " );
         }
-        
+
         errBasic.setOrgSendYn("0");
         errBasic.setSec( parsed.getString("call_class").trim() + parsed.getString("call_type").trim() + parsed.getString("call_cnt_type").trim() );
         errBasic.setErrorCd( parsed.getString("error_cd") );
@@ -176,11 +176,11 @@ public class In01000130Impl extends InMsgHandlerImpl {
         ||  errBasic.getOrgCd().equals(MsgBrokerConst.WRATMS_CODE)     /* 우리 ATMS */
         ||  errBasic.getOrgCd().equals(MsgBrokerConst.KNATMS_CODE) ) { /* 경남 ATMS */
             /**
-             *  HOST에서 출동요청구분이 수동, 자동일경우는 '9' 민원일경우는 '3' 그이외에는 '1'을 설정하여 준다 
+             *  HOST에서 출동요청구분이 수동, 자동일경우는 '9' 민원일경우는 '3' 그이외에는 '1'을 설정하여 준다
              *  예)국민은행 출동요청구분이 수동일경우 KB9+출동요청사유(2)+_LC코드
              */
             if( errBasic.getErrorCd().substring(2, 3).equals(MsgBrokerConst.CALL_TYPE_AUTO) ) {
-                /** 
+                /**
                  * 업무구분 '21'-자동,수동출동요청전문
                  */
                 errBasic.setFormatType("21");
@@ -203,7 +203,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
               ||  errBasic.getOrgCd().equals(MsgBrokerConst.BU_CODE)
               ||  errBasic.getOrgCd().equals(MsgBrokerConst.NONGH_CODE)
               ||  errBasic.getOrgCd().equals(MsgBrokerConst.BUATMS_CODE) ) {
-            /** 
+            /**
              * 업무구분 '21'-자동,수동출동요청전문
              */
             errBasic.setFormatType("21");
@@ -238,7 +238,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
                 logger.info("대구은행 그룹장애코드 맵핑 Error[{}-{}][{}][{}]",
                         errBasic.getBranchCd(), errBasic.getMacNo(), errBasic.getErrorCd(), e.getMessage() );
             }
-            
+
         }
         else {
             /**
@@ -246,18 +246,18 @@ public class In01000130Impl extends InMsgHandlerImpl {
              */
             errBasic.setFormatType("11");
         }
-        
-        comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, parsed.getString("part_mng_yn") );
+
+        comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, parsed.getString("part_mng_yn") );
     }
-    
+
     private void insertErrMngMadeCom( TCtErrorBasic errBasic, TCtErrorMngMadeCom errMngMadeCom ) throws Exception {
         TCtErrorBasic rsltErrBasic = errBasicMap.selectByCond1( errBasic );
-        
+
         if( rsltErrBasic == null ) {
             logger.info("[insertErrMngMadeCom]해당 장애 없음 trans_date[{}] org_msg_no[{}] org_call_cnt[{}]\n",
                     errBasic.getTransDate(), errBasic.getOrgMsgNo(), errMngMadeCom.getOrgCallCnt() );
         }
-        
+
         errMngMadeComMap.insert( errMngMadeCom );
     }
 }

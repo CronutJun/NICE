@@ -240,10 +240,10 @@ public class In05000110Impl extends InMsgHandlerImpl {
                      */
                     if( macInfo.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) ) {
                         if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_NEAR )
-                            comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                            comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else {
-                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                 }
                 /*
@@ -362,7 +362,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                     logger.info(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
                     return;
                 }
-                comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
 
                 /*
                  * ERRMon 에서 만든 user 정의 장애( 나이스 발생 장애 ) 라면 응답 송신하지 않는다.
@@ -402,7 +402,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_AGENCY_OFF );
-                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("agency_off").equals("0") ) {
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_AGENCY_OFF );
@@ -413,7 +413,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_PLAYER_OFF );
-                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("player_off").equals("0") ) {
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_PLAYER_OFF );
@@ -424,7 +424,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_SETTOP_OFF );
-                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("settop_off").equals("0") ) {
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_SETTOP_OFF );
@@ -435,7 +435,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_NON_SCHDULE );
-                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("non_schdule").equals("0") ) {
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_NON_SCHDULE );
@@ -446,7 +446,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                         errTxn.setRepairDate(null);
                         errTxn.setRepairTime(null);
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_NON_FILE );
-                        comPack.insertErrBasic( errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
                     }
                     else if( parsed.getString("non_file").equals("0") ) {
                         errBasic.setErrorCd( MsgBrokerConst.ALARM_NON_FILE );

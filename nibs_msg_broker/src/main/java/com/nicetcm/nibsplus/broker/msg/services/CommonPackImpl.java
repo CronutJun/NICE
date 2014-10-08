@@ -442,22 +442,17 @@ public class CommonPackImpl implements CommonPack {
      * @throws Exception
      * @see TCtErrorBasic
      */
-    public void insertErrBasic( TCtErrorBasic ErrBasic, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
+    public void insertErrBasic( MsgBrokerData safeData, TCtErrorBasic ErrBasic, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, String PartMngYn ) throws Exception {
 
         int iAutoSMS;
         String sSendTypeDetail = "";
 
-        String sSysDate = MsgBrokerLib.SysDate();
-        String sNSysDate = MsgBrokerLib.SysDate(1);
-        String sSysTime = MsgBrokerLib.SysTime();
-        Date   dSysDate = MsgBrokerLib.SysDateD(0);
-
         /*
          * 현재시간을 얻는다.
          */
-        ErrRcpt.setAcceptDate( sSysDate );
-        ErrRcpt.setAcceptTime( sSysTime );
+        ErrRcpt.setAcceptDate( safeData.getSysDate() );
+        ErrRcpt.setAcceptTime( safeData.getSysTime() );
 
         /*
          * 장애관리, 개시관리 관련 변수 대입
@@ -659,7 +654,7 @@ public class CommonPackImpl implements CommonPack {
             logger.info("F_GET_NICE_BRANCH_CD Call Error [{}]", e.getMessage() );
             throw e;
         }
-        ErrBasic.setRegDt( dSysDate );
+        ErrBasic.setRegDt( safeData.getDSysDate() );
         ErrBasic.setRegId( ErrRcpt.getAcceptUid() );
         ErrRcpt.setErrorNo( ErrBasic.getErrorNo() );
         ErrRcpt.setCreateDate( ErrBasic.getCreateDate() );
@@ -698,20 +693,20 @@ public class CommonPackImpl implements CommonPack {
             ErrNoti.setSendUid( "" );
         }
         if( sSendTypeDetail.equals("0") ) {
-            ErrNoti.setSendCheckDatetime( dSysDate );
-            ErrNoti.setSendPlanDatetime( dSysDate );
+            ErrNoti.setSendCheckDatetime( safeData.getDSysDate() );
+            ErrNoti.setSendPlanDatetime( safeData.getDSysDate() );
         }
         else if( sSendTypeDetail.equals("1") ) {
-            ErrNoti.setSendCheckDatetime( DateUtils.addDays( dSysDate,  (1 / (24*60)) * (retASI.waitTime - 1) ));
-            ErrNoti.setSendPlanDatetime( DateUtils.addDays( dSysDate,  (1 / (24*60)) * retASI.waitTime ));
+            ErrNoti.setSendCheckDatetime( DateUtils.addDays( safeData.getDSysDate(),  (1 / (24*60)) * (retASI.waitTime - 1) ));
+            ErrNoti.setSendPlanDatetime( DateUtils.addDays( safeData.getDSysDate(),  (1 / (24*60)) * retASI.waitTime ));
         }
         else if( sSendTypeDetail.equals("2") ) {
-            ErrNoti.setSendCheckDatetime(DateUtils.parseDate( sNSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
-            ErrNoti.setSendPlanDatetime(DateUtils.parseDate( sNSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
+            ErrNoti.setSendCheckDatetime(DateUtils.parseDate( safeData.getNSysDate() + " 080000", new String[]{"yyyyMMdd HHmmss"}));
+            ErrNoti.setSendPlanDatetime(DateUtils.parseDate( safeData.getNSysDate() + " 080000", new String[]{"yyyyMMdd HHmmss"}));
         }
         else if( sSendTypeDetail.equals("3") ) {
-            ErrNoti.setSendCheckDatetime(DateUtils.parseDate( sSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
-            ErrNoti.setSendPlanDatetime(DateUtils.parseDate( sSysDate + " 080000", new String[]{"yyyyMMdd HHmmss"}));
+            ErrNoti.setSendCheckDatetime(DateUtils.parseDate( safeData.getSysDate() + " 080000", new String[]{"yyyyMMdd HHmmss"}));
+            ErrNoti.setSendPlanDatetime(DateUtils.parseDate( safeData.getSysDate() + " 080000", new String[]{"yyyyMMdd HHmmss"}));
         }
         else {
             ErrNoti.setSendCheckDatetime( null );
@@ -755,13 +750,13 @@ public class CommonPackImpl implements CommonPack {
         ErrNoti.setOrgUserNm( ErrRcpt.getAcceptNm() );
         ErrNoti.setOrgUserType( "0" );
 
-        ErrBasic.setUpdateDate( dSysDate );
+        ErrBasic.setUpdateDate( safeData.getDSysDate() );
         ErrBasic.setUpdateUid( ErrRcpt.getAcceptUid() );
 
         ErrBasic.setDeptCd( MacInfo.getDeptCd() );
         ErrBasic.setOfficeCd( MacInfo.getOfficeCd() );
         ErrBasic.setTeamCd( MacInfo.getTeamCd() );
-        ErrBasic.setRegDt( dSysDate );
+        ErrBasic.setRegDt( safeData.getDSysDate() );
         ErrBasic.setRegId( ErrRcpt.getAcceptNm() );
 
         try {

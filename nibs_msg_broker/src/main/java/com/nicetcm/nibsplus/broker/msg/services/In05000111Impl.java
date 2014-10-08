@@ -127,7 +127,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
              */
             if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_NEAR
             ||  parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_END ) {
-                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
 
                 /*
                  *  회선장애가 발생한 상태라면 이후 장애는 체크하지 않는다.
@@ -179,7 +179,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
         if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.ELAND_CODE) ) {
             if( parsed.getString("error_hw_yn").equals("2") ) {
                 errBasic.setErrorCd( parsed.getString("mtc_cd") );
-                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
             else if( parsed.getString("error_hw_yn").equals("6") ) {
                 errBasic.setErrorCd( parsed.getString("mtc_cd") );
@@ -188,7 +188,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
             }
             if( parsed.getString("error_hw_yn").equals("7") ) {
                 errBasic.setErrorCd( "NE211" );
-                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
             else if( parsed.getString("error_hw_yn").equals("8") ) {
                 errBasic.setErrorCd( "NE211" );
@@ -213,7 +213,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
 
             logger.info(">>> [SaveCalcMacErrState] [정산기 슈퍼바이져 상태] {}", errBasic.getErrorCd() );
 
-            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             /*
              *  Terminal Mode 가 '1' 일 경우 작업 상태 이므로 슈퍼바이저 에러만 발생 시키고
              * 금고 침투 장애를 발생 시키지 않는다.
@@ -227,7 +227,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
 
             if( nNormal != CNT_CALC_MAC_ATMWATCH_STATE ) {
                 errBasic.setErrorCd( String.format("NE2%2s", lpad(MsgBrokerConst.CD_CALC_MAC_WATCH_ERR, 2, "0")) );
-                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
             else {
                 errBasic.setErrorCd( String.format("NE2%2s", lpad(MsgBrokerConst.CD_CALC_MAC_WATCH_ERR, 2, "0")) );

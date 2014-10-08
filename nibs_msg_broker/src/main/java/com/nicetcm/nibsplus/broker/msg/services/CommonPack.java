@@ -22,9 +22,9 @@ public interface CommonPack {
             void checkBranchMacLength(MsgParser parsed) throws Exception;
     public void getMacNoIntoSite( TMacInfo MacInfo ) throws Exception;
     public void getMacInfo( TMacInfo MacInfo ) throws Exception;
-    public void insertErrBasic( TCtErrorBasic ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
+    public void insertErrBasic( MsgBrokerData safeData, TCtErrorBasic ErrBasic, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, String PartMngYn ) throws Exception;
-    public void updateErrBasic( MsgBrokerData safeData, int WorkType, String DbMode, TCtErrorBasic ErrMng, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
+    public void updateErrBasic( MsgBrokerData safeData, int WorkType, String DbMode, TCtErrorBasic ErrBasic, TCtErrorRcpt ErrRcpt, TCtErrorNoti ErrNoti, TCtErrorCall ErrCall,
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, byte[] curMacStateError ) throws Exception;
     public void insertUpdateMacOpen( MsgBrokerData safeData, TMacInfo MacInfo, TCtErrorBasic ErrBasic ) throws Exception;
     public byte[] getCurrentErrorState( ErrorState ErrorState ) throws Exception;

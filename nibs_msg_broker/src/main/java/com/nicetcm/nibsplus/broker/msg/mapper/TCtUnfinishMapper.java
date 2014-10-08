@@ -223,7 +223,7 @@ public interface TCtUnfinishMapper {
           "and CREATE_TIME = #{createTime,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(TCtUnfinish record);
-    
+
     /**
      * CommonPack GetDupErrorMng 메소드에서 장애출동 취소가 아닐경우 호출 됨
      *
@@ -245,11 +245,11 @@ public interface TCtUnfinishMapper {
         @Result(column="ORG_MSG", property="orgMsg", jdbcType=JdbcType.VARCHAR)
     })
     TCtUnfinish selectByCond1(TCtErrorBasic record);
-    
-    
+
+
     /**
      * CommonPack GetDupErrorMng 메소드에서 장애출동 취소일 경우 호출 됨
-     *            ErrorCd 가 조건에 없다. 
+     *            ErrorCd 가 조건에 없다.
      *
      * @author KDJ on Tue Jul 01 09:59:32 KST 2014
      */
@@ -268,8 +268,8 @@ public interface TCtUnfinishMapper {
         @Result(column="ORG_MSG", property="orgMsg", jdbcType=JdbcType.VARCHAR)
     })
     TCtUnfinish selectByCond2(TCtErrorBasic record);
-    
-    
+
+
     /**
      * CommonPack InsertCheckErrorMng 메소드에서  호출 됨
      *
@@ -288,14 +288,14 @@ public interface TCtUnfinishMapper {
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true)
     })
     TCtUnfinish selectByCond3(TCtErrorBasic record);
-    
+
     /**
      * CommonPack.getCurrentErrorState 메소드에서 호출 됨 (나이스)
      *
-     * @author KDJ 
+     * @author KDJ
      */
     @Select({
-        "SELECT  DECODE(NVL(SUM(DECODE(ERROR_CD, 'NI101', 1, 0)), 0), 0, '0', '1')||               ",     
+        "SELECT  DECODE(NVL(SUM(DECODE(ERROR_CD, 'NI101', 1, 0)), 0), 0, '0', '1')||               ",
         "        DECODE(NVL(SUM(DECODE(ERROR_CD, 'NI110', 1, 0)), 0), 0, '0', '1')||               ",
         "        DECODE(NVL(SUM(DECODE(ERROR_CD, 'NI111', 1, 0)), 0), 0, '0', '1')||               ",
         "        DECODE(NVL(SUM(DECODE(ERROR_CD, 'NI112', 1, 0)), 0), 0, '0', '1')||               ",
@@ -348,11 +348,11 @@ public interface TCtUnfinishMapper {
         @Result(column="ERROR_STATES", property="errorStates", jdbcType=JdbcType.VARCHAR)
     })
     ErrorState selectByCond4(ErrorState cond);
-    
+
     /**
      * CommonPack.getCurrentErrorState 메소드에서 호출 됨 (정산기)
      *
-     * @author KDJ 
+     * @author KDJ
      */
     @Select({
         "SELECT DECODE(NVL(SUM(DECODE(ERROR_CD, 'NE102', 1, 0)), 0), 0, '0', '1')||  /* 전표 부족 예보           02 */                 ",
@@ -438,11 +438,11 @@ public interface TCtUnfinishMapper {
         @Result(column="ERROR_STATES", property="errorStates", jdbcType=JdbcType.VARCHAR)
     })
     ErrorState selectByCond5(ErrorState cond);
-    
+
     /**
      * CommonPack.getCurrentErrorState 메소드에서 호출 됨 (삼성생명)
      *
-     * @author KDJ 
+     * @author KDJ
      */
     @Select({
         "SELECT /*+ index_desc (t_ct_error_mng ix_t_ct_error_mng_04)  */                                                           ",
@@ -528,11 +528,11 @@ public interface TCtUnfinishMapper {
         @Result(column="ERROR_STATES", property="errorStates", jdbcType=JdbcType.VARCHAR)
     })
     ErrorState selectByCond6(ErrorState cond);
-    
+
     /**
      * CommonPack.getCurrentErrorState 메소드에서 호출 됨
      *
-     * @author KDJ 
+     * @author KDJ
      */
     @Select({
         "SELECT DECODE(NVL(SUM(DECODE(ERROR_CD, 'NE100', 1, 0)), 0), 0, '0', '1')|| /* 만원 부족 예보            */                 ",
@@ -617,4 +617,24 @@ public interface TCtUnfinishMapper {
         @Result(column="ERROR_STATES", property="errorStates", jdbcType=JdbcType.VARCHAR)
     })
     ErrorState selectByCond7(ErrorState cond);
+
+    /**
+     * In05000150Impl KIOSK 장애 상태 ( 홈플러스 ) 에서 호출
+     *
+     * @author KDJ on Wed Oct 08 10:21:32 KST 2014
+     */
+    @Select({
+        "SELECT   DISTINCT ERROR_CD                                            ",
+        "FROM     OP.T_CT_UNFINISH                                             ",
+        "WHERE    CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )) ",
+        "AND      ORG_CD = #{orgCd, jdbcType=VARCHAR}                          ",
+        "AND      BRANCH_CD = #{branchCd, jdbcType=VARCHAR}                    ",
+        "AND      MAC_NO = #{macNo, jdbcType=VARCHAR}                          ",
+        "AND      SUBSTR(ERROR_CD, 1, 3) <> 'ERR'                              "  /* 기기상태에의한 것과 HW 장애 만 */
+    })
+    @Results({
+        @Result(column="ERROR_CD", property="errorCd", jdbcType=JdbcType.VARCHAR)
+    })
+    List<TCtUnfinish> selectByCond8(TCtErrorBasic record);
+
 }

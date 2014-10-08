@@ -261,7 +261,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
          */
         else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_LINE_ERR) ) {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_LINE_ERROR );
-            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             nRtn = 0;
         }
         /*
@@ -270,7 +270,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
          */
         else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_AC_ERR) ) {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_AC_ERROR );
-            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             nRtn = 0;
         }
         /*
@@ -429,7 +429,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                              */
                             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
                             if( parsed.getString("atm_monitor").substring(0,1).equals(MsgBrokerConst.NICE_ERROR) ) {
-                                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                                 /*
                                  * Terminal Mode 가 '1' 일 경우 작업 상태 이므로 슈퍼바이저 에러만 발생 시키고
                                  * 금고 침투 장애를 발생 시키지 않는다.
@@ -453,7 +453,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                              * 야간 ATM 감시 전문 처리 (금고침투긴급)
                              */
                             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_URGENCY_ERROR );
-                            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                             /*
                              * 유저정의 장애는 응답송신하지 않는다.
                              */
@@ -468,7 +468,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     default :
                         break;
                 }
-                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                 /*
                  * 유저정의 장애는 응답송신하지 않는다.
                  */
@@ -541,13 +541,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                             */
                            if ( i >= CNT_CASH_BOX - 1 ) {
                                errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N09 );
-                               comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                               comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                            }
                        }
                    }
                    else  {
                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_CASHBOX_EMPTY );
-                       comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                       comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                    }
                 }
             }
@@ -576,11 +576,11 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                      */
                     if( getIsCashState( macInfo.getMacNo() ) == -1 ) {
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N09 );
-                        comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                        comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                     }
                     else {
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_CASHBOX_EMPTY );
-                        comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                        comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                     }
 
                 }
@@ -595,7 +595,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  *  회수함 부족
                  */
-                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
             else if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal(),
                          EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
@@ -615,7 +615,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  *  명세표 부족
                  */
-                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
             else if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_SPECS.ordinal(),
                     EnumNCBS.IDX_STATE_SPECS.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
@@ -639,7 +639,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  *  입금함 참
                  */
-                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
             else if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_INPUT_BOX.ordinal(),
                     EnumNCBS.IDX_STATE_INPUT_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
@@ -661,7 +661,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  *  수표함 빔
                  */
-                comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
             else if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_CHECK_BOX.ordinal(),
                     EnumNCBS.IDX_STATE_CHECK_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
@@ -709,7 +709,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                         }
 
                         errBasic.setErrorCd( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())) );
-                        comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                        comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
 
                         errBasic.setMadeErrCd(null);
 
@@ -773,7 +773,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
                 if( parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_TERM_MODE.ordinal(),
                         EnumNM.IDX_MON_TERM_MODE.ordinal()+1).equals(MsgBrokerConst.NICE_ERROR) ) {
-                    comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                    comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                     /*
                      * Terminal Mode 가 '1' 일 경우 작업 상태 이므로 슈퍼바이저 에러만 발생 시키고
                      * 금고 침투 장애를 발생 시키지 않는다.
@@ -796,7 +796,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
                     }
 
-                    comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                    comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                 }
                 else  {
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_OPEN_ERROR );
@@ -825,12 +825,12 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     ||  parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_OPNE_SAFE_YN.ordinal(),
                             EnumNM.IDX_MON_OPNE_SAFE_YN.ordinal()+1).equals(MsgBrokerConst.NICE_ERROR) ) {
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_URGENCY_ERROR );
-                        comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                        comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                         return;
                     }
 
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
-                    comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                    comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                 }
                 else {
                     /*

@@ -177,7 +177,7 @@ public class In01000310Impl extends InMsgHandlerImpl {
 
         try
         {
-            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
 
         } catch( org.springframework.dao.DataIntegrityViolationException e ) {
             isDbDupData = true;

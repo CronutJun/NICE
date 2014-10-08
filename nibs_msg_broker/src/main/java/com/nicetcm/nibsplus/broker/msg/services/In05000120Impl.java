@@ -4,11 +4,11 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * Copyright 2014 The NIBS+ Project
  *
  * MSG Broker 신규(농협관련) 일괄 장애, 개국(복구)
- * 
+ *
  * <pre>
  * MngES_SaveNHErrState
  * </pre>
- * 
+ *
  *           2014. 07. 29    K.D.J.
  */
 
@@ -37,10 +37,10 @@ import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 public class In05000120Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(In05000120Impl.class);
-    
+
     @Autowired private StoredProcMapper splMap;
     @Autowired private TCtErrorBasicMapper errBasicMap;
-    
+
     private String[] saValidErr = {
             "00100000",
             "00000000",
@@ -54,14 +54,14 @@ public class In05000120Impl extends InMsgHandlerImpl {
             "00000000"
         };
     private short[] usCheckBit = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01};
-    
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        
+
         String[] saOldErrList = new String[saValidErr.length];
         int iErrorExitYn = 0;
         int iRtn = 0;
-        
+
         TMacInfo macInfo = new TMacInfo();
         TCtErrorBasic errBasic = new TCtErrorBasic();
         TCtErrorRcpt errRcpt = new TCtErrorRcpt();
@@ -71,7 +71,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
 
         for(int i = 0; i < saOldErrList.length; i++ )
             saOldErrList[i] = "00000000";
-        
+
         macInfo.setOrgCd( parsed.getString("CM.org_cd") );
         macInfo.setBranchCd( parsed.getString("brch_cd") );
         macInfo.setMacNo( parsed.getString("mac_no") );
@@ -89,7 +89,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
             throw e;
         }
         comPack.checkBranchMacLength( macInfo );
-        
+
         errBasic.setOrgCd( macInfo.getOrgCd() );
         errBasic.setCreateDate( parsed.getInt("create_date") );
         errBasic.setCreateTime( parsed.getString("create_time") );
@@ -105,9 +105,9 @@ public class In05000120Impl extends InMsgHandlerImpl {
         //memcpy( suDBErr.open_date   , suMacInfo.open_date   , strlen(suMacInfo.open_date)   );
         //memcpy( suDBErr.close_date  , suMacInfo.close_date  , strlen(suMacInfo.close_date)  );
         //memcpy( suDBErr.mac_grade   , suMacInfo.mac_grade   , strlen(suMacInfo.mac_grade)   );
-        
+
         errBasic.setOrgSiteCd( parsed.getString("org_site_cd") );
-        
+
         errBasic.setTransDate( parsed.getString("create_date") );
         errBasic.setOrgMsgNo( parsed.getString("org_seq_no") );
         errBasic.setFormatType( "21" );                                                         // 농협은 21로
@@ -185,7 +185,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
         if( parsed.getString("mac_state").equals("f0")
         ||  parsed.getString("mac_state").equals("f1") ) {
             errBasic.setErrorCd( String.format("ES%s", parsed.getString("mac_state")) );
-            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             logger.info( "회선장애 처리 후 다른 상태 skip" );
             /*
              *  AS 기 접수 장애는 장애 정상 발생 처리 후 중복 응답 처리 20101220 농협 회의결과
@@ -198,7 +198,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
             else if( iRtn == -1 ) throw new Exception("ErrorRaised in In05000120");
             else throw new MsgBrokerException( "ErrorRaised in In05000120", iRtn );
         }
-        
+
         /*
          *  20110830 농협요청 단말상태 'A1' && 유효비트들이 모두 정상 이면 복구 하도록 추가
          */
@@ -239,7 +239,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
                     }
                     else {
                         if( (parsed.getBytes("modul_state")[iRow] & usCheckBit[iCol]) == usCheckBit[iCol] ) {
-                            comPack.insertErrBasic( errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                         }
                     }
                     if( parsed.getString("mac_state").equals("A1") ) {
