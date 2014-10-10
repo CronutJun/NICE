@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.nicetcm.nibsplus.orgsend.common.OrgSendException;
 import com.nicetcm.nibsplus.orgsend.constant.NibsDataSource;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
 import com.nicetcm.nibsplus.orgsend.model.OrgSendExternalVO;
@@ -36,7 +35,7 @@ public class OrgSendTest
         try
         {
             nOrgSendService.execute(orgSendExternalVO);
-        } catch (OrgSendException e)
+        } catch (Exception e)
         {
             // TODO Auto-generated catch block
             e.printStackTrace();

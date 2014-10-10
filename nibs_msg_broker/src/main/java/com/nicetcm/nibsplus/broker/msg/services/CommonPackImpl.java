@@ -2144,7 +2144,23 @@ public class CommonPackImpl implements CommonPack {
      * @param Mac      변경하려는 기기의 정보
      * @throws Exception
      */
-    public void updateMacInfo( MsgBrokerData safeData, TMacInfo MacInfo, TCmMac Mac) throws Exception {
+    public void updateMacInfo( MsgBrokerData safeData, TMacInfo MacInfo, TCmMac Mac, TCtNiceMac NiceMac ) throws Exception {
+        /*
+         * CD-VAN 기기이고 정보 변경이 있다면  T_CT_NICE_MAC 도  UPDATE
+         */
+        if( MacInfo.getOrgCd().equals(MsgBrokerConst.NICE_CODE)
+        && (NiceMac.getRpcYn() != null || NiceMac.getModemRelayYn() != null ) ) {
+            try {
+                BeanUtils.copyProperties( NiceMac,  Mac );
+
+                niceMacMap.updateByPrimaryKeySelective( NiceMac );
+                logger.info("RPC여부[{}] 모뎀중계여부[{}]변경 완료", NiceMac.getRpcYn(), NiceMac.getModemRelayYn() );
+            }
+            catch( Exception e ) {
+                logger.info( ">>> [updateMacInfo] (T_CT_NICE_MAC) UPDATE ERROR [{}]", e.getLocalizedMessage() );
+            }
+        }
+
         /*
          *  기존 정보 모두 변경이 없다면 return
          */

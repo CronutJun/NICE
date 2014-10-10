@@ -30,6 +30,7 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMac;
+import com.nicetcm.nibsplus.broker.msg.model.TCtNiceMac;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
@@ -242,8 +243,9 @@ public class In05000111Impl extends InMsgHandlerImpl {
          *  나이스 기기 UPDATE 함수를 함께 쓴다.
          */
         TCmMac cmMac = new TCmMac();
+        TCtNiceMac niceMac = new TCtNiceMac();
         cmMac.setMacVer( parsed.getString("mac_ver") );
-        comPack.updateMacInfo( safeData, macInfo, cmMac ); // 기기 프로그램 버전, 시리얼 번호 업데이트
+        comPack.updateMacInfo( safeData, macInfo, cmMac, niceMac ); // 기기 프로그램 버전, 시리얼 번호 업데이트
 
         /*
          *  정산기 ftp_Cnt가 설정되어 있다면 해당 file의 수신 개수를 확인 처리하여 응답

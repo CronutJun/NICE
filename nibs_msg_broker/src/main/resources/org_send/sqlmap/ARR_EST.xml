@@ -573,6 +573,57 @@
             AND format_type = '21'
     ]]>
     </select>
+    
+    <!-- DreamAutoSend 관련 Query 시작 -->
+	<!--
+		<entry key=""ARR_EST""               value="01001151" />
+
+		{
+		   "name" : "01001151",                    "kname" : "도착예정",
+		   "response" : { "code" : "01001151",     "type" : "SELF" },
+		   "columns" : [
+		   ]
+		} 
+	-->
+    
+    <select id="select0DM" resultType="hashmap">
+		select 	mng.org_cd,
+				CASE WHEN mng.org_cd = '031'
+					 THEN '0'||mng.branch_cd
+				     ELSE mng.branch_cd
+				END as branch_cd,
+				mng.site_cd,		
+				mng.mac_no,
+				mng.create_date,
+				mng.error_no,
+				mng.recv_user_uid,
+				mng.arrival_est_date,
+				mng.arrival_est_time,
+				DECODE( mng.close_yn, '1', '0', /* 고객대기접수완료 			'1' -> '3'	*/
+									  '2', '0', /* 고객대기접수완료 후 예정입력 '2' -> '3'	*/
+									  'A', 'P', /* PDA 재입력 10분이내 			'A' -> '3'	*/
+									  'C', 'P', /* PDA 재입력 10분초과 			'C' -> 'D'	*/ 
+									  'B', 'A', /* 관제 재입력 15분이하 		'B' -> '3'	*/
+									  'X', 'A', /* 관제 재입력 15분초과 		'X' -> 'Y'	*/
+									       '0' ) AS EST_FLAG,
+				mng.CLOSE_YN
+		from    op.t_ct_error_mng    mng,
+		        op.T_CT_ERROR          ERR,
+		        op.t_cm_site_01        site
+		where    mng.arrival_est_time is not null
+		and        nvl(mng.close_yn, '0') IN ( '1', '2', 'A', 'B', 'X', 'C' )
+		AND        mng.ARRIVAL_TIME IS NULL
+		AND        NVL(mng.ERROR_STATUS, '0' ) <> '7000'
+		AND        mng.FINISH_TIME IS NULL
+		AND     mng.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-1, 'YYYYMMDD' ))
+		AND        ( mng.ORG_CUST_RECV_YN = 'Y' OR ERR.ALARM_MON_YN = 'Y' )
+		and      nvl(site.alarm, '0') = '1' 
+		and        mng.org_cd = site.org_cd
+		and     mng.branch_cd = site.branch_cd
+		and        mng.site_cd = site.site_cd
+		AND     MNG.ORG_CD = ERR.ORG_CD(+)
+		AND     MNG.ERROR_CD = ERR.ERROR_CD(+)
+    </select>
 
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[

@@ -230,13 +230,15 @@ public class In01001150Impl extends InMsgHandlerImpl {
             if(tCtErrorMng.getArrivalDate().equals("") && tCtErrorMng.getArrivalTime().equals("")) {
 
                 TCtErrorMng tCtErrorMng2 = new TCtErrorMng();
+                /* 2014.07.18 경비사 수신확인 전문을 추가 하였으므로 삭제
                 tCtErrorMng2.setRecvDate       (safeData.getSysDate());
                 tCtErrorMng2.setRecvTime       (safeData.getSysTime().substring(0, 4));
-                tCtErrorMng2.setArrivalEstDate (parsed.getString("schdule_date"));
-                tCtErrorMng2.setArrivalEstTime (parsed.getString("schdule_time").substring(0, 4));
                 tCtErrorMng2.setRecvUserNm     (parsed.getString("arrival_nm"));
                 tCtErrorMng2.setRecvUserUid    (parsed.getString("office_nm").equals("") ? "9999999" : parsed.getString("office_nm"));
                 tCtErrorMng2.setRecvTeleNo     (parsed.getString("arrival_tel_no"));
+                */
+                tCtErrorMng2.setArrivalEstDate (parsed.getString("schdule_date"));
+                tCtErrorMng2.setArrivalEstTime (parsed.getString("schdule_time").substring(0, 4));
                 tCtErrorMng2.setSendStatus     ("2");
                 tCtErrorMng2.setSendSmsStatus  ("6040");
                 tCtErrorMng2.setWorkStatus     ("6050");

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ADD_CASH">
+
+<!--
+<entry key="ACPT_CUST"               value="01001150" />
+
+{
+   "name" : "01001150",                    "kname" : "도착예정",
+   "response" : { "code" : "01001150",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "call_date",              "kname" : "출동요청일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "call_time",              "kname" : "출동요청시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "schdule_date",           "kname" : "도착예정일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "schdule_time",           "kname" : "도착예정시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "trans1_date",            "kname" : "1차통지 거래일자",       "type" : "N",   "length"  : 8   },
+      { "name" : "trans1_seq",             "kname" : "1차통지 전문번호",       "type" : "AN",  "length"  : 10  },
+      { "name" : "brch_cd",                "kname" : "지점코드",               "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "org_site_cd",            "kname" : "기관사이트코드",         "type" : "AN",  "length"  : 6   },
+      { "name" : "org_call_cnt",           "kname" : "지점포구분->출동요청차수로도 사용", "type" : "AN",  "length"  : 4   },
+      { "name" : "oper_type",              "kname" : "운영구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "org_site_nm",            "kname" : "장소명",                 "type" : "AN",  "length"  : 60  },
+      { "name" : "error_cd",               "kname" : "LC코드(장애코드)",       "type" : "AN",  "length"  : 8   },
+      { "name" : "error_msg",              "kname" : "장애코드명",             "type" : "AN",  "length"  : 60  },
+      { "name" : "call_class",             "kname" : "출동요청구분",           "type" : "AN",  "length"  : 4   },
+      { "name" : "call_type",              "kname" : "출동사유",               "type" : "AN",  "length"  : 4   },
+      { "name" : "schdule_cnt",            "kname" : "출동사유",               "type" : "N",   "length"  : 1   },
+      { "name" : "accept_uid",             "kname" : "접수자 사번",            "type" : "AN",  "length"  : 8   },
+      { "name" : "accept_nm",              "kname" : "업체접수자명",           "type" : "AN",  "length"  : 10  },
+      { "name" : "arrival_uid",            "kname" : "출동자 사번",            "type" : "AN",  "length"  : 8   },
+      { "name" : "arrival_nm",             "kname" : "업체 출동자명",          "type" : "AN",  "length"  : 10  },
+      { "name" : "arrival_tel_no",         "kname" : "업체 출동자 전화번호",   "type" : "AN",  "length"  : 13  },
+      { "name" : "memo",                   "kname" : "메모",                   "type" : "AN",  "length"  : 100 },
+      { "name" : "message",                "kname" : "응답 Message",           "type" : "AN",  "length"  : 50  },
+      { "name" : "office_cd",              "kname" : "관리지사코드",           "type" : "AN",  "length"  : 4   },
+      { "name" : "office_nm",              "kname" : "관리지사명",             "type" : "AN",  "length"  : 20  },
+      { "name" : "org_cd",                 "kname" : "경비사송신-기관코드",    "type" : "AN",  "length"  : 3   },
+      { "name" : "crt_no",                 "kname" : "경비사송신-CRT 번호",    "type" : "AN",  "length"  : 15  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 52  }
+   ]
+}
+ -->
+    <select id="select0DM" resultType="hashmap">
+    	<![CDATA[
+		select 	mng.org_cd,
+				CASE WHEN mng.org_cd = '031'
+					 THEN '0'||mng.branch_cd
+				     ELSE mng.branch_cd
+				END as branch_cd,
+				mng.site_cd,		
+				MNG.mac_no,
+				mng.create_date,
+				mng.error_no
+		from    op.t_ct_error_mng mng,
+		        op.T_CT_ERROR  ERR,
+		        op.t_cm_site_01    site
+		where    nvl(mng.close_yn, '0') = '0'
+		AND        mng.ARRIVAL_TIME IS NULL
+		AND        NVL(mng.ERROR_STATUS, '0' ) <> '7000'
+		AND        ( mng.ORG_CUST_RECV_YN = 'Y' OR ERR.ALARM_MON_YN = 'Y')
+		AND     mng.CREATE_DATE > TO_CHAR( SYSDATE-1, 'YYYYMMDD' )
+		and      nvl(site.alarm, '0') = '1' 
+		and        mng.org_cd = site.org_cd
+		and     mng.branch_cd = site.branch_cd
+		and        mng.site_cd = site.site_cd
+		AND     MNG.ORG_CD = ERR.ORG_CD(+)
+		AND     MNG.ERROR_CD = ERR.ERROR_CD(+)
+		]]>
+    </select>
+</mapper>

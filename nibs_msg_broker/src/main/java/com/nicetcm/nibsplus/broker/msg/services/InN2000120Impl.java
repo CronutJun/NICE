@@ -6,7 +6,7 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * MSG Broker 나이스 장애처리
  *
  * <pre>
- * MngNS_NiceSaveErrState
+ * MngNS_SaveNiceErrState
  * </pre>
  *
  * @author   K.D.J
@@ -49,6 +49,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxnSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TCtNiceMng;
+import com.nicetcm.nibsplus.broker.msg.model.TCtNiceMac;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasicSpec;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
@@ -1079,6 +1080,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         niceMng.setOutCheck ( parsed.getString("atm_hw_error[16]") );             /* 수표출금부 */
         niceMng.setInCash5  ( parsed.getString("atm_hw_error[17]") );             /* 입금함2->오만원권 */
         niceMng.setInCash10 ( parsed.getString("atm_hw_error[18]") );             /* 입금함3->십만원권 */
+        niceMng.setRpc      ( parsed.getString("atm_hw_error[19]") );             /* RPC모듈상태 */
         niceMng.setRemMoney ( parsed.getString("atm_hw_error[20]") );             /* 지폐잔류 */
 
         niceMng.setTermMode ( parsed.getString("atm_monitor").substring(0, 1) );  /* 터미널모드 */
@@ -1098,7 +1100,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         niceMng.setDummy12  ( parsed.getString("atm_monitor").substring(14) );    /* 더미12 */
 
         niceMng.setPgmVer  ( parsed.getString("pgm_version") );                   /* 기기프로그램 버젼 */
-        //niceMng.setSerialNo( parsed.getString("serial_no"  ) );                   /* 시리얼 번호 */
+        //niceMng.setSerialNo( parsed.getString("serial_no"  ) );                 /* 시리얼 번호 */
         niceMng.setUpdateDate( safeData.getDSysDate() );
         try {
             niceMngMap.insertSelective( niceMng );
@@ -1148,10 +1150,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_LINE_ERROR );       /* 6. 장애코드              */;
 
         TCmMac cmMac = new TCmMac();
+        TCtNiceMac niceMac = new TCtNiceMac();
         cmMac.setMacVer( parsed.getString("pgm_version") );
         cmMac.setSerialNo( parsed.getString("serial_no") );
         cmMac.setMacAddress( parsed.getString("mac_address") );
-        comPack.updateMacInfo( safeData, macInfo, cmMac );
+        niceMac.setRpcYn( parsed.getString("rpc_yn") );
+        niceMac.setModemRelayYn( parsed.getString("modem_relay_yn") );
+        comPack.updateMacInfo( safeData, macInfo, cmMac, niceMac );
         comPack.insertUpdateMacOpen( safeData,  macInfo, errBasic );
         comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ONE_CLEAR,
                 errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, curErrList );

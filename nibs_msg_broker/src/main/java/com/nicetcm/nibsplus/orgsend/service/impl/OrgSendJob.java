@@ -62,7 +62,7 @@ public class OrgSendJob implements Job, JobExecuter
         try
         {
             nOrgSendService.execute(orgSendExternalVO);
-        } catch (OrgSendException e)
+        } catch (Exception e)
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -82,7 +82,7 @@ public class OrgSendJob implements Job, JobExecuter
      * @throws OrgSendException
      */
     @Override
-    public void executeJob(ApplicationContext applicationContext, SchedulerVO schedulerVO) throws OrgSendException
+    public void executeJob(ApplicationContext applicationContext, SchedulerVO schedulerVO) throws Exception
     {
         NOrgSendService nOrgSendService = applicationContext.getBean("NOrgSendImpl", NOrgSendService.class);
 

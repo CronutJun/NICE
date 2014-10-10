@@ -31,6 +31,7 @@ public class MsgBrokerWorker implements Runnable {
         byte[] bMsgType = new byte[4];
         byte[] bWrkType = new byte[4];
         String inQNm;
+        boolean skipDBProc = false;
 
         try {
             buf = ByteBuffer.allocateDirect(msg.length);
@@ -82,9 +83,18 @@ public class MsgBrokerWorker implements Runnable {
                                      * 오류가 있는경우는 Update 하지 않고 AP로 응답 보냄.
                                      * 응답전문일 경우는 ap로 전송하도록
                                      */
+                                    skipDBProc = true;
                                     logger.debug( "오류[{}], DB저장 안함", msgPsr.getString("CM.ret_cd_src") );
                                 }
                             }
+                        }
+                        if( !skipDBProc ) {
+                            /*
+                             *  Find and invoke method of instance of biz
+                             */
+                            InMsgHandler bizBranch = (InMsgHandler)MsgBrokerSpringMain
+                                    .sprCtx.getBean("in" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
+                            bizBranch.inMsgHandle( msgThrdSafeData, msgPsr );
                         }
                     }
                     else {

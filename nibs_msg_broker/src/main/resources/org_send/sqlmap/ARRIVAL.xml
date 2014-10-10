@@ -581,6 +581,49 @@
                AND MNG.recv_user_uid = MBR.member_id(+)
     ]]>
     </select>
+    
+	<!-- DreamAutoSend 관련 Query 시작 -->
+	<!--
+		<entry key=""ARRIVAL""               value="01001152" />
+
+		{
+		   "name" : "01001152",                    "kname" : "도착",
+		   "response" : { "code" : "01001152",     "type" : "SELF" },
+		   "columns" : [
+		   ]
+		} 
+	-->
+    
+    <select id="select0DM" resultType="hashmap">
+		select 	mng.org_cd,
+				CASE WHEN mng.org_cd = '031'
+					 THEN '0'||mng.branch_cd
+				     ELSE mng.branch_cd
+				END as branch_cd,
+				mng.site_cd,		
+				mng.mac_no,
+				mng.create_date,
+				mng.error_no,
+				mng.recv_user_uid,
+				mng.arrival_date,
+				mng.arrival_time,
+				'',
+				'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	'',	''
+		from	op.t_ct_error_mng mng,
+				op.t_cm_site_01		site
+		where	mng.close_yn in ( '1', '2', '3', 'A', 'B', 'C', 'D', 'X', 'Y' )
+		AND		mng.ARRIVAL_TIME IS NOT NULL
+				/*
+				(    mng.ARRIVAL_TIME IS NOT NULL
+		          OR NVL(mng.ERROR_STATUS, '0' ) = '7000'
+		        )
+		        */
+		AND mng.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-3, 'YYYYMMDD' ))
+		and      nvl(site.alarm, '0') = '1' 
+		and		mng.org_cd = site.org_cd
+		and 	mng.branch_cd = site.branch_cd
+		and		mng.site_cd = site.site_cd
+    </select>
 
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[

@@ -91,6 +91,8 @@ public class In03000202Impl extends InMsgHandlerImpl {
             tFnRealtimeTrade.setOut10Cnt          (parsed.getInt("out_10_cnt"));
             tFnRealtimeTrade.setSubOrgCd          (parsed.getString("sub_org_cd"));
             tFnRealtimeTrade.setAtmDealNo         (parsed.getInt("atm_deal_no"));
+            tFnRealtimeTrade.setTransDate         (parsed.getString("CM.trans_date"));
+            tFnRealtimeTrade.setTransSeq          (parsed.getString("CM.trans_seq_no"));
             tFnRealtimeTrade.setUpdateUid         ("ETC_In");
             tFnRealtimeTrade.setUpdateDate        (safeData.getDSysDate());
 

@@ -42,7 +42,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxnSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 
-@Service("in01000140")
+@Service("in01000151")
 public class In01000151Impl extends InMsgHandlerImpl {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

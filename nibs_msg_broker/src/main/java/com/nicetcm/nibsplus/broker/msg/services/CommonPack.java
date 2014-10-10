@@ -28,7 +28,7 @@ public interface CommonPack {
             TCtErrorTxn ErrTxn, TMacInfo MacInfo, byte[] curMacStateError ) throws Exception;
     public void insertUpdateMacOpen( MsgBrokerData safeData, TMacInfo MacInfo, TCtErrorBasic ErrBasic ) throws Exception;
     public byte[] getCurrentErrorState( ErrorState ErrorState ) throws Exception;
-    public void updateMacInfo( MsgBrokerData safeData, TMacInfo MacInfo, TCmMac Mac) throws Exception;
+    public void updateMacInfo( MsgBrokerData safeData, TMacInfo MacInfo, TCmMac Mac, TCtNiceMac NiceMac ) throws Exception;
     public void insertUpdateMacSet( MsgBrokerData safeData, int WorkType, TCtMacSetMng MacSetMng ) throws Exception;
     public void insertOrgSigeChnage( MsgBrokerData safeData, TCtOrgSiteChange OrgSiteChange ) throws Exception;
     boolean getDupErrorMng(TCtErrorBasic ErrBasic, int CancelYN) throws Exception;

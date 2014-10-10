@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nicetcm.nibsplus.filemng.dao.CasherMapper">
+
+	<insert id="insertCasherTranDataNew" parameterType="com.nicetcm.nibsplus.filemng.model.CasherTRVO">
+		INSERT
+		INTO
+		    OP.T_FN_CHALSI_DEAL
+		    (
+		        org_cd ,
+		        Branch_Cd ,
+		        Deal_Date ,
+		        Deal_No ,
+		        Deal_Type ,
+		        Mac_No ,
+		        Tenant_Cd ,
+		        Pos_No ,
+		        Close_Date ,
+		        Casher_Id ,
+		        Deal_Time ,
+		        Devicever_Id ,
+		        Acudiv ,
+		        Inmon_Flag ,
+		        CW15_Cnt,
+		        CW15_Amt,
+		        CW54_Cnt ,
+		        CW54_Amt ,
+		        CW14_Cnt ,
+		        CW14_Amt ,
+		        CW53_Cnt ,
+		        CW53_Amt ,
+		        CW13_Cnt ,
+		        CW13_Amt ,
+		        CW52_Cnt ,
+		        CW52_Amt ,
+		        CW12_Cnt ,
+		        CW12_Amt ,
+		        CW51_Cnt ,
+		        CW51_Amt ,
+		        CW11_Cnt ,
+		        CW11_Amt ,
+				HW16_CNT ,
+				HW16_AMT,
+				HW55_CNT,
+				HW55_AMT,
+				HW35_CNT,
+				HW35_AMT,
+				HW15_CNT,
+				HW15_AMT,
+		        Check_Etc_Amt ,
+		        Box_Cash_Amt ,
+		        Box_Coin_Amt ,
+		        Box_Check_Amt ,
+		        Box_Incom_Amt ,
+		        Box_Outcom_Amt ,
+		        Box_Ppcard_Amt ,
+		        IN_SW13_CNT,
+		        IN_SW13_AMT,
+		        IN_SW23_CNT,
+		        IN_SW23_AMT,
+		        IN_SW33_CNT,
+		        IN_SW33_AMT,
+		        IN_SW53_CNT,
+		        IN_SW53_AMT,
+		        IN_SW14_CNT,
+		        IN_SW14_AMT,
+		        IN_SW34_CNT,
+		        IN_SW34_AMT,
+		        IN_SW54_CNT,
+		        IN_SW54_AMT,
+		        IN_SW74_CNT,
+		        IN_SW74_AMT,
+		        IN_SW15_CNT,
+		        IN_SW15_AMT,
+		        IN_SW35_CNT,
+		        IN_SW35_AMT,
+		        IN_SW55_CNT,
+		        IN_SW55_AMT,
+		        IN_SW16_CNT,
+		        IN_SW16_AMT,
+		        OUT_SW13_CNT,
+		        OUT_SW13_AMT,
+		        OUT_SW23_CNT,
+		        OUT_SW23_AMT,
+		        OUT_SW33_CNT,
+		        OUT_SW33_AMT,
+		        OUT_SW53_CNT,
+		        OUT_SW53_AMT,
+		        OUT_SW14_CNT,
+		        OUT_SW14_AMT,
+		        OUT_SW34_CNT,
+		        OUT_SW34_AMT,
+		        OUT_SW54_CNT,
+		        OUT_SW54_AMT,
+		        OUT_SW74_CNT,
+		        OUT_SW74_AMT,
+		        OUT_SW15_CNT,
+		        OUT_SW15_AMT,
+		        OUT_SW35_CNT,
+		        OUT_SW35_AMT,
+		        OUT_SW55_CNT,
+		        OUT_SW55_AMT,
+		        OUT_SW16_CNT,
+		        OUT_SW16_AMT,
+		        insert_date ,
+		        insert_uid
+		    )
+		    VALUES
+		    (
+		        '0CS' ,
+		        #{szBranch_Cd}
+		        #{szDeal_Date}
+		        #{szDeal_No}
+		        #{szDeal_Type}
+		        #{szMac_No}
+		        #{szTenant_Cd}
+		        #{szPos_No}
+		        #{szClose_Date}
+		        #{szCasher_Id}
+		        #{szDeal_Time}
+		        #{szDevicever_Id}
+		        #{szAcudiv}
+		        #{szInmon_Flag}
+		        #{szCash_15_Cnt}
+		        #{szCash_100000_Amt}
+		        #{szCash_50000_Cnt}
+		        #{szCash_50000_Amt}
+		        #{szCash_10000_Cnt}
+		        #{szCash_10000_Amt}
+		        #{szCash_5000_Cnt}
+		        #{szCash_5000_Amt}
+		        #{szCash_1000_Cnt}
+		        #{szCash_1000_Amt}
+		        #{szCash_500_Cnt}
+		        #{szCash_500_Amt}
+		        #{szCash_100_Cnt}
+		        #{szCash_100_Amt}
+		        #{szCash_50_Cnt}
+		        #{szCash_50_Amt}
+		        #{szCash_10_Cnt}
+		        #{szCash_10_Amt}
+		        #{szCheck_100_Cnt}
+		        #{szCheck_100_Amt}
+		        #{szCheck_50_Cnt}
+		        #{szCheck_50_Amt}
+		        #{szCheck_30_Cnt}
+		        #{szCheck_30_Amt}
+		        #{szCheck_10_Cnt}
+		        #{szCheck_10_Amt}
+		        #{szCheck_Etc_Amt}
+		        #{szBox_Cash_Amt}
+		        #{szBox_Coin_Amt}
+		        #{szBox_Check_Amt}
+		        #{szBox_Incom_Amt}
+		        #{szBox_Outcom_Amt}
+		        #{szBox_Ppcard_Amt}
+		        #{szTick_Own_1000_cnt}
+		        #{szTick_Own_1000_cnt}
+		        #{szTick_Own_2000_cnt}
+		        #{szTick_Own_2000_cnt}
+		        #{szTick_Own_3000_cnt}
+		        #{szTick_Own_3000_cnt}
+		        #{szTick_Own_5000_cnt}
+		        #{szTick_Own_5000_cnt}
+		        #{szTick_Own_10000_cnt}
+		        #{szTick_Own_10000_cnt}
+		        #{szTick_Own_30000_cnt}
+		        #{szTick_Own_30000_cnt}
+		        #{szTick_Own_50000_cnt}
+		        #{szTick_Own_50000_cnt}
+		        #{szTick_Own_70000_cnt}
+		        #{szTick_Own_70000_cnt}
+		        #{szTick_Own_100000_cnt}
+		        #{szTick_Own_100000_cnt}
+		        #{szTick_Own_300000_cnt}
+		        #{szTick_Own_300000_cnt}
+		        #{szTick_Own_500000_cnt}
+		        #{szTick_Own_500000_cnt}
+		        #{szTick_Own_1000000_cnt}
+		        #{szTick_Etc_1000000_cnt}
+		        #{szTick_Etc_1000_cnt}
+		        #{szTick_Etc_1000_cnt}
+		        #{szTick_Etc_2000_cnt}
+		        #{szTick_Etc_2000_cnt}
+		        #{szTick_Etc_3000_cnt}
+		        #{szTick_Etc_3000_cnt}
+		        #{szTick_Etc_5000_cnt}
+		        #{szTick_Etc_5000_cnt}
+		        #{szTick_Etc_10000_cnt}
+		        #{szTick_Etc_10000_cnt}
+		        #{szTick_Etc_30000_cnt}
+		        #{szTick_Etc_30000_cnt}
+		        #{szTick_Etc_50000_cnt}
+		        #{szTick_Etc_50000_cnt}
+		        #{szTick_Etc_70000_cnt}
+		        #{szTick_Etc_70000_cnt}
+		        #{szTick_Etc_100000_cnt}
+		        #{szTick_Etc_100000_cnt}
+		        #{szTick_Etc_300000_cnt}
+		        #{szTick_Etc_300000_cnt}
+		        #{szTick_Etc_500000_cnt}
+		        #{szTick_Etc_500000_cnt}
+		        #{szTick_Etc_1000000_cnt}
+		        #{szTick_Etc_1000000_cnt}
+		        sysdate ,
+		        'online'
+		    )
+	</insert>
+	
+	<insert id="insertCasherTranDataOld" parameterType="com.nicetcm.nibsplus.filemng.model.CasherTRVO">
+		INSERT
+		INTO
+		    OP.T_FN_CHALSI_DEAL
+		    (
+		        org_cd ,
+		        Branch_Cd ,
+		        Deal_Date ,
+		        Deal_No ,
+		        Deal_Type ,
+		        Mac_No ,
+		        Tenant_Cd ,
+		        Pos_No ,
+		        Close_Date ,
+		        Casher_Id ,
+		        Deal_Time ,
+		        Devicever_Id ,
+		        Acudiv ,
+		        Inmon_Flag ,
+		        CW15_Cnt,
+		        CW15_Amt,
+		        CW54_Cnt ,
+		        CW54_Amt ,
+		        CW14_Cnt ,
+		        CW14_Amt ,
+		        CW53_Cnt ,
+		        CW53_Amt ,
+		        CW13_Cnt ,
+		        CW13_Amt ,
+		        CW52_Cnt ,
+		        CW52_Amt ,
+		        CW12_Cnt ,
+		        CW12_Amt ,
+		        CW51_Cnt ,
+		        CW51_Amt ,
+		        CW11_Cnt ,
+		        CW11_Amt ,
+				HW16_CNT,
+				HW16_AMT,
+				HW55_CNT,
+				HW55_AMT,
+				HW35_CNT,
+				HW35_AMT,
+				HW15_CNT,
+				HW15_AMT,
+		        Check_Etc_Amt ,
+		        Box_Cash_Amt ,
+		        Box_Coin_Amt ,
+		        Box_Check_Amt ,
+		        Box_Incom_Amt ,
+		        Box_Outcom_Amt ,
+		        Box_Ppcard_Amt ,
+		        insert_date ,
+		        insert_uid
+		    )
+		    VALUES
+		    (
+		        '0CS' ,
+		        #{szBranch_Cd}
+		        #{szDeal_Date}
+		        #{szDeal_No}
+		        #{szDeal_Type}
+		        #{szMac_No}
+		        #{szTenant_Cd}
+		        #{szPos_No}
+		        #{szClose_Date}
+		        #{szCasher_Id}
+		        #{szDeal_Time}
+		        #{szDevicever_Id}
+		        #{szAcudiv}
+		        #{szInmon_Flag}
+		        #{szCash_100000_Cnt}
+		        #{szCash_100000_Amt}
+		        #{szCash_50000_Cnt}
+		        #{szCash_50000_Amt}
+		        #{szCash_10000_Cnt}
+		        #{szCash_10000_Amt}
+		        #{szCash_5000_Cnt}
+		        #{szCash_5000_Amt}
+		        #{szCash_1000_Cnt}
+		        #{szCash_1000_Amt}
+		        #{szCash_500_Cnt}
+		        #{szCash_500_Amt}
+		        #{szCash_100_Cnt}
+		        #{szCash_100_Amt}
+		        #{szCash_50_Cnt}
+		        #{szCash_50_Amt}
+		        #{szCash_10_Cnt}
+		        #{szCash_10_Amt}
+		        #{szCheck_100_Cnt}
+		        #{szCheck_100_Amt}
+		        #{szCheck_50_Cnt}
+		        #{szCheck_50_Amt}
+		        #{szCheck_30_Cnt}
+		        #{szCheck_30_Amt}
+		        #{szCheck_10_Cnt}
+		        #{szCheck_10_Amt}
+		        #{szCheck_Etc_Amt}
+		        #{szBox_Cash_Amt}
+		        #{szBox_Coin_Amt}
+		        #{szBox_Check_Amt}
+		        #{szBox_Incom_Amt}
+		        #{szBox_Outcom_Amt}
+		        #{szBox_Ppcard_Amt}
+		        sysdate ,
+		        'online'
+		    )
+	</insert>
+	
+	<insert id="insertCheckDetailData" parameterType="com.nicetcm.nibsplus.filemng.model.CasherCKVO">
+		INSERT
+		INTO
+		    OP.T_FN_CHALSI_DEAl_CHECK
+		    (
+		        org_cd ,
+		        Branch_Cd ,
+		        Deal_Date ,
+		        Deal_No ,
+		        Deal_Type ,
+		        Mac_No ,
+		        Tenant_Cd ,
+		        Pos_No ,
+		        Close_Date ,
+		        Casher_Id ,
+		        Deal_Time ,
+		        Devicever_Id,
+		        Acudiv ,
+		        Inmon_Flag ,
+		        Check_Type ,
+		        Check_No ,
+		        insert_date ,
+		        insert_uid
+		    )
+		    VALUES
+		    (
+		        '0CS' ,
+		        #{szBranchCd}
+		        #{szDealDate}
+		        #{szDealNo}
+		        #{szDealType}
+		        #{szMacNo}
+		        #{szTenantCd}
+		        #{szPosNo}
+		        #{szCloseDate}
+		        #{szCasherId}
+		        #{szDealTime}
+		        #{szDeviceverId}
+		        #{szAcudiv}
+		        #{szInmonFlag}
+		        #{szCheckType}
+		        #{szCheckNo}
+		        sysdate ,
+		        'online'
+		    )
+	</insert>
+	
+	<insert id="insertTicketDetailData" parameterType="com.nicetcm.nibsplus.filemng.model.CasherTKVO">
+		INSERT
+		INTO
+		    OP.T_FN_CHALSI_DEAl_TICKET
+		    (
+		        org_cd ,
+		        Branch_Cd ,
+		        Deal_Date ,
+		        Deal_No ,
+		        Deal_Type ,
+		        Mac_No ,
+		        Tenant_Cd ,
+		        Pos_No ,
+		        Close_Date ,
+		        Casher_Id ,
+		        Deal_Time ,
+		        Devicever_Id,
+		        Acudiv ,
+		        Inmon_Flag ,
+		        PUBLISH_CD ,
+		        TICKET_TYPE ,
+		        TICKET_NO ,
+		        insert_date ,
+		        insert_uid
+		    )
+		    VALUES
+		    (
+		        '0CS' ,
+		        #{szBranchCd}
+		        #{szDealDate}
+		        #{szDealNo}
+		        #{szDealType}
+		        #{szMacNo}
+		        #{szTenantCd}
+		        #{szPosNo}
+		        #{szCloseDate}
+		        #{szCasherId}
+		        #{szDealTime}
+		        #{szDeviceverId}
+		        #{szAcudiv}
+		        #{szInmonFlag}
+		        #{szPublishCd}
+		        #{szTicketType}
+		        #{szTicketNo}
+		        sysdate ,
+		        'online'
+		    )
+	</insert>
+	
+</mapper>

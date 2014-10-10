@@ -89,7 +89,7 @@ public class NOrgSendImpl implements NOrgSendService
     }
 
     @Override
-    public void execute(OrgSendExternalVO orgSendExternalVO) throws OrgSendException
+    public void execute(OrgSendExternalVO orgSendExternalVO) throws Exception
     {
 
         SqlSessionFactory sqlSessionFactory = null;
