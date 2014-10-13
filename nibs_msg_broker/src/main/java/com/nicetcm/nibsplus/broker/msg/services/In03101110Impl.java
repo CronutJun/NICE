@@ -143,7 +143,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
              [새마을금고] 이거나 20080403
              [대구은행] 이거나 20090811
              현금 잔액이 없는 경우는 장전금액에서 계산해 준다.
-             [경남은행] 시재조회출처구분이 '1'(ATMS 인경우도)
+             [경남은행] 시재조회출처구분이 '1'(ATMS 인경우도) --> 경남은행은 무조건 장전금액에서 계산하도록 2014.10.06
 
              if( strcmp(suBody.cash_remain_amt, "" ) == 0 )
             ***************************************************************************************************/
@@ -151,7 +151,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
             if(parsed.getString("cash_remain_amt").equals("") ||
                MsgBrokerConst.KFCC_CODE.equals(parsed.getString("CM.org_cd")) ||
                MsgBrokerConst.DGB_CODE.equals(parsed.getString("CM.org_cd")) ||
-            (  MsgBrokerConst.KNATMS_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("inq_source").equals("1") )) {
+            (  MsgBrokerConst.KNATMS_CODE.equals(parsed.getString("CM.org_cd")) /* && parsed.getString("inq_source").equals("1")*/) ) {
 
                 parsed.setLong("cash_remain_amt", 0);
                 /**************************************************************************************************

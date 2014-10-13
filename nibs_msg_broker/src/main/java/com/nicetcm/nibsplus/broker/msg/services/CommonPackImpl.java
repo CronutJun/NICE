@@ -249,7 +249,7 @@ public class CommonPackImpl implements CommonPack {
      */
     public void checkBranchMacLength( TMacInfo MacInfo ) throws Exception {
 
-        String sBrchCd, sMacNo;
+        String sBrchCd = "", sMacNo = "";
         logger.debug("Calling CheckBranchMacLength");
         if( !MacInfo.getOrgCd().equals(MsgBrokerConst.KBST_CODE) ) {
             TCmCommonSpec spec = new TCmCommonSpec();
@@ -269,17 +269,21 @@ public class CommonPackImpl implements CommonPack {
             int iMacLen = Integer.parseInt(rslt.get(0).getCdNm2());
 
             logger.debug("BrchCd[0] = {}, iBranchLen = {}, iMacLen = {}", MacInfo.getBranchCd(), iBranchLen, iMacLen);
-            if( MacInfo.getBranchCd().length() > 0 && MacInfo.getBranchCd().length() < iBranchLen ) {
-                sBrchCd = String.format("%" + iBranchLen + "s", MacInfo.getBranchCd());
+            if( MacInfo.getBranchCd() != null ) {
+                if( MacInfo.getBranchCd().length() > 0 && MacInfo.getBranchCd().length() < iBranchLen ) {
+                    sBrchCd = String.format("%" + iBranchLen + "s", MacInfo.getBranchCd());
+                }
+                else if( MacInfo.getBranchCd().length() >= iBranchLen ) {
+                    sBrchCd = MacInfo.getBranchCd().substring(MacInfo.getBranchCd().length() - iBranchLen, MacInfo.getBranchCd().length() );
+                }
             }
-            else {
-                sBrchCd = MacInfo.getBranchCd().substring(MacInfo.getBranchCd().length() - iBranchLen, MacInfo.getBranchCd().length() );
-            }
-            if( MacInfo.getMacNo().length() > 0 && MacInfo.getMacNo().length() < iMacLen ) {
-                sMacNo = String.format("%" + iMacLen + "s", MacInfo.getMacNo());
-            }
-            else {
-                sMacNo = MacInfo.getMacNo().substring(MacInfo.getMacNo().length() - iMacLen, MacInfo.getMacNo().length() );
+            if( MacInfo.getMacNo() != null ) {
+                if( MacInfo.getMacNo().length() > 0 && MacInfo.getMacNo().length() < iMacLen ) {
+                    sMacNo = String.format("%" + iMacLen + "s", MacInfo.getMacNo());
+                }
+                else if( MacInfo.getMacNo().length() >= iMacLen ) {
+                    sMacNo = MacInfo.getMacNo().substring(MacInfo.getMacNo().length() - iMacLen, MacInfo.getMacNo().length() );
+                }
             }
             MacInfo.setBranchCd(sBrchCd);
             MacInfo.setMacNo(sMacNo);

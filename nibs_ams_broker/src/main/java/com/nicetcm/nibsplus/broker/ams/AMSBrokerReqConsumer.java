@@ -69,9 +69,11 @@ public class AMSBrokerReqConsumer extends Thread {
 
     private void acceptJob(AMSBrokerReqJob reqJob) throws Exception {
         try {
+            logger.debug("acceptJob");
             AMSBrokerReqInfo reqInfo = new AMSBrokerReqInfo();
 
             reqMsg.reqMsgHandle( amsSafeData, reqJob, reqInfo );
+            logger.debug("after reqMsgHandle, reqJob timeout = {}", reqJob.getTimeOut() );
 
             try {
                 AMSBrokerClient client = AMSBrokerClient.getInstance( reqInfo.getDestIP(), reqInfo.getDestPort(), reqJob );

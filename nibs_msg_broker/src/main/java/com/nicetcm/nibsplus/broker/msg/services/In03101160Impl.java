@@ -105,9 +105,13 @@ public class In03101160Impl extends InMsgHandlerImpl {
 
             tFnAddCashRealtimeMapper.updateBySpecSelective(tFnAddCashRealtime, tFnAddCashRealtimeSpec);
 
-        } else if(parsed.getString("addcash_type").equals("R") && MsgBrokerConst.NONGH_CODE.equals(parsed.getString("CM.org_cd"))) {
-            /* 농협 실시간 추가현송일 경우에는 별도의 테이블에 송신 플레그를 update 해 준다. */
-            /* 송신플레그에 오류코드를 넣어준다. 성공일 경우 '00' */
+        }
+        /* 농협 실시간 추가현송일 경우에는 별도의 테이블에 송신 플레그를 update 해 준다. */
+        /* 송신플레그에 오류코드를 넣어준다. 성공일 경우 '00' */
+        /* 경남은행도 농협과 같이 실시간 테이블에서 실시간으로 전송 추가 (익일배치 삭제)2014.10.04
+        단 경남은행은 배치 없이 모두 실시간 이므로... */
+        else if( (parsed.getString("addcash_type").equals("R") && parsed.getString("CM.org_cd").equals(MsgBrokerConst.NONGH_CODE))
+              ||  (!parsed.getString("addcash_type").equals("B") && parsed.getString("CM.org_cd").equals(MsgBrokerConst.KNATMS_CODE)) ) {
 
             TFnAtmsAddNhReport tFnAtmsAddNhReport = new TFnAtmsAddNhReport();
             tFnAtmsAddNhReport.setOrgSendYn(parsed.getString("CM.ret_cd"));

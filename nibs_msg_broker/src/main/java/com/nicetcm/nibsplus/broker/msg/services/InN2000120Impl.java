@@ -113,7 +113,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         IDX_HW_ENCODE_MAC,      /* 10- 암호화장비       */
         IDX_HW_CASHIN,          /* 11- 지폐미수취       */
         IDX_HW_T_MONEY,         /* 12- T-Money 모듈상태 */
-         DX_HW_DONGGLEI,        /* 13- 동글이           */
+        IDX_HW_DONGGLEI,        /* 13- 동글이           */
         IDX_HW_DVR_ERR,         /* 14- 화상카메라       */
         IDX_HW_INPUT_CHECK,     /* 15- 수표입금부       */
         IDX_HW_OUT_CHECK,       /* 16- 수표출금부       */
@@ -355,11 +355,12 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                          * 2007.02.23 DVR 장애 관제는 하지 않으나 조건조회에서 조회 가능하도록 발생과 동시에 복구 처리 - 운총요청
                          */
                     ||  enumNHME.name().equals("IDX_HW_DVR_ERR"         )    /* 14 DVR   */
-                    ||  enumNHME.name().equals("IDX_HW_INPUT_CHECK"     )    /* 15- 수표입금부        */
-                    ||  enumNHME.name().equals("IDX_HW_OUT_CHECK"       )    /* 16- 수표출금부        */
+                    ||  enumNHME.name().equals("IDX_HW_INPUT_CHECK"     )    /* 15- 수표입금부         */
+                    ||  enumNHME.name().equals("IDX_HW_OUT_CHECK"       )    /* 16- 수표출금부         */
                     ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_50000" )    /* 17- 오만원입금함       */
                     ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_100000")    /* 18- 십만원입금함       */
-                    ||  enumNHME.name().equals("IDX_HW_REMAIN_MONEY"    ) ) {/* 19- 지폐잔류         */
+                    ||  enumNHME.name().equals("IDX_HW_RPC"             )    /* 19- RPC                */
+                    ||  enumNHME.name().equals("IDX_HW_REMAIN_MONEY"    ) ) {/* 20- 지폐잔류           */
                        if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
                            errBasic.setErrorCd( saNiceErrState[enumNHME.ordinal()] );
                            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
@@ -687,12 +688,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                      * 2006.11.17 DVR 장애 관제 하지 않음 .. 무시
                      * 2007.02.23 DVR 장애 관제는 하지 않으나 조건조회에서 조회 가능하도록 발생과 동시에 복구 처리 - 운총요청
                      */
-                ||  enumNHME.name().equals("IDX_HW_DVR_ERR"         )    /* 14 DVR   */
-                ||  enumNHME.name().equals("IDX_HW_INPUT_CHECK"     )    /* 15- 수표입금부        */
-                ||  enumNHME.name().equals("IDX_HW_OUT_CHECK"       )    /* 16- 수표출금부        */
+                ||  enumNHME.name().equals("IDX_HW_DVR_ERR"         )    /* 14 DVR                 */
+                ||  enumNHME.name().equals("IDX_HW_INPUT_CHECK"     )    /* 15- 수표입금부         */
+                ||  enumNHME.name().equals("IDX_HW_OUT_CHECK"       )    /* 16- 수표출금부         */
                 ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_50000" )    /* 17- 오만원입금함       */
                 ||  enumNHME.name().equals("IDX_HW_INPUT_BOX_100000")    /* 18- 십만원입금함       */
-                ||  enumNHME.name().equals("IDX_HW_REMAIN_MONEY"    ) ) {/* 19- 지폐잔류         */
+                ||  enumNHME.name().equals("IDX_HW_RPC"             )    /* 19- RPC                */
+                ||  enumNHME.name().equals("IDX_HW_REMAIN_MONEY"    ) ) {/* 20- 지폐잔류           */
                     errBasic.setErrorCd( saNiceErrState[enumNHME.ordinal()] );
                     if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
                                         .substring(0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR)

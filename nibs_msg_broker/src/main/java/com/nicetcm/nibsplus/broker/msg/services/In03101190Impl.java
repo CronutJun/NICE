@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
@@ -71,6 +72,7 @@ public class In03101190Impl extends InMsgHandlerImpl {
                 }
 
                 msgTX.commit(safeData.getTXS());
+                safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
                 logger.info( "[T_FN_ATMS_DEMAND_MAC] - 이전 추가 현송 미 전송분  Update OK" );
             }
 
@@ -83,7 +85,6 @@ public class In03101190Impl extends InMsgHandlerImpl {
                 throw e;
             }
 
-            msgTX.commit(safeData.getTXS());
             logger.info( "[T_FN_ATMS_DEMAND_MAC2] Update OK" );
 
         } else {
@@ -98,7 +99,6 @@ public class In03101190Impl extends InMsgHandlerImpl {
                 throw e;
             }
 
-            msgTX.commit(safeData.getTXS());
             logger.info( "[T_FN_ATMS_OPERFUNDS_DEMAND1] Update OK" );
 
         }//endif
