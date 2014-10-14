@@ -13,7 +13,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtManyErrorMngSpec;
 
 /**
  *
- * 동시다발장애 출동요청 등답처리 - 기기사
+ * 동시다발장애 출동요청 응답처리 - 기기사
  * <pre>
  * MngEM_AP_SaveGuardManyErr( pRecvData, nLen );
  * </pre>
