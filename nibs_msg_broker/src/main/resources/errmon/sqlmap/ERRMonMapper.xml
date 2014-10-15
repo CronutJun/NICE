@@ -107,25 +107,25 @@
 			AND   MAC.SITE_CD = SITE1.SITE_CD
 			AND   CAL.STD_DATE = TO_CHAR( SYSDATE, 'YYYYMMDD' ) 
 			AND   (
-			          (     SITE.OPER_TYPE = '1100'   /* 시간내 */
-			            AND CAL.HOLIDAY_YN = '0'    /* 토,일, 공유일을 제외한 평일 만운영 */
+			          (     SITE.OPER_TYPE = '1100'   -- 시간내
+			            AND CAL.HOLIDAY_YN = '0'    -- 토,일, 공유일을 제외한 평일 만운영
 			            AND   to_char(sysdate,'hh24mi') BETWEEN decode( site.oper_start_time, '2400', '2359', site.oper_start_time)
 			                                and decode( site.oper_end_time, '2400', '2359', site.oper_end_time)
 			          )
 			       OR
-			          (     SITE.OPER_TYPE <> '1100'   /* 시간내 이외*/
-			            AND (   (    CAL.real_HOLIDAY_YN = '1'    /* 토,일, 공유일 */
+			          (     SITE.OPER_TYPE <> '1100'   -- 시간내 이외
+			            AND (   (    CAL.real_HOLIDAY_YN = '1'    -- 토,일, 공유일
 			                     AND to_char(sysdate,'hh24mi') BETWEEN decode( site1.h_oper_start_time, '2400', '2359', site1.h_oper_start_time)
 			                                and decode( site1.h_oper_end_time, '2400', '2359', site1.h_oper_end_time)
 			                     )
-			                  OR (    CAL.REAL_HOLIDAY_YN = '0'    /* 평일 */
+			                  OR (    CAL.REAL_HOLIDAY_YN = '0'    -- 평일
 			                     AND to_char(sysdate,'hh24mi') BETWEEN decode( site.oper_start_time, '2400', '2359', site.oper_start_time)
 			                                and decode( site.oper_end_time, '2400', '2359', site.oper_end_time)
 			                     )
 			                 )     
 			          )
 			      )
-			and   /* 운영중단일자 및 운영중단시간 체크 */    
+			and   -- 운영중단일자 및 운영중단시간 체크     
 			    (
 			        (    site.not_oper_start_date is null
 			         and site.not_oper_end_date is null
@@ -154,12 +154,6 @@
 			from t_ct_open 
 			where org_cd = #{orgCd}
             and open_date = TO_CHAR( SYSDATE, 'YYYYMMDD')
-            /* 동양종금 개국 신호가 00시 05분에 대부분 수신됨에 따라 시간 변경 20120304 
-            and open_time >= (case  when org_cd = '0DJ' THEN  '003000'
-                              ELSE  '000000'
-                              END
-                              )
-			*/
 			and open_time >= (case  when org_cd = '0DJ' THEN  '000500'
                               ELSE  '000000'
                               END

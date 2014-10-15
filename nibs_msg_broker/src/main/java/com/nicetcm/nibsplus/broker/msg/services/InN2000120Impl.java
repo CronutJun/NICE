@@ -201,16 +201,6 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             throw e;
         }
 
-        /*
-         * 점주관리 기기의 경우 t_ct_nice_mng에만 저장하고 장애 발생 하지 않는다.
-         * 점주관리 기기는 dept_cd like '3%' 인 기기
-         * 2014.04.02
-         */
-        if( macInfo.getDeptCd().substring(0, 1).equals("3") ) {
-            logger.info( "점주관리기기-[{}] skip", parsed.getString("mac_no") );
-            return;
-        }
-
         errBasic.setCreateDate( parsed.getInt("create_date") );                       /*  발생시간        */
         errBasic.setCreateTime( parsed.getString("create_time") );                    /*  발생시간        */
         errBasic.setOrgCd( macInfo.getOrgCd() );                                      /*  기관코드        */
@@ -232,6 +222,42 @@ public class InN2000120Impl extends InMsgHandlerImpl {
 
         byte[] retErrState = comPack.getCurrentErrorState( errState );
         logger.info(" CUR_ERROR_LIST[{}]", errState.getErrorStates() );
+
+        /*
+         * 점주관리 기기의 경우 t_ct_nice_mng에만 저장하고 장애 발생 하지 않는다.
+         * 2014.04.02
+         * 점주관리 기기라도 문열림(상판열림)은 장애 발생시키도록 함. 2014.06.30
+         * 점주관리 기기의 기기정보 저장을 위해 개국신호는 처리하도록 함. 금진선과장 요청 2014.08.28
+         */
+        /*
+         *  점주관리 기기이면서 개국전문이라면 아래 일반 CD-VAN 개국 프로세스를 타도록 한다.
+         */
+         if( macInfo.getStoreKeeperYn().equals("1")
+         &&  !parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_START) ) {
+             /*
+              *  회선장애 전문이 아닌경우 즉 상태전문인 경우에 작업모드가 아닌 문열림 상태만 발생/복구 처리
+              */
+             /*
+              *  점주모드 suBody.atm_monitor[IDX_MON_TERM_MODE] == '5' 인경우도 상판열림 장애 발생시킴
+              */
+             if( !parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_LINE_ERR)
+             &&  !parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_TERM_MODE.ordinal(), EnumNM.IDX_MON_TERM_MODE.ordinal()+1).equals("1") ) {
+
+                 errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_OPENDOOR_ERROR );
+
+                 if( parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_OPEN_DOOR.ordinal(), EnumNM.IDX_MON_OPEN_DOOR.ordinal()+1).equals(MsgBrokerConst.NICE_NORMAL)
+                 ||  parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_OPEN_DOOR.ordinal(), EnumNM.IDX_MON_OPEN_DOOR.ordinal()+1).equals(MsgBrokerConst.NICE_NO_SET) ) {
+                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
+                             errNoti, errCall, errTxn, macInfo, retErrState );
+                 }
+                 else {
+                     comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                 }
+             }
+
+             logger.info( "점주관리기기-[%s] skip", parsed.getString("mac_no") );
+             return;
+         }
 
         /*
          * 개시전문

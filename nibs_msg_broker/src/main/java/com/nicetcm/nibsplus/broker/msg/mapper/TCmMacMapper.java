@@ -506,8 +506,8 @@ public interface TCmMacMapper {
     int updateByPrimaryKey(TCmMac record);
 
     /**
-     * Mac Info select (기기정보 Select)
-     *           
+     * Mac Info select (기기정보 Select1)
+     *
      * @created Tue Jun 24 17:20:03 KST 2014 by K.D.J
      */
     @Select({
@@ -560,11 +560,77 @@ public interface TCmMacMapper {
         @Result(column="FDEPT_CD", property="fdeptCd", jdbcType=JdbcType.VARCHAR ),
         @Result(column="FOFFICE_CD", property="fofficeCd", jdbcType=JdbcType.VARCHAR )
     })
-    TMacInfo selectMacInfo(TMacInfo cond);
+    TMacInfo selectMacInfo1(TMacInfo cond);
+
+    /**
+     * Mac Info select2 (기기정보 Select2)
+     *
+     * @created Tue Oct 15 16:25:03 KST 2014 by K.D.J
+     */
+    @Select({
+        "SELECT  M.SITE_CD,                                ",
+        "        /*M.branch_cd,*/                          ",
+        "        M.MAC_NM,                                 ",
+        "        M.MAC_MODEL,                              ",
+        "        M.MADE_COM_CD,                            ",
+        "        S.DEPT_CD,                                ",
+        "        S.OFFICE_CD,                              ",
+        "        S.TEAM_CD,                                ",
+        "        CASE WHEN M.MAC_VER IS NOT NULL           ",
+        "            THEN RTRIM(M.MAC_VER)                 ",
+        "            ELSE 'NULL'                           ",
+        "        END AS MAC_VER,                           ",
+        "        CASE WHEN M.SERIAL_NO IS NOT NULL         ",
+        "            THEN RTRIM(M.SERIAL_NO)               ",
+        "            ELSE 'NULL'                           ",
+        "        END AS SERIAL_NO,                         ",
+        "        M.CHECK_YN,                               ",
+        "        M.AS_ACPT_YN,                             ",
+        "        M.OPEN_DATE,                              ",
+        "        M.CLOSE_DATE,                             ",
+        "        M.mac_grade,                              ",
+        "        M.mac_address,                            ",
+        "        NM.rpc_yn,                                ",
+        "        NM.modem_relay_yn,                        ",
+        "        S.FDEPT_CD,                               ",
+        "        S.FOFFICE_CD                              ",
+        "FROM    T_CM_MAC      M,                          ",
+        "        T_CM_SITE     S,                          ",
+        "        T_CT_NICE_MAC NM                          ",
+        "WHERE   M.MAC_NO    = #{macNo, jdbcType=VARCHAR}  ",
+        "AND     M.BRANCH_CD = '9600'                      ",
+        "AND     M.ORG_CD    = '096'                       ",
+        "AND     M.ORG_CD    = S.ORG_CD                    ",
+        "AND     M.JIJUM_CD  = S.JIJUM_CD                  ",
+        "AND     M.SITE_CD   = S.SITE_CD                   ",
+        "AND     M.ORG_CD    = NM.ORG_CD                   ",
+        "AND     M.JIJUM_CD  = NM.JIJUM_CD                 ",
+        "AND     M.MAC_NO    = NM.MAC_NO                   "
+    })
+    @Results({
+        @Result(column="SITE_CD", property="siteCd", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="MAC_NM", property="macNm", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="MAC_MODEL", property="macModel", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="MADE_COM_CD", property="madeComCd", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="DEPT_CD", property="deptCd", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="OFFICE_CD", property="officeCd", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="TEAM_CD", property="teamCd", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="MAC_VER", property="macVer", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="SERIAL_NO", property="serialNo", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="CHECK_YN", property="checkYn", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="AS_ACPT_YN", property="asAcptYn", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="OPEN_DATE", property="openDate", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="CLOSE_DATE", property="closeDate", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="MAC_GRADE", property="macGrade", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="MAC_ADDRESS", property="macAddress", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="FDEPT_CD", property="fdeptCd", jdbcType=JdbcType.VARCHAR ),
+        @Result(column="FOFFICE_CD", property="fofficeCd", jdbcType=JdbcType.VARCHAR )
+    })
+    TMacInfo selectMacInfo2(TMacInfo cond);
 
     /**
      * Join select#1
-     * 
+     *
      *
      * @created Tue Jun 24 17:20:03 KST 2014 by K.D.J
      */
@@ -588,5 +654,5 @@ public interface TCmMacMapper {
         @Result(column="MAC_NO", property="macNo", jdbcType=JdbcType.VARCHAR, id=true)
     })
     TCmMac selectByJoin1(TCmMacCond cond);
-    
+
 }

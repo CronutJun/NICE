@@ -54,6 +54,7 @@ import com.nicetcm.nibsplus.broker.msg.mapper.TCtOpenMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtOrgSiteChangeMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtUnfinishMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnSendReportMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnStorekeeperMacInfoMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCommon;
@@ -94,6 +95,8 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtOrgSiteChange;
 import com.nicetcm.nibsplus.broker.msg.model.TCtUnfinish;
 import com.nicetcm.nibsplus.broker.msg.model.TFnSendReport;
 import com.nicetcm.nibsplus.broker.msg.model.TFnSendReportCond;
+import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfoKey;
+import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
@@ -121,16 +124,12 @@ public class CommonPackImpl implements CommonPack {
     @Autowired private TCtErrorTxnMapper       errTxnMap;
     @Autowired private TCtMacSetMngMapper      macSetMngMap;
     @Autowired private TCtOrgSiteChangeMapper  orgSiteChangeMap;
-
     @Autowired private TCtNiceMacMapper        niceMacMap;
-
     @Autowired private TCtUnfinishMapper       unfinishMap;
-
     @Autowired private TFnSendReportMapper     fnSRptMap;
-
     @Autowired private TMiscMapper             miscMap;
-
     @Autowired private TCtErrorMngMapper       ctErrorMngMap;
+    @Autowired private TFnStorekeeperMacInfoMapper   fnStorekeeperMacInfoMap;
 
     /**
      *
@@ -379,7 +378,11 @@ public class CommonPackImpl implements CommonPack {
 
         TCmMac cmMac = null;
 
-        if( MacInfo.getOrgCd().equals(MsgBrokerConst.CS_CODE) && MacInfo.getBranchCd().length() == 0 ) {
+        /*
+         * 신세계 첼시 회선장애의 경우 점번을 호스트에서 알 수 없으므로 유니크한 기번으로 점번을 가져 온다.
+         */
+        if( MacInfo.getOrgCd().equals(MsgBrokerConst.CS_CODE)
+        && (MacInfo.getBranchCd() == null || MacInfo.getBranchCd().length() == 0) ) {
             TCmMacKey macKey = new TCmMacKey();
             macKey.setOrgCd( MacInfo.getOrgCd() );
             macKey.setBranchCd( MacInfo.getBranchCd() );
@@ -391,12 +394,21 @@ public class CommonPackImpl implements CommonPack {
             }
         }
 
-        TMacInfo macInfo = cmMacMap.selectMacInfo( MacInfo );
+        /*
+         * CD_VAN 은 T_CT_NICE_MAC도 함께 조회 2014.05.20
+         * 점주 관리 기기의 경우 등록되어 있는 dept_cd 대신 t_fn_storekeeper_mac_info에
+         * mapping 되어 있는 지사 정보로 저장 될 수 있도록 한다. 2014.07.07
+         */
+        TMacInfo macInfo = null;
+        if( MacInfo.getOrgCd().equals(MsgBrokerConst.NICE_CODE) )
+            macInfo = cmMacMap.selectMacInfo2( MacInfo );
+        else
+            macInfo = cmMacMap.selectMacInfo1( MacInfo );
         if( macInfo == null ) {
             TCmMacNo macNo = new TCmMacNo();
             macNo.setOrgCd(MacInfo.getOrgCd());
             macNo.setBranchCd(MacInfo.getBranchCd());
-            macNo.setMacNo("9999");
+            macNo.setMacNo(MacInfo.getMacNo());
             try {
                 cmMacNoMap.insert(macNo);
             }
@@ -414,27 +426,54 @@ public class CommonPackImpl implements CommonPack {
                 throw e;
             }
         }
-        else {
-            MacInfo.setSiteCd(macInfo.getSiteCd());
-            MacInfo.setMacNm(macInfo.getMacNm());
-            MacInfo.setMacModel(macInfo.getMacModel());
-            MacInfo.setMadeComCd(macInfo.getMadeComCd());
-            MacInfo.setDeptCd(macInfo.getDeptCd());
-            MacInfo.setOfficeCd(macInfo.getOfficeCd());
-            MacInfo.setTeamCd(macInfo.getTeamCd());
-            MacInfo.setFdeptCd(macInfo.getFdeptCd());
-            MacInfo.setFofficeCd(macInfo.getFofficeCd());
-            MacInfo.setSiteNm(macInfo.getSiteNm());
-            MacInfo.setSerialNo(macInfo.getSerialNo());
-            MacInfo.setCheckYn(macInfo.getCheckYn());
-            MacInfo.setAsAcptYn(macInfo.getAsAcptYn());
-            MacInfo.setOpenDate(macInfo.getOpenDate());
-            MacInfo.setCloseDate(macInfo.getCloseDate());
-            MacInfo.setMacGrade(macInfo.getMacGrade());
-            MacInfo.setMacAddress(macInfo.getMacAddress());
-            MacInfo.setRpcYn(macInfo.getRpcYn());
-            MacInfo.setModelRelayYn(macInfo.getModelRelayYn());
+
+        MacInfo.setStoreKeeperYn("0");
+
+        /*
+         *  점주관리 기기라면 매핑테이블의 정보로 수정
+         */
+        if( macInfo.getDeptCd().substring(0,1).equals("8") )  {
+            TFnStorekeeperMacInfoKey skmiKey = new TFnStorekeeperMacInfoKey();
+            skmiKey.setOrgCd( macInfo.getOrgCd() );
+            skmiKey.setBranchCd( macInfo.getBranchCd() );
+            skmiKey.setMacNo( macInfo.getMacNo() );
+
+            MacInfo.setStoreKeeperYn( "1" );
+
+            try {
+                TFnStorekeeperMacInfo skmi = fnStorekeeperMacInfoMap.selectByPrimaryKey( skmiKey );
+                if( skmi == null ) {
+                    logger.info( "점주관리 정보 데이터 없음 mac_no[{}]", macInfo.getMacNo() );
+                    throw new Exception( String.format("점주관리 정보 데이터 없음 mac_no[%s]", macInfo.getMacNo()) );
+                }
+                macInfo.setDeptCd( skmi.getDeptCd() );
+                macInfo.setOfficeCd( skmi.getOfficeCd() );
+            }
+            catch( Exception e ) {
+                logger.info( "점주관리 정보 검색 실패  mac_no[{}]", macInfo.getMacNo() );
+                throw e;
+            }
         }
+
+        MacInfo.setSiteCd(macInfo.getSiteCd());
+        MacInfo.setMacNm(macInfo.getMacNm());
+        MacInfo.setMacModel(macInfo.getMacModel());
+        MacInfo.setMadeComCd(macInfo.getMadeComCd());
+        MacInfo.setDeptCd(macInfo.getDeptCd());
+        MacInfo.setOfficeCd(macInfo.getOfficeCd());
+        MacInfo.setTeamCd(macInfo.getTeamCd());
+        MacInfo.setFdeptCd(macInfo.getFdeptCd());
+        MacInfo.setFofficeCd(macInfo.getFofficeCd());
+        MacInfo.setSiteNm(macInfo.getSiteNm());
+        MacInfo.setSerialNo(macInfo.getSerialNo());
+        MacInfo.setCheckYn(macInfo.getCheckYn());
+        MacInfo.setAsAcptYn(macInfo.getAsAcptYn());
+        MacInfo.setOpenDate(macInfo.getOpenDate());
+        MacInfo.setCloseDate(macInfo.getCloseDate());
+        MacInfo.setMacGrade(macInfo.getMacGrade());
+        MacInfo.setMacAddress(macInfo.getMacAddress());
+        MacInfo.setRpcYn(macInfo.getRpcYn());
+        MacInfo.setModelRelayYn(macInfo.getModelRelayYn());
     }
 
     /**
