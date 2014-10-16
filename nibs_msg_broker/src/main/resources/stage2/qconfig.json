@@ -102,7 +102,6 @@
      { "name" : "ATMS.005.H.Q",                  "kname" : "외환은행"                    },
      { "name" : "ATMS.011.H.Q",                  "kname" : "농협"                        },
      { "name" : "ATMS.020.H.Q",                  "kname" : "우리은행ATMS"                },
-     { "name" : "ATMS.022.H.Q",                  "kname" : "우리/경남은행"               },
      { "name" : "ATMS.023.H.Q",                  "kname" : "SC은행"                      },
      { "name" : "ATMS.027.H.Q",                  "kname" : "씨티은행"                    },
      { "name" : "ATMS.031.H.Q",                  "kname" : "대구은행"                    },

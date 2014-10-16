@@ -405,11 +405,12 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNiceTranRec.setOriginDealDate( parsed.getString("origin_deal_date") );
         fnNiceTranRec.setOriginDealNo( parsed.getString("origin_deal_no") );
         fnNiceTranRec.setCalcDate( parsed.getString("calc_date") );
+        fnNiceTranRec.setArpcFault( parsed.getString("arpc_fault") );
 
         /*
          * 입금시 취소 나 미완료가 들어왔을경우 오류처리(입금은 정상과 거절만 있다. 20051201 BY B.H.J
          */
-        if( fnNiceTranRec.getDealTimeType().equals("1") ) {
+        if( fnNiceTranRec.getDealType().equals("1") ) {
             if( fnNiceTranRec.getDealStatus().equals("1") || fnNiceTranRec.getDealStatus().equals("2") ) {
                 logger.info("입금업무에 취소/미완료가 들어옴[{}][{}]",
                         ret.prevDealStatus, fnNiceTranRec.getDealStatus() );
@@ -419,11 +420,184 @@ public class InN1000100Impl extends InMsgHandlerImpl {
             }
         }
 
+        /*
+         * 20070215 개인신용정보조회 추가로 인해 기관코드 N1 혹은 N2로 수신된 것은
+         * NC(한신정) 로 변환해서 저장 해 주도록 한다.
+         * HOST에 2개의 라인으로 들어와 처리되나 ntms에서는 하나의 기관으로 저장
+         * 개설기관코드 변환
+         */
+        if( fnNiceTranRec.getInstOrgCd().equals("0N1") || fnNiceTranRec.getInstOrgCd().equals("0N2") ) {
+            fnNiceTranRec.setInstOrgCd("0NC");
+        }
+        /*
+         *  결재기관코드 변환
+         */
+        if( fnNiceTranRec.getOrgCd().equals("0N1") || fnNiceTranRec.getOrgCd().equals("0N2") ) {
+            fnNiceTranRec.setOrgCd("0NC");
+        }
+
+
         try {
             fnNiceTranMap.insert( fnNiceTranRec );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {
+                /*
+                 *  2014.02.06 기업은행 입금처리 시 기관에서 응답이 늦게 들어오는 경우를 체크 하기 위해
+                 *  ADMIS_ORG 를 사용하기로 함. BY 이재원
+                 *  기관응답 없이 정상건으로 선 수신 시 admis_org = 'N',
+                 *  이후 기관 응답이 들어 오게 되면 다시 정상건으로 admis_org = 'B'로 저장 해야 함.
+                 *  기존에 정상건 두번 수신시 무시 하던 부분 수정
+                 */
+                TFnNiceTran prevNiceTran = null;
+                try {
+                    prevNiceTran = fnNiceTranMap.selectByCond1( fnNiceTranRec );
+                    if( prevNiceTran == null ) {
+                        throw new Exception("T_FN_NICE_TRAN NO_DATA_FOUND");
+                    }
+                }
+                catch( Exception e ) {
+                    logger.info(">>> [NiceTranProc] 기거래건 검색실패 DEAL_STATUS [{}]", e.getLocalizedMessage());
+                    throw e;
+                }
+                /*
+                 *  입금시 거절->정상으로 들어왔을경우 Skip 하도록 추가 20051201 BY B.H.J
+                 */
+                if( fnNiceTranRec.getDealType().equals("1") ) {
+                    if( fnNiceTranRec.getDealStatus().equals("0") ) {
+                        if( prevNiceTran.getDealStatus().equals("0") ) {
+                            /*
+                             *  기기내 잔액 계산에 영향을 미칠 수 있으므로 admis_org 만 update 하고
+                             *  return -999 로 처리 하여 이후 프로세스 진행 하지 않도록 함
+                             */
+                            /*
+                             *  거절 시에는 계좌번호가 없다가 정상 거래에만 있는 경우를 위해 계좌번호도
+                             *  저장하도록 수정
+                             */
+                            /*
+                             *  나이스승인('N') -> 기관승인('B') 로 들어온 정상거래의 경우
+                             *  먼저 들어온 계좌번호를 유지하고,
+                             *  ADMIS_ORG_CD와 REAL_ACCOUNT_NO 만 두번째 수신 데이터로 UPDATE 이기섭과장 확인 2014.08.19
+                             */
+                            if( prevNiceTran.getAdmisOrg().equals("N") && fnNiceTranRec.getAdmisOrg().equals("B") ) {
+                                try {
+                                    fnNiceTranMap.updateByCond1( fnNiceTranRec );
+                                    logger.debug("AdmimsOrgCd Update OK!!!");
+                                }
+                                catch( Exception e ) {
+                                    logger.info( "AdmisOrgCd Update Error [{}]", e.getLocalizedMessage() );
+                                }
+                            }
+                            else {
+                                    logger.info("같은 정상Data가 또 들어왔음[{}][{}]",
+                                                        prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
+                            }
+
+                            throw new MsgBrokerException(-999);
+                        }
+
+                        /*
+                         *  거절->정상 시 계좌번호 부분 저장
+                         */
+                        if( prevNiceTran.getDealStatus().equals("3") ) {
+                            try {
+                                fnNiceTranMap.updateByCond2( fnNiceTranRec );
+                                logger.info("ACCOUNT NO Update OK!!!");
+                            }
+                            catch( Exception e ) {
+                                logger.info( "ACCOUNT NO Update Error [{}]", e.getLocalizedMessage() );
+                            }
+                            return;
+                        }
+                    }
+                }
+                /*
+                 *  이체거래시 deal_status = '2'미완료 -> '0' 또는 '3'(거절) 은 update
+                 */
+                /*
+                 *  이체거래시 '0' 또는 '3' -> '2' skip     2007/08/24 이재원대리 요청
+                 */
+                else if( fnNiceTranRec.getDealType().equals("4") ) {
+                    if( fnNiceTranRec.getDealStatus().equals("0") ) {
+                        if( prevNiceTran.getDealStatus().equals("0") ) {
+                            logger.info( "같은 정상Data가 또 들어왔음[{}][{}]",
+                                    prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
+                            throw new MsgBrokerException(-999);
+                        }
+                    }
+                    else if( fnNiceTranRec.getDealStatus().equals("2") ) {
+                        if( prevNiceTran.getDealStatus().equals("0") || prevNiceTran.getDealStatus().equals("3") ) {
+                            logger.info("prev[{}] curr[{}] Skip...",
+                                    prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
+                            return;
+                        }
+                    }
+                }
+                /*
+                 *  deal_type == '5'(신용정보조회, 공과금납부,티켓발권) 인경우
+                 *  같은 정상Data 수신이외의 모든 데이터 update
+                 *  전자상품권 판매의 경우 일반 출금과 같은 패턴으로 처리하게 함(else 부분에서
+                 */
+                else if( fnNiceTranRec.getDealType().equals("5") && !fnNiceTranRec.getDealClss().equals("5710") ) {
+                    if( fnNiceTranRec.getDealStatus().equals("0") ) {
+                        if( prevNiceTran.getDealStatus().equals("0") ) {
+                            logger.info( "같은 정상Data가 또 들어왔음[{}][{}]",
+                                    prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
+                            throw new MsgBrokerException(-999);
+                        }
+                    }
+                }
+                else {
+                    if( fnNiceTranRec.getDealStatus().equals("0") ) {
+                        if( prevNiceTran.getDealStatus().equals("0") ) {
+                            logger.info( "같은 정상Data가 또 들어왔음[{}][{}]",
+                                    prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
+                            throw new MsgBrokerException(-999);
+                        }
+                        logger.info( "prev[{}] curr[{}] Skip...",
+                                prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
+
+                        /*
+                         *  뒤늦게 정상이 들어오는 경우는 호스트에서 순서가 뒤바뀐 것이므로 skip 처리 해야 하나
+                         *  정상 전문에만있는 계좌번호 부분만 따로 저장하도록 수정. 2014.04.23
+                         */
+                        try {
+                            fnNiceTranMap.updateByCond2( fnNiceTranRec );
+                            logger.debug("ACCOUNT NO Update OK!!!");
+                        }
+                        catch( Exception e ) {
+                            logger.info( "ACCOUNT NO Update Error [{}]", e.getLocalizedMessage() );
+                        }
+
+                        return;
+                    }
+                    else if( fnNiceTranRec.getDealStatus().equals("2") ) {
+                        if( prevNiceTran.getDealStatus().equals("1") || prevNiceTran.getDealStatus().equals("3") ) {
+                            logger.info("prev[{}] curr[{}] Skip...",
+                                    prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
+                            return;
+                        }
+                    }
+                }
+                /*
+                 * 기존 데이터 즉 원 데이터에 계좌번호가 존재했으나 취소 거래 등 뒤늦게 들어온 거래에
+                 * 계좌번호 필드가 없이 들어오는경우 (-> 계좌번호 보안 때문에 호스트에서 지워서 들어옴)
+                 * 기존 데이터의 계좌번호를 null로 update 하지 않도록 하기 위해 비교하여 update 함
+                 */
+                if( prevNiceTran.getAccountNo() != null && prevNiceTran.getAccountNo().length() > 0
+                &&  prevNiceTran.getAccountNo().equals(fnNiceTranRec.getAccountNo()) ) {
+                    fnNiceTranRec.setInstBranchCd( prevNiceTran.getInstBranchCd() );
+                    fnNiceTranRec.setAccountNo( prevNiceTran.getAccountNo() );
+                }
+                if( prevNiceTran.getRealAccountNo() != null && prevNiceTran.getRealAccountNo().length() > 0
+                &&  prevNiceTran.getRealAccountNo().equals(fnNiceTranRec.getRealAccountNo()) ) {
+                    fnNiceTranRec.setRealAccountNo( prevNiceTran.getRealAccountNo() );
+                }
+                if( prevNiceTran.getRealAccountNo() != null && prevNiceTran.getRealAccountNo().length() > 0
+                &&  prevNiceTran.getRealAccountNo().equals(fnNiceTranRec.getTransAccountNo()) ) {
+                    fnNiceTranRec.setTransBranchCd( prevNiceTran.getTransBranchCd() );
+                    fnNiceTranRec.setTransAccountNo( prevNiceTran.getTransAccountNo() );
+                }
                 fnNiceTranMap.updateByPrimaryKeySelective( fnNiceTranRec );
             }
             catch ( Exception e ) {
@@ -435,6 +609,36 @@ public class InN1000100Impl extends InMsgHandlerImpl {
             logger.info( ">>> [InsertUpdateNiceTran] (T_FN_NICE_TRAN) INSERT ERROR [{}]", e.getMessage() );
             throw e;
         }
+        logger.info("DealType[{}]",    fnNiceTranRec.getDealType()   );
+        logger.info("DealStatus[{}]",  fnNiceTranRec.getDealStatus() );
+        logger.info("deal_type[{}]",   parsed.getString("deal_type")   );
+        logger.info("deal_status[{}]", parsed.getString("deal_status") );
+
+        /*
+         *  전자상품권 판매 데이터가 정상 일 경우 승인번호를 고객에게 SMS 전송 처리
+         */
+        if( parsed.getString("deal_type").equals("55710") && parsed.getString("deal_status").equals("0") ) {
+            String sMsg = String.format("거래일련번호[%s]-쿠폰번호[%s]-쿠폰승인번호[%s]", parsed.getString("deal_no"), parsed.getString("gift_seq_no"),
+                    parsed.getString("join_org_deal_no") );
+            logger.info( "[T_FN_NICE_TRAN] {}", sMsg );
+            TMisc data = new TMisc();
+            data.setTelNo( parsed.getString("real_account_no") );
+            data.setSendMsg( sMsg );
+            splMap.sendSMS(data);
+        }
+        /*
+         *  전자상품권 결제취소 전문이 들어오면 고객에서 취소안내 SMS 전송 처리
+         */
+        else if( parsed.getString("deal_type").equals("55700") && parsed.getString("deal_status").equals("1") ) {
+            String sMsg = String.format("취소완료.거래일련번호[%s]-쿠폰번호[%s]-쿠폰승인번호[%s]", parsed.getString("deal_no"), parsed.getString("gift_seq_no"),
+                    parsed.getString("join_org_deal_no") );
+            logger.info( "[T_FN_NICE_TRAN] {}", sMsg );
+            TMisc data = new TMisc();
+            data.setTelNo( parsed.getString("real_account_no") );
+            data.setSendMsg( sMsg );
+            splMap.sendSMS(data);
+        }
+
     }
 
     private void updateFNMacProc( MsgBrokerData safeData, MsgParser parsed, String prevDealStatus, int upInFlag, int n0KKyn ) throws Exception {
