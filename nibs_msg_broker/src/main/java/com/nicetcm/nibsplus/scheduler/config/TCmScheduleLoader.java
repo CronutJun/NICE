@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.io.InputStream;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -65,13 +66,10 @@ public class TCmScheduleLoader {
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static final String EXCEL_FILE_NAME;
     private final String TABLE_NAME;
     private static HSSFWorkbook WB;
 
-    static {
-        EXCEL_FILE_NAME = "D:\\Project_NIBS\\Workspace_new_nibsplus\\nibs_msg_broker_NEW_SVN\\src\\main\\resources\\scheduler\\properties\\OP.T_CM_SCHEDULE.local.xls";
-    }
+    private static String EXCEL_FILE_NAME = "/scheduler/properties/OP.T_CM_SCHEDULE.local.xls";
 
     private final int firstDataNum = 2;
 
@@ -86,11 +84,17 @@ public class TCmScheduleLoader {
     public static void main(String[] args) {
         FileInputStream fis = null;
         POIFSFileSystem fs = null;
+        InputStream is = null;
 
         try {
-
-            fis = new FileInputStream(EXCEL_FILE_NAME);
-            fs = new POIFSFileSystem(fis);
+            if( args.length > 0 ) {
+                fis = new FileInputStream(args[0]);
+                fs = new POIFSFileSystem(fis);
+            }
+            else {
+                is = TCmScheduleLoader.class.getResourceAsStream(TCmScheduleLoader.EXCEL_FILE_NAME);
+                fs = new POIFSFileSystem(is);
+            }
             WB = new HSSFWorkbook(fs);
 
             Connection conn = null;
@@ -135,7 +139,10 @@ public class TCmScheduleLoader {
             e.printStackTrace();
         } finally {
             try {
-                fis.close();
+                if( args.length > 0 )
+                    fis.close();
+                else
+                    is.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -163,34 +170,24 @@ public class TCmScheduleLoader {
 
         sbInsert.append(" INSERT INTO " + TABLE_NAME + " ( ");
 
-        int i = 0;
-        for(String column : columnList) {
-
-
+        for(int i = 0; i<columnList.size(); i++) {
             if(i == columnList.size() - 1) {
-                sbInsert.append(" " + column + " ");
+                sbInsert.append(" " + columnList.get(i) + " ");
             } else {
-                sbInsert.append(" " + column + ", ");
+                sbInsert.append(" " + columnList.get(i) + ", ");
             }
-
-            i++;
         }
 
         sbInsert.append(" ) ");
         sbInsert.append(" VALUES ( ");
 
-        int j = 0;
-        for(String column : columnList) {
-
-
+        for(int j = 0; j<columnList.size(); j++) {
             if(j == columnList.size() - 1) {
                 //sbInsert.append(" :" + column + " ");
                 sbInsert.append(" " + "?" + " ");
             } else {
                 sbInsert.append(" " + "?" + ", ");
             }
-
-            j++;
         }
 
         sbInsert.append(" ) ");

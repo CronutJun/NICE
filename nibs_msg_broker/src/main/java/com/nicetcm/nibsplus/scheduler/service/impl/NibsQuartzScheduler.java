@@ -18,8 +18,6 @@ import org.quartz.TriggerListener;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.scheduler.common.SchduleException;
@@ -110,8 +108,8 @@ public class NibsQuartzScheduler implements ScheduleExecuter
                 Trigger trigger = TriggerBuilder
                                 .newTrigger()
                                 .withIdentity(schedulerVO.getJobName(), schedulerVO.getJobGroup())
-                                //.withSchedule(CronScheduleBuilder.cronSchedule(schedulerVO.getCronExpression()))
-                                .withSchedule(CronScheduleBuilder.cronSchedule("* * * * * ?"))
+                                .withSchedule(CronScheduleBuilder.cronSchedule(schedulerVO.getCronExpression()))
+                                //.withSchedule(CronScheduleBuilder.cronSchedule("* * * * * ?"))
                                 .build();
 
                 scheduler.scheduleJob(jobA, trigger);
@@ -147,55 +145,6 @@ public class NibsQuartzScheduler implements ScheduleExecuter
         }
 
         logger.info("스케쥴 로딩 완료");
-    }
-
-    private static ApplicationContext addAndGetApplicationContext(ApplicationContext applicationContext, String[] locations) {
-        ClassPathXmlApplicationContext newClassPathXmlApplicationContext = new ClassPathXmlApplicationContext(applicationContext);
-
-
-        if(locations != null && locations.length > 0) {
-            newClassPathXmlApplicationContext.setConfigLocations(locations);
-        }
-
-        newClassPathXmlApplicationContext.refresh();
-
-        return newClassPathXmlApplicationContext;
-    }
-
-    /**
-     *
-     * Nibs Quartz Scheduler Main
-     * <pre>
-     * Nibs Quartz Scheduler를 CMD에서 실행
-     * 필수 VM인자: -DQUARTZ_NODE_NAME=고유명
-     * </pre>
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-
-        try
-        {
-            logger.info("Nibs Quartz Scheduler를 시작 합니다.");
-
-            ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:scheduler/spring/context-scheduler.xml");
-
-
-            ScheduleExecuter scheduleExecuter = applicationContext.getBean("NibsQuartzScheduler", ScheduleExecuter.class);
-            scheduleExecuter.startSchedule();
-
-            logger.info("Nibs Quartz Scheduler를 [정상적] 으로 실행 되었습니다.");
-
-
-        } catch (SchduleException e)
-        {
-            //e.printStackTrace();
-            logger.error(e.getMessage());
-            logger.error("Nibs Quartz Scheduler를 [비정상적] 으로 종료 되었습니다.");
-            System.exit(-1);
-        } finally {
-
-        }
     }
 
 }

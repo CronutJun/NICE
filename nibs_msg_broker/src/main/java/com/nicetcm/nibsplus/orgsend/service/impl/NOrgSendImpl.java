@@ -58,8 +58,8 @@ public class NOrgSendImpl implements NOrgSendService
     private OrgSend orgSend;
 
 
-    //@Resource(name= "MsgRmiTransfer")
-    @Resource(name= "MsgLocalTransfer")
+    @Resource(name= "MsgRmiTransfer")
+    //@Resource(name= "MsgLocalTransfer")
     private MsgTransferService msgTransferService;
 
 

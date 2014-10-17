@@ -80,8 +80,8 @@ public class ERRMonServiceImpl implements ERRMonService {
 	private void exec5Min() {
 		logger("checkCnt 2 : " + checkCnt + "\n");
 		
-		SimpleDateFormat dateFmt = new SimpleDateFormat("HHMISS");
-		int lCurrTime = Integer.parseInt(dateFmt.format(Calendar.getInstance()));
+		SimpleDateFormat dateFmt = new SimpleDateFormat("HHmmss");
+		int lCurrTime = Integer.parseInt(dateFmt.format(Calendar.getInstance().getTime()));
 		String hRealHolyYn = null;
 
 		if ( niceTranPickErrorProc() < 0 ) {
@@ -222,7 +222,7 @@ public class ERRMonServiceImpl implements ERRMonService {
 		
 		for (HashMap<String, Object> obj : list) {
 			try {
-				niceTranErrorSendProc( 10, (String)obj.get("mac_no"));
+				niceTranErrorSendProc( 10, (String)obj.get("MAC_NO"));
 			} catch(Exception e) {
 				logger( "NiceTranICNotranErrorProc Error !!!\n" );
 				fnCleanup(-1);
@@ -245,6 +245,7 @@ public class ERRMonServiceImpl implements ERRMonService {
 		
 		for (HashMap<String, Object> obj : list) {
 			errMonMapper.updateNiceEemptySensorRepairProc(obj);
+			errMonMapper.updateNiceEemptySensorRepairProc2(obj);
 		}
 		
 		return 0;
@@ -262,6 +263,7 @@ public class ERRMonServiceImpl implements ERRMonService {
 
 		for (HashMap<String, Object> obj : list) {
 			errMonMapper.updateNiceCashLackRepairProc(obj);
+			errMonMapper.updateNiceCashLackRepairProc2(obj);
 		}
 		
 		return 0;
@@ -275,6 +277,17 @@ public class ERRMonServiceImpl implements ERRMonService {
 	 * 
 	 */
 	private int niceDoorCheckErrorProc() {
+		List<String> list = errMonMapper.selectNiceDoorCheckErrorProc();
+		
+		for (String mapNo : list) {
+			try {
+				niceTranErrorSendProc( 15, mapNo );
+			} catch(Exception e) {
+				logger( "N05 NiceDoorCheckErrorProc Error !!!\n" );
+				fnCleanup(-1);
+			}
+		}
+		
 		return 0;
 	}
 	
@@ -302,10 +315,10 @@ public class ERRMonServiceImpl implements ERRMonService {
 			list = errMonMapper.selectSHCashLackErrorProc();
 			
 			for (HashMap<String, Object> obj : list) {
-				orgCd = obj.get("org_cd").toString();
-				branchCd = obj.get("branch_cd").toString();
-				macNo = obj.get("mac_cd").toString();
-				szMsg = "[현재시재-" + obj.get("remain_amt").toString() + "원]";
+				orgCd = obj.get("ORG_CD").toString();
+				branchCd = obj.get("BRANCH_CD").toString();
+				macNo = obj.get("MAC_CD").toString();
+				szMsg = "[현재시재-" + obj.get("REMAIN_AMT").toString() + "원]";
 				
 				try {
 					atmESErrorSendProc( orgCd, branchCd, macNo, "NE999", szMsg, "1" );
@@ -322,10 +335,10 @@ public class ERRMonServiceImpl implements ERRMonService {
 			list = errMonMapper.selectSHCashLackErrorProc2();
 			
 			for (HashMap<String, Object> obj : list) {
-				orgCd = obj.get("org_cd").toString();
-				branchCd = obj.get("branch_cd").toString();
-				macNo = obj.get("mac_cd").toString();
-				szMsg = obj.get("org_msg").toString() + "[현재시재-" + obj.get("remain_amt").toString() + "원]";
+				orgCd = obj.get("ORG_CD").toString();
+				branchCd = obj.get("BRANCH_CD").toString();
+				macNo = obj.get("MAC_CD").toString();
+				szMsg = obj.get("ORG_MSG").toString() + "[현재시재-" + obj.get("REMAIN_AMT").toString() + "원]";
 
 				try {
 					atmESErrorSendProc( orgCd, branchCd, macNo, "NE999", szMsg, "1" );
@@ -360,9 +373,9 @@ public class ERRMonServiceImpl implements ERRMonService {
 		String macNo, dealType;
 		
 		for (HashMap<String, Object> obj : list) {
-			macNo = obj.get("mac_no").toString();
-			dealType = obj.get("deal_type").toString();
-			atmDealNo = obj.get("atm_deal_no").toString();
+			macNo = obj.get("MAC_NO").toString();
+			dealType = obj.get("DEAL_TYPE").toString();
+			atmDealNo = obj.get("ATM_DEAL_NO").toString();
 			
 			if (prevMacNo != null && prevMacNo.equals(macNo)) {
 				/* 새로운 기기 list로 넘어가면 이전 기기의 마지막 정상출금 atm_deal_no 혹은	*/
@@ -452,8 +465,8 @@ public class ERRMonServiceImpl implements ERRMonService {
 		int shortCashStatus;
 		
 		for (HashMap<String, Object> obj : list) {
-			macNo = obj.get("mac_no").toString();
-			shortCashStatus = (Integer)obj.get("short_cash_status");
+			macNo = obj.get("MAC_NO").toString();
+			shortCashStatus = (Integer)obj.get("SHORT_CASH_STATUS");
 
 			if ( shortCashStatus == -1 ) {
 				/* 기준금액 없음 장애 발생 */
@@ -553,17 +566,17 @@ public class ERRMonServiceImpl implements ERRMonService {
 		
 		for (HashMap<String, Object> obj : list) {
 			macNo = obj.get("MAC_NO").toString();
-			toDayWeek = (Integer)obj.get("TO_DAY_WEEK");
-			naryWeek[0] = (Integer)obj.get("NO_TRADE_SUN");
-			naryWeek[1] = (Integer)obj.get("NO_TRADE_MON");
-			naryWeek[2] = (Integer)obj.get("NO_TRADE_TUE");
-			naryWeek[3] = (Integer)obj.get("NO_TRADE_WED");
-			naryWeek[4] = (Integer)obj.get("NO_TRADE_THU");
-			naryWeek[5] = (Integer)obj.get("NO_TRADE_FRI");
-			naryWeek[6] = (Integer)obj.get("NO_TRADE_SAT");
-			noTradeBase = (Integer)obj.get("NO_TRADE_BASE");
-			totNoTrade = (Integer)obj.get("TOT_NO_TRADE");
-			oneOperTime = (Integer)obj.get("ONE_OPER_TIME");
+			toDayWeek = Integer.parseInt(obj.get("TO_DAY_WEEK").toString());
+			naryWeek[0] = Integer.parseInt(obj.get("NO_TRADE_SUN").toString());
+			naryWeek[1] = Integer.parseInt(obj.get("NO_TRADE_MON").toString());
+			naryWeek[2] = Integer.parseInt(obj.get("NO_TRADE_TUE").toString());
+			naryWeek[3] = Integer.parseInt(obj.get("NO_TRADE_WED").toString());
+			naryWeek[4] = Integer.parseInt(obj.get("NO_TRADE_THU").toString());
+			naryWeek[5] = Integer.parseInt(obj.get("NO_TRADE_FRI").toString());
+			naryWeek[6] = Integer.parseInt(obj.get("NO_TRADE_SAT").toString());
+			noTradeBase = Integer.parseInt(obj.get("NO_TRADE_BASE").toString());
+			totNoTrade = Integer.parseInt(obj.get("TOT_NO_TRADE").toString());
+			oneOperTime = Integer.parseInt(obj.get("ONE_OPER_TIME").toString());
 			
 			for (int i=0; i<7; i++) {
 				/* 전체 무거래 시간이 하루 운영 시간을 초과할경우
@@ -779,7 +792,7 @@ public class ERRMonServiceImpl implements ERRMonService {
             @Override
             public void doPreCallBroker(MsgParser parsed, Object empty) throws Exception {
             	SimpleDateFormat dateFmt = new SimpleDateFormat("YYYYMMDDHHMISS");
-            	String curDate = dateFmt.format(Calendar.getInstance());
+            	String curDate = dateFmt.format(Calendar.getInstance().getTime());
 
             	// memcpy( suSendHead.org_cd		, org_cd , LEN_ORG_CD );
             	// memcpy( suSendHead.ret_cd_src	, " " , 1 );
@@ -845,7 +858,7 @@ public class ERRMonServiceImpl implements ERRMonService {
             @Override
             public void doPreCallBroker(MsgParser parsed, String params) throws Exception {
             	SimpleDateFormat dateFmt = new SimpleDateFormat("YYYYMMDDHHMISS");
-            	String curDate = dateFmt.format(Calendar.getInstance());
+            	String curDate = dateFmt.format(Calendar.getInstance().getTime());
             	
             	/*
             	memcpy( suSendHead.org_cd		, "096" , 3 );

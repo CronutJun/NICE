@@ -1,0 +1,14 @@
+DECLARE 
+  PDATE VARCHAR2(200);
+
+BEGIN 
+  SELECT TO_CHAR(SYSDATE,'YYYYMMDD')
+  INTO PDATE
+  FROM DUAL;
+
+  NIBS.sp_fn_sendplan_reform ( PDATE );
+  COMMIT; 
+END; 
+
+/
+EXIT;

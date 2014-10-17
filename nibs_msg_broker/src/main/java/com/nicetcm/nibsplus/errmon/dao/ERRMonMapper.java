@@ -74,6 +74,7 @@ public interface ERRMonMapper {
 	 * @param obj
 	 */
 	public void updateNiceCashLackRepairProc(HashMap<String, Object> obj);
+	public void updateNiceCashLackRepairProc2(HashMap<String, Object> obj);
 
 	/**
 	 * 여기에 메소드(한글)명.
@@ -105,6 +106,7 @@ public interface ERRMonMapper {
 	 * @param obj
 	 */
 	public void updateNiceEemptySensorRepairProc(HashMap<String, Object> obj);
+	public void updateNiceEemptySensorRepairProc2(HashMap<String, Object> obj);
 
 	/**
 	 * 여기에 메소드(한글)명.
@@ -160,6 +162,8 @@ public interface ERRMonMapper {
 	 * @return
 	 */
 	public List<HashMap<String, Object>> selectNiceTranRepairErrorProc(@Param("orgCd") String horgcd, @Param("branchCd") String hbranchcd, @Param("cashOut")String cashOut);
+	
+	public List<String> selectNiceDoorCheckErrorProc();
 
 	/**
 	 * 여기에 메소드(한글)명.

@@ -7,9 +7,13 @@
  */
 package com.nicetcm.nibsplus.errmon.main;
 
+import java.io.IOException;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerMain;
 import com.nicetcm.nibsplus.errmon.service.ERRMonService;
 
 /**
@@ -24,11 +28,9 @@ import com.nicetcm.nibsplus.errmon.service.ERRMonService;
  */
 public class ERRMonMain {
 	
-	public static void main(String[] args) throws InterruptedException {
-	    String[] springConfig  =
-	        {   "classpath:/filemng/spring/context-filemng.xml",
-	            "classpath:/filemng/spring/context-filemng-casherJob.xml"
-	        };
+	public static void main(String[] args) throws InterruptedException, IOException {
+	    String springConfig  = "classpath:/errmon/spring/context-errmon.xml";
+    	MsgCommon.msgProps.load(MsgBrokerMain.class.getResourceAsStream("/uat/msg.properties"));
 
 	    ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
 	    ERRMonService errMonService = (ERRMonService)context.getBean("errMonService");

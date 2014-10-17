@@ -42,6 +42,7 @@ import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorTxnMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtRemoteHistoryMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorCustInfoMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmSiteMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnArpcFaultMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorRcpt;
@@ -66,6 +67,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCustInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 import com.nicetcm.nibsplus.broker.msg.model.TCmSite;
 import com.nicetcm.nibsplus.broker.msg.model.TCmSiteKey;
+import com.nicetcm.nibsplus.broker.msg.model.TFnArpcFault;
 
 
 @Service("inN2000120")
@@ -84,6 +86,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
     @Autowired private TCtRemoteHistoryMapper remoteHistoryMap;
     @Autowired private TCtErrorCustInfoMapper errCustInfoMap;
     @Autowired private TCmSiteMapper cmSiteMap;
+    @Autowired private TFnArpcFaultMapper fnArpcFaultMap;
+
 
     private static final int CNT_CASH_BOX = 4; /* 총 지폐함 수 */
 
@@ -1056,6 +1060,26 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         niceMng.setNetS( parsed.getString("network_info") );      /* 통신망 */
         niceMng.setStat( parsed.getString("atm_state") );         /* 상태 */
 
+        /*
+         *  2014.09.29 ARPC 오류 처리 저장 추가
+         */
+        if( parsed.getString("arpc_fault_dealno").length() > 0 ) {
+            TFnArpcFault fnArpcFault = new TFnArpcFault();
+            fnArpcFault.setDealYear( parsed.getString("create_date").substring(0, 4) );
+            fnArpcFault.setDealDate(  parsed.getString("create_date") );
+            fnArpcFault.setDealNo( parsed.getString("arpc_fault_dealno") );
+            try {
+                fnArpcFaultMap.insertSelective( fnArpcFault );
+            }
+            catch( Exception e ) {
+                logger.info( "T_FN_ARPC_FAULT[DEAL_NO=%{}] Insert 오류 ... 정상진행..", parsed.getString("arpc_fault_dealno") );
+            }
+        }
+        /*
+         * NET_S 가 608인 경우 처리 방법 변경
+         * 일자 기준으로 최종 데이타가 608인 상태이고
+         * 새로운 데이타가 608이라면 이 데이타는 버린다
+         */
         if( niceMng.getNetS().equals(MsgBrokerConst.NICE_STATE_LINE_ERR) ) {
             TCtNiceMng rsltNiceMng;
             try {

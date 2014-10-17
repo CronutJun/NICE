@@ -1,0 +1,2 @@
+exec pkg_fn_KNAtms_DemandManager.sp_KNAtms_batchProcess;
+exit;

@@ -115,9 +115,9 @@ public class In01000130Impl extends InMsgHandlerImpl {
         errBasic.setMidErrorCd( parsed.getString("mid_error_cd") );
         errBasic.setMadeErrCd( parsed.getString("error_mtc_cd") );
         errBasic.setCrtNo( parsed.getString("crt_no") );
-        errBasic.setOrgCallCnt( Double.parseDouble(Integer.toString(parsed.getInt("org_call_cnt"))) );
+        errBasic.setOrgCallCnt( parsed.getLong("org_call_cnt") );
 
-        errMngMadeCom.setOrgCallCnt( Short.parseShort(Integer.toString(parsed.getInt("org_call_cnt"))) );
+        errMngMadeCom.setOrgCallCnt( parsed.getShort("org_call_cnt") );
         errMngMadeCom.setMtcCd( errBasic.getCrtNo() );
 
         /**
@@ -147,9 +147,9 @@ public class In01000130Impl extends InMsgHandlerImpl {
         /**
          * 신한은행 ATMS의 경우 출동요청 차수를 기관 메모에 보여주도록 한다.
          */
-        //if( errBasic.getOrgCallCnt() > 0 ) {
-        //    errBasic.setOrgMsg( errBasic.getOrgMsg() + String.format("요청차수[%s]", errBasic.getOrgCallCnt()) );
-        //}
+        if( errBasic.getOrgCallCnt() > 0 ) {
+            errBasic.setOrgMsg( errBasic.getOrgMsg() + String.format("요청차수[%s]", errBasic.getOrgCallCnt()) );
+        }
 
         if( parsed.getString("req_visit_date").trim().length() > 0 ) {
             errBasic.setOrgMsg(  errBasic.getOrgMsg() + String.format("방문요청일시[%s-", parsed.getString("req_visit_date")) );

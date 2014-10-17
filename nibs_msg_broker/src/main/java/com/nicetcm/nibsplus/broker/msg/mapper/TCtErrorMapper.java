@@ -202,24 +202,35 @@ public interface TCtErrorMapper {
         @Result(column = "GROUP_ERROR_CD", property = "groupErrorCd", jdbcType = JdbcType.VARCHAR),
         @Result(column = "GUARD_YN", property = "guardYn", jdbcType = JdbcType.CHAR) })
     TCtError selectByJoin1(TCtErrorCond cond);
- 
+
     /**
      * CommonPackImpl.getAutoSendInfo 에서 호출
      *
      * @author KDJ, on Tue Jul 02 17:02:00 KST 2014
      */
     @Select({
-        "SELECT  AUTO_SEND_YN,           /* 자동통보유무*/                                                ",
-        "        DECODE(#{orgCd,jdbcType=VARCHAR}, '096',                                                 ",
-        "          DECODE(#{errorCd,jdbcType=VARCHAR}, 'NI101',                                           ",
-        "            DECODE(#{macGrade,jdbcType=VARCHAR}, 'A',  20, WAIT_TIME1), WAIT_TIME1), WAIT_TIME1) ",
-        "        AS WAIT_TIME1,          /* 자동통보 대기시간 */                                          ",
-        "        ERROR_MOT_YN,                                                                            ",
-        "        GROUP_ERROR_CD,                                                                          ",
-        "        GUARD_YN                /* 경비사 통보 여부 */                                           ",
-        "FROM    OP.T_CT_ERROR                                                                            ",
-        "WHERE   ORG_CD      = #{orgCd, jdbcType=VARCHAR}                                                 ",
-        "AND     ERROR_CD    = #{errorCd, jdbcType=VARCHAR}                                               "
+        "SELECT  AUTO_SEND_YN,     /* 자동통보유무*/                                                                                     ",
+        "        DECODE(#{orgCd,jdbcType=VARCHAR}, '096',                                                                                ",
+        "          DECODE(#{errorCd,jdbcType=VARCHAR}, 'NI101',                                                                          ",
+        "            DECODE(#{macGrade,jdbcType=VARCHAR}, 'A',  20, WAIT_TIME1),                                                         ",
+        "            'NI912',                                                                                                            ",
+        "              DECODE(#{macGrade,jdbcType=VARCHAR},'A', WAIT_TIME1, 'S', WAIT_TIME1,                                             ",
+        "                      CASE                                                                                                      ",
+        "                      WHEN TO_CHAR(SYSDATE, 'HH24') >= '22' THEN                                                                ",
+        "                           ROUND((TO_DATE(TO_CHAR(SYSDATE + 2, 'YYYYMMDD')||'080000', 'YYYYMMDDHH24MISS') - SYSDATE) * 24*60)   ",
+        "                      WHEN TO_CHAR(SYSDATE, 'HH24') < '08' THEN                                                                 ",
+        "                           ROUND((TO_DATE(TO_CHAR(SYSDATE + 1, 'YYYYMMDD') || '080000', 'YYYYMMDDHH24MISS') - SYSDATE) * 24*60) ",
+        "                      ELSE 24*60                                                                                                ",
+        "                      END),                                                                                                     ",
+        "            WAIT_TIME1 ),                                                                                                       ",
+        "          WAIT_TIME1)                                                                                                           ",
+        "        AS WAIT_TIME, /* 자동통보 대기시간 */                                                                                   ",
+        "        ERROR_MOT_YN,                                                                                                           ",
+        "        GROUP_ERROR_CD,                                                                                                         ",
+        "        GUARD_YN  /* 경비사 통보 여부 */                                                                                        ",
+        "FROM    OP.T_CT_ERROR                                                                                                           ",
+        "WHERE   ORG_CD      = #{orgCd, jdbcType=VARCHAR}                                                                                ",
+        "AND     ERROR_CD    = #{errorCd, jdbcType=VARCHAR}                                                                              "
     })
     @Results({
         @Result(column = "AUTO_SEND_YN", property = "autoSendYn", jdbcType = JdbcType.CHAR),
@@ -228,5 +239,5 @@ public interface TCtErrorMapper {
         @Result(column = "GROUP_ERROR_CD", property = "groupErrorCd", jdbcType = JdbcType.VARCHAR),
         @Result(column = "GUARD_YN", property = "guardYn", jdbcType = JdbcType.CHAR) })
     TCtError selectByCond1(TCtErrorCond cond);
-    
+
 }

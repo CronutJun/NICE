@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F.%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="root" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="/Project_NIBS/logs_batch/filemng_root.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+        <!-- <filter class="com.skylife.ots.foundation.log.SqlFilter"></filter> -->
+    </appender>
+
+    <appender name="sqltime" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="/Project_NIBS/logs_batch/filemng_sqltime.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="filemng" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="file" value="/Project_NIBS/logs_batch/filemng_app.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="com.nicetcm.nibsplus.filemng">
+        <level value="debug" />
+        <appender-ref ref="filemng"/>
+    </logger>
+
+    <logger name="org.springframework.integration.samples.ftp">
+        <level value="debug" />
+        <appender-ref ref="filemng"/>
+    </logger>
+
+
+    <logger name="com.bogogt">
+        <level value="info" />
+    </logger>
+
+    <logger name="java.sql">
+        <level value="info" />
+    </logger>
+
+    <logger name="org.springframework">
+        <level value="info" />
+    </logger>
+
+    <logger name="org.apache.activemq" >
+        <level value="warn" />
+    </logger>
+
+    <logger name="jdbc.resultsettable" additivity="false">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="jdbc.audit" additivity="false">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="jdbc.resultset" additivity="false">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="jdbc.sqltiming" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="sqltime"/>
+    </logger>
+
+    <logger name="jdbc.connection" additivity="false">
+        <level value="WARN" />
+    </logger>
+
+    <root>
+        <priority value="info" />
+        <appender-ref ref="root"/>
+        <appender-ref ref="consoleAppender"/>
+    </root>
+
+</log4j:configuration>

@@ -53,7 +53,7 @@
       { "name" : "origin_deal_date",       "kname" : "원거래일자",             "type" : "N",   "length" :  16 },
       { "name" : "origin_deal_no",         "kname" : "원거래 거래고유번호",    "type" : "AN",  "length" :  24 },
       { "name" : "calc_date",              "kname" : "정산일자",               "type" : "N",   "length" :  16 },
-      { "name" : "arpc_fault",             "kname" : "ARPC 오류 상태 - 예외승인 = '2'", "type" : "N",   "length" :   1 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 110 }
+      { "name" : "arpc_fault",             "kname" : "ARPC 오류 상태 - 예외승인 = '2'", "type" : "N",   "length" :   2 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 220 }
    ]
 }

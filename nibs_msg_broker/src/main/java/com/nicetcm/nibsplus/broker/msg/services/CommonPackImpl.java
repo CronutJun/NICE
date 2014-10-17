@@ -583,24 +583,36 @@ public class CommonPackImpl implements CommonPack {
             else {
                 ErrNoti.setSendStatus("0");
                 /*
-                 * 외주 수분 후 자동 통보
+                 * 나이스 현금부족(기준금액)-NI912 면서 대기 시간이 24시간 이상 이라면
+                 * send_type = '9'로 2014.08.06 bhj
                  */
-                if( retASI.guardSite == 1 ) {
-                    ErrNoti.setSendType("6");
+                if( ErrBasic.getErrorCd().equals("NI912") && retASI.waitTime >= 24*60 ) {
+                    ErrNoti.setSendType( "9" );
+                    ErrBasic.setOrgMsg(ErrBasic.getOrgMsg().trim() + "==>등급관리 기기로 24시간 이후 통보예정 ");
                 }
-                /*
-                 * NICE 수분 후 자동 통보
-                 */
                 else {
-                    ErrNoti.setSendType("1");
+                    /*
+                     * 외주 수분 후 자동 통보
+                     */
+                    if( retASI.guardSite == 1 ) {
+                        ErrNoti.setSendType("6");
+                    }
+                    /*
+                     * NICE 수분 후 자동 통보
+                     */
+                    else {
+                        ErrNoti.setSendType("1");
+                    }
                 }
                 sSendTypeDetail = "1";
             }
 
             /*
              * 나이스 장애중 22시 이후 오전 8시 이전 데이타는 대기후 자동통보로 변경한다.
+             * 위에서 계산한 send_type = '9'는 조건에서 뺀다.
              */
             if( ErrBasic.getOrgCd().equals( MsgBrokerConst.NICE_CODE )
+            &&  !ErrNoti.getSendType().equals("9")
             &&  ( ErrRcpt.getAcceptTime().compareTo("220000") >= 0
               ||  ErrRcpt.getAcceptTime().compareTo("080000") < 0 )) {
                 ErrNoti.setSendStatus("0");
@@ -1139,9 +1151,11 @@ public class CommonPackImpl implements CommonPack {
                  *  농협 신 상태전문이 아닌 타기관 전문일경우 처리
                  *  농협일경우에는 기존 장애 여부를 위에서 체크하므로 해당 장애 코드를 복구 처리
                  *  출동알림의 경우는 기본 상태필드 atm_state 가 아닌 FILLER 추가부분을 사용하므로 따로 처리
+                 *   KIOS 의 경우도 기존장애 체크 하지 않도록 2014.06.30
                  */
                 else if( !ErrBasic.getOrgCd().equals(MsgBrokerConst.NONGH_CODE)
-                      &&  !ErrBasic.getOrgCd().equals(MsgBrokerConst.ALARM_CODE) ) {
+                      &&  !ErrBasic.getOrgCd().equals(MsgBrokerConst.ALARM_CODE)
+                      &&  !ErrBasic.getOrgCd().equals(MsgBrokerConst.KIOSK_HP_CODE) ) {
                     int i = 0;
                     for( i = 0 ; i < saAtmErrorList.length; i++ ) {
                         if( ErrBasic.getErrorCd().length() > 0 && ErrBasic.getErrorCd().equals(saAtmErrorList[i]) ) {
@@ -1822,6 +1836,13 @@ public class CommonPackImpl implements CommonPack {
 
         }
         else {
+            /*
+             *  회선장애 이면서 'A'등급이라면 20분 나머지는 'T_CT_ERROR' 에 정의된데로
+             */
+            /*
+             *  현금부족(기준금액) 장애 이면서 브랜드제휴기기가 아니고  'A', 'S'가 아닌 경우는 대기시간 24시간으로 설정
+             *  이 때 24시간 이후 시간이 22~08시 사이 이면 08시 이후 시간으로 추가 산정 2014.08.05
+             */
             errCond.setOrgCd( ErrBasic.getOrgCd() );
             errCond.setErrorCd( ErrBasic.getErrorCd() );
             errCond.setMacGrade( MacInfo.getMacGrade() );

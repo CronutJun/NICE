@@ -2,20 +2,26 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
     xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:util="http://www.springframework.org/schema/util"
-    xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:lang="http://www.springframework.org/schema/lang"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.2.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd"
->
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
     <!-- 환경설정파일 로딩 -->
 
     <!-- 개발자 Local-PC 환경 -->
-    <beans profile="">
-        <util:properties id="config" location="classpath:/scheduler/properties/context-scheduler.local.properties" />
+    <beans profile="local">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/scheduler/properties/context-scheduler.local.properties</value>
+    			</list>
+    		</property>
+    	</bean>
 
         <!-- Log4j 설정 -->
         <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -29,9 +35,15 @@
         </bean>
     </beans>
 
-    <!-- DEV 환경 -->
+    <!-- DEV 환경 -Dspring.profiles.active=dev -->
     <beans profile="dev">
-        <util:properties id="config" location="classpath:/scheduler/properties/context-scheduler.dev.properties" />
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/scheduler/properties/context-scheduler.dev.properties</value>
+    			</list>
+    		</property>
+    	</bean>
 
         <!-- Log4j 설정 -->
         <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -40,6 +52,50 @@
             <property name="arguments">
                 <list>
                     <value>classpath:scheduler/properties/context-scheduler-log4j.dev.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- stage1 환경 -Dspring.profiles.active=stage1 -->
+    <beans profile="stage1">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/scheduler/properties/context-scheduler.stage.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:scheduler/properties/context-scheduler-log4j.stage.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- stage2 환경 -Dspring.profiles.active=stage2 -->
+    <beans profile="stage2">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/scheduler/properties/context-scheduler.stage.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:scheduler/properties/context-scheduler-log4j.stage.xml</value>
                 </list>
             </property>
         </bean>
@@ -80,23 +136,14 @@
 
         <bean id="sqlSessionFactory_OP" class="org.mybatis.spring.SqlSessionFactoryBean">
             <property name="dataSource" ref="dataSource_OP"></property>
-            <property name="configLocation" value="classpath:scheduler/mybatis/mybatis-config.xml"></property>
-            <property name="mapperLocations" value="classpath*:scheduler/sqlmap/**/*.xml"></property>
+            <property name="configLocation" value="classpath:/scheduler/mybatis/mybatis-config.xml"></property>
+            <property name="mapperLocations" value="classpath:/scheduler/sqlmap/**/*.xml"></property>
         </bean>
 
         <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
             <property name="basePackage" value="com.nicetcm.nibsplus.scheduler" />
             <!-- <property name="annotationClass" value="com.kt.pdfbill.foundation.annotation.DatasourceIM" /> -->
             <property name="sqlSessionFactory" ref="sqlSessionFactory_OP" />
-        </bean>
-
-        <!-- rmi service -->
-        <bean class="org.springframework.remoting.rmi.RmiServiceExporter"
-            p:service-ref="NibsRmiScheduleExecuter"
-            p:serviceName="NibsRmiScheduleExecuter"
-            p:serviceInterface="com.nicetcm.nibsplus.scheduler.service.RemoteScheduleExecuter"
-            p:alwaysCreateRegistry="true">
-            <property name="registryPort"><value>#{config['execute.rmi.registry.port']}</value></property>
         </bean>
     </beans>
 </beans>

@@ -126,6 +126,18 @@ public class TCtErrorBasicMiscProvider {
                  + "         SUBSTR(ERROR_CD, 4, 2) IN ('10', '11', '12'))  \n"
                  + "     OR (ERROR_CD = 'WR409')                            \n"
                  + "    )                                                   \n";
+        else if( basic.getOrgCd().equals(MsgBrokerConst.KIOSK_HP_CODE) ) {
+            /*
+             * KIOSK( 홈플러스)의 경우 H/W장애코드는 'H+장치코드(1자리)+장애코드(4)로 구성됨
+             * MODE_UPDATE_HW_ALL_CLEAR 의경우 장애 코드가 없이 요청되면
+             * 'H'시작하는 전체 코드를 복구 하고,
+             * 장애코드가 있다면 'H'다음 해당 장치코드의 모든 장애를 복구 하도록 한다.
+             * 함수 호츨하는 부분에서 넣어 주므로 그냥 처리
+             */
+            if( basic.getErrorCd() != null && basic.getErrorCd().length() > 0 ) {
+                sql += String.format("   AND ERROR_CD LIKE '%s%%'                    \n", basic.getErrorCd());
+            }
+        }
         else
             /*
              *  상태장애 (현금부족 등 ) 을 제외한 HW 장애만 CELAR 하도록

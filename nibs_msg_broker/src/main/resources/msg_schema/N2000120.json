@@ -34,6 +34,7 @@
       { "name" : "atm_deal_no",            "kname" : "만원권 거래 매수",       "type" : "AN",  "length" :  10 },
       { "name" : "rpc_yn",                 "kname" : "RPC 모듈 장착여부",      "type" : "AN",  "length" :   2 },
       { "name" : "modem_relay_yn",         "kname" : "모뎀릴레이 장착여부",    "type" : "AN",  "length" :   2 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 180 }
+      { "name" : "arpc_fault_dealno",      "kname" : "ARPC 오류 발생 거래고유 번호",    "type" : "AN",  "length"  : 24  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 156 }
    ]
 }
