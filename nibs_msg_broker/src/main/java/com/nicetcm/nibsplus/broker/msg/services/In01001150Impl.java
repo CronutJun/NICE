@@ -112,8 +112,8 @@ public class In01001150Impl extends InMsgHandlerImpl {
             }
 
             TCtErrorMngMadeCom tCtErrorMngMadeCom = tCtErrorMngMadeComList.get(0);
-            tCtErrorMngMadeCom.setArrivalEstDate(tCtErrorMngMadeCom.getArrivalEstDate().trim());
-            tCtErrorMngMadeCom.setArrivalEstTime(tCtErrorMngMadeCom.getArrivalEstTime().trim());
+            tCtErrorMngMadeCom.setArrivalEstDate(tCtErrorMngMadeCom.getArrivalEstDate() != null ? tCtErrorMngMadeCom.getArrivalEstDate().trim() : tCtErrorMngMadeCom.getArrivalEstDate());
+            tCtErrorMngMadeCom.setArrivalEstTime(tCtErrorMngMadeCom.getArrivalEstTime() != null ? tCtErrorMngMadeCom.getArrivalEstTime().trim() : tCtErrorMngMadeCom.getArrivalEstTime());
 
             /* 이미 완료된 건은 update 하지 않도록 한다. */
             if(tCtErrorMngMadeCom.getFinishStatus().equals("7000")) {
@@ -125,7 +125,8 @@ public class In01001150Impl extends InMsgHandlerImpl {
             parsed.setString("arrival_tel_no", parsed.getString("arrival_tel_no").replaceAll("-", ""));
 
             /* 도착시간이 비어있을 경우에만 도착예정시간을 재전송한다. 20120612 최락경  */
-            if(tCtErrorMngMadeCom.getArrivalDate().equals("") && tCtErrorMngMadeCom.getArrivalTime().equals("")) {
+            if((tCtErrorMngMadeCom.getArrivalDate() == null || tCtErrorMngMadeCom.getArrivalDate().equals(""))
+            && (tCtErrorMngMadeCom.getArrivalTime() == null || tCtErrorMngMadeCom.getArrivalTime().equals(""))) {
                 /* ORG_SEND_YN 0: 2차출동요청, 1:2차출동요청응답수신->신한도착예정시간 송신준비,
                                2: 신한도착예정시간응답수신->신한도착시간 송신준비,
                                3: 신한도착시간응답수신->신한조치결과 송신준비,
@@ -227,7 +228,8 @@ public class In01001150Impl extends InMsgHandlerImpl {
             /* 출동자명이 없을 경우에는 경비사 default값 9999999을 넣도록 수정 20090302 */
 
             /* 도착시간이 비어있을 경우에만 도착예정시간을 재전송한다. 20120612 최락경  */
-            if(tCtErrorMng.getArrivalDate().equals("") && tCtErrorMng.getArrivalTime().equals("")) {
+            if((tCtErrorMng.getArrivalDate() == null || tCtErrorMng.getArrivalDate().equals(""))
+            && (tCtErrorMng.getArrivalTime() == null || tCtErrorMng.getArrivalTime().equals(""))) {
 
                 TCtErrorMng tCtErrorMng2 = new TCtErrorMng();
                 /* 2014.07.18 경비사 수신확인 전문을 추가 하였으므로 삭제

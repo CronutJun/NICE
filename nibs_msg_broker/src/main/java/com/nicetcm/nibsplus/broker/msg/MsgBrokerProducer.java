@@ -60,6 +60,13 @@ public class MsgBrokerProducer {
 
     }
 
+    public static void putDataToPrd(MsgParser msgPsr, String orgCd) throws Exception {
+
+        msgPsr.setString( "CM.org_cd", orgCd );
+        putDataToPrd( msgPsr );
+
+    }
+
     public void setBroker(String broker) {
         this.broker = broker;
     }

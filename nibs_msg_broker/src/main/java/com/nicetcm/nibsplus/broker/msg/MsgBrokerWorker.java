@@ -117,7 +117,7 @@ public class MsgBrokerWorker implements Runnable {
                                 .sprCtx.getBean("respAckNak");
                         resp.procAckNak( msgThrdSafeData, msgPsr, 0 );
 
-                        MsgBrokerProducer.putDataToPrd(msgPsr);
+                        MsgBrokerProducer.putDataToPrd(msgPsr, new String(bOrgCd));
                     }
                     /*
                      * nibsplus 또는 기타 AP요청의 응답인지
@@ -144,7 +144,7 @@ public class MsgBrokerWorker implements Runnable {
                                 .sprCtx.getBean("respAckNak");
                             resp.procAckNak( msgThrdSafeData, msgPsr, me.getErrorCode() );
 
-                            MsgBrokerProducer.putDataToPrd(msgPsr);
+                            MsgBrokerProducer.putDataToPrd(msgPsr, new String(bOrgCd));
                         }
                     }
                     /*
@@ -171,7 +171,7 @@ public class MsgBrokerWorker implements Runnable {
                             .sprCtx.getBean("respAckNak");
                         resp.procAckNak( msgThrdSafeData, msgPsr, -1 );
 
-                        MsgBrokerProducer.putDataToPrd(msgPsr);
+                        MsgBrokerProducer.putDataToPrd(msgPsr, new String(bOrgCd));
                     }
                     /*
                      * nibsplus 또는 기타 AP요청의 응답인지

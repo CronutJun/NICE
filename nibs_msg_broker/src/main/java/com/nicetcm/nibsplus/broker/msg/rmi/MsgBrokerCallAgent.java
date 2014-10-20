@@ -48,7 +48,7 @@ public class MsgBrokerCallAgent <PT> {
 
     public void callBrokerSync(int timeout) throws Exception {
 
-        MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")  + this.msgId + ".json");
+        MsgParser msgPsr = MsgParser.getInstance("/msg_schema/"  + this.msgId + ".json");
         ByteBuffer msg = ByteBuffer.allocateDirect( msgPsr.getSchemaLength() );
         msgPsr.newMessage( msg );
         msg.position(0);
@@ -64,7 +64,7 @@ public class MsgBrokerCallAgent <PT> {
             msg.position(0);
             msg.get(read);
 
-            Registry registry = LocateRegistry.getRegistry("10.3.28.180", 10199);
+            Registry registry = LocateRegistry.getRegistry("10.61.101.101", 10199);
             MsgBrokerRMI remoteObj = (MsgBrokerRMI)registry.lookup("MsgBrokerRMI");
 
             byte[] rsltMsg = remoteObj.callBrokerSync(read, timeout);
@@ -81,7 +81,8 @@ public class MsgBrokerCallAgent <PT> {
 
     public void callBrokerAync() throws Exception {
 
-        MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")  + this.msgId + ".json");
+        //MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")  + this.msgId + ".json");
+        MsgParser msgPsr = MsgParser.getInstance("/msg_schema/"  + this.msgId + ".json");
         ByteBuffer msg = ByteBuffer.allocateDirect( msgPsr.getSchemaLength() );
         msgPsr.newMessage( msg );
         msg.position(0);
@@ -97,8 +98,10 @@ public class MsgBrokerCallAgent <PT> {
             msg.position(0);
             msg.get(read);
 
-            Registry registry = LocateRegistry.getRegistry(MsgCommon.msgProps.getProperty("msgbroker.server.ip"), Integer.parseInt(MsgCommon.msgProps.getProperty("msgbroker.server.port")));
-            MsgBrokerRMI remoteObj = (MsgBrokerRMI)registry.lookup(MsgCommon.msgProps.getProperty("msgbroker.lookup.name"));
+            //Registry registry = LocateRegistry.getRegistry(MsgCommon.msgProps.getProperty("msgbroker.server.ip"), Integer.parseInt(MsgCommon.msgProps.getProperty("msgbroker.server.port")));
+            Registry registry = LocateRegistry.getRegistry("10.61.101.101", 10199);
+            //MsgBrokerRMI remoteObj = (MsgBrokerRMI)registry.lookup(MsgCommon.msgProps.getProperty("msgbroker.lookup.name"));
+            MsgBrokerRMI remoteObj = (MsgBrokerRMI)registry.lookup("MsgBrokerRMI");
 
             remoteObj.callBrokerAsync(read);
         }

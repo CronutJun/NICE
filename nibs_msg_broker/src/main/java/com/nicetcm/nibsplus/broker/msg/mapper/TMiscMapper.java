@@ -121,7 +121,7 @@ public interface TMiscMapper {
         "       MATCH_YN    = '1',                                                                                                                                       ",
         "       UPDATE_DATE = SYSDATE,                                                                                                                                   ",
         "       UPDATE_UID  = 'APmng'                                                                                                                                    ",
-        "WHERE  ORG_CD      = DECODE(#{orgCd, jdbcType=VARCHAR}, 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                 ",
+        "WHERE  ORG_CD      = DECODE(CAST(#{orgCd, jdbcType=VARCHAR} AS VARCHAR), 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                 ",
         "AND    BRANCH_CD   = CASE                                                                                                                                       ",
         "                     WHEN #{orgCd, jdbcType=VARCHAR} <> 'T20' AND  #{orgCd, jdbcType=VARCHAR} <> 'T39' THEN                                                     ",
         "                          #{branchCd, jdbcType=VARCHAR}                                                                                                         ",
@@ -153,7 +153,7 @@ public interface TMiscMapper {
         "       ORG_SEND_YN = '1',                                                                                                                                    ",
         "       UPDATE_DATE = SYSDATE,                                                                                                                                ",
         "       UPDATE_UID  = 'APmng'                                                                                                                                 ",
-        "WHERE  ORG_CD    = DECODE(#{orgCd, jdbcType=VARCHAR}, 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                ",
+        "WHERE  ORG_CD    = DECODE(CAST(#{orgCd, jdbcType=VARCHAR} AS VARCHAR), 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                ",
         "AND    BRANCH_CD = CASE                                                                                                                                      ",
         "                   WHEN #{orgCd, jdbcType=VARCHAR} <> 'T20' AND  #{orgCd, jdbcType=VARCHAR} <> 'T39' THEN                                                    ",
         "                        #{branchCd, jdbcType=VARCHAR}                                                                                                        ",
@@ -185,7 +185,7 @@ public interface TMiscMapper {
         "       ORG_SEND_YN = 'c',                                                                                                                                                                                              ",
         "       UPDATE_DATE = SYSDATE,                                                                                                                                                                                          ",
         "       UPDATE_UID  = 'APmng'                                                                                                                                                                                           ",
-        "where  ORG_CD        = DECODE(#{orgCd, jdbcType=VARCHAR}, 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                                                                  ",
+        "where  ORG_CD        = DECODE(CAST(#{orgCd, jdbcType=VARCHAR} AS VARCHAR), 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                                                                  ",
         "        and       BRANCH_CD    = CASE WHEN #{orgCd, jdbcType=VARCHAR} <> 'T20' AND  #{orgCd, jdbcType=VARCHAR} <> 'T39'                                                                                            ",
         "                                      THEN #{branchCd, jdbcType=VARCHAR}                                                                                                                                           ",
         "                                      ELSE DECODE (OP.FC_GET_MAP_BRANCH_CD( 1, #{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR},#{macNo, jdbcType=VARCHAR}),                                              ",
@@ -206,7 +206,7 @@ public interface TMiscMapper {
         "       ORG_SEND_YN = '1',                                                                                                                                                                                              ",
         "       UPDATE_DATE = SYSDATE,                                                                                                                                                                                          ",
         "       UPDATE_UID  = 'APmng'                                                                                                                                                                                           ",
-        "where  ORG_CD        = DECODE(#{orgCd, jdbcType=VARCHAR}, 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                                                                  ",
+        "where  ORG_CD        = DECODE(CAST(#{orgCd, jdbcType=VARCHAR} AS VARCHAR), 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                                                                  ",
         "        and       BRANCH_CD    = CASE WHEN #{orgCd, jdbcType=VARCHAR} <> 'T20' AND  #{orgCd, jdbcType=VARCHAR} <> 'T39'                                                                                            ",
         "                                      THEN #{branchCd, jdbcType=VARCHAR}                                                                                                                                           ",
         "                                      ELSE DECODE (OP.FC_GET_MAP_BRANCH_CD( 1, #{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}),                                             ",
@@ -227,8 +227,8 @@ public interface TMiscMapper {
         "       ORG_SEND_YN = '1',                                                                                                                                                                                              ",
         "       UPDATE_DATE = SYSDATE,                                                                                                                                                                                          ",
         "       UPDATE_UID  = 'APmng'                                                                                                                                                                                           ",
-        "where  ORG_CD      = DECODE(#{orgCd, jdbcType=VARCHAR}, 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                                                                      ",
-        "and        BRANCH_CD   = DECODE(#{branchCd, jdbcType=VARCHAR}, '','9999',#{branchCd, jdbcType=VARCHAR})                                                                                                                  ",
+        "where  ORG_CD      = DECODE(CAST(#{orgCd, jdbcType=VARCHAR} AS VARCHAR), 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                                                                      ",
+        "and        BRANCH_CD   = DECODE(CAST(#{branchCd, jdbcType=VARCHAR} AS VARCHAR), '','9999',#{branchCd, jdbcType=VARCHAR})                                                                                                                  ",
         "and        REQ_DATE    = #{reqDate, jdbcType=VARCHAR}                                                                                                                                                                    "
     })
     void updateFnAtmsOperfundsDemand(TMacInfo tMacInfo);
@@ -238,7 +238,7 @@ public interface TMiscMapper {
         "       ORG_SEND_CONFIRM_YN    = #{orgSendConfirmYn, jdbcType=VARCHAR},                                                                                         ",
         "       UPDATE_DATE            = SYSDATE,                                                                                                                       ",
         "       UPDATE_UID             = 'APmng'                                                                                                                        ",
-        "WHERE  ORG_CD      = DECODE(#{orgCd, jdbcType=VARCHAR}, 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                ",
+        "WHERE  ORG_CD      = DECODE(CAST(#{orgCd, jdbcType=VARCHAR} AS VARCHAR), 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                ",
         "AND    BRANCH_CD   = CASE                                                                                                                                      ",
         "                     WHEN #{orgCd, jdbcType=VARCHAR} <> 'T20' AND  #{orgCd, jdbcType=VARCHAR} <> 'T39' THEN                                                    ",
         "                          #{branchCd, jdbcType=VARCHAR}                                                                                                        ",
@@ -490,18 +490,18 @@ public interface TMiscMapper {
     String getElapseTime(@Param("yyyymmddhh24miss1") String yyyymmddhh24miss1, @Param("yyyymmddhh24miss2") String yyyymmddhh24miss2);
 
     @Update({
-        "update OP.T_CT_ERROR_MNG_MADE_COM                                                                                                                  ",
-        "set     ARRIVAL_EST_DATE = rtrim(#{arrivalEstDate, jdbcType=VARCHAR}),                                                                             ",
+        "UPDATE  OP.T_CT_ERROR_MNG_MADE_COM                                                                                                                 ",
+        "SET     ARRIVAL_EST_DATE = rtrim(#{arrivalEstDate, jdbcType=VARCHAR}),                                                                             ",
         "        ARRIVAL_EST_TIME = SUBSTR(rtrim(#{arrivalEstTime, jdbcType=VARCHAR}), 1, 4),                                                               ",
-        "        COM_MAN_NM = DECODE(#{comManNm, jdbcType=VARCHAR}, NULL, COM_MAN_NM, #{comManNm, jdbcType=VARCHAR}),                                       ",
-        "        COM_MAN_TEL_NO = DECODE(#{comManTelNo, jdbcType=VARCHAR}, NULL, COM_MAN_TEL_NO, OP.FC_FN_SECURITY(#{comManTelNo, jdbcType=VARCHAR}, '1')), ",
+        "        COM_MAN_NM = DECODE(CAST(#{comManNm, jdbcType=VARCHAR} AS VARCHAR), NULL, COM_MAN_NM, #{comManNm, jdbcType=VARCHAR}),                                       ",
+        "        COM_MAN_TEL_NO = DECODE(CAST(#{comManTelNo, jdbcType=VARCHAR} AS VARCHAR), NULL, COM_MAN_TEL_NO, OP.FC_FN_SECURITY(#{comManTelNo, jdbcType=VARCHAR}, '1')), ",
         "        UPDATE_DATE = SYSDATE,                                                                                                                     ",
         "        UPDATE_UID  = 'ERRmng'                                                                                                                     ",
-        "WHERE   AS_ACPT_date = #{asAcptDate, jdbcType=VARCHAR}                                                                                             ",
+        "WHERE   AS_ACPT_DATE = #{asAcptDate, jdbcType=VARCHAR}                                                                                             ",
         "  AND   ORG_CD = #{orgCd, jdbcType=VARCHAR}                                                                                                        ",
         "  AND   BRANCH_CD = #{branchCd, jdbcType=VARCHAR}                                                                                                  ",
         "  AND   MAC_NO = #{macNo, jdbcType=VARCHAR}                                                                                                        ",
-        "  AND   ORG_CALL_CNT = #{orgCallCnt, jdbcType=VARCHAR}                                                                                             "
+        "  AND   ORG_CALL_CNT = #{orgCallCnt, jdbcType=SMALLINT}                                                                                             "
     })
     void updateCtErrorMngMadeCom(TCtErrorMngMadeCom tCtErrorMngMadeCom);
 
@@ -509,15 +509,15 @@ public interface TMiscMapper {
         "update OP.T_CT_ERROR_MNG_MADE_COM                                                                                                                  ",
         "set     ARRIVAL_DATE = #{arrivalDate, jdbcType=VARCHAR},                                                                             ",
         "        ARRIVAL_TIME = #{arrivalTime, jdbcType=VARCHAR},                                                               ",
-        "        COM_MAN_NM = DECODE(#{comManNm, jdbcType=VARCHAR}, NULL, COM_MAN_NM, #{comManNm, jdbcType=VARCHAR}),                                       ",
-        "        COM_MAN_TEL_NO = DECODE(#{comManTelNo, jdbcType=VARCHAR}, NULL, COM_MAN_TEL_NO, OP.FC_FN_SECURITY(#{comManTelNo, jdbcType=VARCHAR}, '1')), ",
+        "        COM_MAN_NM = DECODE(CAST(#{comManNm, jdbcType=VARCHAR} AS VARCHAR), NULL, COM_MAN_NM, #{comManNm, jdbcType=VARCHAR}),                                       ",
+        "        COM_MAN_TEL_NO = DECODE(CAST(#{comManTelNo, jdbcType=VARCHAR} AS VARCHAR), NULL, COM_MAN_TEL_NO, OP.FC_FN_SECURITY(#{comManTelNo, jdbcType=VARCHAR}, '1')), ",
         "        UPDATE_DATE = SYSDATE,                                                                                                                     ",
         "        UPDATE_UID  = 'ERRmng'                                                                                                                     ",
         "WHERE   AS_ACPT_date = #{asAcptDate, jdbcType=VARCHAR}                                                                                             ",
         "  AND   ORG_CD = #{orgCd, jdbcType=VARCHAR}                                                                                                        ",
         "  AND   BRANCH_CD = #{branchCd, jdbcType=VARCHAR}                                                                                                  ",
         "  AND   MAC_NO = #{macNo, jdbcType=VARCHAR}                                                                                                        ",
-        "  AND   ORG_CALL_CNT = #{orgCallCnt, jdbcType=VARCHAR}                                                                                             "
+        "  AND   ORG_CALL_CNT = #{orgCallCnt, jdbcType=SMALLINT}                                                                                             "
     })
     void updateCtErrorMngMadeCom2(TCtErrorMngMadeCom tCtErrorMngMadeCom);
 
@@ -526,8 +526,8 @@ public interface TMiscMapper {
         "set     FINISH_DATE = #{finishDate, jdbcType=VARCHAR},                                                                                             ",
         "        FINISH_TIME = #{finishTime, jdbcType=VARCHAR},                                                                                             ",
         "        FINISH_STATUS = #{finishStatus, jdbcType=VARCHAR},                                                                                         ",
-        "        COM_MAN_NM  = DECODE(#{comManNm, jdbcType=VARCHAR}, NULL, COM_MAN_NM, #{comManNm, jdbcType=VARCHAR}),                                      ",
-        "        COM_MAN_TEL_NO = DECODE(#{comManTelNo, jdbcType=VARCHAR}, NULL, COM_MAN_TEL_NO, OP.FC_FN_SECURITY(#{comManTelNo, jdbcType=VARCHAR}, '1')), ",
+        "        COM_MAN_NM  = DECODE(CAST(#{comManNm, jdbcType=VARCHAR} AS VARCHAR), NULL, COM_MAN_NM, #{comManNm, jdbcType=VARCHAR}),                                      ",
+        "        COM_MAN_TEL_NO = DECODE(CAST(#{comManTelNo, jdbcType=VARCHAR} AS VARCHAR), NULL, COM_MAN_TEL_NO, OP.FC_FN_SECURITY(#{comManTelNo, jdbcType=VARCHAR}, '1')), ",
         "        ORG_MSG     = #{orgMsg, jdbcType=VARCHAR},                                                                                                 ",
         "        UPDATE_DATE = SYSDATE,                                                                                                                     ",
         "        UPDATE_UID  = 'ERRmng'                                                                                                                     ",
@@ -535,7 +535,7 @@ public interface TMiscMapper {
         "  AND   ORG_CD = #{orgCd, jdbcType=VARCHAR}                                                                                                        ",
         "  AND   BRANCH_CD = #{branchCd, jdbcType=VARCHAR}                                                                                                  ",
         "  AND   MAC_NO = #{macNo, jdbcType=VARCHAR}                                                                                                        ",
-        "  AND   ORG_CALL_CNT = #{orgCallCnt, jdbcType=VARCHAR}                                                                                             "
+        "  AND   ORG_CALL_CNT = #{orgCallCnt, jdbcType=SMALLINT}                                                                                             "
     })
     void updateCtErrorMngMadeCom3(TCtErrorMngMadeCom tCtErrorMngMadeCom);
 
@@ -547,7 +547,7 @@ public interface TMiscMapper {
         "        UPDATE_UID = 'ERRmng'                                      ",
         "WHERE   TRANS_DATE          = #{transDate, jdbcType=VARCHAR}       ",
         "AND     rtrim(ORG_MSG_NO)   = rtrim(#{orgMsgNo, jdbcType=VARCHAR}) ",
-        "AND     ORG_CALL_CNT        = #{orgCallCnt, jdbcType=VARCHAR}      "
+        "AND     ORG_CALL_CNT        = #{orgCallCnt, jdbcType=SMALLINT}      "
     })
     int updateCtErrorMngMadeCom4(TCtErrorMngMadeCom tCtErrorMngMadeCom);
 

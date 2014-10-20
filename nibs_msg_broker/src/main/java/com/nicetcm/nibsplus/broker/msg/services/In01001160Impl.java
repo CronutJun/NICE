@@ -112,7 +112,7 @@ public class In01001160Impl extends InMsgHandlerImpl {
             TCtErrorMngMadeCom tCtErrorMngMadeCom = tCtErrorMngMadeComList.get(0);
             int htimeConf = 0;
 
-            if(Integer.parseInt(tCtErrorMngMadeCom.getSendDate() + tCtErrorMngMadeCom.getSendTime()) > Integer.parseInt(parsed.getString("arrival_date") + parsed.getString("arrival_time"))) {
+            if(Long.parseLong(tCtErrorMngMadeCom.getSendDate() + tCtErrorMngMadeCom.getSendTime()) > Long.parseLong(parsed.getString("arrival_date") + parsed.getString("arrival_time"))) {
                 htimeConf = 0;
             } else {
                 htimeConf = 1;
@@ -125,7 +125,8 @@ public class In01001160Impl extends InMsgHandlerImpl {
                 throw new MsgBrokerException(-2);
             }
 
-            if(Integer.parseInt(tCtErrorMngMadeCom.getArrivalTime()) > 0) {
+            if(tCtErrorMngMadeCom.getArrivalTime() != null
+            && Integer.parseInt(tCtErrorMngMadeCom.getArrivalTime()) > 0) {
                 logger.info(String.format("[SaveErrArrival] 이미 도착시간이 설정되어 있습니다. AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), horgCallCnt));
                 throw new MsgBrokerException(-2);
@@ -182,7 +183,7 @@ public class In01001160Impl extends InMsgHandlerImpl {
 
             int htimeConf = 0;
 
-            if(Integer.parseInt(tCtErrorMng.getSendDate() + tCtErrorMng.getSendTime()) > Integer.parseInt(parsed.getString("arrival_date") + parsed.getString("arrival_time"))) {
+            if(Long.parseLong(tCtErrorMng.getSendDate() + tCtErrorMng.getSendTime()) > Long.parseLong(parsed.getString("arrival_date") + parsed.getString("arrival_time"))) {
                 htimeConf = 0;
             } else {
                 htimeConf = 1;
@@ -194,7 +195,8 @@ public class In01001160Impl extends InMsgHandlerImpl {
                 throw new MsgBrokerException(-2);
             }
 
-            if(Integer.parseInt(tCtErrorMng.getArrivalTime()) > 0) {
+            if(tCtErrorMng.getArrivalTime() != null
+            && Integer.parseInt(tCtErrorMng.getArrivalTime()) > 0) {
                 logger.info(String.format("[SaveErrArrival] 이미 도착시간이 설정되어 있습니다. create_date[%s], error_no[%s], old_arrival_date[%s], old_arrival_time[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("trans1_seq"), tCtErrorMng.getArrivalDate(), tCtErrorMng.getArrivalTime()));
                 throw new MsgBrokerException(-2);

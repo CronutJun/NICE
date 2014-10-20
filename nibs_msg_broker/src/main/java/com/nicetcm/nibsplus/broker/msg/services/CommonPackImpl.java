@@ -2741,9 +2741,12 @@ public class CommonPackImpl implements CommonPack {
     public String parseErrorMsg( String errorMsg, int pos ) {
         String parsedValue = "";
 
-        if(pos == 15) {
+        if( errorMsg.length() > 16 ) {
             //org_call_cnt
             parsedValue = errorMsg.substring(15, 17);
+        }
+        else {
+            parsedValue = errorMsg.substring(15);
         }
 
         return parsedValue;
