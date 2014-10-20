@@ -8,8 +8,7 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.2.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd"
->
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
     <bean id="orgSend" class="com.nicetcm.nibsplus.orgsend.common.OrgSend">
 
         <!--
@@ -67,13 +66,13 @@
 		                <entry key="ARRIVAL_BRAND"          value="01001160" />     <!-- 48. 브랜드기기도착통보-->
 		                <entry key="FIN_RSLT"               value="01001170" />     <!-- 03. 조치결과-->
 		                <entry key="AFTER_MNG"              value="01001320" />     <!-- 35. 후처리조치예정_완료-->
-		
+
 		                <!-- SM -->
 		                <entry key="SET_RSLT"               value="02001150" />     <!-- 53. 처리결과-->
 		                <entry key="SET_FAC"                value="02001230" />     <!-- 40. 우리은행시설물관리-->
 		                <entry key="SET_ENV"                value="02001240" />     <!-- 39. 우리은행환경관리-->
 		                <entry key="SITE_STATE"             value="02001340" />     <!-- 49. 코너(기기)현황-->
-		
+
 		                <!-- CM -->
 		                <entry key="DAY_CLOSE"              value="03000320" />     <!-- 59. 일마감-->
 		                <entry key="CUR_AMT"                value="03001110" />     <!-- 27. 현재시재조회-->
@@ -104,7 +103,7 @@
 		                <entry key="DAY_USE_STATUS"         value="03001401" />     <!-- 60. 일일이용현황-->
 		                <entry key="BRAND_SVC_FEE"          value="03001403" />     <!-- 62. 확정청구용역료제출-->
 		                <entry key="BRAND_COM_FEE"          value="03001404" />     <!-- 63. 수수료내역제출-->
-		
+
 		                <!-- IQ -->
 		                <entry key="RSP_PEN"                value="04000220" />     <!-- 22. 페널티명세통보-->
 		                <entry key="RSP_PEN_BRAND"          value="04000220" />     <!-- 56. 페널티명세통보(브랜드)-->
@@ -122,16 +121,16 @@
 		                <entry key="APPLY_GOOD"             value="04001400" />     <!-- 54. 용도(소모)품신청-->
 		                <entry key="MISS_NO"                value="04002110" />     <!-- 36. 결번요청-->
 		                <entry key="POLL"                   value="04002200" />     <!-- 61. POLL-->
-		
+
 		                <!-- ES -->
 		                <entry key="ES_BRAND_ERR"           value="05001130" />     <!-- 57. 브랜드제휴상태전문(장애)-->
 		                <entry key="ES_BRAND_FIN"           value="05001130" />     <!-- 58. 브랜드제휴상태전문(복구)-->
-		
+
 		                <!-- NI -->
 		                <entry key="SVC_CLOSE"              value="N4001600" />     <!-- 24. 나이스서비스철수-->
 		                <entry key="MST_CLOSE"              value="N4001500" />     <!-- 25. 나이스마스터철수-->
 		                <entry key="MST_INFO"               value="N4001500" />     <!-- 43. 나이스마스터정보등록(삼성생명)-->
-		
+
 		                <!-- NQ -->
 		                <entry key="NICE_RSLT"              value="N5001400" />     <!-- 31. 처리결과조회(나이스트란)-->
         			</map>
@@ -141,7 +140,7 @@
 
         <!--
             AS-IS
-                *ORGSEND_MTYPE_BRAND[MAX_TOTAL_BRAND_MSG_CNT] 
+                *ORGSEND_MTYPE_BRAND[MAX_TOTAL_BRAND_MSG_CNT]
          -->
         <property name="orgSendMtypeBrand" >
         	<bean class="org.springframework.beans.factory.config.ListFactoryBean">
@@ -167,5 +166,5 @@
       		</bean>
         </property>
     </bean>
-    
+
 </beans>
