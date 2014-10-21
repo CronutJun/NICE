@@ -1,0 +1,26 @@
+{
+   "name" : "03000250",                    "kname" : "잔전요청",
+   "response" : { "code" : "03000250",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length" :  16 },
+      { "name" : "carry_org_cd",           "kname" : "코너코드(나이스지사)",   "type" : "AN",  "length" :  16 },
+      { "name" : "corner_cd",              "kname" : "지사코드(업체지사-무시)","type" : "AN",  "length" :  16 },
+      { "name" : "work_type",              "kname" : "거래구분",               "type" : "AN",  "length" :   2 },
+      { "name" : "req_date",               "kname" : "신청일자",               "type" : "N",   "length" :  16 },
+      { "name" : "user_nm",                "kname" : "사용자성명",             "type" : "AN",  "length" :  40 },
+      { "name" : "req_amt_100000",         "kname" : "십만원신청금액",         "type" : "N",   "length" :  20 },
+      { "name" : "req_amt_50000",          "kname" : "오만원신청금액",         "type" : "N",   "length" :  20 },
+      { "name" : "req_amt_10000",          "kname" : "만원신청금액",           "type" : "N",   "length" :  20 },
+      { "name" : "req_amt_5000",           "kname" : "오천원신청금액",         "type" : "N",   "length" :  20 },
+      { "name" : "req_amt_1000",           "kname" : "천원신청금액",           "type" : "N",   "length" :  20 },
+      { "name" : "req_amt_500",            "kname" : "오백원신청금액",         "type" : "N",   "length" :  20 },
+      { "name" : "req_amt_100",            "kname" : "백원신청금액",           "type" : "N",   "length" :  20 },
+      { "name" : "req_amt_50",             "kname" : "오십원신청금액",         "type" : "N",   "length" :  20 },
+      { "name" : "req_amt_10",             "kname" : "십원신청금액",           "type" : "N",   "length" :  20 },
+      { "name" : "req_amt_total",          "kname" : "합계금액",               "type" : "N",   "length" :  24 },
+      { "name" : "bigo",                   "kname" : "비고",                   "type" : "AN",  "length" : 400 },
+      { "name" : "send_date",              "kname" : "공급예정일",             "type" : "N",   "length" :  16 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 118 }
+   ]
+}

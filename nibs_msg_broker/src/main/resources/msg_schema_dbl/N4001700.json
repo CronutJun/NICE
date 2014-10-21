@@ -1,0 +1,23 @@
+{
+   "name" : "N4001700",                    "kname" : "NICE 기관관리",
+   "response" : { "code" : "N4001700",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "org_cd",                 "kname" : "기관코드",               "type" : "AN",  "length" :   4 },
+      { "name" : "job_type",               "kname" : "업무구분",               "type" : "AN",  "length" :   2 },
+      { "name" : "org_nm",                 "kname" : "기관명",                 "type" : "AN",  "length" :  32 },
+      { "name" : "org_short_nm",           "kname" : "기관약칭",               "type" : "AN",  "length" :   8 },
+      { "name" : "svc_type",               "kname" : "서비스상태",             "type" : "AN",  "length" :   2 },
+      { "name" : "usual_start_time",       "kname" : "평일거래 개시시간",      "type" : "N",   "length" :  12 },
+      { "name" : "usual_end_time",         "kname" : "평일거래 종료시간",      "type" : "N",   "length" :  12 },
+      { "name" : "sat_start_time",         "kname" : "토요일거래 개시시간",    "type" : "N",   "length" :  12 },
+      { "name" : "sat_end_time",           "kname" : "토요일거래 종료시간",    "type" : "N",   "length" :  12 },
+      { "name" : "hol_start_time",         "kname" : "휴일거래 개시시간",      "type" : "N",   "length" :  12 },
+      { "name" : "hol_end_time",           "kname" : "휴일거래 종료시간",      "type" : "N",   "length" :  12 },
+      { "name" : "nosvc_start_date",       "kname" : "미서비스 개시일자",      "type" : "N",   "length" :  16 },
+      { "name" : "nosvc_start_time",       "kname" : "미서비스 개시시간",      "type" : "N",   "length" :  12 },
+      { "name" : "nosvc_end_date",         "kname" : "미서비스 종료일자",      "type" : "N",   "length" :  16 },
+      { "name" : "nosvc_end_time",         "kname" : "미서비스 종료시간",      "type" : "N",   "length" :  12 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" :  20 }
+   ]
+}

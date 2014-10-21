@@ -5,14 +5,18 @@ import java.util.concurrent.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nicetcm.nibsplus.broker.common.*;
+import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerRMI;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerTimeoutException;
 
 public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
     public static final ConcurrentMap<String, BlockingQueue<byte[]>> rmiSyncAns = new ConcurrentHashMap<String, BlockingQueue<byte[]>>();
+
+    private TMiscMapper miscMap;
 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerRMIImpl.class);
     private FileOutputStream fOut;
@@ -30,8 +34,11 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg);
         logger.debug("QNm = {}", ret.QNm);
 
+        miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
+
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
+            msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
             logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
             if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
@@ -72,8 +79,11 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg);
         logger.debug("QNm = {}", ret.QNm);
 
+        miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
+
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
+            msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
             logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
             if( msgPsr.getString("CM.trans_seq_no").length() == 0 )

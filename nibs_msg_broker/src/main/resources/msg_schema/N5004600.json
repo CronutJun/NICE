@@ -3,11 +3,11 @@
    "response" : { "code" : "N5004600",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "work_gb",                "kname" : "업무구분",               "type" : "AN",  "length" :   8 },
-      { "name" : "info_gb",                "kname" : "정보구분",               "type" : "AN",  "length" :   2 },
-      { "name" : "work_cd",                "kname" : "업무코드",               "type" : "AN",  "length" :   8 },
-      { "name" : "proc_cd",                "kname" : "프로세스 코드",          "type" : "AN",  "length" :   4 },
-      { "name" : "ret_cd",                 "kname" : "응답코드",               "type" : "AN",  "length" :   4 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 194 }
+      { "name" : "work_gb",                "kname" : "업무구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "info_gb",                "kname" : "정보구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "work_cd",                "kname" : "업무코드",               "type" : "AN",  "length"  : 4   },
+      { "name" : "proc_cd",                "kname" : "프로세스 코드",          "type" : "AN",  "length"  : 2   },
+      { "name" : "ret_cd",                 "kname" : "응답코드",               "type" : "AN",  "length"  : 2   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 97  }
    ]
 }

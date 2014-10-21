@@ -1,0 +1,29 @@
+{
+   "name" : "02000170",                    "kname" : "코너 설치 신규/철수",
+   "response" : { "code" : "02000170",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "set_type",               "kname" : "1:신규, 2:철수",         "type" : "AN",  "length" :   2 },
+      { "name" : "set_date",               "kname" : "처리일자",               "type" : "N",   "length" :  16 },
+      { "name" : "brch_cd",                "kname" : "처리점번",               "type" : "AN",  "length" :  16 },
+      { "name" : "mac_no",                 "kname" : "단말번호",               "type" : "AN",  "length" :  24 },
+      { "name" : "org_site_cd",            "kname" : "코너코드",               "type" : "AN",  "length" :  12 },
+      { "name" : "brch_nm",                "kname" : "처리점명",               "type" : "AN",  "length" :  80 },
+      { "name" : "made_com_cd",            "kname" : "제조사 (2013)",          "type" : "AN",  "length" :   8 },
+      { "name" : "org_site_nm",            "kname" : " ",                      "type" : "AN",  "length" :  80 },
+      { "name" : "service_cd",             "kname" : "용역료 지점",            "type" : "AN",  "length" :  16 },
+      { "name" : "service_nm",             "kname" : "지점명",                 "type" : "AN",  "length" :  80 },
+      { "name" : "oper_type",              "kname" : "운영 구분",              "type" : "AN",  "length" :   8 },
+      { "name" : "oper_time",              "kname" : "운영 시간",              "type" : "AN",  "length" :   8 },
+      { "name" : "oper_time2",             "kname" : "운영 시간",              "type" : "AN",  "length" :   8 },
+      { "name" : "mac_model",              "kname" : "기종",                   "type" : "AN",  "length" :   8 },
+      { "name" : "set_place",              "kname" : "설치 장소",              "type" : "AN",  "length" : 120 },
+      { "name" : "set_addr",               "kname" : "설치 주소",              "type" : "AN",  "length" : 120 },
+      { "name" : "est_oper_date",          "kname" : "가동예정일",             "type" : "N",   "length" :  16 },
+      { "name" : "place_type",             "kname" : "장소형태",               "type" : "AN",  "length" :   8 },
+      { "name" : "guard_nm",               "kname" : "경비업체명",             "type" : "AN",  "length" :  40 },
+      { "name" : "clean_nm",               "kname" : "청소용역업체명",         "type" : "AN",  "length" :  40 },
+      { "name" : "close_reason",           "kname" : "철수사유 :1-코너폐쇄, 2-관리업체변경",   "type" : "AN",  "length" :   8 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 130 }
+   ]
+}

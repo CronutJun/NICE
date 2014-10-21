@@ -3,10 +3,10 @@
    "response" : { "code" : "03001230",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length" :  16 },
-      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
-      { "name" : "inq_date",               "kname" : "조회일자",               "type" : "N",   "length" :  16 },
-      { "name" : "check_no",               "kname" : "수표번호",               "type" : "AN",  "length" :  40 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 748 }
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "inq_date",               "kname" : "조회일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "check_no",               "kname" : "수표번호",               "type" : "AN",  "length"  : 20  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 374 }
    ]
 }

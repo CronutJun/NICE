@@ -3,9 +3,9 @@
    "response" : { "code" : "M1000200",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length" :  24 },
-      { "name" : "user_telno",             "kname" : "고객전화번호",           "type" : "AN",  "length" :  26 },
-      { "name" : "authenti_no",            "kname" : "인증번호",               "type" : "AN",  "length" :  12 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 782 }
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "user_telno",             "kname" : "고객전화번호",           "type" : "AN",  "length"  : 13  },
+      { "name" : "authenti_no",            "kname" : "인증번호",               "type" : "AN",  "length"  : 6   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 391 }
    ]
 }

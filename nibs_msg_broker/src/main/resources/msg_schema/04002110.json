@@ -3,12 +3,12 @@
    "response" : { "code" : "04002110",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "req_date",               "kname" : "요청전문일자",           "type" : "N",   "length" :  16 },
-      { "name" : "req_seq",                "kname" : "요청전문일련번호",       "type" : "AN",  "length" :  20 },
-      { "name" : "message",                "kname" : "Message",                "type" : "AN",  "length" : 200 },
-      { "name" : "init_seq",               "kname" : "최초일련번호",           "type" : "AN",  "length" :  20 },
-      { "name" : "final_seq",              "kname" : "최종일련번호",           "type" : "AN",  "length" :  20 },
-      { "name" : "req_code",               "kname" : "요청구분",               "type" : "AN",  "length" :   2 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 142 }
+      { "name" : "req_date",               "kname" : "요청전문일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "req_seq",                "kname" : "요청전문일련번호",       "type" : "AN",  "length"  : 10  },
+      { "name" : "message",                "kname" : "Message",                "type" : "AN",  "length"  : 100 },
+      { "name" : "init_seq",               "kname" : "최초일련번호",           "type" : "AN",  "length"  : 10  },
+      { "name" : "final_seq",              "kname" : "최종일련번호",           "type" : "AN",  "length"  : 10  },
+      { "name" : "req_code",               "kname" : "요청구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 71  }
    ]
 }

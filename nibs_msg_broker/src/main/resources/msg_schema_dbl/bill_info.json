@@ -1,0 +1,12 @@
+{
+  "name" : "bill_info",        "kname" : "키오스크 권종별 매수 공통",
+  "columns" : [
+      { "name" : "ticket_cd",        "kname" : "발행사",                 "type" : "AN",  "length" :   6 },
+      { "name" : "bill_class_cd",    "kname" : "권종구분코드",           "type" : "AN",  "length" :   4 },
+      { "name" : "cnt_type1",        "kname" : "매수 1",                 "type" : "N",   "length" :  10 },
+      { "name" : "cnt_type2",        "kname" : "매수 2",                 "type" : "N",   "length" :  10 },
+      { "name" : "cnt_type3",        "kname" : "매수 3",                 "type" : "N",   "length" :  10 },
+      { "name" : "cnt_type4",        "kname" : "매수 4",                 "type" : "N",   "length" :  10 },
+      { "name" : "cnt_type5",        "kname" : "매수 5",                 "type" : "N",   "length" :  10 }
+  ]
+}

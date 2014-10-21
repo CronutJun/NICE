@@ -1,0 +1,29 @@
+{
+   "name" : "03000241",                    "kname" : "미처리 금액 조회결과 통보",
+   "response" : { "code" : "03000241",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length" :  16 },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
+      { "name" : "inq_start_date",         "kname" : "조회시작일",             "type" : "N",   "length" :  16 },
+      { "name" : "inq_end_date",           "kname" : "조회종료일",             "type" : "N",   "length" :  16 },
+      { "name" : "req_serial_no",          "kname" : "요청시리얼번호",         "type" : "AN",  "length" :   6 },
+      { "name" : "total_cnt",              "kname" : "총건수",                 "type" : "N",   "length" :   6 },
+      { "name" : "OCC",                                                        "type" : "STRUCT", "ref_iteration": "total_cnt",
+         "struct" : [ 
+            { "name" : "serial_no",        "kname" : "미처리건수 시리얼번호",  "type" : "AN",  "length" :   6 },
+            { "name" : "mac_no",           "kname" : "기번",                   "type" : "AN",  "length" :  24 },
+            { "name" : "deal_date",        "kname" : "거래일자",               "type" : "N",   "length" :  16 },
+            { "name" : "deal_amt",         "kname" : "거래금액",               "type" : "N",   "length" :  30 },
+            { "name" : "trade_no",         "kname" : "거래일련번호",           "type" : "AN",  "length" :   8 },
+            { "name" : "trade_org",        "kname" : "거래 개설기관",          "type" : "AN",  "length" :   6 },
+            { "name" : "account_no",       "kname" : "계좌/카드번호",          "type" : "AN",  "length" :  40 },
+            { "name" : "trade_type",       "kname" : "거래종류 '1' : 입금 '2' : 출금 '3' : 미장전",      "type" : "AN",  "length" :   8 },
+            { "name" : "process_yn",       "kname" : "거래상태 '0':미처리, '1':처리완료",                "type" : "AN",  "length" :   2 },
+            { "name" : "finish_nm",        "kname" : "담당자",                 "type" : "AN",  "length" :  20 }
+         ]  
+      },
+      { "name" : "term_no",                "kname" : "조작자 단말 번호",       "type" : "AN",  "length" :   6 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 114 }
+   ]
+}

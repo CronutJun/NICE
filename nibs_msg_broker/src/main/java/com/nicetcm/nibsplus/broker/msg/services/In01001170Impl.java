@@ -121,9 +121,8 @@ public class In01001170Impl extends InMsgHandlerImpl {
             TCtErrorMngMadeCom tCtErrorMngMadeCom = tCtErrorMngMadeComList.get(0);
             int htimeConf = 0;
 
-            if(Integer.parseInt(tCtErrorMngMadeCom.getArrivalDate() + tCtErrorMngMadeCom.getArrivalTime()) > Integer.parseInt(parsed.getString("finish_date") + parsed.getString("finish_time"))
-               || Integer.parseInt(tCtErrorMngMadeCom.getSendDate() + tCtErrorMngMadeCom.getSendTime()) > Integer.parseInt(parsed.getString("finish_date") + parsed.getString("finish_time"))
-            ) {
+            if(String.format("%s%s", tCtErrorMngMadeCom.getArrivalDate(), tCtErrorMngMadeCom.getArrivalTime()).replace("null", "").compareTo(String.format("%s%s", parsed.getString("finish_date"), parsed.getString("finish_time")).replace("null", "")) > 0
+            || String.format("%s%s", tCtErrorMngMadeCom.getSendDate(), tCtErrorMngMadeCom.getSendTime()).replace("null", "").compareTo(String.format("%s%s", parsed.getString("finish_date"), parsed.getString("finish_time")).replace("null", "")) > 0 ) {
                 htimeConf = 0;
             } else {
                 htimeConf = 1;
@@ -211,9 +210,8 @@ public class In01001170Impl extends InMsgHandlerImpl {
             if(tCtErrorMng.getArrivalTime() == null || tCtErrorMng.getSendTime() == null) {
                 htimeConf = 0;
             } else {
-                if(Integer.parseInt(tCtErrorMng.getArrivalDate() + tCtErrorMng.getArrivalTime()) > Integer.parseInt(parsed.getString("finish_date") + parsed.getString("finish_time"))
-                    || Integer.parseInt(tCtErrorMng.getSendDate() + tCtErrorMng.getSendTime()) > Integer.parseInt(parsed.getString("finish_date") + parsed.getString("finish_time"))
-                ) {
+                if(String.format("%s%s", tCtErrorMng.getArrivalDate(), tCtErrorMng.getArrivalTime()).replace("null", "").compareTo(String.format("%s%s", parsed.getString("finish_date"), parsed.getString("finish_time")).replace("null", "")) > 0
+                || String.format("%s%s", tCtErrorMng.getSendDate(), tCtErrorMng.getSendTime()).replace("null", "").compareTo(String.format("%s%s",  parsed.getString("finish_date"), parsed.getString("finish_time")).replace("null", "")) > 0 ) {
                     htimeConf = 0;
                 } else {
                     htimeConf = 1;

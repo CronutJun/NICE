@@ -3,11 +3,11 @@
    "response" : { "code" : "N5001500",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
-      { "name" : "remote_gb",              "kname" : "원격명령구분",           "type" : "AN",  "length" :  16 },
-      { "name" : "create_date",            "kname" : "장애발생일자",           "type" : "N",   "length" :  16 },
-      { "name" : "error_no",               "kname" : "장애일련번호",           "type" : "AN",  "length" :  12 },
-      { "name" : "remote_seq",             "kname" : "원격요청일련번호",       "type" : "AN",  "length" :  12 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 764 }
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "remote_gb",              "kname" : "원격명령구분",           "type" : "AN",  "length"  : 8   },
+      { "name" : "create_date",            "kname" : "장애발생일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "error_no",               "kname" : "장애일련번호",           "type" : "AN",  "length"  : 6   },
+      { "name" : "remote_seq",             "kname" : "원격요청일련번호",       "type" : "AN",  "length"  : 6   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 382 }
    ]
 }

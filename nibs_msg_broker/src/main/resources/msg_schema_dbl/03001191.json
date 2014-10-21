@@ -1,0 +1,11 @@
+{
+   "name" : "03001191",                    "kname" : "운영자금청구조회",
+   "response" : { "code" : "03001191",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "inq_type",               "kname" : "조회구분",               "type" : "AN",  "length" :   2 },
+      { "name" : "oper_amt",               "kname" : "운영자금",               "type" : "N",   "length" :  30 },
+      { "name" : "inq_date",               "kname" : "조회일자",               "type" : "N",   "length" :  16 },
+      { "name" : "inq_time",               "kname" : "조회시간",               "type" : "N",   "length" :  12 }
+   ]
+}

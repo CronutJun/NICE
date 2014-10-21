@@ -3,16 +3,16 @@
    "response" : { "code" : "03001111",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length" :  16 },
-      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
-      { "name" : "inq_date",               "kname" : "조회일자",               "type" : "N",   "length" :  16 },
-      { "name" : "inq_time",               "kname" : "조회시간",               "type" : "N",   "length" :  12 },
-      { "name" : "self_check_in_amt",      "kname" : "당행수표 입금금액",      "type" : "N",   "length" :  30 },
-      { "name" : "other_check_in_amt",     "kname" : "타행수표 입금금액",      "type" : "N",   "length" :  30 },
-      { "name" : "check_10_cnt",           "kname" : "권종13(10만원권) 매수",  "type" : "N",   "length" :  12 },
-      { "name" : "check_30_cnt",           "kname" : "권종14(30만원권) 매수",  "type" : "N",   "length" :  12 },
-      { "name" : "check_50_cnt",           "kname" : "권종15(50만원권) 매수",  "type" : "N",   "length" :  12 },
-      { "name" : "check_100_cnt",          "kname" : "권종16(100만원권) 매수", "type" : "N",   "length" :  12 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 668 }
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "inq_date",               "kname" : "조회일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "inq_time",               "kname" : "조회시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "self_check_in_amt",      "kname" : "당행수표 입금금액",      "type" : "N",   "length"  : 15  },
+      { "name" : "other_check_in_amt",     "kname" : "타행수표 입금금액",      "type" : "N",   "length"  : 15  },
+      { "name" : "check_10_cnt",           "kname" : "권종13(10만원권) 매수",  "type" : "N",   "length"  : 6   },
+      { "name" : "check_30_cnt",           "kname" : "권종14(30만원권) 매수",  "type" : "N",   "length"  : 6   },
+      { "name" : "check_50_cnt",           "kname" : "권종15(50만원권) 매수",  "type" : "N",   "length"  : 6   },
+      { "name" : "check_100_cnt",          "kname" : "권종16(100만원권) 매수", "type" : "N",   "length"  : 6   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 334 }
    ]
 }

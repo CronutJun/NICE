@@ -1,0 +1,16 @@
+{
+   "name" : "03000201",                    "kname" : "실시간 입출금액 통보",
+   "response" : { "code" : "03000201",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length" :  16 },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
+      { "name" : "seq_no",                 "kname" : "일련번호",               "type" : "AN",  "length" :   8 },
+      { "name" : "trade_date",             "kname" : "거래일자",               "type" : "N",   "length" :  16 },
+      { "name" : "trade_time",             "kname" : "거래시간",               "type" : "N",   "length" :  12 },
+      { "name" : "trade_amt",              "kname" : "거래금액",               "type" : "N",   "length" :  30 },
+      { "name" : "trade_type",             "kname" : "거래구분",               "type" : "AN",  "length" :   2 },
+      { "name" : "trade_status",           "kname" : "거래상태",               "type" : "AN",  "length" :   2 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 734 }
+   ]
+}

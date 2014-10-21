@@ -3,10 +3,10 @@
    "response" : { "code" : "M1000100",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "brch_cd",                "kname" : "지점코드",               "type" : "AN",  "length" :   8 },
-      { "name" : "member_no",              "kname" : "사원번호",               "type" : "AN",  "length" :   8 },
-      { "name" : "brch_nm",                "kname" : "지점명",                 "type" : "AN",  "length" :  60 },
-      { "name" : "br_master_nm",           "kname" : "점주명",                 "type" : "AN",  "length" :  40 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 728 }
+      { "name" : "brch_cd",                "kname" : "지점코드",               "type" : "AN",  "length"  : 4   },
+      { "name" : "member_no",              "kname" : "사원번호",               "type" : "AN",  "length"  : 4   },
+      { "name" : "brch_nm",                "kname" : "지점명",                 "type" : "AN",  "length"  : 60  },
+      { "name" : "br_master_nm",           "kname" : "점주명",                 "type" : "AN",  "length"  : 40  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 364 }
    ]
 }

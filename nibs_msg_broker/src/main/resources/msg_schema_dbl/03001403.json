@@ -1,0 +1,21 @@
+{
+   "name" : "03001403",                    "kname" : "확정청구용역료 제출",
+   "response" : { "code" : "03001403",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length" :  80 },
+      { "name" : "mng_brch_cd",            "kname" : "관리점코드",             "type" : "AN",  "length" :  12 },
+      { "name" : "mng_brch_nm",            "kname" : "관리점명",               "type" : "AN",  "length" :  80 },
+      { "name" : "year_mon",               "kname" : "기준월",                 "type" : "N",   "length" :  12 },
+      { "name" : "base_svc_fee",           "kname" : "용역료",                 "type" : "N",   "length" :  20 },
+      { "name" : "penalty_amt",            "kname" : "페널티금액",             "type" : "N",   "length" :  20 },
+      { "name" : "fin_svc_fee",            "kname" : "청구용역료",             "type" : "N",   "length" :  20 },
+      { "name" : "org_cd",                 "kname" : "입금은행코드",           "type" : "AN",  "length" :   6 },
+      { "name" : "account_no",             "kname" : "입금계좌",               "type" : "AN",  "length" :  64 },
+      { "name" : "due_date",               "kname" : "납입기한",               "type" : "N",   "length" :  16 },
+      { "name" : "doc_no",                 "kname" : "문서번호",               "type" : "AN",  "length" :  40 },
+      { "name" : "send_nm",                "kname" : "발송자",                 "type" : "AN",  "length" :  20 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" :   6 }
+   ]
+}

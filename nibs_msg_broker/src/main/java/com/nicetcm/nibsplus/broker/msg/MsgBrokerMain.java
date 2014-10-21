@@ -3,6 +3,7 @@ package com.nicetcm.nibsplus.broker.msg;
 import java.io.InputStream;
 import java.net.DatagramSocket;
 import java.lang.management.ManagementFactory;
+import java.rmi.server.RMISocketFactory;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -98,6 +99,9 @@ public class MsgBrokerMain {
             InputStream is = MsgBrokerMain.class.getResourceAsStream(
                     String.format("/%s/msg.properties", MsgBrokerConst.SVR_TYPE));
             MsgCommon.msgProps.load(is);
+
+            RMISocketFactory.setSocketFactory(new MsgBrokerRMISocketFactory());
+
             new MsgBrokerMain();
         }
         catch (Exception err) {

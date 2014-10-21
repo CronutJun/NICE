@@ -3,15 +3,15 @@
    "response" : { "code" : "N3000200",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "mac_no",                 "kname" : "기기id",                 "type" : "AN",  "length" :  24 },
-      { "name" : "close_date",             "kname" : "집계일자",               "type" : "N",   "length" :  16 },
-      { "name" : "close_time",             "kname" : "집계시간",               "type" : "N",   "length" :  12 },
-      { "name" : "ticket1_emit_comp",      "kname" : "방출상품권발행처",       "type" : "AN",  "length" :   6 },
-      { "name" : "ticket1_emit_gubun_cd",  "kname" : "방출상품권권종코드",     "type" : "AN",  "length" :   8 },
-      { "name" : "ticket1_emit_cnt",       "kname" : "방출상품권매수",         "type" : "N",   "length" :  10 },
-      { "name" : "ticket1_back_comp",      "kname" : "회수상품권발행처",       "type" : "AN",  "length" :   6 },
-      { "name" : "ticket1_back_gubun_cd",  "kname" : "회수상품권권종코드",     "type" : "AN",  "length" :   8 },
-      { "name" : "ticket1_back_cnt",       "kname" : "회수상품권매수",         "type" : "N",   "length" :  10 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 752 }
+      { "name" : "mac_no",                 "kname" : "기기id",                 "type" : "AN",  "length"  : 12  },
+      { "name" : "close_date",             "kname" : "집계일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "close_time",             "kname" : "집계시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "ticket1_emit_comp",      "kname" : "방출상품권발행처",       "type" : "AN",  "length"  : 3   },
+      { "name" : "ticket1_emit_gubun_cd",  "kname" : "방출상품권권종코드",     "type" : "AN",  "length"  : 4   },
+      { "name" : "ticket1_emit_cnt",       "kname" : "방출상품권매수",         "type" : "N",   "length"  : 5   },
+      { "name" : "ticket1_back_comp",      "kname" : "회수상품권발행처",       "type" : "AN",  "length"  : 3   },
+      { "name" : "ticket1_back_gubun_cd",  "kname" : "회수상품권권종코드",     "type" : "AN",  "length"  : 4   },
+      { "name" : "ticket1_back_cnt",       "kname" : "회수상품권매수",         "type" : "N",   "length"  : 5   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 376 }
    ]
 }

@@ -3,19 +3,19 @@
    "response" : { "code" : "03001210",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length" :  16 },
-      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
-      { "name" : "mon_yn",                 "kname" : "월요일현송여부",         "type" : "AN",  "length" :   2 },
-      { "name" : "tue_yn",                 "kname" : "화요일현송여부",         "type" : "AN",  "length" :   2 },
-      { "name" : "wed_yn",                 "kname" : "수요일현송여부",         "type" : "AN",  "length" :   2 },
-      { "name" : "thu_yn",                 "kname" : "목요일현송여부",         "type" : "AN",  "length" :   2 },
-      { "name" : "fri_yn",                 "kname" : "금요일현송여부",         "type" : "AN",  "length" :   2 },
-      { "name" : "trans_date",             "kname" : "자금이체일(이마트정산기)",        "type" : "N",   "length" :  16 },
-      { "name" : "dept_cd",                "kname" : "관리사업부코드",         "type" : "AN",  "length" :   4 },
-      { "name" : "office_cd",              "kname" : "관리지사코드",           "type" : "AN",  "length" :   4 },
-      { "name" : "calc_start_date",        "kname" : "자금이체일(이마트정산기)",        "type" : "N",   "length" :  16 },
-      { "name" : "calc_end_date",          "kname" : "자금이체일(이마트정산기)",        "type" : "N",   "length" :  16 },
-      { "name" : "info_type",              "kname" : "정보구분",               "type" : "AN",  "length" :   2 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 736 }
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "mon_yn",                 "kname" : "월요일현송여부",         "type" : "AN",  "length"  : 1   },
+      { "name" : "tue_yn",                 "kname" : "화요일현송여부",         "type" : "AN",  "length"  : 1   },
+      { "name" : "wed_yn",                 "kname" : "수요일현송여부",         "type" : "AN",  "length"  : 1   },
+      { "name" : "thu_yn",                 "kname" : "목요일현송여부",         "type" : "AN",  "length"  : 1   },
+      { "name" : "fri_yn",                 "kname" : "금요일현송여부",         "type" : "AN",  "length"  : 1   },
+      { "name" : "trans_date",             "kname" : "자금이체일(이마트정산기)",        "type" : "N",   "length"  : 8   },
+      { "name" : "dept_cd",                "kname" : "관리사업부코드",         "type" : "AN",  "length"  : 2   },
+      { "name" : "office_cd",              "kname" : "관리지사코드",           "type" : "AN",  "length"  : 2   },
+      { "name" : "calc_start_date",        "kname" : "자금이체일(이마트정산기)",        "type" : "N",   "length"  : 8   },
+      { "name" : "calc_end_date",          "kname" : "자금이체일(이마트정산기)",        "type" : "N",   "length"  : 8   },
+      { "name" : "info_type",              "kname" : "정보구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 368 }
    ]
 }

@@ -1,0 +1,11 @@
+{
+   "name" : "04000120",                    "kname" : "보수요원관리",
+   "response" : { "code" : "04000120",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "mbr_nm",                 "kname" : "직원성명",               "type" : "AN",  "length" :  40 },
+      { "name" : "mbr_idno",               "kname" : "직원주민번호",           "type" : "AN",  "length" :  26 },
+      { "name" : "mbr_yn",                 "kname" : "직원재직여부 0:재직,1:퇴직,2:없음",      "type" : "AN",  "length" :   2 },
+      { "name" : "req_serial",             "kname" : "요청일련번호",           "type" : "AN",  "length" :  14 }
+   ]
+}
