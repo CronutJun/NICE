@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
@@ -715,7 +716,6 @@ public class FileSendServiceImpl implements FileSendService {
 		String hPreDate;
 	
 		int		ncount;
-		String szCnt;
 		long	lnTotalAmt;
 
 		new File(pFileName).createNewFile();
@@ -753,13 +753,15 @@ public class FileSendServiceImpl implements FileSendService {
 	
 		// fprintf( fileWriter, "HB0001339999999J96%07ld%*s\n", ncount, 35, " " );
 		fileWriter.write(String.format("HB0001339999999J96%07d%35s\n", ncount, " " ));
-	
-		szCnt = String.format("%07d", ncount);
+
+		fileWriter.close();
+
 		// fseek (fileWriter, 6+2+7+3, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt ), 6+2+7+3, 7);
-	
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+7+3);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 	
 		return 0;
 	}
@@ -1390,7 +1392,6 @@ public class FileSendServiceImpl implements FileSendService {
 		String hAtmType;
 
 		String szDate;
-		String szCnt;
 		int		ncount;
 		long	lnTotalAmt;
 
@@ -1473,12 +1474,14 @@ public class FileSendServiceImpl implements FileSendService {
 		// fprintf( fileWriter, "VC0033339999999011NC %07ld%.8s%*s\n", ncount, hPreDate, 134, " " );
 		fileWriter.write(String.format("VC0033339999999011NC %07d%8s%134s\n", ncount, hPreDate, " " ));
 
-		szCnt = String.format("%07d", ncount );
+		fileWriter.close();
+		
 		// fseek (fileWriter, 6+2+7+3+3, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt ), 6+2+7+3+3, 7);
-
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+7+3+3);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 
 		return 0;
 	}
@@ -1493,7 +1496,6 @@ public class FileSendServiceImpl implements FileSendService {
 		String hZipNo;
 		String hJoinMojumCd;
 
-		String szCnt;
 		String hActDate;
 		int		ncount;
 
@@ -1546,12 +1548,14 @@ public class FileSendServiceImpl implements FileSendService {
 		// fprintf( fileWriter, "VC0002339999999011NC %07ld%.8s%*s\n", ncount, pTransDate, 164, " " );
 		fileWriter.write(String.format("VC0002339999999011NC %07d%8s%164s\n", ncount, pTransDate, " " ));
 
-		szCnt = String.format("%07d", ncount );
+		fileWriter.close();
+		
 		// fseek (fileWriter, 6+2+7+3+3, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt ), 6+2+7+3+3, 7);
-
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+7+3+3);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 
 		return 0;
 	}
@@ -1563,7 +1567,6 @@ public class FileSendServiceImpl implements FileSendService {
 		String hMacModel;
 		String hOpenDate;
 
-		String szCnt;
 		String hActDate;
 		String hPreActDate;
 		String hPreActYM;
@@ -1613,12 +1616,14 @@ public class FileSendServiceImpl implements FileSendService {
 			ncount++;
 	    }
 
-		szCnt = String.format("%07d", ncount );
+		fileWriter.close();
+		
 		// fseek (fileWriter, 6+2+3, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt ), 6+2+3, 7);
-
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+3);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 
 		return 0;
 	}
@@ -1643,7 +1648,6 @@ public class FileSendServiceImpl implements FileSendService {
 
 		String szDate;
 		String szOrgCd;
-		String szCnt;
 		int		ncount;
 		int		nDataCnt;
 
@@ -1850,12 +1854,14 @@ public class FileSendServiceImpl implements FileSendService {
 		// fprintf( fileWriter, "ATM001339999999%2s03%07ld%*s\n", szOrgCd, ncount, 144, " " );
 		fileWriter.write(String.format("ATM001339999999%2s03%07d%144s\n", szOrgCd, ncount, " " ));
 
-		szCnt = String.format("%07d", ncount );
+		fileWriter.close();
+
 		// fseek (fileWriter, 6+2+7+2+2, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt ), 6+2+7+2+2, 7);
-
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+7+2+2);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 
 		return 0;
 	}
@@ -1880,7 +1886,6 @@ public class FileSendServiceImpl implements FileSendService {
 		int		nDataCnt;
 		String szDate;
 		String szOrgCd;
-		String szCnt;
 
 		int		nTotAcptCnt;
 		long	lnTotAcptAmt;
@@ -2055,12 +2060,14 @@ public class FileSendServiceImpl implements FileSendService {
 		// fprintf( fileWriter, "ATM001339999999%2s03%07ld%*s\n", szOrgCd, ncount, 144, " " );
 		fileWriter.write(String.format("ATM001339999999%2s03%07d%144s\n", szOrgCd, ncount, " " ));
 
-		szCnt = String.format("%07d", ncount );
+		fileWriter.close();
+
 		// fseek (fileWriter, 6+2+7+2+2, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt ), 6+2+7+2+2, 7);
-
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+7+2+2);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 
 		return 0;
 	}
@@ -2084,7 +2091,6 @@ public class FileSendServiceImpl implements FileSendService {
 
 		String szDate;
 		String szOrgCd;
-		String szCnt;
 		int		ncount;
 		int		nDataCnt;
 
@@ -2261,12 +2267,14 @@ public class FileSendServiceImpl implements FileSendService {
 		// fprintf( fileWriter, "ATM001339999999%2s03%07ld%*s\n", szOrgCd, ncount, 144, " " );
 		fileWriter.write(String.format("ATM001339999999%2s03%07d%144s\n", szOrgCd, ncount, " " ));
 
-		szCnt = String.format("%07d", ncount );
+		fileWriter.close();
+
 		// fseek (fileWriter, 6+2+7+2+2, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt ), 6+2+7+2+2, 7);
-
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+7+2+2);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 
 		return 0;
 	}
@@ -3083,7 +3091,7 @@ public class FileSendServiceImpl implements FileSendService {
 		lnTotalCancelAmt = 0;
 
 		// fprintf( fileWriter, "H96%8s%6ld%*s\n", pTransDate, GetCurTime(), 133, " " );
-		fileWriter.write(String.format("H96%8s%6d%133s\n", pTransDate, GetCurTime(), " " ));
+		fileWriter.write(String.format("H96%8s%6s%133s\n", pTransDate, GetCurTime(), " " ));
 
 		List<LinkedHashMap<String, Object>> list = fileSendMapper.selectGetCHTranData(szDate);
 		String[] rowValues;
@@ -3153,7 +3161,6 @@ public class FileSendServiceImpl implements FileSendService {
 
 		int		ncount;
 		String szDate;
-		String szCnt;
 
 		new File(pFileName).createNewFile();
 		OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(pFileName));
@@ -3217,12 +3224,14 @@ public class FileSendServiceImpl implements FileSendService {
 		// fprintf( fileWriter, "NI0001339999999007096%07ld%*s%*s\n", ncount, 8, pTransDate, 164, " " );
 		fileWriter.write(String.format("NI0001339999999007096%07d%8s%164s\n", ncount, pTransDate, " " ));
 
-		szCnt = String.format("%07d", ncount );
+		fileWriter.close();
+
 		// fseek (fileWriter, 6+2+7+3+3, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt), 6+2+7+3+3, 7);
-
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+7+3+3);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 
 		return 0;
 	}
@@ -3237,7 +3246,6 @@ public class FileSendServiceImpl implements FileSendService {
 		String hInterphoneNo;
 		String hZipNo;
 
-		String szCnt;
 		String hActDate;
 		int		ncount;
 
@@ -3287,12 +3295,14 @@ public class FileSendServiceImpl implements FileSendService {
 		// fprintf( fileWriter, "NI0002339999999007096%07ld%.8s%*s\n", ncount, pTransDate, 164, " " );
 		fileWriter.write(String.format("NI0002339999999007096%07d%8s%164s\n", ncount, pTransDate, " " ));
 
-		szCnt = String.format("%07d", ncount );
+		fileWriter.close();
+
 		// fseek (fileWriter, 6+2+7+3+3, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt ), 6+2+7+3+3, 7);
-
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+7+3+3);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 
 		return 0;
 	}
@@ -3307,7 +3317,6 @@ public class FileSendServiceImpl implements FileSendService {
 		String hOrgCd;
 
 		String szDate;
-		String szCnt;
 		int		ncount;
 
 		long	nTotalDebitAmt = 0;
@@ -3384,12 +3393,14 @@ public class FileSendServiceImpl implements FileSendService {
 		// fprintf( fileWriter, "CD1119339999999096%07d%020lu%020lu%*s\n", ncount, nTotalDebitAmt, nTotalCreditAmt, 35, " " );
 		fileWriter.write(String.format("CD1119339999999096%07d%020d%020d%35s\n", ncount, Math.abs(nTotalDebitAmt), Math.abs(nTotalCreditAmt), " " ));
 
-		szCnt = String.format("%07d", ncount );
+		fileWriter.close();
+
 		// fseek (fileWriter, 6+2+7+3, 0 );
 		// fprintf( fileWriter, "%7s", szCnt );
-		fileWriter.write(String.format("%7s", szCnt ), 6+2+7+3, 7);
-
-		fileWriter.close();
+		RandomAccessFile raf = new RandomAccessFile(pFileName, "rw");
+		raf.seek(6+2+7+3);
+		raf.writeBytes(String.format("%07d", ncount ));
+		raf.close();
 
 		return 0;
 	}
@@ -3546,7 +3557,7 @@ public class FileSendServiceImpl implements FileSendService {
 	}
 	
 	private Object GetCurTime() {
-		return new SimpleDateFormat("HH24MISS").format(Calendar.getInstance().getTime());
+		return new SimpleDateFormat("HHmmss").format(Calendar.getInstance().getTime());
 	}
 
 }

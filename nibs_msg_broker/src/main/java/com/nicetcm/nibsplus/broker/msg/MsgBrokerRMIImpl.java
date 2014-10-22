@@ -30,8 +30,7 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         int defTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout"));
         BlockingQueue<byte[]> waitQ = new LinkedBlockingQueue<byte[]>();
 
-        logger.debug("getting ret");
-        MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg);
+        MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
         logger.debug("QNm = {}", ret.QNm);
 
         miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
@@ -75,8 +74,8 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
     }
 
     public void callBrokerAsync(byte[] msg) throws Exception {
-        logger.debug("getting ret");
-        MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg);
+
+        MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
         logger.debug("QNm = {}", ret.QNm);
 
         miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);

@@ -791,7 +791,7 @@ public class ERRMonServiceImpl implements ERRMonService {
             //전문에 Message 셋팅
             @Override
             public void doPreCallBroker(MsgParser parsed, Object empty) throws Exception {
-            	SimpleDateFormat dateFmt = new SimpleDateFormat("YYYYMMDDHHMISS");
+            	SimpleDateFormat dateFmt = new SimpleDateFormat("yyyyMMddHHmmss");
             	String curDate = dateFmt.format(Calendar.getInstance().getTime());
 
             	// memcpy( suSendHead.org_cd		, org_cd , LEN_ORG_CD );
@@ -857,7 +857,7 @@ public class ERRMonServiceImpl implements ERRMonService {
             //전문에 Message 셋팅
             @Override
             public void doPreCallBroker(MsgParser parsed, String params) throws Exception {
-            	SimpleDateFormat dateFmt = new SimpleDateFormat("YYYYMMDDHHMISS");
+            	SimpleDateFormat dateFmt = new SimpleDateFormat("yyyyMMddHHmmss");
             	String curDate = dateFmt.format(Calendar.getInstance().getTime());
             	
             	/*

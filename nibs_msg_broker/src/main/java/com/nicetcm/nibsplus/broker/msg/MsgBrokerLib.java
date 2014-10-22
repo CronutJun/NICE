@@ -197,27 +197,42 @@ public class MsgBrokerLib {
     public static class BufferAndQName {
         public ByteBuffer buf;
         public String QNm;
+        public String orgCd;
+        public String msgType;
+        public String wrkType;
     }
 
-    public static BufferAndQName allocAndFindSchemaName(byte[] msg) {
+    public static BufferAndQName allocAndFindSchemaName(byte[] msg, String IO, boolean isSetThreadID) {
 
         BufferAndQName ret = new BufferAndQName();
+        byte[] bOrgCd   = new byte[3];
         byte[] bMsgType = new byte[4];
         byte[] bWrkType = new byte[4];
 
         ret.buf = ByteBuffer.allocateDirect(msg.length);
         ret.buf.put(msg);
+        ret.buf.position(0);
+        ret.buf.get(bOrgCd);
         ret.buf.position(MsgBrokerConst.MSG_TYPE_OFS);
         ret.buf.get(bMsgType);
         ret.buf.get(bWrkType);
         ret.buf.position(0);
 
+        ret.orgCd   = new String(bOrgCd);
+        ret.msgType = new String(bMsgType);
+        ret.wrkType = new String(bWrkType);
+
+        if( IO.equals("O") && bMsgType[2] == '0')
+            bMsgType[2] = '1';
+        else if( IO.equals("I") && bMsgType[2] == '1')
+            bMsgType[2] = '1';
+        if( isSetThreadID )
+            Thread.currentThread().setName(String.format("<T>%s-%s%s-%s", new String(bOrgCd).trim(), new String(bMsgType).trim(), new String(bWrkType).trim(), Thread.currentThread().getId()));
+
         /*
          * 응답 전문의 경우에 스키마 파일은 원본 요청 전문에 해당하는 스키마를 읽도록 한다.
          */
-        if( bMsgType[2] == '1')
-            bMsgType[2] = '0';
-
+        bMsgType[2] = '0';
         ret.QNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType).trim() + new String(bWrkType).trim() + ".json";
 
         return ret;

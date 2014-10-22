@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
-import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerCallBack;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
+import com.nicetcm.nibsplus.orgsend.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.orgsend.service.MsgTransferService;
 
 /**

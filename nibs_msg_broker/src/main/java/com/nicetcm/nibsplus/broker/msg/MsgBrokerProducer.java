@@ -18,6 +18,7 @@ import javax.jms.TextMessage;
 
 
 
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +55,7 @@ public class MsgBrokerProducer {
 
         byte[] read = new byte[msgPsr.getMessage().limit()];
         msgPsr.getMessage().get(read);
-        logger.info("Response Data : [{}]", new String(read) );
+        logger.info("O-MSG : [{}],[{}]", read.length, new String(read));
         respData.writeBytes(read);
         prd.produce( respData );
 

@@ -3,8 +3,17 @@ package com.nicetcm.nibsplus.broker.msg;
 import java.io.InputStream;
 import java.net.DatagramSocket;
 import java.lang.management.ManagementFactory;
-import java.rmi.server.RMISocketFactory;
+import java.net.InetAddress;
+import java.rmi.registry.LocateRegistry;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
+import javax.rmi.ssl.SslRMIClientSocketFactory;
+import javax.rmi.ssl.SslRMIServerSocketFactory;
+import javax.management.remote.rmi.RMIConnectorServer;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -17,6 +26,7 @@ import com.nicetcm.nibsplus.broker.common.MsgCommon;
 public class MsgBrokerMain {
 
     private static MsgBrokerRMIServer rmi;
+    private static JMXConnectorServer cs;
     private DatagramSocket isRun;
 
     public static final Logger logger = LoggerFactory.getLogger(MsgBrokerMain.class);
@@ -100,7 +110,8 @@ public class MsgBrokerMain {
                     String.format("/%s/msg.properties", MsgBrokerConst.SVR_TYPE));
             MsgCommon.msgProps.load(is);
 
-            RMISocketFactory.setSocketFactory(new MsgBrokerRMISocketFactory());
+            //RMISocketFactory.setSocketFactory(new MsgBrokerRMISocketFactory());
+            startJMXConnectorServer();
 
             new MsgBrokerMain();
         }
@@ -108,6 +119,42 @@ public class MsgBrokerMain {
             err.printStackTrace();
         }
 
+    }
+
+    private static void startJMXConnectorServer() throws Exception {
+
+        final int rmiRegistryPort = Integer.parseInt(System.getProperty("com.nicetcm.nibsplus.broker.jmxremote.port","10899"));
+        final int rmiServerPort   = rmiRegistryPort - 1;
+        final String hostname     = System.getProperty("java.rmi.server.hostname","localhost");
+
+        logger.debug("registry port  = {}", rmiRegistryPort);
+        logger.debug("rmiServer port = {} ", rmiServerPort);
+
+        LocateRegistry.createRegistry(rmiRegistryPort);
+
+        MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
+
+        Map<String, Object> env = new HashMap<String, Object>();
+
+        // SSL 사용한다면 아래4라인 사용해야 함
+        //SslRMIClientSocketFactory csf = new SslRMIClientSocketFactory();
+        //SslRMIServerSocketFactory ssf = new SslRMIServerSocketFactory();
+        //env.put(RMIConnectorServer.RMI_CLIENT_SOCKET_FACTORY_ATTRIBUTE, csf);
+        //env.put(RMIConnectorServer.RMI_SERVER_SOCKET_FACTORY_ATTRIBUTE, ssf);
+
+        JMXServiceURL url = new JMXServiceURL("service:jmx:rmi://" + hostname + ":" +
+                                                rmiServerPort + "/jndi/rmi://" + hostname + ":" +
+                                                rmiRegistryPort + "/jmxrmi");
+
+        logger.debug("Local Connection URL: {}", url);
+        logger.debug("Creating RMI connector server");
+        cs = JMXConnectorServerFactory.newJMXConnectorServer(url, env, mbs);
+        cs.start();
+
+    }
+
+    public static void stopJMX() throws Exception {
+        cs.stop();
     }
 
 }

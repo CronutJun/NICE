@@ -31,7 +31,7 @@ public class MsgBrokerShutdown extends Thread {
             logger.debug("Start RMI shutdown..");
             MsgBrokerMain.getRMI().unbind();
             logger.debug("RMI stopped.");
-            
+
             logger.debug("Stopping consumer..");
             Iterator<Map.Entry<String, MsgBrokerConsumer>>  itrC = MsgBrokerConsumer.consumers.entrySet().iterator();
             while ( itrC.hasNext() ){
@@ -51,6 +51,9 @@ public class MsgBrokerShutdown extends Thread {
                 MsgBrokerConsumer.consumers.remove(e.getKey());
             }
             logger.debug("Producer is stopped.");
+
+            MsgBrokerMain.stopJMX();
+            logger.debug("JMXAgent is stopped.");
 
             logger.debug("Thread's count = {}", Thread.activeCount() );
             //for (Thread t : Thread.getAllStackTraces().keySet()) {

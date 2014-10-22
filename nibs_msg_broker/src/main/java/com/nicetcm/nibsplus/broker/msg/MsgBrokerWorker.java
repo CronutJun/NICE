@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import com.nicetcm.nibsplus.broker.msg.services.CommonPack;
 import com.nicetcm.nibsplus.broker.msg.services.InMsgHandler;
 import com.nicetcm.nibsplus.broker.msg.services.RespAckNakHandler;
-
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 
@@ -18,7 +17,6 @@ public class MsgBrokerWorker implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerWorker.class);
 
     private byte[] msg;
-    private ByteBuffer buf;
     private MsgParser msgPsr;
     private MsgBrokerData msgThrdSafeData;
 
@@ -27,34 +25,14 @@ public class MsgBrokerWorker implements Runnable {
     }
 
     public void run() {
-        byte[] bOrgCd   = new byte[3];
-        byte[] bMsgType = new byte[4];
-        byte[] bWrkType = new byte[4];
-        String inQNm;
         boolean skipDBProc = false;
 
         try {
-            buf = ByteBuffer.allocateDirect(msg.length);
-            buf.put(msg);
-            buf.position(0);
-            buf.get(bOrgCd);
-            buf.position(MsgBrokerConst.MSG_TYPE_OFS);
-            buf.get(bMsgType);
-            buf.get(bWrkType);
-            buf.position(0);
+            MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "I", true);
+            logger.debug("inQNm = {}", ret.QNm);
+            logger.info("I-MSG : [{}],[{}]", msg.length, new String(msg));
 
-            Thread.currentThread().setName(String.format("<T>%s-%s%s-%s", new String(bOrgCd).trim(), new String(bMsgType).trim(), new String(bWrkType).trim(), Thread.currentThread().getId()));
-            logger.info("Income message  size : [{}], data : [{}]", msg.length, new String(msg));
-            /*
-             * 응답 전문의 경우에 스키마 파일은 원본 요청 전문에 해당하는 스키마를 읽도록 한다.
-             */
-            if( bMsgType[2] == '1')
-                bMsgType[2] = '0';
-
-            inQNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType).trim() + new String(bWrkType).trim() + ".json";
-            logger.debug("inQNm = " + inQNm);
-
-            msgPsr = MsgParser.getInstance(inQNm).parseMessage(buf);
+            msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
             logger.debug("Parse OK");
             msgThrdSafeData = new MsgBrokerData();
             try {
@@ -117,7 +95,7 @@ public class MsgBrokerWorker implements Runnable {
                                 .sprCtx.getBean("respAckNak");
                         resp.procAckNak( msgThrdSafeData, msgPsr, 0 );
 
-                        MsgBrokerProducer.putDataToPrd(msgPsr, new String(bOrgCd));
+                        MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                     }
                     /*
                      * nibsplus 또는 기타 AP요청의 응답인지
@@ -144,7 +122,7 @@ public class MsgBrokerWorker implements Runnable {
                                 .sprCtx.getBean("respAckNak");
                             resp.procAckNak( msgThrdSafeData, msgPsr, me.getErrorCode() );
 
-                            MsgBrokerProducer.putDataToPrd(msgPsr, new String(bOrgCd));
+                            MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                         }
                     }
                     /*
@@ -171,7 +149,7 @@ public class MsgBrokerWorker implements Runnable {
                             .sprCtx.getBean("respAckNak");
                         resp.procAckNak( msgThrdSafeData, msgPsr, -1 );
 
-                        MsgBrokerProducer.putDataToPrd(msgPsr, new String(bOrgCd));
+                        MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                     }
                     /*
                      * nibsplus 또는 기타 AP요청의 응답인지

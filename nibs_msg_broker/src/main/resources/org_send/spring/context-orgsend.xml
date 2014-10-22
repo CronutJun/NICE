@@ -21,6 +21,13 @@
     			</list>
     		</property>
    		</bean>
+    	<bean id="msgBrokerConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/uat/msg.properties</value>
+    			</list>
+    		</property>
+   		</bean>
     </beans>
 
     <!-- DEV 환경 -->
@@ -29,6 +36,13 @@
     		<property name="locations">
     			<list>
     				<value>classpath:/org_send/properties/context-orgsend.dev.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+    	<bean id="msgBrokerConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/dev/msg.properties</value>
     			</list>
     		</property>
    		</bean>
@@ -43,6 +57,13 @@
                 </list>
             </property>
         </bean>
+    	<bean id="msgBrokerConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/stage1/msg.properties</value>
+    			</list>
+    		</property>
+   		</bean>
     </beans>
 
     <beans>

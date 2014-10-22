@@ -6,8 +6,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.util.regex.Matcher;
 
 public class SqlRename {
@@ -19,6 +18,9 @@ public class SqlRename {
 			}
 		});
 
+		RandomAccessFile f;
+		FileInputStream fin;
+		FileOutputStream fout;
 		BufferedReader in;
 		BufferedWriter out;
 		String line;
@@ -26,14 +28,7 @@ public class SqlRename {
 		int fromIdx, toIdx;
 		
 		for (File file : files) {
-			in = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-			out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)));
-			
-			while ((line = in.readLine()) != null) {
-				if ((fromIdx = line.toUpperCase().indexOf("JIJUM")) != -1) {
-					line.replaceAll("(jijum)", "BRANCH");
-				}
-			}
+			f = new RandomAccessFile(file, "rws");
 		}
 	}
 	

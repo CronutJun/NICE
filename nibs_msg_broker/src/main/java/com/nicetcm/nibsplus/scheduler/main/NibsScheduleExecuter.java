@@ -1,10 +1,13 @@
 package com.nicetcm.nibsplus.scheduler.main;
 
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.nicetcm.nibsplus.orgsend.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.scheduler.model.JobVO;
 import com.nicetcm.nibsplus.scheduler.model.SchedulerVO;
 import com.nicetcm.nibsplus.scheduler.service.JobExecuter;
@@ -27,11 +30,11 @@ public class NibsScheduleExecuter {
 	public static void main(String[] args) {
         try {
         	ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:/scheduler/spring/context-scheduler.xml");
-
+        	
             JobVO jobVO = new JobVO();
-            jobVO.setQuartzNodeName(args[0]); // "OrgSendService");
-            jobVO.setJobGroup(args[1]); // "ADD_CASH");
-            jobVO.setJobName(args[2]); // "003");
+            jobVO.setQuartzNodeName("OrgSendService");
+            jobVO.setJobGroup("ADD_CASH");
+            jobVO.setJobName("003");
             
             ScheduleInfoProvider scheduleInfoProvider = applicationContext.getBean("ScheduleDBInfoProvider", ScheduleInfoProvider.class);
             SchedulerVO schedulerVO = scheduleInfoProvider.selectScheduleByPk(jobVO);
@@ -40,6 +43,7 @@ public class NibsScheduleExecuter {
             	logger.info("해당하는 스케쥴이 존재하지 않습니다.");
             } else {
                 ApplicationContext jobContext = scheduleInfoProvider.getApplicationContext(schedulerVO.getSpringContextXml());
+                MsgBrokerCallAgent.msgBrokerConfig = (Properties)jobContext.getBean("msgBrokerConfig");
                 
                 Class<JobExecuter> jobClass = null;
                 jobClass = (Class<JobExecuter>)Class.forName(schedulerVO.getJobClass());
