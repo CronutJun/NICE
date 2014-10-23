@@ -14,14 +14,16 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerCallBack;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerRMI;
+import com.nicetcm.nibsplus.orgsend.service.impl.MsgRmiTransfer;
 
 public class MsgBrokerCallAgent <PT> {
 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerCallAgent.class);
     private final MsgBrokerConf conf;
-    private final String msgId;
+    private final String msgId, msgId2;
     private PT params;
     private MsgBrokerCallBack<PT> callBack;
+    
     public static Properties msgBrokerConfig; // NibsScheduleExecuter, NibsQuartzSchedulerMain 에서 주입
 
     public MsgBrokerCallAgent( MsgBrokerConf conf, PT params, MsgBrokerCallBack<PT> callBack ) {
@@ -34,10 +36,18 @@ public class MsgBrokerCallAgent <PT> {
         } else {
             msgId = conf.getMsgType() + conf.getWorkType();
         }
+        
+        if (MsgRmiTransfer.class.getName().equals(Thread.currentThread().getStackTrace()[2].getClassName())) {
+        	msgId2 = "AUTOSND";
+        } else {
+        	msgId2 = "ERRMON";
+        }
     }
 
     private void initMsgPsr(MsgParser msgPsr) throws Exception {
         msgPsr.setString("CM.org_cd", conf.getOrgCd() )
+              .setString("CM.ret_cd_src", "S" )
+              .setString("CM.msg_id", msgId2 ) // AUTOSEND : AUTOSND, ERRMon : ERRMON
               .setString("CM.format_type", conf.getFormatType() )
               .setString("CM.msg_type", msgId.substring(0, 4) )
               .setString("CM.work_type", conf.getWorkType() )

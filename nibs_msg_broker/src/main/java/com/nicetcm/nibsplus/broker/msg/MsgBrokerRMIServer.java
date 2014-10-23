@@ -8,22 +8,24 @@ import org.slf4j.Logger;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerRMI;
+import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerManageRMI;
 
 public class MsgBrokerRMIServer {
-    
+
     public static final Logger logger = LoggerFactory.getLogger(MsgBrokerRMIServer.class);
-    
+
     private Registry registry;
     private MsgBrokerRMIImpl remoteObj;
-    
+    private MsgBrokerManageRMIImpl manageObj;
+
     public MsgBrokerRMIServer() {
     }
-    
+
     public void bind() {
-        
-        try { 
+
+        try {
             remoteObj = new MsgBrokerRMIImpl();
-            
+
             MsgBrokerRMI stub = (MsgBrokerRMI)UnicastRemoteObject.exportObject(remoteObj, Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
 
             LocateRegistry.createRegistry(Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
@@ -31,9 +33,17 @@ public class MsgBrokerRMIServer {
             registry = LocateRegistry.getRegistry(Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
             logger.debug("rebind");
             registry.rebind("MsgBrokerRMI", stub);
-            logger.debug("MsgBrokerRMI Remote Object bound to the registry and ready to service incoming client calls..."); 
+            logger.debug("MsgBrokerRMI Remote Object bound to the registry and ready to service incoming client calls...");
+
+            manageObj = new MsgBrokerManageRMIImpl();
+            MsgBrokerManageRMI mStub = (MsgBrokerManageRMI)UnicastRemoteObject.exportObject(manageObj, Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
+            logger.debug("manage rebind");
+            registry.rebind("MsgBrokerManageRMI", mStub);
+            logger.debug("MsgBrokerManageRMI Remote Object bound to the registry and ready to service incoming client calls...");
+
+
         }
-        catch(java.rmi.RemoteException e) { 
+        catch(java.rmi.RemoteException e) {
             logger.error("Exception occurred during processing incoming method call");
             e.printStackTrace();
         }
@@ -42,9 +52,12 @@ public class MsgBrokerRMIServer {
             e.printStackTrace();
         }
     }
-    
+
     public void unbind() {
         try {
+            registry.unbind("MsgBrokerManageRMI");
+            UnicastRemoteObject.unexportObject(manageObj, true);
+            logger.debug("registry unbound");
             registry.unbind("MsgBrokerRMI");
             UnicastRemoteObject.unexportObject(remoteObj, true);
             logger.debug("registry unbound");

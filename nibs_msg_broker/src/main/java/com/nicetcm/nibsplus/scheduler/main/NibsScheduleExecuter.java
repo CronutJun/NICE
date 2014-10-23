@@ -18,7 +18,7 @@ import com.nicetcm.nibsplus.scheduler.service.ScheduleInfoProvider;
  * <pre>
  * 여기에 클래스 설명 및 변경 이력을 기술하십시오.
  * </pre>
- * 
+ *
  * @author 박상철
  * @version 1.0
  * @see
@@ -30,12 +30,12 @@ public class NibsScheduleExecuter {
 	public static void main(String[] args) {
         try {
         	ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:/scheduler/spring/context-scheduler.xml");
-        	
+
             JobVO jobVO = new JobVO();
-            jobVO.setQuartzNodeName("OrgSendService");
-            jobVO.setJobGroup("ADD_CASH");
-            jobVO.setJobName("003");
-            
+            jobVO.setQuartzNodeName(args[0]); // "OrgSendService");
+            jobVO.setJobGroup(args[1]); // "ADD_CASH");
+            jobVO.setJobName(args[2]); // "003");
+
             ScheduleInfoProvider scheduleInfoProvider = applicationContext.getBean("ScheduleDBInfoProvider", ScheduleInfoProvider.class);
             SchedulerVO schedulerVO = scheduleInfoProvider.selectScheduleByPk(jobVO);
 
@@ -44,7 +44,7 @@ public class NibsScheduleExecuter {
             } else {
                 ApplicationContext jobContext = scheduleInfoProvider.getApplicationContext(schedulerVO.getSpringContextXml());
                 MsgBrokerCallAgent.msgBrokerConfig = (Properties)jobContext.getBean("msgBrokerConfig");
-                
+
                 Class<JobExecuter> jobClass = null;
                 jobClass = (Class<JobExecuter>)Class.forName(schedulerVO.getJobClass());
 

@@ -1,0 +1,33 @@
+{
+   "name" : "05000150",                    "kname" : "KIOSK 장애, 개국(복구), 상태  (홈플러스)",
+   "response" : { "code" : "05000150",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "create_date",            "kname" : "장애발생일",             "type" : "N",   "length"  : 8   },
+      { "name" : "create_time",            "kname" : "장애발생시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "open_yn",                "kname" : "개국여부 0:정상,1:개국", "type" : "AN",  "length"  : 1   },
+      { "name" : "mode_type",              "kname" : "수퍼바이저모드 0:정상,1:개원모드",       "type" : "AN",  "length"  : 1   },
+      { "name" : "BI",                     "kname" : "카세트정보",             "type" : "STRUCT",   "iteration"  : 10,
+          "struct" : [
+            { "name" : "ticket_cd",        "kname" : "발행사",                 "type" : "AN",  "length"  : 3   },
+            { "name" : "bill_class_cd",    "kname" : "권종구분코드",           "type" : "AN",  "length"  : 2   },
+            { "name" : "state",            "kname" : "0:good,1:NerEnd,2:Empty","type" : "AN",  "length"  : 1   }
+          ]
+      },
+      { "name" : "deal_list_state",        "kname" : "명세표 상태",            "type" : "AN",  "length"  : 1   },
+      { "name" : "dummy1",                 "kname" : "임시",                   "type" : "AN",  "length"  : 10  },
+      { "name" : "KH",                     "kname" : "H/W정보",                "type" : "STRUCT",   "iteration"  : 5,
+          "struct" : [
+            { "name" : "state",            "kname" : "상태, 0:정상, 1:장애",   "type" : "AN",  "length"  : 1   },
+            { "name" : "hw_type",          "kname" : "장치구분",               "type" : "AN",  "length"  : 1   },
+            { "name" : "hw_err_cd",        "kname" : "hw 장애코드",            "type" : "AN",  "length"  : 4   }
+          ]
+      },
+      { "name" : "dummy2",                 "kname" : "임시2",                  "type" : "AN",  "length"  : 20  },
+      { "name" : "pgm_version",            "kname" : "프로그램 버전",          "type" : "AN",  "length"  : 10  },
+      { "name" : "mac_serial",             "kname" : "기기시리얼 번호",        "type" : "AN",  "length"  : 20  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 235 }
+   ]
+}

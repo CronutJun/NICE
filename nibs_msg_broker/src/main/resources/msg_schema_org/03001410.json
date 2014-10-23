@@ -1,0 +1,28 @@
+{
+   "name" : "03001410",                    "kname" : "일일이용현황",
+   "response" : { "code" : "03001410",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 40  },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "brch_nm",                "kname" : "관리점명",               "type" : "AN",  "length"  : 40  },
+      { "name" : "std_date",               "kname" : "기준일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "total_withdraw",         "kname" : "전체고객이용건수-출금",  "type" : "N",   "length"  : 5   },
+      { "name" : "total_transfer",         "kname" : "전체고객이용건수-이체",  "type" : "N",   "length"  : 5   },
+      { "name" : "total_deposit",          "kname" : "전체고객이용건수-입금",  "type" : "N",   "length"  : 5   },
+      { "name" : "total_sum",              "kname" : "전체고객이용건수-합계",  "type" : "N",   "length"  : 5   },
+      { "name" : "same_withdraw",          "kname" : "당행고객이용건수-출금",  "type" : "N",   "length"  : 5   },
+      { "name" : "same_transfer",          "kname" : "당행고객이용건수-이체",  "type" : "N",   "length"  : 5   },
+      { "name" : "same_deposit",           "kname" : "당행고객이용건수-입금",  "type" : "N",   "length"  : 5   },
+      { "name" : "same_sum",               "kname" : "당행고객이용건수-합계",  "type" : "N",   "length"  : 5   },
+      { "name" : "diff_withdraw",          "kname" : "타행고객이용건수-출금",  "type" : "N",   "length"  : 5   },
+      { "name" : "diff_transer",           "kname" : "타행고객이용건수-이체",  "type" : "N",   "length"  : 5   },
+      { "name" : "diff_deposit",           "kname" : "타행고객이용건수-입금",  "type" : "N",   "length"  : 5   },
+      { "name" : "diff_sum",               "kname" : "타행고객이용건수-합계",  "type" : "N",   "length"  : 5   },
+      { "name" : "bankbook_update_cnt",    "kname" : "통장정리이용건수",       "type" : "N",   "length"  : 5   },
+      { "name" : "earned_fee_IBK",         "kname" : "수수료수입-IBK",         "type" : "N",   "length"  : 10  },
+      { "name" : "earned_fee_VAN",         "kname" : "수수료수입-VAN",         "type" : "N",   "length"  : 10  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 229 }
+   ]
+}

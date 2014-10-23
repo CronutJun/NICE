@@ -1,6 +1,5 @@
 package com.nicetcm.nibsplus.broker.msg;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
@@ -9,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.nicetcm.nibsplus.broker.msg.services.CommonPack;
 import com.nicetcm.nibsplus.broker.msg.services.InMsgHandler;
 import com.nicetcm.nibsplus.broker.msg.services.RespAckNakHandler;
-import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 
 public class MsgBrokerWorker implements Runnable {
@@ -107,6 +105,9 @@ public class MsgBrokerWorker implements Runnable {
                         if( waitQ != null ) {
                             waitQ.put( msg );
                         }
+                        else {
+                            MsgBrokerManageRMIImpl.ansRMIAvailability( msg );
+                        }
                     }
                 }
                 catch (MsgBrokerException me) {
@@ -135,6 +136,9 @@ public class MsgBrokerWorker implements Runnable {
                         if( waitQ != null ) {
                             waitQ.put( msg );
                         }
+                        else {
+                            MsgBrokerManageRMIImpl.ansRMIAvailability( msg );
+                        }
                     }
                 }
                 catch (Exception e) {
@@ -161,6 +165,9 @@ public class MsgBrokerWorker implements Runnable {
                         if( waitQ != null ) {
                             waitQ.put( msg );
                         }
+                        else {
+                            MsgBrokerManageRMIImpl.ansRMIAvailability( msg );
+                        }
                     }
                     throw e;
                 }
@@ -177,4 +184,5 @@ public class MsgBrokerWorker implements Runnable {
 
         }
     }
+
 }

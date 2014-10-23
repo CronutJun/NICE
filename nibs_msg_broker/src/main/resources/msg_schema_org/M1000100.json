@@ -1,0 +1,12 @@
+{
+   "name" : "M1000100",                    "kname" : "지점정보조회",
+   "response" : { "code" : "M1000100",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "지점코드",               "type" : "AN",  "length"  : 4   },
+      { "name" : "member_no",              "kname" : "사원번호",               "type" : "AN",  "length"  : 4   },
+      { "name" : "brch_nm",                "kname" : "지점명",                 "type" : "AN",  "length"  : 30  },
+      { "name" : "br_master_nm",           "kname" : "점주명",                 "type" : "AN",  "length"  : 20  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 364 }
+   ]
+}

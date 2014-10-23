@@ -1,0 +1,17 @@
+{
+   "name" : "N3000300",                    "kname" : "점주관리 일마감",
+   "response" : { "code" : "N3000300",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "close_date",             "kname" : "마감일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "cash_out_cnt",           "kname" : "방출매수",               "type" : "N",   "length"  : 4   },
+      { "name" : "cash_out_amt",           "kname" : "방출금액",               "type" : "N",   "length"  : 10  },
+      { "name" : "notend_cnt",             "kname" : "미완료 발생 건수",       "type" : "N",   "length"  : 4   },
+      { "name" : "notend_amt",             "kname" : "미완료 발생 금액",       "type" : "N",   "length"  : 10  },
+      { "name" : "part_out_cnt",           "kname" : "부분방출 발생 건수",     "type" : "N",   "length"  : 4   },
+      { "name" : "part_out_amt",           "kname" : "부분방출 총 거래 금액",  "type" : "N",   "length"  : 10  },
+      { "name" : "field_pay_amt",          "kname" : "현장지급 금액",          "type" : "N",   "length"  : 10  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 350 }
+   ]
+}

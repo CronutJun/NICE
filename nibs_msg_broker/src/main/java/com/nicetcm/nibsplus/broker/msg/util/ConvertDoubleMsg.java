@@ -23,6 +23,7 @@ public class ConvertDoubleMsg {
     private BufferedReader rdr;
     private FileOutputStream wdr;
     private MsgParser sMsgPsr;
+    private MsgParser tMsgPsr;
 
     public ConvertDoubleMsg(String srcFileNm, String destFileNm) {
 
@@ -65,18 +66,26 @@ public class ConvertDoubleMsg {
                 System.out.println("Source QNm = " + inQNm);
 
                 sMsgPsr = MsgParser.getInstance(inQNm).parseMessage(srcBuf);
+
                 destBuf.position(0);
+                inQNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + new String(bWrkType) + ".json";
+                System.out.println("Target QNm = " + inQNm);
+
+                tMsgPsr = MsgParser.getInstance(inQNm).newMessage(destBuf);
+                destBuf.position(0);
+
                 for(Entry<String, MsgData> entry: sMsgPsr.getAllFields().entrySet()) {
                     byte cData[] = null;
                     if( destBuf.position() < MsgBrokerConst.HEADER_LEN )
                         cData = new byte[entry.getValue().length];
                     else
-                        cData = new byte[entry.getValue().length * 2];
+                        cData = new byte[tMsgPsr.getField(tMsgPsr.getCurrentThrData().msgDatMap, entry.getValue().name).length];
                     String fmt = String.format("%%-%ds", cData.length);
                     String sData = String.format(fmt, new String(sMsgPsr.getBytes(entry.getKey()), "MS949"));
                     System.arraycopy(sData.getBytes(), 0, cData, 0,
                             sData.getBytes().length > cData.length ? cData.length : sData.getBytes().length);
                     destBuf.put(cData);
+                    //System.out.println("FieldName = " + entry.getValue().name);
                 }
                 destBuf.position(0);
                 byte dData[] = new byte[destBuf.limit()];

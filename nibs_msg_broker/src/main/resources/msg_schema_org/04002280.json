@@ -1,0 +1,13 @@
+{
+   "name" : "04002280",                    "kname" : "CRT번호등록",
+   "response" : { "code" : "04002280",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "org_cd",                 "kname" : "기관코드",               "type" : "AN",  "length"  : 3   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "site_cd",                "kname" : "기관코너코드",           "type" : "AN",  "length"  : 6   },
+      { "name" : "crt_no",                 "kname" : "CRT_NO",                 "type" : "AN",  "length"  : 15  },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 378 }
+   ]
+}
