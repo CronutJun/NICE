@@ -12,15 +12,12 @@ package com.nicetcm.nibsplus.broker.msg.services;
 import java.nio.ByteBuffer;
 import java.util.Date;
 
-import javax.jms.BytesMessage;
-
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.mapper.*;
 import com.nicetcm.nibsplus.broker.msg.model.*;
@@ -28,11 +25,9 @@ import com.nicetcm.nibsplus.broker.msg.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 
 @Service("inN1000100")
 public class InN1000100Impl extends InMsgHandlerImpl {
@@ -158,7 +153,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
          * 입금거래 일 경우만 적용
          */
         if( (parsed.getString("st_org_cd").equals("017") || parsed.getString("st_org_cd").equals("018"))
-        &&  parsed.getString("deal_type").substring(0,1).equals("1") ) {
+        &&  MsgBrokerLib.substr(parsed.getString("deal_type"),0,1).equals("1") ) {
             if( parsed.getString("org_response_cd").equals("A6")
             ||  parsed.getString("org_response_cd").equals("A7") ) {
 
@@ -183,7 +178,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnRcInfoRec.setMacNo( parsed.getString("mac_no") );
         fnRcInfoRec.setDealTime( parsed.getString("deal_time") );
         fnRcInfoRec.setDealType( MsgBrokerLib.substr(parsed.getString("deal_type"),0,1) );
-        fnRcInfoRec.setDealClass( parsed.getString("deal_type").substring(1) );
+        fnRcInfoRec.setDealClass( MsgBrokerLib.substr(parsed.getString("deal_type"),1) );
         fnRcInfoRec.setCompGb( MsgBrokerLib.lpad( parsed.getString("inst_org_cd"), 4, "0") );
         fnRcInfoRec.setHpNo( parsed.getString("account_no") );
         fnRcInfoRec.setInsertDate( safeData.getDSysDate() );
@@ -222,21 +217,21 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNTCRec.setDealDate( parsed.getString("deal_date") );
         fnNTCRec.setMacNo( parsed.getString("mac_no") );
         fnNTCRec.setAtmDealNo( parsed.getString("atm_deal_no") );
-        fnNTCRec.setDealType( parsed.getString("deal_type").substring(0, 1) );
-        fnNTCRec.setDealClss( parsed.getString("deal_type").substring(1) );
-        fnNTCRec.setInstBranchCd( MsgBrokerLib.rpad(parsed.getString("account_no").substring(0, 4), 4, " ") );
-        fnNTCRec.setAccountNo( MsgBrokerLib.rpad(parsed.getString("account_no").substring(4), 20, " ") );
+        fnNTCRec.setDealType( MsgBrokerLib.substr(parsed.getString("deal_type"),0, 1) );
+        fnNTCRec.setDealClss( MsgBrokerLib.substr(parsed.getString("deal_type"),1) );
+        fnNTCRec.setInstBranchCd( MsgBrokerLib.rpad(MsgBrokerLib.substr(parsed.getString("account_no"),0, 4), 4, " ") );
+        fnNTCRec.setAccountNo( MsgBrokerLib.rpad(MsgBrokerLib.substr(parsed.getString("account_no"),4), 20, " ") );
         fnNTCRec.setRealAccountNo( MsgBrokerLib.rpad(parsed.getString("real_account_no"), 16, " ") );
         fnNTCRec.setDealAmt( parsed.getLong("deal_amt") );
         fnNTCRec.setOrgCd( parsed.getString("st_org_cd") );
-        fnNTCRec.setDealYear( fnNTCRec.getDealDate().substring(0, 4) );
-        fnNTCRec.setDealMmdd( fnNTCRec.getDealDate().substring(4) );
+        fnNTCRec.setDealYear( MsgBrokerLib.substr(fnNTCRec.getDealDate(),0, 4) );
+        fnNTCRec.setDealMmdd( MsgBrokerLib.substr(fnNTCRec.getDealDate(),4) );
         fnNTCRec.setDealNo( parsed.getString("deal_no") );
         fnNTCRec.setDealStatus( parsed.getString("deal_status") );
         fnNTCRec.setDealTime( parsed.getString("deal_time") );
-        fnNTCRec.setDealHour( fnNTCRec.getDealTime().substring(0, 2) );
-        fnNTCRec.setDealMi( fnNTCRec.getDealTime().substring(2, 4) );
-        fnNTCRec.setDealSec( fnNTCRec.getDealTime().substring(4) );
+        fnNTCRec.setDealHour( MsgBrokerLib.substr(fnNTCRec.getDealTime(),0, 2) );
+        fnNTCRec.setDealMi( MsgBrokerLib.substr(fnNTCRec.getDealTime(),2, 4) );
+        fnNTCRec.setDealSec( MsgBrokerLib.substr(fnNTCRec.getDealTime(),4) );
         fnNTCRec.setDealInAmtCw15( parsed.getLong("cash_cnt_100000") );
         fnNTCRec.setDealInAmtCw54( parsed.getLong("cash_cnt_50000") );
         fnNTCRec.setDealInAmtCw14( parsed.getLong("cash_cnt_10000") );
@@ -280,12 +275,12 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNTGRec.setDealDate( parsed.getString("deal_date") );
         fnNTGRec.setMacNo( parsed.getString("mac_no") );
         fnNTGRec.setAtmDealNo( parsed.getString("atm_deal_no") );
-        fnNTGRec.setDealType( parsed.getString("deal_type").substring(0, 1) );
-        fnNTGRec.setDealClss( parsed.getString("deal_type").substring(1) );
+        fnNTGRec.setDealType( MsgBrokerLib.substr(parsed.getString("deal_type"),0, 1) );
+        fnNTGRec.setDealClss( MsgBrokerLib.substr(parsed.getString("deal_type"),1) );
         fnNTGRec.setTrackNo( parsed.getString("track_no") );
         fnNTGRec.setInstOrgCd( parsed.getString("inst_org_cd"));
-        fnNTGRec.setInstBranchCd( MsgBrokerLib.rpad(parsed.getString("account_no").substring(0, 4), 4, " ") );
-        fnNTGRec.setAccountNo( MsgBrokerLib.rpad(parsed.getString("account_no").substring(4), 20, " ") );
+        fnNTGRec.setInstBranchCd( MsgBrokerLib.rpad(MsgBrokerLib.substr(parsed.getString("account_no"),0, 4), 4, " ") );
+        fnNTGRec.setAccountNo( MsgBrokerLib.rpad(MsgBrokerLib.substr(parsed.getString("account_no"),4), 20, " ") );
         fnNTGRec.setRealAccountNo( MsgBrokerLib.rpad(parsed.getString("real_account_no"), 16, " ") );
         fnNTGRec.setDealAmt( parsed.getLong("deal_amt") );
         fnNTGRec.setCustFee( parsed.getInt("cust_fee") );
@@ -293,14 +288,14 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNTGRec.setResponseCd( parsed.getString("response_cd") );
         fnNTGRec.setRefuseCd( parsed.getString("refuse_cd") );
         fnNTGRec.setOrgResponseCd( parsed.getString("org_response_cd") );
-        fnNTGRec.setDealYear( fnNTGRec.getDealDate().substring(0, 4) );
-        fnNTGRec.setDealMmdd( fnNTGRec.getDealDate().substring(4) );
+        fnNTGRec.setDealYear( MsgBrokerLib.substr(fnNTGRec.getDealDate(),0, 4) );
+        fnNTGRec.setDealMmdd( MsgBrokerLib.substr(fnNTGRec.getDealDate(),4) );
         fnNTGRec.setDealNo( parsed.getString("deal_no") );
         fnNTGRec.setAdmisOrg( parsed.getString("admis_org") );
         fnNTGRec.setDealStatus( parsed.getString("deal_status") );
-        fnNTGRec.setDealHour( parsed.getString("deal_time").substring(0, 2) );
-        fnNTGRec.setDealMi( parsed.getString("deal_time").substring(2, 4) );
-        fnNTGRec.setDealSec( parsed.getString("deal_time").substring(4) );
+        fnNTGRec.setDealHour( MsgBrokerLib.substr(parsed.getString("deal_time"),0, 2) );
+        fnNTGRec.setDealMi( MsgBrokerLib.substr(parsed.getString("deal_time"),2, 4) );
+        fnNTGRec.setDealSec( MsgBrokerLib.substr(parsed.getString("deal_time"),4) );
         fnNTGRec.setErrorStatus( parsed.getString("error_status") );
         fnNTGRec.setDealTimeType( parsed.getString("deal_time_type") );
         fnNTGRec.setJoinOrgDealNo( parsed.getString("join_org_deal_no") );
@@ -358,32 +353,32 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNiceTranRec.setDealDate( parsed.getString("deal_date") );
         fnNiceTranRec.setMacNo( parsed.getString("mac_no") );
         fnNiceTranRec.setAtmDealNo( parsed.getString("atm_deal_no") );
-        fnNiceTranRec.setDealType( parsed.getString("deal_type").substring(0, 1) );
-        fnNiceTranRec.setDealClss( parsed.getString("deal_type").substring(1) );
+        fnNiceTranRec.setDealType( MsgBrokerLib.substr(parsed.getString("deal_type"),0, 1) );
+        fnNiceTranRec.setDealClss( MsgBrokerLib.substr(parsed.getString("deal_type"),1) );
         fnNiceTranRec.setTrackNo( parsed.getString("track_no") );
         fnNiceTranRec.setInstOrgCd( parsed.getString("inst_org_cd"));
-        fnNiceTranRec.setInstBranchCd( MsgBrokerLib.rpad(parsed.getString("account_no").substring(0, 4), 4, " ") );
-        fnNiceTranRec.setAccountNo( MsgBrokerLib.rpad(parsed.getString("account_no").substring(4), 20, " ") );
+        fnNiceTranRec.setInstBranchCd( MsgBrokerLib.rpad(MsgBrokerLib.substr(parsed.getString("account_no"),0, 4), 4, " ") );
+        fnNiceTranRec.setAccountNo( MsgBrokerLib.rpad(MsgBrokerLib.substr(parsed.getString("account_no"),4), 20, " ") );
         fnNiceTranRec.setRealAccountNo( MsgBrokerLib.rpad(parsed.getString("real_account_no"), 16, " ") );
         fnNiceTranRec.setDealAmt( parsed.getLong("deal_amt") );
         fnNiceTranRec.setCustFee( parsed.getInt("cust_fee") );
         fnNiceTranRec.setBankFee( parsed.getInt("bank_fee") );
         fnNiceTranRec.setTransOrgCd( parsed.getString("trans_org_cd") );
-        fnNiceTranRec.setTransBranchCd( MsgBrokerLib.rpad(parsed.getString("account_no").substring(0, 4), 4, " ") );
-        fnNiceTranRec.setTransAccountNo( MsgBrokerLib.rpad(parsed.getString("account_no").substring(4), 20, " ") );
+        fnNiceTranRec.setTransBranchCd( MsgBrokerLib.rpad(MsgBrokerLib.substr(parsed.getString("account_no"),0, 4), 4, " ") );
+        fnNiceTranRec.setTransAccountNo( MsgBrokerLib.rpad(MsgBrokerLib.substr(parsed.getString("account_no"),4), 20, " ") );
         fnNiceTranRec.setTransDepositor( parsed.getString("trans_depositor") );
         fnNiceTranRec.setResponseCd( parsed.getString("response_cd") );
         fnNiceTranRec.setRefuseCd( parsed.getString("refuse_cd") );
         fnNiceTranRec.setOrgResponseCd( parsed.getString("org_response_cd") );
         fnNiceTranRec.setOrgCd( parsed.getString("st_org_cd") );
-        fnNiceTranRec.setDealYear( fnNiceTranRec.getDealDate().substring(0, 4) );
-        fnNiceTranRec.setDealMmdd( fnNiceTranRec.getDealDate().substring(4) );
+        fnNiceTranRec.setDealYear( MsgBrokerLib.substr(fnNiceTranRec.getDealDate(),0, 4) );
+        fnNiceTranRec.setDealMmdd( MsgBrokerLib.substr(fnNiceTranRec.getDealDate(),4) );
         fnNiceTranRec.setDealNo( parsed.getString("deal_no") );
         fnNiceTranRec.setAdmisOrg( parsed.getString("admis_org") );
         fnNiceTranRec.setDealStatus( parsed.getString("deal_status") );
-        fnNiceTranRec.setDealHour( parsed.getString("deal_time").substring(0, 2) );
-        fnNiceTranRec.setDealMi( parsed.getString("deal_time").substring(2, 4) );
-        fnNiceTranRec.setDealSec( parsed.getString("deal_time").substring(4) );
+        fnNiceTranRec.setDealHour( MsgBrokerLib.substr(parsed.getString("deal_time"),0, 2) );
+        fnNiceTranRec.setDealMi( MsgBrokerLib.substr(parsed.getString("deal_time"),2, 4) );
+        fnNiceTranRec.setDealSec( MsgBrokerLib.substr(parsed.getString("deal_time"),4) );
         fnNiceTranRec.setErrorStatus( parsed.getString("error_status") );
         fnNiceTranRec.setDealTimeType( parsed.getString("deal_time_type") );
         fnNiceTranRec.setJoinOrgDealNo( parsed.getString("join_org_deal_no") );
