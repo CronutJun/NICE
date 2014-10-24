@@ -428,14 +428,14 @@ public interface TFnNiceTranMapper {
      * @since  Tue Oct 16 11:26:01 KST 2014
      */
     @Select({
-        "SELECT  DEAL_STATUS,                                              ",
-        "        ADMIS_ORG,                                                ",
-        "        FC_FN_SECURITY(INST_BRANCH_CD, '2') AS INST_BRANCH_CD,    ",
-        "        FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,            ",
-        "        FC_FN_SECURITY(REAL_ACCOUNT_NO, '2') AS REAL_ACCOUNT_NO,  ",
-        "        FC_FN_SECURITY(TRANS_BRANCH_CD, '2') AS TRANS_BRANCH_CD,  ",
-        "        FC_FN_SECURITY(TRANS_ACCOUNT_NO, '2') AS TRANS_ACCOUNT_NO ",
-        "FROM    T_FN_NICE_TRAN                                            ",
+        "SELECT  DEAL_STATUS,                                                 ",
+        "        ADMIS_ORG,                                                   ",
+        "        OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') AS INST_BRANCH_CD,    ",
+        "        OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,            ",
+        "        OP.FC_FN_SECURITY(REAL_ACCOUNT_NO, '2') AS REAL_ACCOUNT_NO,  ",
+        "        OP.FC_FN_SECURITY(TRANS_BRANCH_CD, '2') AS TRANS_BRANCH_CD,  ",
+        "        OP.FC_FN_SECURITY(TRANS_ACCOUNT_NO, '2') AS TRANS_ACCOUNT_NO ",
+        "FROM    OP.T_FN_NICE_TRAN                                            ",
         "WHERE   DEAL_DATE   = RTRIM(#{dealDate, jdbcType=VARCHAR})        ",
         "AND     MAC_NO      = RTRIM(#{macNo, jdbcType=VARCHAR})           ",
         "AND     ATM_DEAL_NO = RTRIM(#{atmDealNo, jdbcType=VARCHAR})       "
@@ -456,9 +456,9 @@ public interface TFnNiceTranMapper {
      * @since  Tue Oct 16 11:26:01 KST 2014
      */
     @Update({
-        "UPDATE  T_FN_NICE_TRAN                                                                        ",
+        "UPDATE  OP.T_FN_NICE_TRAN                                                                     ",
         "   SET  ADMIS_ORG  = #{admisOrg, jdbcType=VARCHAR},                                           ",
-        "        REAL_ACCOUNT_NO = FC_FN_SECURITY(RPAD(#{realAccountNo, jdbcType=VARCHAR}, ' ') , '1') ",
+        "        REAL_ACCOUNT_NO = OP.FC_FN_SECURITY(RPAD(#{realAccountNo, jdbcType=VARCHAR}, ' ') , '1') ",
         "WHERE   DEAL_DATE   = RTRIM(#{dealDate, jdbcType=VARCHAR})                                    ",
         "AND     MAC_NO      = RTRIM(#{macNo, jdbcType=VARCHAR})                                       ",
         "AND     ATM_DEAL_NO = RTRIM(#{atmDealNo, jdbcType=VARCHAR})                                   "
@@ -472,12 +472,12 @@ public interface TFnNiceTranMapper {
      * @since  Tue Oct 16 11:26:01 KST 2014
      */
     @Update({
-        "UPDATE  T_FN_NICE_TRAN                                                                          ",
+        "UPDATE  OP.T_FN_NICE_TRAN                                                                       ",
         "   SET  INST_BRANCH_CD  = #{instBranchCd, jdbcType=VARCHAR},                                    ",
-        "        ACCOUNT_NO = FC_FN_SECURITY(RPAD(#{accountNo, jdbcType=VARCHAR}, ' ') , '1'),           ",
-        "        REAL_ACCOUNT_NO = FC_FN_SECURITY(RPAD(#{realAccountNo, jdbcType=VARCHAR}, ' ') , '1'),  ",
-        "        TRANS_BRANCH_CD = FC_FN_SECURITY(RPAD(#{transBranchCd, jdbcType=VARCHAR}, ' ') , '1'),  ",
-        "        TRANS_ACCOUNT_NO = FC_FN_SECURITY(RPAD(#{transAccountNo, jdbcType=VARCHAR}, ' ') , '1') ",
+        "        ACCOUNT_NO = OP.FC_FN_SECURITY(RPAD(#{accountNo, jdbcType=VARCHAR}, ' ') , '1'),           ",
+        "        REAL_ACCOUNT_NO = OP.FC_FN_SECURITY(RPAD(#{realAccountNo, jdbcType=VARCHAR}, ' ') , '1'),  ",
+        "        TRANS_BRANCH_CD = OP.FC_FN_SECURITY(RPAD(#{transBranchCd, jdbcType=VARCHAR}, ' ') , '1'),  ",
+        "        TRANS_ACCOUNT_NO = OP.FC_FN_SECURITY(RPAD(#{transAccountNo, jdbcType=VARCHAR}, ' ') , '1') ",
         "WHERE   DEAL_DATE   = RTRIM(#{dealDate, jdbcType=VARCHAR})                                      ",
         "AND     MAC_NO      = RTRIM(#{macNo, jdbcType=VARCHAR})                                         ",
         "AND     ATM_DEAL_NO = RTRIM(#{atmDealNo, jdbcType=VARCHAR})                                     "

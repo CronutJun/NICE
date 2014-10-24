@@ -1,0 +1,2 @@
+cd $HOME/MsgBroker
+$JAVA_HOME/bin/java -cp "$JDK_HOME/lib/tools.jar:$JDK_HOME/lib/jconsole.jar:nibs_msg_broker-0.0.1-SNAPSHOT-jar-with-dependencies.jar" -Dserver.type=stage1 com.nicetcm.nibsplus.broker.msg.util.ActiveMQManager $*

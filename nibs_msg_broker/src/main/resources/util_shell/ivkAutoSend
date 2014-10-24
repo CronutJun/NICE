@@ -1,0 +1,7 @@
+if [ $# -ne 3 ]
+then
+  echo "Usage: ivkAutoSend [Node] [JobGroup] [JobName]"
+  exit
+fi
+#$JAVA_HOME/bin/java -cp $HOME/MsgBroker/nibs_msg_broker-0.0.1-SNAPSHOT-jar-with-dependencies.jar -Dspring.profiles.active=stage1 -Dfile.encoding=UTF-8 com.nicetcm.nibsplus.scheduler.main.NibsScheduleExecuter $*
+$JAVA_HOME/bin/java -cp $HOME/MsgBroker/nibs_msg_broker -Dspring.profiles.active=stage1 -Dfile.encoding=UTF-8 com.nicetcm.nibsplus.scheduler.main.NibsScheduleExecuter $*
