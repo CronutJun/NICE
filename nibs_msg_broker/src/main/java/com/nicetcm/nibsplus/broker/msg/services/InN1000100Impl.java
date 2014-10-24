@@ -544,7 +544,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 }
                 else {
                     if( fnNiceTranRec.getDealStatus().equals("0") ) {
-                        if( prevNiceTran.getDealStatus().equals("0") ) {
+                        if( MsgBrokerLib.nstr(prevNiceTran.getDealStatus()).equals("0") ) {
                             logger.info( "같은 정상Data가 또 들어왔음[{}][{}]",
                                     prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
                             throw new MsgBrokerException(-999);
