@@ -140,7 +140,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
          * 잔액조회도 실거래로 인식하도록(무거래에 포함되지 않도록) 한다. 2008.06.23 김희천 대리 요청
          */
         if( parsed.getString("deal_type").equals("01001")
-        ||  parsed.getString("deal_type").substring(0, 1).equals("1")
+        ||  MsgBrokerLib.substr( parsed.getString("deal_type"), 0, 1).equals("1")
         /*
          * 잔액조회
          */
@@ -182,7 +182,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnRcInfoRec.setDealNo( parsed.getString("deal_no") );
         fnRcInfoRec.setMacNo( parsed.getString("mac_no") );
         fnRcInfoRec.setDealTime( parsed.getString("deal_time") );
-        fnRcInfoRec.setDealType( parsed.getString("deal_type").substring(0,1) );
+        fnRcInfoRec.setDealType( MsgBrokerLib.substr(parsed.getString("deal_type"),0,1) );
         fnRcInfoRec.setDealClass( parsed.getString("deal_type").substring(1) );
         fnRcInfoRec.setCompGb( MsgBrokerLib.lpad( parsed.getString("inst_org_cd"), 4, "0") );
         fnRcInfoRec.setHpNo( parsed.getString("account_no") );

@@ -148,6 +148,49 @@ public class MsgBrokerLib {
     }
 
     /**
+     * 문자열 NULL치환
+     *
+     * @param src    원본 문자열
+     * @return       치환 문자열
+     */
+    public static String nstr(String src) {
+
+        if( src == null ) return "";
+        return src;
+
+    }
+
+    /**
+     * 문자열 자르기
+     *
+     * @param src    원본 문자열
+     * @param pos    시작위치 0 index
+     * @param ePos   자를 위치 다음 index
+     * @return       자른 문자열
+     */
+    public static String substr(String src, int pos, int ePos) {
+
+        if( src == null ) return "";
+        if( src.length()-1 < pos ) return "";
+        if( src.length() < ePos ) return src.substring(pos);
+        return src.substring( pos, ePos );
+    }
+
+    /**
+     * 문자열 자르기
+     *
+     * @param src    원본 문자열
+     * @param pos    시작위치 0 index
+     * @return       자른 문자열
+     */
+    public static String substr(String src, int pos) {
+
+        if( src == null ) return "";
+        if( src.length()-1 < pos ) return "";
+        return src.substring( pos );
+    }
+
+    /**
      *
      * 왼쪽공백제거
      * <pre>
