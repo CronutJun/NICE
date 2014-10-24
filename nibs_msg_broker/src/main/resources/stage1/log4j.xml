@@ -18,19 +18,19 @@
   </appender>
 
     <logger name="com.nicetcm.nibsplus">
-        <level value="info" />
+        <level value="warn" />
     </logger>
 
     <logger name="com.bogogt">
-        <level value="info" />
+        <level value="warn" />
     </logger>
 
   <logger name="java.sql">
-    <level value="info" />
+    <level value="warn" />
   </logger>
 
     <logger name="org.springframework">
-        <level value="info" />
+        <level value="warn" />
     </logger>
 
     <logger name="org.apache.activemq" >
@@ -38,7 +38,7 @@
     </logger>
 
   <root>
-    <priority value="info" />
+    <priority value="warn" />
     <appender-ref ref="testAppender"/>
   </root>
 

@@ -28,7 +28,7 @@ public class MsgBrokerWorker implements Runnable {
         try {
             MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "I", true);
             logger.debug("inQNm = {}", ret.QNm);
-            logger.info("I-MSG : [{}],[{}]", msg.length, new String(msg));
+            logger.warn("I-MSG : [{}],[{}]", msg.length, new String(msg));
 
             msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
             logger.debug("Parse OK");
