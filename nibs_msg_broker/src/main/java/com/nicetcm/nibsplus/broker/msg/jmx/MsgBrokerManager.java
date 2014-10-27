@@ -12,18 +12,23 @@ package com.nicetcm.nibsplus.broker.msg.jmx;
  * @since   2014.09.05
  */
 
-import javax.management.*;
+import javax.management.AttributeChangeNotification;
+import javax.management.MBeanNotificationInfo;
+import javax.management.Notification;
+import javax.management.NotificationBroadcasterSupport;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.beans.factory.config.BeanDefinition;
 
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerClassLoader;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerShutdown;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerSpringMain;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerClassLoader;
-import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 public class MsgBrokerManager extends NotificationBroadcasterSupport implements MsgBrokerManagerMBean {
 
@@ -113,6 +118,85 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
             return e.getMessage();
         }
     }
+
+    @Override
+    public String setLogLevel(String logLevel) {
+        try {
+            if( logLevel == null ) return "please set the log level.";
+            if( logLevel.equals("ALL") ) {
+                LogManager.getRootLogger().setLevel(Level.ALL);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.ALL);
+                LogManager.getLogger("com.bogogt").setLevel(Level.ALL);
+                LogManager.getLogger("java.sql").setLevel(Level.ALL);
+                LogManager.getLogger("org.springframework").setLevel(Level.ALL);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.ALL);
+            }
+            else if( logLevel.equals("TRACE") ) {
+                LogManager.getRootLogger().setLevel(Level.TRACE);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.TRACE);
+                LogManager.getLogger("com.bogogt").setLevel(Level.TRACE);
+                LogManager.getLogger("java.sql").setLevel(Level.TRACE);
+                LogManager.getLogger("org.springframework").setLevel(Level.TRACE);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.TRACE);
+            }
+            else if( logLevel.equals("DEBUG") ) {
+                LogManager.getRootLogger().setLevel(Level.DEBUG);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.DEBUG);
+                LogManager.getLogger("com.bogogt").setLevel(Level.DEBUG);
+                LogManager.getLogger("java.sql").setLevel(Level.DEBUG);
+                LogManager.getLogger("org.springframework").setLevel(Level.DEBUG);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.DEBUG);
+            }
+            else if( logLevel.equals("INFO") ) {
+                LogManager.getRootLogger().setLevel(Level.INFO);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.INFO);
+                LogManager.getLogger("com.bogogt").setLevel(Level.INFO);
+                LogManager.getLogger("java.sql").setLevel(Level.INFO);
+                LogManager.getLogger("org.springframework").setLevel(Level.INFO);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.INFO);
+            }
+            else if( logLevel.equals("WARN") ) {
+                LogManager.getRootLogger().setLevel(Level.WARN);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.WARN);
+                LogManager.getLogger("com.bogogt").setLevel(Level.WARN);
+                LogManager.getLogger("java.sql").setLevel(Level.WARN);
+                LogManager.getLogger("org.springframework").setLevel(Level.WARN);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.WARN);
+            }
+            else if( logLevel.equals("ERROR") ) {
+                LogManager.getRootLogger().setLevel(Level.ERROR);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.ERROR);
+                LogManager.getLogger("com.bogogt").setLevel(Level.ERROR);
+                LogManager.getLogger("java.sql").setLevel(Level.ERROR);
+                LogManager.getLogger("org.springframework").setLevel(Level.ERROR);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.ERROR);
+            }
+            else if( logLevel.equals("FATAL") ) {
+                LogManager.getRootLogger().setLevel(Level.FATAL);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.FATAL);
+                LogManager.getLogger("com.bogogt").setLevel(Level.FATAL);
+                LogManager.getLogger("java.sql").setLevel(Level.FATAL);
+                LogManager.getLogger("org.springframework").setLevel(Level.FATAL);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.FATAL);
+            }
+            else if( logLevel.equals("OFF") ) {
+                LogManager.getRootLogger().setLevel(Level.OFF);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.OFF);
+                LogManager.getLogger("com.bogogt").setLevel(Level.OFF);
+                LogManager.getLogger("java.sql").setLevel(Level.OFF);
+                LogManager.getLogger("org.springframework").setLevel(Level.OFF);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.OFF);
+            }
+            else return String.format("Invalid log level %s", logLevel);
+
+            return "change succeed";
+        }
+        catch( Exception e ) {
+            logger.error("setLogLevel exception is raised: {}", e.getMessage() );
+            return "Fail!";
+        }
+    }
+
 
     @Override
     public void listBean() {
