@@ -124,6 +124,7 @@ public class MsgBrokerLib {
     public static String lpad(String src, int len, String padStr) {
 
         String padding = "";
+        if( src == null ) src = new String("");
         for( int i = src.length(); i < len; i++ )
             padding += padStr;
 
@@ -141,6 +142,7 @@ public class MsgBrokerLib {
     public static String rpad(String src, int len, String padStr) {
 
         String padding = "";
+        if( src == null ) src = new String("");
         for( int i = src.length(); i < len; i++ )
             padding += padStr;
 

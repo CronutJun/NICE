@@ -51,7 +51,7 @@ public class In01100140Impl extends InMsgHandlerImpl {
             tCtErrorMngMadeComSpec.createCriteria()
             .andTransDateEqualTo(parsed.getString("trans1_date"))
             .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"))
-            .andOrgCallCntEqualTo(parsed.getShort("mac_model"));
+            .andOrgCallCntEqualTo(Short.parseShort(parsed.getString("mac_model").substring(0, 2)));
 
             try
             {

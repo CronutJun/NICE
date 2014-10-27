@@ -9,8 +9,11 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorMngGuardMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorMngMadeComMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngGuard;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngGuardSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngMadeCom;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngMadeComSpec;
 
 /**
  *
@@ -29,12 +32,13 @@ public class In01100180Impl extends InMsgHandlerImpl {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired private TCtErrorMngGuardMapper tCtErrorMngGuardMapper;
+    @Autowired private TCtErrorMngMadeComMapper tCtErrorMngMadeComMapper;
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         String hSEND_YN;
 
-        if(parsed.getString("CM.ret_cd").equals("0000")) {
+        if(parsed.getInt("CM.ret_cd") == 0) {
             /* 고객대기 장애는 미완료 장애중 출동요청 전문이 성공한 */
             /* 경우만 송신하여 정상응답을 수신 받으면    */
             /* GUARD_SEND_YN = 'A' 로 설정한다                                   */
@@ -69,5 +73,31 @@ public class In01100180Impl extends InMsgHandlerImpl {
         }
 
         logger.info( "[T_CT_ERROR_MNG_GUARD] Update OK" );
+
+        /**
+         * 2014/10/27 방혜진차장 요청 (원본에는 없는 내용 임)
+         */
+        TCtErrorMngMadeCom tCtErrorMngMadeCom = new TCtErrorMngMadeCom();
+        tCtErrorMngMadeCom.setOrgSendYn(hSEND_YN);
+        tCtErrorMngMadeCom.setUpdateDate(safeData.getDSysDate());
+        tCtErrorMngMadeCom.setUpdateUid("APmngEM");
+
+        TCtErrorMngMadeComSpec tCtErrorMngMadeComSpec = new TCtErrorMngMadeComSpec();
+        tCtErrorMngMadeComSpec.createCriteria()
+        .andTransDateEqualTo(parsed.getString("trans1_date"))
+        .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"))
+        .andOrgCallCntEqualTo(parsed.getShort("call_cnt"));
+
+        try {
+            tCtErrorMngMadeComMapper.updateBySpecSelective(tCtErrorMngMadeCom, tCtErrorMngMadeComSpec);
+        }
+        catch (Exception e) {
+            logger.info("[T_CT_ERROR_MNG_MADE_COM] Update Err [{}]", e.getMessage());
+            throw e;
+        }
+
+        logger.info( "[T_CT_ERROR_MNG_MADE_COM] Update OK" );
+
+
     }
 }
