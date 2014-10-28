@@ -43,6 +43,11 @@ public class ScheduleDBInfoProvider implements ScheduleInfoProvider
         return schedulerMapper.selectScheduleByPk(jobVO);
     }
 
+	@Override
+	public List<SchedulerVO> selectScheduleJobGroup() {
+		return schedulerMapper.selectScheduleJobGroup();
+	}
+
     @Override
     public ApplicationContext getApplicationContext(String springContextXml) {
         ApplicationContext applicationContext;

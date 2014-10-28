@@ -1,4 +1,4 @@
-package com.nicetcm.nibsplus.orgsend.rmi;
+package com.nicetcm.nibsplus.errmon.rmi;
 
 import java.nio.ByteBuffer;
 import java.rmi.registry.LocateRegistry;
@@ -20,7 +20,7 @@ public class MsgBrokerCallAgent <PT> {
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerCallAgent.class);
     private final MsgBrokerConf conf;
     private final String msgId;
-    private String msgId2 = "AUTOSND";
+    private final String msgId2 = "ERRMON";
     private PT params;
     private MsgBrokerCallBack<PT> callBack;
     

@@ -229,6 +229,8 @@ public class In05000110Impl extends InMsgHandlerImpl {
                  * 복구일 경우는 NE0**, 예보일 경우는 NE1**, 장애일 경우는 NE2**
                  */
                 errBasic.setErrorCd( String.format("NE%c%s", parsed.getBytes("atm_state")[e.ordinal()], lpad(e.getErrorCd(), 2, "0")) );
+                errTxn.setRepairDate(null);
+                errTxn.setRepairTime(null);
 
                 /*
                  * 예보 및 장애

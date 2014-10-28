@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
@@ -129,7 +132,7 @@ public class In01001170Impl extends InMsgHandlerImpl {
             }
 
             /* 이미 완료된 건은 update 하지 않도록 한다. */
-            if(tCtErrorMngMadeCom.getFinishStatus().equals("0")) {
+            if(nstr(tCtErrorMngMadeCom.getFinishStatus()).equals("0")) {
                 logger.info(String.format("[SaveErrArrSchdule] 완료장애에 대한 처리결과 수신 AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), parsed.getString("org_call_cnt")));
                 throw new MsgBrokerException(-2);
@@ -219,7 +222,7 @@ public class In01001170Impl extends InMsgHandlerImpl {
             }
 
             /* 이미 완료된 건은 update 하지 않도록 한다. */
-            if(tCtErrorMng.getErrorStatus().equals("0")) {
+            if(nstr(tCtErrorMng.getErrorStatus()).equals("0")) {
                 logger.info(String.format("[SaveErrArrSchdule] 완료장애에 대한 처리결과 수신 AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), parsed.getString("org_call_cnt")));
                 throw new MsgBrokerException(-2);
@@ -320,7 +323,7 @@ public class In01001170Impl extends InMsgHandlerImpl {
             } else {
 
                 /* 조치 완료 건에 대해서만 완료시간을 넣어주도록 한다. */
-                if(tCtErrorMng.getErrorStatus().equals("7000")) {
+                if(nstr(tCtErrorMng.getErrorStatus()).equals("7000")) {
 
                     TCtErrorMngSpec tCtErrorMngSpec3 = new TCtErrorMngSpec();
                     tCtErrorMngSpec3.createCriteria()

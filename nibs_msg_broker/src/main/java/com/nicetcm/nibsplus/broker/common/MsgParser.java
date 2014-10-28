@@ -14,7 +14,6 @@ package com.nicetcm.nibsplus.broker.common;
 
 import java.nio.ByteBuffer;
 import java.nio.BufferUnderflowException;
-import java.io.File;
 
 import javax.json.Json;
 import javax.json.JsonReader;
@@ -107,6 +106,19 @@ public class MsgParser {
         }
     }
 
+    public static void clearSchemas() throws Exception {
+        logger.debug("start clearSchemas");
+        synchronized( instPool ) {
+            Iterator<Entry<String, MsgParser>>  itr = instPool.entrySet().iterator();
+            while ( itr.hasNext() ) {
+                Map.Entry<String, MsgParser> e = (Entry<String, MsgParser>)itr.next();
+                logger.debug("going to clear schema : {}", e.getKey());
+                e.getValue().clearSchema();
+                instPool.remove(e.getKey());
+            }
+        }
+    }
+
     private void readSchema(String incFile, Map<String, MsgFmtRec> msgMap) throws Exception {
 
         if( includeMap.containsKey(incFile) )
@@ -185,6 +197,28 @@ public class MsgParser {
 
             msgMap.put(result.getString("name"), msgFmtRec);
         }
+    }
+
+    private void clearSchema() throws Exception {
+
+        Iterator<Entry<Long, ThrData>> itr1 = msgThrMap.entrySet().iterator();
+        while ( itr1.hasNext() ) {
+            Entry<Long, ThrData> e = (Entry<Long, ThrData>)itr1.next();
+            msgThrMap.remove(e.getKey());
+        }
+
+        Iterator<Entry<String, String>> itr2 = includeMap.entrySet().iterator();
+        while ( itr2.hasNext() ) {
+            Entry<String, String> e = (Entry<String, String>)itr2.next();
+            includeMap.remove(e.getKey());
+        }
+
+        Iterator<Entry<String, MsgFmtRec>> itr3 = msgFmtMap.entrySet().iterator();
+        while ( itr3.hasNext() ) {
+            Entry<String, MsgFmtRec> e = (Entry<String, MsgFmtRec>)itr3.next();
+            msgFmtMap.remove(e.getKey());
+        }
+
     }
 
     public int getSchemaLength() {

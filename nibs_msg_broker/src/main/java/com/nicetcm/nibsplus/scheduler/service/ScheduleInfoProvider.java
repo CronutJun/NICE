@@ -16,4 +16,6 @@ public interface ScheduleInfoProvider
 
     SchedulerVO selectScheduleByPk(JobVO jobVO);
 
+	List<SchedulerVO> selectScheduleJobGroup();
+
 }

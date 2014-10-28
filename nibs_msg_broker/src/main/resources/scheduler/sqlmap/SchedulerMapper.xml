@@ -14,4 +14,10 @@
         and job_group = #{jobGroup}
         and job_name = #{jobName}
     </select>
+    
+    <select id="selectScheduleJobGroup" resultType="com.nicetcm.nibsplus.scheduler.model.SchedulerVO">
+		select
+		    distinct quartz_node_name, job_group 
+		from op.t_cm_schedule
+    </select>
 </mapper>

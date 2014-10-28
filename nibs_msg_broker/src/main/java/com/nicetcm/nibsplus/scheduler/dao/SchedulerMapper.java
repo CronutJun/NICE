@@ -23,4 +23,6 @@ public interface SchedulerMapper
 
     SchedulerVO selectScheduleByPk(JobVO jobVO);
 
+	List<SchedulerVO> selectScheduleJobGroup();
+
 }

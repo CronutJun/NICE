@@ -20,8 +20,8 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerCallBack;
 import com.nicetcm.nibsplus.errmon.dao.ERRMonMapper;
+import com.nicetcm.nibsplus.errmon.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.errmon.service.ERRMonService;
-import com.nicetcm.nibsplus.orgsend.rmi.MsgBrokerCallAgent;
 
 /**
  * 여기에 클래스(한글)명.

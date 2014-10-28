@@ -42,8 +42,6 @@ public interface StoredProcMapper {
     @Options(statementType=StatementType.CALLABLE)
     void test(TMacInfo cond);
 
-
-
     @Select({
         "CALL op.SP_IF_GetPreAmt( #{hCashType, mode=IN ,  jdbcType=VARCHAR},",
                                       "#{inqDate  , mode=IN ,  jdbcType=VARCHAR},",
@@ -220,4 +218,14 @@ public interface StoredProcMapper {
         @Result(column="ORNZ_CD", property="ornzCd", jdbcType=JdbcType.VARCHAR)
     })
     TMisc fcGetOrnzCdByMacNo( TMisc cond );
+
+    @Select({
+        "CALL OP.SP_CM_TRANS_SEQNO( #{orgCd,        mode=IN ,  jdbcType=VARCHAR},",
+                                   "#{createDate,   mode=IN ,  jdbcType=VARCHAR},",
+                                   "#{transSeqNo,   mode=OUT,  jdbcType=VARCHAR}",
+        ")"
+    })
+    @Options(statementType=StatementType.CALLABLE)
+    void spCmTransSeqNo(TMisc tMisc);
+
 }

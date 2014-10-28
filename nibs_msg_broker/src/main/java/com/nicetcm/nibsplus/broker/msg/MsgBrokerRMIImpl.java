@@ -1,13 +1,20 @@
 package com.nicetcm.nibsplus.broker.msg;
 
-import java.io.*;
-import java.util.concurrent.*;
+import java.io.FileOutputStream;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nicetcm.nibsplus.broker.common.*;
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
+import com.nicetcm.nibsplus.broker.common.MsgParser;
+import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
+import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerRMI;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerTimeoutException;
 
@@ -15,7 +22,8 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
     public static final ConcurrentMap<String, BlockingQueue<byte[]>> rmiSyncAns = new ConcurrentHashMap<String, BlockingQueue<byte[]>>();
 
-    private TMiscMapper miscMap;
+    //private TMiscMapper      miscMap;
+    private StoredProcMapper splMap;
 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerRMIImpl.class);
     private FileOutputStream fOut;
@@ -32,11 +40,17 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
         logger.debug("QNm = {}", ret.QNm);
 
-        miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
+        //miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
+        splMap = (StoredProcMapper)MsgBrokerSpringMain.sprCtx.getBean(StoredProcMapper.class);
 
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
-            msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
+            //msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
+            TMisc misc = new TMisc();
+            misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
+            misc.setCreateDate( msgPsr.getString("CM.trans_date") );
+            splMap.spCmTransSeqNo( misc );
+            msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
             logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
             if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
@@ -77,11 +91,17 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
         logger.debug("QNm = {}", ret.QNm);
 
-        miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
+        //miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
+        splMap = (StoredProcMapper)MsgBrokerSpringMain.sprCtx.getBean(StoredProcMapper.class);
 
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
-            msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
+            //msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
+            TMisc misc = new TMisc();
+            misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
+            misc.setCreateDate( msgPsr.getString("CM.trans_date") );
+            splMap.spCmTransSeqNo( misc );
+            msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
             logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
             if( msgPsr.getString("CM.trans_seq_no").length() == 0 )

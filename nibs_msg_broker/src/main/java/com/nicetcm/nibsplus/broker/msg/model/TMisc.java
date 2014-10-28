@@ -75,6 +75,10 @@ public class TMisc {
 
     private String telNo;
 
+    private String createDate;
+
+    private String transSeqNo;
+
     public String getHoliday() {
         return holiday;
     }
@@ -489,6 +493,22 @@ public class TMisc {
 
     public void setTelNo(String telNo) {
         this.telNo = telNo;
+    }
+
+    public String getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(String createDate) {
+        this.createDate = createDate;
+    }
+
+    public String getTransSeqNo() {
+        return transSeqNo;
+    }
+
+    public void setTransSeqNo(String transSeqNo) {
+        this.transSeqNo = transSeqNo;
     }
 
 

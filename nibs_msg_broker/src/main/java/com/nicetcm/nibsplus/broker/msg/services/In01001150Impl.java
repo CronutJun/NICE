@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
@@ -116,7 +119,7 @@ public class In01001150Impl extends InMsgHandlerImpl {
             tCtErrorMngMadeCom.setArrivalEstTime(tCtErrorMngMadeCom.getArrivalEstTime() != null ? tCtErrorMngMadeCom.getArrivalEstTime().trim() : tCtErrorMngMadeCom.getArrivalEstTime());
 
             /* 이미 완료된 건은 update 하지 않도록 한다. */
-            if(tCtErrorMngMadeCom.getFinishStatus().equals("7000")) {
+            if(nstr(tCtErrorMngMadeCom.getFinishStatus()).equals("7000")) {
                 logger.info(String.format("[SaveErrArrSchdule] 완료 2차출동에 대한 도착예정 수신 AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), parsed.getString("org_call_cnt")));
                 throw new MsgBrokerException(-2);
@@ -125,8 +128,8 @@ public class In01001150Impl extends InMsgHandlerImpl {
             parsed.setString("arrival_tel_no", parsed.getString("arrival_tel_no").replaceAll("-", ""));
 
             /* 도착시간이 비어있을 경우에만 도착예정시간을 재전송한다. 20120612 최락경  */
-            if((tCtErrorMngMadeCom.getArrivalDate() == null || tCtErrorMngMadeCom.getArrivalDate().equals(""))
-            && (tCtErrorMngMadeCom.getArrivalTime() == null || tCtErrorMngMadeCom.getArrivalTime().equals(""))) {
+            if((tCtErrorMngMadeCom.getArrivalDate() == null || nstr(tCtErrorMngMadeCom.getArrivalDate()).equals(""))
+            && (tCtErrorMngMadeCom.getArrivalTime() == null || nstr(tCtErrorMngMadeCom.getArrivalTime()).equals(""))) {
                 /* ORG_SEND_YN 0: 2차출동요청, 1:2차출동요청응답수신->신한도착예정시간 송신준비,
                                2: 신한도착예정시간응답수신->신한도착시간 송신준비,
                                3: 신한도착시간응답수신->신한조치결과 송신준비,
@@ -188,7 +191,7 @@ public class In01001150Impl extends InMsgHandlerImpl {
             tCtErrorMng.setArrivalEstTime(tCtErrorMng.getArrivalEstTime().trim());
 
             /* 이미 완료된 건은 update 하지 않도록 한다. */
-            if(tCtErrorMng.getErrorStatus().equals("7000")) {
+            if(nstr(tCtErrorMng.getErrorStatus()).equals("7000")) {
                 logger.info(String.format(">>> [SaveErrArrSchdule] 완료장애에 대한 도착예정 수신 create_date[%s], error_no[%s]", parsed.getInt("trans1_date"), parsed.getString("trans1_seq")));
                 throw new MsgBrokerException(-2);
             }
@@ -218,7 +221,7 @@ public class In01001150Impl extends InMsgHandlerImpl {
             update_uid
             */
 
-            if(parsed.getString("arrival_nm").equals("")) {
+            if(nstr(parsed.getString("arrival_nm")).equals("")) {
                 parsed.setString("arrival_nm", tMiscMapper.getArrivalNm(parsed.getString("trans1_date"), parsed.getString("trans1_seq")));
             }
 
@@ -228,8 +231,8 @@ public class In01001150Impl extends InMsgHandlerImpl {
             /* 출동자명이 없을 경우에는 경비사 default값 9999999을 넣도록 수정 20090302 */
 
             /* 도착시간이 비어있을 경우에만 도착예정시간을 재전송한다. 20120612 최락경  */
-            if((tCtErrorMng.getArrivalDate() == null || tCtErrorMng.getArrivalDate().equals(""))
-            && (tCtErrorMng.getArrivalTime() == null || tCtErrorMng.getArrivalTime().equals(""))) {
+            if((tCtErrorMng.getArrivalDate() == null || nstr(tCtErrorMng.getArrivalDate()).equals(""))
+            && (tCtErrorMng.getArrivalTime() == null || nstr(tCtErrorMng.getArrivalTime()).equals(""))) {
 
                 TCtErrorMng tCtErrorMng2 = new TCtErrorMng();
                 /* 2014.07.18 경비사 수신확인 전문을 추가 하였으므로 삭제

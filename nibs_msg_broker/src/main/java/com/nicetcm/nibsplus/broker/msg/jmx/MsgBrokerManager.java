@@ -26,6 +26,7 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
+import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerClassLoader;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerShutdown;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerSpringMain;
@@ -212,8 +213,8 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     }
 
     @Override
-    public void reloadSchema() {
-        // Not implemented yet.
+    public void reloadSchema() throws Exception {
+        MsgParser.clearSchemas();
     }
 
     @Override
