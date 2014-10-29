@@ -23,7 +23,7 @@ public class MsgBrokerCallAgent <PT> {
     private String msgId2 = "AUTOSND";
     private PT params;
     private MsgBrokerCallBack<PT> callBack;
-    
+
     public static Properties msgBrokerConfig; // NibsScheduleExecuter, NibsQuartzSchedulerMain 에서 주입
 
     public MsgBrokerCallAgent( MsgBrokerConf conf, PT params, MsgBrokerCallBack<PT> callBack ) {
@@ -76,6 +76,7 @@ public class MsgBrokerCallAgent <PT> {
 
             byte[] rsltMsg = remoteObj.callBrokerSync(read, timeout);
 
+            msg.position(0);
             msg.put(rsltMsg);
             msgPsr.parseMessage(msg);
 

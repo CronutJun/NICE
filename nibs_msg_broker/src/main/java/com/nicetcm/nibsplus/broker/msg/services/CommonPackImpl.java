@@ -12,6 +12,9 @@ package com.nicetcm.nibsplus.broker.msg.services;
  *           @author KDJ
  */
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
@@ -27,9 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Component;
 
-import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
-import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
-
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
@@ -37,6 +37,7 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
+import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmCommonMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmMacMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmMacNoMapper;
@@ -97,8 +98,8 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtOrgSiteChange;
 import com.nicetcm.nibsplus.broker.msg.model.TCtUnfinish;
 import com.nicetcm.nibsplus.broker.msg.model.TFnSendReport;
 import com.nicetcm.nibsplus.broker.msg.model.TFnSendReportCond;
-import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfoKey;
 import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfo;
+import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfoKey;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
@@ -110,6 +111,7 @@ public class CommonPackImpl implements CommonPack {
 
     @Autowired protected DataSourceTransactionManager msgTX;
 
+    @Autowired private StoredProcMapper        splMap;
     @Autowired private TCmCommonMapper         cmMap;
     @Autowired private TCmMacMapper            cmMacMap;
     @Autowired private TCmMacNoMapper          cmMacNoMap;
@@ -718,21 +720,29 @@ public class CommonPackImpl implements CommonPack {
         ErrRcpt.setCreateTime( ErrBasic.getCreateTime() );
         ErrRcpt.setRegDt( ErrBasic.getRegDt() );
         ErrRcpt.setRegId( ErrBasic.getRegId() );
+        ErrRcpt.setUpdateDate( ErrBasic.getRegDt() );
+        ErrRcpt.setUpdateUid( ErrBasic.getRegId() );
         ErrNoti.setErrorNo( ErrBasic.getErrorNo() );
         ErrNoti.setCreateDate( ErrBasic.getCreateDate() );
         ErrNoti.setCreateTime( ErrBasic.getCreateTime() );
         ErrNoti.setRegDt( ErrBasic.getRegDt() );
         ErrNoti.setRegId( ErrBasic.getRegId() );
+        ErrNoti.setUpdateDate( ErrBasic.getRegDt() );
+        ErrNoti.setUpdateUid( ErrBasic.getRegId() );
         ErrCall.setErrorNo( ErrBasic.getErrorNo() );
         ErrCall.setCreateDate( ErrBasic.getCreateDate() );
         ErrCall.setCreateTime( ErrBasic.getCreateTime() );
         ErrCall.setRegDt( ErrBasic.getRegDt() );
         ErrCall.setRegId( ErrBasic.getRegId() );
+        ErrCall.setUpdateDate( ErrBasic.getRegDt() );
+        ErrCall.setUpdateUid( ErrBasic.getRegId() );
         ErrTxn.setErrorNo( ErrBasic.getErrorNo() );
         ErrTxn.setCreateDate( ErrBasic.getCreateDate() );
         ErrTxn.setCreateTime( ErrBasic.getCreateTime() );
         ErrTxn.setRegDt( ErrBasic.getRegDt() );
         ErrTxn.setRegId( ErrBasic.getRegId() );
+        ErrTxn.setUpdateDate( ErrBasic.getRegDt() );
+        ErrTxn.setUpdateUid( ErrBasic.getRegId() );
 
         if( nstr(ErrBasic.getCreateTime()).length() == 0 )
             ErrBasic.setCreateTime( ErrRcpt.getAcceptTime() );
@@ -1073,6 +1083,11 @@ public class CommonPackImpl implements CommonPack {
                         updErrBasic.setErrorNo( errBasicJoin.getErrorNo() );
                         updErrBasic.setCreateDate( errBasicJoin.getCreateDate() );
                         updErrBasic.setCreateTime( errBasicJoin.getCreateTime() );
+                        updErrBasic.setOrgCd( errBasicJoin.getOrgCd() );
+                        updErrBasic.setBranchCd( errBasicJoin.getBranchCd() );
+                        updErrBasic.setMacNo( errBasicJoin.getMacNo() );
+                        updErrBasic.setSiteCd( errBasicJoin.getSiteCd() );
+                        updErrBasic.setErrorCd( errBasicJoin.getErrorCd() );
                         updErrTxn.setUpdateDate( safeData.getDSysDate() );
                         updErrTxn.setUpdateUid("online");;;
                         updErrTxn.setErrorNo( errBasicJoin.getErrorNo() );
@@ -1212,6 +1227,11 @@ public class CommonPackImpl implements CommonPack {
                     updErrBasic.setErrorNo( errBasicJoin.getErrorNo() );
                     updErrBasic.setCreateDate( errBasicJoin.getCreateDate() );
                     updErrBasic.setCreateTime( errBasicJoin.getCreateTime() );
+                    updErrBasic.setOrgCd( errBasicJoin.getOrgCd() );
+                    updErrBasic.setBranchCd( errBasicJoin.getBranchCd() );
+                    updErrBasic.setMacNo( errBasicJoin.getMacNo() );
+                    updErrBasic.setSiteCd( errBasicJoin.getSiteCd() );
+                    updErrBasic.setErrorCd( errBasicJoin.getErrorCd() );
                     updErrTxn.setUpdateDate( safeData.getDSysDate() );
                     updErrTxn.setUpdateUid("online");;;
                     updErrTxn.setErrorNo( errBasicJoin.getErrorNo() );
@@ -1299,6 +1319,11 @@ public class CommonPackImpl implements CommonPack {
                         updErrBasic.setErrorNo( errBasicJoin.getErrorNo() );
                         updErrBasic.setCreateDate( errBasicJoin.getCreateDate() );
                         updErrBasic.setCreateTime( errBasicJoin.getCreateTime() );
+                        updErrBasic.setOrgCd( errBasicJoin.getOrgCd() );
+                        updErrBasic.setBranchCd( errBasicJoin.getBranchCd() );
+                        updErrBasic.setMacNo( errBasicJoin.getMacNo() );
+                        updErrBasic.setSiteCd( errBasicJoin.getSiteCd() );
+                        updErrBasic.setErrorCd( errBasicJoin.getErrorCd() );
                         updErrTxn.setFinishType("0001");
                         updErrTxn.setFinishNm("취소");
                         updErrTxn.setUpdateDate( safeData.getDSysDate() );
@@ -2847,6 +2872,12 @@ public class CommonPackImpl implements CommonPack {
 
             //CM. Header 셋팅
             setStringHeader(commMsgHeader, msgPsr);
+
+            TMisc misc = new TMisc();
+            misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
+            misc.setCreateDate( msgPsr.getString("CM.trans_date") );
+            splMap.spCmTransSeqNo( misc );
+            msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
 
             //Body 셋팅
             if(columnMap != null) {

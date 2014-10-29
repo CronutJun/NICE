@@ -45,38 +45,43 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
-            //msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
-            TMisc misc = new TMisc();
-            misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
-            misc.setCreateDate( msgPsr.getString("CM.trans_date") );
-            splMap.spCmTransSeqNo( misc );
-            msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
-            logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
-
-            if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
-                throw new Exception("trans_seq_no is empty!!");
-
-            rmiSyncAns.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), waitQ);
             try {
-                MsgBrokerProducer.putDataToPrd(msgPsr);
+                //msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
+                TMisc misc = new TMisc();
+                misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
+                misc.setCreateDate( msgPsr.getString("CM.trans_date") );
+                splMap.spCmTransSeqNo( misc );
+                msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
+                logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
-                if( timeout > 0)
-                    defTimeout = timeout;
+                if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
+                    throw new Exception("trans_seq_no is empty!!");
 
-                respMsg = waitQ.poll(defTimeout, TimeUnit.SECONDS);
-                if( respMsg == null )
-                    throw new MsgBrokerTimeoutException(String.format("Timeout [%d]", timeout));
-             }
-             catch (InterruptedException ie ) {
-                 logger.debug("Interrupted..");
-             }
-             catch ( MsgBrokerTimeoutException re ) {
-                 logger.debug("callBrokerSync Timeout error raised.. {}", re.getMessage());
-                 throw re;
-             }
-             catch ( Exception e) {
-                 logger.debug("callBrokerSync error raised.. {}", e.getMessage());
-             }
+                rmiSyncAns.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), waitQ);
+                try {
+                    MsgBrokerProducer.putDataToPrd(msgPsr);
+
+                    if( timeout > 0)
+                        defTimeout = timeout;
+
+                    respMsg = waitQ.poll(defTimeout, TimeUnit.SECONDS);
+                    if( respMsg == null )
+                        throw new MsgBrokerTimeoutException(String.format("Timeout [%d]", timeout));
+                 }
+                 catch (InterruptedException ie ) {
+                     logger.debug("Interrupted..");
+                 }
+                 catch ( MsgBrokerTimeoutException re ) {
+                     logger.debug("callBrokerSync Timeout error raised.. {}", re.getMessage());
+                     throw re;
+                 }
+            }
+            catch( Exception e ) {
+                logger.error("Error raised. Message = {}", e.getMessage() );
+                for( StackTraceElement se: e.getStackTrace() )
+                    logger.error(se.toString());
+                throw e;
+            }
         }
         finally {
             rmiSyncAns.remove(msgPsr.getString("CM.trans_seq_no"));
@@ -96,18 +101,26 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
-            //msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
-            TMisc misc = new TMisc();
-            misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
-            misc.setCreateDate( msgPsr.getString("CM.trans_date") );
-            splMap.spCmTransSeqNo( misc );
-            msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
-            logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
+            try {
+                //msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
+                TMisc misc = new TMisc();
+                misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
+                misc.setCreateDate( msgPsr.getString("CM.trans_date") );
+                splMap.spCmTransSeqNo( misc );
+                msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
+                logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
-            if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
-                throw new Exception("trans_seq_no is empty!!");
+                if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
+                    throw new Exception("trans_seq_no is empty!!");
 
-            MsgBrokerProducer.putDataToPrd(msgPsr);
+                MsgBrokerProducer.putDataToPrd(msgPsr);
+            }
+            catch( Exception e ) {
+                logger.error("Error raised. Message = {}", e.getMessage() );
+                for( StackTraceElement se: e.getStackTrace() )
+                    logger.error(se.toString());
+                throw e;
+            }
         }
         finally {
             msgPsr.clearMessage();
