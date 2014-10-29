@@ -27,6 +27,8 @@
       { "name" : "multi_resp_yn",          "kname" : "다중응답여부 1:다중",    "type" : "AN",  "length"  : 1   },
       { "name" : "tot_msg_cnt",            "kname" : "총전문건수",             "type" : "N",   "length"  : 4   },
       { "name" : "msg_index",              "kname" : "전문 Index",             "type" : "N",   "length"  : 4   },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 220 }
+      { "name" : "card_cl",                "kname" : "카드구분",               "type" : "N",   "length"  : 4   },
+      { "name" : "beneficiary_nm",         "kname" : "수취인성명",             "type" : "N",   "length"  : 40  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 196 }
    ]
 }

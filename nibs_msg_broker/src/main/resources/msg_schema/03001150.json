@@ -23,7 +23,7 @@
       { "name" : "customer_nm",            "kname" : "고객명",                 "type" : "AN",  "length"  : 20  },
       { "name" : "tele_no",                "kname" : "고객연락처",             "type" : "AN",  "length"  : 12  },
       { "name" : "office_nm",              "kname" : "관리사무소",             "type" : "AN",  "length"  : 40  },
-      { "name" : "memo",                   "kname" : "메모",                   "type" : "AN",  "length"  : 50  },
+      { "name" : "memo",                   "kname" : "메모",                   "type" : "AN",  "length"  : 100 },
       { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 145 }
    ]
 }
