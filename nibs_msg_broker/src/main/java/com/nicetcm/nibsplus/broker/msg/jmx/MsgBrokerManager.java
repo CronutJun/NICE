@@ -36,7 +36,6 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerManager.class);
 
     private long sequenceNumber = 1;
-    private int RMIResTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
 
     @Override
     public String shutdownServer(String operation) {
@@ -219,14 +218,14 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
 
     @Override
     public int getRMIResTimeout() {
-        return RMIResTimeout;
+
+        return Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
     }
 
     @Override
     public void setRMIResTimeout(int timeout) {
-        int oldTimeout = RMIResTimeout;
-        RMIResTimeout  = timeout;
-        // 실제 반영 해야 함... 아직 안했다.
+        int oldTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
+        MsgCommon.msgProps.setProperty("rmi.response.timeout", Integer.toString(timeout) );
 
         Notification n =  new AttributeChangeNotification(this,
                                                           sequenceNumber++,
@@ -235,7 +234,7 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
                                                           "RMIResTimeout",
                                                           "int",
                                                           oldTimeout,
-                                                          this.RMIResTimeout);
+                                                          Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0")));
 
         sendNotification(n);
     }

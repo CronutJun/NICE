@@ -61,8 +61,11 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                 try {
                     MsgBrokerProducer.putDataToPrd(msgPsr);
 
+                    /**
+                     * TImeout 무시한다.
                     if( timeout > 0)
                         defTimeout = timeout;
+                     */
 
                     respMsg = waitQ.poll(defTimeout, TimeUnit.SECONDS);
                     if( respMsg == null )

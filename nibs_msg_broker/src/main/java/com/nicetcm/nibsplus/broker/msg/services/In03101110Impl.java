@@ -98,7 +98,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
         /***************************************************************************************************
          이마트일경우 다른 테이블 이용
         ***************************************************************************************************/
-        if(MsgBrokerConst.EMART_CODE.equals(parsed.getLong("CM.org_cd"))) {
+        if(MsgBrokerConst.EMART_CODE.equals(parsed.getString("CM.org_cd"))) {
 
             IfCashInsertEmart ifCashInsertEmart = new IfCashInsertEmart();
             ifCashInsertEmart.setnUpdateCheckYN   (0);

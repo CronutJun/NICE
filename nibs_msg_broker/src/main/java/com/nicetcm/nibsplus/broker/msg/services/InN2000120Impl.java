@@ -123,7 +123,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         IDX_HW_OUT_CHECK,       /* 16- 수표출금부       */
         IDX_HW_INPUT_BOX_50000, /* 17- 오만원입금함     */
         IDX_HW_INPUT_BOX_100000,/* 18- 십만원입금함     */
-        IDX_HW_IMSI,            /* 19- 임시             */
+        IDX_HW_RPC,             /* 19- RPC 모듈 상태    */
         IDX_HW_REMAIN_MONEY     /* 20- 지폐잔류         */
     };
 
@@ -172,16 +172,16 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 "",
                 MsgBrokerConst.NICE_ERROR_DEAL_LIST_ERROR , /* "129" 거래내역출력부 2008.12.16 추가 */
                 "",
-                MsgBrokerConst.NICE_ERROR_CASHIN_ERROR    , /* "131" 지폐미수취              */
+                MsgBrokerConst.NICE_ERROR_CASHIN_ERROR    , /* "131" 지폐미수취                */
                 "",
                 MsgBrokerConst.NICE_ERROR_DONGUL_ERROR    , /* "133" 동글이                    */
-                MsgBrokerConst.NICE_ERROR_DVR_ERROR       , /* "134" DVR 2003.11.13 추가      */
-                MsgBrokerConst.NICE_ERROR_INPUT_CHECK     , /* "135" 수표입금부                  */
-                MsgBrokerConst.NICE_ERROR_OUT_CHECK       , /* "136" 수표출금부              */
+                MsgBrokerConst.NICE_ERROR_DVR_ERROR       , /* "134" DVR 2003.11.13 추가       */
+                MsgBrokerConst.NICE_ERROR_INPUT_CHECK     , /* "135" 수표입금부                */
+                MsgBrokerConst.NICE_ERROR_OUT_CHECK       , /* "136" 수표출금부                */
                 MsgBrokerConst.NICE_ERROR_INPUT_BOX_50000 , /* "137" 오만원권입금부            */
                 MsgBrokerConst.NICE_ERROR_INPUT_BOX_100000, /* "138" 십만원권입금부            */
-                "",
-                MsgBrokerConst.NICE_ERROR_REMAIN_MONEY
+                MsgBrokerConst.NICE_ERROR_RPC,              /* "151" RPC 모듈 상태 2014.05.20  */
+                MsgBrokerConst.NICE_ERROR_REMAIN_MONEY      /* "139" 지폐잔류                  */
         };
         macInfo.setOrgCd( parsed.getString("CM.org_cd") );
         macInfo.setBranchCd( parsed.getString("brch_cd") );
@@ -771,6 +771,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  * 문열림(앞문개폐)는 무시하도록 20070420  && 금고진동(user define 장애)은 user define error ,
                  * 열감지,회수함,지폐함1,2,3,4 무시(금고잠금은 NCR 때문에 무시안함) 20071105 김희천대리 요청
+                 * 문열림(상판열림)은 점주관리 기기일 경우 발생시킴 2014.06.30
                  */
 
                 if( !enumNM.name().equals("IDX_MON_TERM_MODE" )
