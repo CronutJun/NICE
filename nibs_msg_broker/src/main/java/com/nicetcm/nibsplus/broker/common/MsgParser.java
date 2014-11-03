@@ -473,7 +473,7 @@ public class MsgParser {
         return all;
     }
 
-    private void getAllFields(String structName, Map<String, MsgData> msgData, Map<String, MsgData> trg) {
+    private void getAllFields(String structName, Map<String, MsgData> msgData, Map<String, MsgData> trg) throws Exception {
 
         String  fName = null;
         MsgData fData = null;
@@ -509,6 +509,17 @@ public class MsgParser {
             }
         }
 
+    }
+
+    public void printMsgData() throws Exception {
+        Map<String, MsgData> datas = getAllFields();
+        Entry<String, MsgData> e = null;
+        logger.warn("===============================================================================================");;
+        while( datas.entrySet().iterator().hasNext() ) {
+            e = datas.entrySet().iterator().next();
+            logger.warn(String.format("FieldName : [%-30s], FieldValue = [%s]", e.getKey(), new String(e.getValue().getBytes())));
+        }
+        logger.warn("===============================================================================================");;
     }
 
 
