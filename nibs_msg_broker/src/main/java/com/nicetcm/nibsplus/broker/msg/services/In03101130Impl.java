@@ -15,6 +15,7 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
 import com.nicetcm.nibsplus.broker.msg.model.FnMacClose;
@@ -191,8 +192,10 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
                 if("OK".equals(fnMacClose.getResult())) {
                     msgTX.commit(safeData.getTXS());
+                    safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
                 } else {
                     msgTX.rollback(safeData.getTXS());
+                    safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
                 }
 
             } else if( MsgBrokerConst.SHATMS_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("close_type").equals("2") ) {
@@ -249,10 +252,11 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 if(ifCashInsert.getvResult() != 0) {
                     logger.info( "[MngCM_AP_SaveCurrentAmt] 프로시져 오류 3: %s", ifCashInsert2.getvResultMsg() );
                     msgTX.rollback(safeData.getTXS());
+                    safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
 
                 } else {
                     msgTX.commit(safeData.getTXS());
-
+                    safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
                 }
 
                 /* 20110831 정희성 요청 계리마감 시 마감조회 (2) 가 없으면 계리마감 데이터로 마감데이터 같이 넣어주도록 */
@@ -318,8 +322,10 @@ public class In03101130Impl extends InMsgHandlerImpl {
                     if(ifCashInsert3.getvResult() != 0) {
                         logger.info( "[MngCM_AP_SaveCurrentAmt] 프로시져 오류 2: %s", ifCashInsert3.getvResultMsg() );
                         msgTX.rollback(safeData.getTXS());
+                        safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
                     } else {
                         msgTX.commit(safeData.getTXS());
+                        safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
                     }
 
                 }
@@ -342,9 +348,11 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
             if("OK".equals(fnMacClose.getResult())) {
                 msgTX.commit(safeData.getTXS());
+                safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
             } else {
                 logger.info("sp_fn_macClose_emart procedure Error. {}", fnMacClose.getResult());
                 msgTX.rollback(safeData.getTXS());
+                safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
             }
 
         }

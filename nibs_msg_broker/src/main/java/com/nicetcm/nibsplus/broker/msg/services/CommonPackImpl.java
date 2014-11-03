@@ -1435,7 +1435,7 @@ public class CommonPackImpl implements CommonPack {
          *   경남은행 출동요청의 경우 출동요청 전문에 특이사항을 나중에 보내주므로
          *   특이사항 비교하여 UPDATE 처리 20090526
          */
-        if( unfinish.getOrgCd().equals(MsgBrokerConst.KNATMS_CODE)
+        if( nstr(unfinish.getOrgCd()).equals(MsgBrokerConst.KNATMS_CODE)
         &&  CancelYN == 0
         && ( nstr(unfinish.getOrgMsg()).length()  == 0
           || !nstr(unfinish.getOrgMsg()).equals(ErrBasic.getOrgMsg()) ) ) {

@@ -9,6 +9,7 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.model.FnMacClose;
 import com.nicetcm.nibsplus.broker.msg.model.IfCashInsert;
@@ -166,9 +167,11 @@ public class In03000131Impl extends InMsgHandlerImpl {
 
                 if("OK".equals(fnMacClose.getResult())) {
                     msgTX.commit(safeData.getTXS());
+                    safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
 
                 } else {
                     msgTX.rollback(safeData.getTXS());
+                    safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
                 }
             }
         }
