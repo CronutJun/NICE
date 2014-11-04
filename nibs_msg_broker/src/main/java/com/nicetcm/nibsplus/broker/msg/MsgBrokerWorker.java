@@ -1,25 +1,29 @@
 package com.nicetcm.nibsplus.broker.msg;
 
+import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.services.CommonPack;
 import com.nicetcm.nibsplus.broker.msg.services.InMsgHandler;
 import com.nicetcm.nibsplus.broker.msg.services.RespAckNakHandler;
-import com.nicetcm.nibsplus.broker.common.MsgParser;
 
 public class MsgBrokerWorker implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerWorker.class);
 
     private byte[] msg;
+    private byte[] keepMsg;
     private MsgParser msgPsr;
     private MsgBrokerData msgThrdSafeData;
 
     public MsgBrokerWorker( byte[] msg ) {
         this.msg = msg;
+        this.keepMsg = new byte[msg.length - MsgBrokerConst.HEADER_LEN];
+        System.arraycopy(msg, MsgBrokerConst.HEADER_LEN, keepMsg, 0, msg.length - MsgBrokerConst.HEADER_LEN);
     }
 
     public void run() {
@@ -33,6 +37,7 @@ public class MsgBrokerWorker implements Runnable {
             msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
             logger.debug("Parse OK");
             msgThrdSafeData = new MsgBrokerData();
+            msgThrdSafeData.setKeepResData(false);
             try {
                 try {
                     /*
@@ -93,6 +98,11 @@ public class MsgBrokerWorker implements Runnable {
                                 .sprCtx.getBean("respAckNak");
                         resp.procAckNak( msgThrdSafeData, msgPsr, 0 );
 
+                        if( msgThrdSafeData.isKeepResData() ) {
+                            ByteBuffer keepBuf = msgPsr.getMessage();
+                            keepBuf.position(MsgBrokerConst.HEADER_LEN);
+                            keepBuf.put(keepMsg);
+                        }
                         MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                     }
                     /*
@@ -123,6 +133,11 @@ public class MsgBrokerWorker implements Runnable {
                                 .sprCtx.getBean("respAckNak");
                             resp.procAckNak( msgThrdSafeData, msgPsr, me.getErrorCode() );
 
+                            if( msgThrdSafeData.isKeepResData() ) {
+                                ByteBuffer keepBuf = msgPsr.getMessage();
+                                keepBuf.position(MsgBrokerConst.HEADER_LEN);
+                                keepBuf.put(keepMsg);
+                           }
                             MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                         }
                     }
@@ -153,6 +168,11 @@ public class MsgBrokerWorker implements Runnable {
                             .sprCtx.getBean("respAckNak");
                         resp.procAckNak( msgThrdSafeData, msgPsr, -1 );
 
+                        if( msgThrdSafeData.isKeepResData() ) {
+                            ByteBuffer keepBuf = msgPsr.getMessage();
+                            keepBuf.position(MsgBrokerConst.HEADER_LEN);
+                            keepBuf.put(keepMsg);
+                        }
                         MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                     }
                     /*

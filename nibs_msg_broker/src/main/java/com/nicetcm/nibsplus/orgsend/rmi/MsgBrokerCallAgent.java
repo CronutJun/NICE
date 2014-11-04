@@ -76,6 +76,7 @@ public class MsgBrokerCallAgent <PT> {
 
             byte[] rsltMsg = remoteObj.callBrokerSync(read, timeout);
 
+            msg = ByteBuffer.allocateDirect( rsltMsg.length );
             msg.position(0);
             msg.put(rsltMsg);
             msgPsr.parseMessage(msg);

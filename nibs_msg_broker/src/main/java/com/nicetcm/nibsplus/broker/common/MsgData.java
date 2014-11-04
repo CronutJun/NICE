@@ -45,7 +45,8 @@ public class MsgData {
     }
 
     public void setString(String value)  throws Exception {
-        this.data = value.getBytes();
+        if( value == null ) this.data = new byte[0];
+        else this.data = value.getBytes();
         if( this.refFmt.ref_size.length() > 0 ) {
             this.refMap.get(this.refFmt.ref_size).setInt(data.length);
             this.length = data.length;

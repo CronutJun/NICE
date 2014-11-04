@@ -35,6 +35,8 @@ public class In03000131Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+
+        safeData.setKeepResData(true);
         if( MsgBrokerConst.TAXRF_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("oper_type").startsWith("A")) {
             logger.info("KTTR 추가현송 수신");
             return;

@@ -46,13 +46,14 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
             try {
+                logger.warn("Getting trans_seq_no..");
                 //msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
                 TMisc misc = new TMisc();
                 misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
                 misc.setCreateDate( msgPsr.getString("CM.trans_date") );
                 splMap.spCmTransSeqNo( misc );
                 msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
-                logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
+                logger.warn("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
                 if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
                     throw new Exception("trans_seq_no is empty!!");
