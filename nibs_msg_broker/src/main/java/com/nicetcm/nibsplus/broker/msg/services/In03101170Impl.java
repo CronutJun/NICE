@@ -65,11 +65,11 @@ public class In03101170Impl extends InMsgHandlerImpl {
             tMiscMapper.updateTFnAtmsCashPlan(tMisc);
         } catch (Exception e)
         {
-            logger.info( "[T_FN_ATMS_CASH_PLAN] Update Error {}", e.getMessage() );
+            logger.warn( "[T_FN_ATMS_CASH_PLAN] Update Error {}", e.getMessage() );
             throw e;
         }
 
-        logger.info( "[T_FN_ATMS_CASH_PLAN] Update OK" );
+        logger.warn( "[T_FN_ATMS_CASH_PLAN] Update OK" );
 
     }
 }

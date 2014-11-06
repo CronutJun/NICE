@@ -71,12 +71,12 @@ public class In02000320Impl extends InMsgHandlerImpl {
                 cmSetMacInfoMap.updateByPrimaryKeySelective(  cmSetMacInfo );
             }
             catch( Exception e) {
-                logger.info( "[T_CM_SET_MAC_INFO] Update Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_SET_MAC_INFO] Update Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( "[T_CM_SET_MAC_INFO] Update Error [{}]", e.getLocalizedMessage() );
+            logger.warn( "[T_CM_SET_MAC_INFO] Update Error [{}]", e.getLocalizedMessage() );
             throw e;
         }
     }

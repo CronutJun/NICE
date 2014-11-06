@@ -76,11 +76,11 @@ public class In03101133Impl extends InMsgHandlerImpl {
             tFnSendBusanMapper.updateBySpecSelective(tFnSendBusan, tFnSendBusanSpec);
         } catch (Exception e)
         {
-            logger.info("[T_FN_SEND_BUSAN] UPDATE Err {}", e.getMessage());
+            logger.warn("[T_FN_SEND_BUSAN] UPDATE Err {}", e.getMessage());
             throw e;
         }
 
-        logger.info("[T_FN_SEND_BUSAN] UPDATE OK");
+        logger.warn("[T_FN_SEND_BUSAN] UPDATE OK");
 
     }
 }

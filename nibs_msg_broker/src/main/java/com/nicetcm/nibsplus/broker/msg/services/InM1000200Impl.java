@@ -36,7 +36,7 @@ public class InM1000200Impl extends InMsgHandlerImpl {
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
         if( parsed.getString("user_telno").length() < 8 ) {
-            logger.info( String.format(" 고객전화번호 이상. 전화번호[%s]", parsed.getString("user_telno")) );
+            logger.warn( String.format(" 고객전화번호 이상. 전화번호[%s]", parsed.getString("user_telno")) );
             throw new MsgBrokerException( String.format(" 고객전화번호 이상. 전화번호[%s]", parsed.getString("user_telno")), -86);
         }
         /*
@@ -46,7 +46,7 @@ public class InM1000200Impl extends InMsgHandlerImpl {
         String sRand = String.format("%06d", rd.nextInt(999999));
         String sMsg  = String.format("한국전자금융 인증번호  [%s]", sRand);
 
-        logger.info(String.format(" 인증번호 발생 [%s]-[%s]", sRand, parsed.getString("user_telno")) );
+        logger.warn(String.format(" 인증번호 발생 [%s]-[%s]", sRand, parsed.getString("user_telno")) );
         TMisc arg = new TMisc();
         arg.setTelNo( parsed.getString("user_telno") );
         arg.setSendMsg( sMsg );
@@ -54,7 +54,7 @@ public class InM1000200Impl extends InMsgHandlerImpl {
             splMap.sendSMS( arg );
         }
         catch( Exception e ) {
-            logger.info("sendSMS call error {}", e.getLocalizedMessage() );
+            logger.warn("sendSMS call error {}", e.getLocalizedMessage() );
             throw e;
         }
         parsed.setString( "authenti_no", sRand );

@@ -53,7 +53,7 @@ public class In03000402Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(">>> [T_FN_BRAND_SUSPENSE] Insert ERROR {}", e.getMessage());
+            logger.warn(">>> [T_FN_BRAND_SUSPENSE] Insert ERROR {}", e.getMessage());
             throw e;
         }
 
@@ -73,13 +73,13 @@ public class In03000402Impl extends InMsgHandlerImpl {
                 tFnBrandSuspenseMapper.updateBySpecSelective(tFnBrandSuspense, tFnBrandSuspenseSpec);
             } catch (Exception e)
             {
-                logger.info(">>> [T_FN_BRAND_SUSPENSE] Update ERROR {}", e.getMessage());
+                logger.warn(">>> [T_FN_BRAND_SUSPENSE] Update ERROR {}", e.getMessage());
                 throw e;
             }
 
-            logger.info("[T_FN_BRAND_SUSPENSE] Update Complete");
+            logger.warn("[T_FN_BRAND_SUSPENSE] Update Complete");
         } else {
-            logger.info("[T_FN_BRAND_SUSPENSE] Insert Complete");
+            logger.warn("[T_FN_BRAND_SUSPENSE] Insert Complete");
         }
     }
 }

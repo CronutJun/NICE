@@ -43,7 +43,7 @@ public class In03101190Impl extends InMsgHandlerImpl {
         ******************************************************************************************/
 
         if(MsgBrokerConst.WC_CODE.equals(parsed.getString("CM.org_cd"))) {
-            logger.info("우체국 지점코드체크 Pass");
+            logger.warn("우체국 지점코드체크 Pass");
         } else {
             comPack.checkBranchMacLength( parsed );
         }
@@ -67,13 +67,13 @@ public class In03101190Impl extends InMsgHandlerImpl {
                     tMiscMapper.updateFnAtmsDemandMac01(tMacInfo);
                 } catch (Exception e)
                 {
-                    logger.info("[T_FN_ATMS_DEMAND_MAC] Update Err {}", e.getMessage());
+                    logger.warn("[T_FN_ATMS_DEMAND_MAC] Update Err {}", e.getMessage());
                     throw e;
                 }
 
                 msgTX.commit(safeData.getTXS());
                 safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
-                logger.info( "[T_FN_ATMS_DEMAND_MAC] - 이전 추가 현송 미 전송분  Update OK" );
+                logger.warn( "[T_FN_ATMS_DEMAND_MAC] - 이전 추가 현송 미 전송분  Update OK" );
             }
 
             try
@@ -81,11 +81,11 @@ public class In03101190Impl extends InMsgHandlerImpl {
                 tMiscMapper.updateFnAtmsDemandMac02(tMacInfo);
             } catch (Exception e)
             {
-                logger.info( "[T_FN_ATMS_DEMAND_MAC2] Update Err {}", e.getMessage() );
+                logger.warn( "[T_FN_ATMS_DEMAND_MAC2] Update Err {}", e.getMessage() );
                 throw e;
             }
 
-            logger.info( "[T_FN_ATMS_DEMAND_MAC2] Update OK" );
+            logger.warn( "[T_FN_ATMS_DEMAND_MAC2] Update OK" );
 
         } else {
             /* 신한은행 운영자금의 경우는 그냥 나이스 관리점으로 송/수신 받음 */
@@ -95,11 +95,11 @@ public class In03101190Impl extends InMsgHandlerImpl {
                 tMiscMapper.updateFnAtmsOperfundsDemand(tMacInfo);
             } catch (Exception e)
             {
-                logger.info( String.format("[T_FN_ATMS_OPERFUNDS_DEMAND1][%s][%s][%s] Update Err[%.200s]\n", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("req_date"), e.getMessage()));
+                logger.warn( String.format("[T_FN_ATMS_OPERFUNDS_DEMAND1][%s][%s][%s] Update Err[%.200s]\n", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("req_date"), e.getMessage()));
                 throw e;
             }
 
-            logger.info( "[T_FN_ATMS_OPERFUNDS_DEMAND1] Update OK" );
+            logger.warn( "[T_FN_ATMS_OPERFUNDS_DEMAND1] Update OK" );
 
         }//endif
     }//end method

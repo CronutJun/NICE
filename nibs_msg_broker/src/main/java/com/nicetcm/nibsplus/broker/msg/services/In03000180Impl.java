@@ -43,7 +43,7 @@ public class In03000180Impl extends InMsgHandlerImpl {
 
         comPack.getMacInfo(macInfo);
 
-        logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+        logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                         macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(),
                         macInfo.getMacNm(), macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
 
@@ -80,12 +80,12 @@ public class In03000180Impl extends InMsgHandlerImpl {
             isDbDupData = true;
         } catch (Exception e)
         {
-            logger.info(">>> [DBUpdateFunds] (T_FN_ATMS_CASH_PLAN) INSERT ERROR {}", e.getMessage());
+            logger.warn(">>> [DBUpdateFunds] (T_FN_ATMS_CASH_PLAN) INSERT ERROR {}", e.getMessage());
             throw e;
         }
 
         if(isDbDupData) {
-            logger.info("...확정현송데이터 중복수신 << ...");
+            logger.warn("...확정현송데이터 중복수신 << ...");
 
             TFnAtmsCashPlan tFnAtmsCashPlan = new TFnAtmsCashPlan();
             tFnAtmsCashPlan.setConfirmCashAmt  (parsed.getLong("cash_amt"));
@@ -106,14 +106,14 @@ public class In03000180Impl extends InMsgHandlerImpl {
                 tFnAtmsCashPlanMapper.updateBySpecSelective(tFnAtmsCashPlan, tFnAtmsCashPlanSpec);
             } catch (Exception e)
             {
-                logger.info(">>> [DBUpdateFunds] (T_FN_ATMS_CASH_PLAN) UPDATE ERROR {}", e.getMessage());
+                logger.warn(">>> [DBUpdateFunds] (T_FN_ATMS_CASH_PLAN) UPDATE ERROR {}", e.getMessage());
                 throw e;
             }
 
-            logger.info("!!!확정현송금액 처리완료(UPDATE)!!!");
+            logger.warn("!!!확정현송금액 처리완료(UPDATE)!!!");
 
         }
 
-        logger.info("!!!확정현송금액 처리완료!!!");
+        logger.warn("!!!확정현송금액 처리완료!!!");
     }
 }

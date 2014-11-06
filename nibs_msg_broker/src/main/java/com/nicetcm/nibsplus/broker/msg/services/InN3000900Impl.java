@@ -52,13 +52,13 @@ public class InN3000900Impl extends InMsgHandlerImpl {
                 fnHostTranCntMap.updateByPrimaryKey( fnHostTranCnt );
             }
             catch( Exception e ) {
-                logger.info( "[T_FN_HOST_TRAN_CNT] UPDATE Err [{}-{}][{}]",
+                logger.warn( "[T_FN_HOST_TRAN_CNT] UPDATE Err [{}-{}][{}]",
                         parsed.getString("deal_date"), parsed.getString("deal_no_cnt"), e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_HOST_TRAN_CNT] INSERT Err [{}-{}][{}]",
+            logger.warn( "[T_FN_HOST_TRAN_CNT] INSERT Err [{}-{}][{}]",
                     parsed.getString("deal_date"), parsed.getString("deal_no_cnt"), e.getLocalizedMessage() );
             throw e;
         }
@@ -77,11 +77,11 @@ public class InN3000900Impl extends InMsgHandlerImpl {
                 splMap.spIfSendSMSTranCntMismatch( cond );
             }
             catch( Exception e ) {
-                logger.info("Call spIfSendSMSTranCntMismatch error [{}]", e.getLocalizedMessage());
+                logger.warn("Call spIfSendSMSTranCntMismatch error [{}]", e.getLocalizedMessage());
             }
         }
         else {
-            logger.info("거래건수 일치");
+            logger.warn("거래건수 일치");
         }
     }
 }

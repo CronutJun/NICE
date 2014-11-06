@@ -51,10 +51,10 @@ public class In03101206Impl extends InMsgHandlerImpl {
             tFnNotendEmartMapper.updateBySpecSelective(tFnNotendEmart, tFnNotendEmartSpec);
         } catch (Exception e)
         {
-            logger.info(">>> [T_FN_NOTEND_EMART] UPDATE ERROR {}", e.getMessage());
+            logger.warn(">>> [T_FN_NOTEND_EMART] UPDATE ERROR {}", e.getMessage());
             throw e;
         }
 
-        logger.info(">>> [T_FN_NOTEND_EMART] UPDATE OK");
+        logger.warn(">>> [T_FN_NOTEND_EMART] UPDATE OK");
     }
 }

@@ -105,7 +105,7 @@ public class In03000320Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(">>> [T_FN_DAY_CLOSE_KTIS] INSERT ERROR {}", e.getMessage());
+                logger.warn(">>> [T_FN_DAY_CLOSE_KTIS] INSERT ERROR {}", e.getMessage());
                 throw e;
             }
 
@@ -133,7 +133,7 @@ public class In03000320Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(">>> [T_FN_DAY_CLOSE] INSERT ERROR {}", e.getMessage());
+                logger.warn(">>> [T_FN_DAY_CLOSE] INSERT ERROR {}", e.getMessage());
                 throw e;
             }
         }
@@ -159,7 +159,7 @@ public class In03000320Impl extends InMsgHandlerImpl {
                     tFnDayCloseKtisMapper.updateBySpecSelective(tFnDayCloseKtis, tFnDayCloseKtisSpec);
                 } catch (Exception e)
                 {
-                    logger.info(">>> [T_FN_DAY_CLOSE_KTIS] UPDATE ERROR {}", e.getMessage());
+                    logger.warn(">>> [T_FN_DAY_CLOSE_KTIS] UPDATE ERROR {}", e.getMessage());
                     throw e;
                 }
 
@@ -185,7 +185,7 @@ public class In03000320Impl extends InMsgHandlerImpl {
                     tFnDayCloseMapper.updateBySpecSelective(tFnDayClose, tFnDayCloseSpec);
                 } catch (Exception e)
                 {
-                    logger.info(">>> [T_FN_DAY_CLOSE] UPDATE ERROR {}", e.getMessage());
+                    logger.warn(">>> [T_FN_DAY_CLOSE] UPDATE ERROR {}", e.getMessage());
                     throw e;
                 }
             }

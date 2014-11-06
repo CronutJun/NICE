@@ -58,7 +58,7 @@ public class InN5101500Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info( "t_ct_remote_history UPDATE Error [{}]", e.getLocalizedMessage() );
+            logger.warn( "t_ct_remote_history UPDATE Error [{}]", e.getLocalizedMessage() );
             throw e;
         }
     }

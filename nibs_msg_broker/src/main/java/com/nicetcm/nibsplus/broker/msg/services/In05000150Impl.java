@@ -119,7 +119,7 @@ public class In05000150Impl extends InMsgHandlerImpl {
         }
         catch (Exception e) {
             logger.debug("GetMacInfo Error");
-            logger.info( "[01003100] 기기정보 검색 실패 기관[{}] 지점[{}] 기번[{}]",
+            logger.warn( "[01003100] 기기정보 검색 실패 기관[{}] 지점[{}] 기번[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo() );
             /**
              * SMS 전송
@@ -128,7 +128,7 @@ public class In05000150Impl extends InMsgHandlerImpl {
             throw e;
         }
 
-        logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+        logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                 macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(), macInfo.getMacNm(),
                 macInfo.getDeptCd(),macInfo.getOfficeCd(), macInfo.getTeamCd());
 
@@ -159,7 +159,7 @@ public class In05000150Impl extends InMsgHandlerImpl {
             unfs = unfMap.selectByCond8( errBasic );
         }
         catch( Exception e ) {
-            logger.info( ">>>Cursor Open Error [%.200s]\n", e.getLocalizedMessage() );
+            logger.warn( ">>>Cursor Open Error [%.200s]\n", e.getLocalizedMessage() );
             throw e;
         }
         for( TCtUnfinish unf: unfs ) {

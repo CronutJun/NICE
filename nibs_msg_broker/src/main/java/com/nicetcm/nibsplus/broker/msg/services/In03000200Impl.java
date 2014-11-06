@@ -45,7 +45,7 @@ public class In03000200Impl extends InMsgHandlerImpl {
 
         comPack.getMacInfo(macInfo);
 
-        logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+        logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                         macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(),
                         macInfo.getMacNm(), macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
 
@@ -118,12 +118,12 @@ public class In03000200Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(">>> [fnDBInsertUpdateFundsInOut] (T_FN_INOUT_STAT) INSERT ERROR {}", e.getMessage());
+            logger.warn(">>> [fnDBInsertUpdateFundsInOut] (T_FN_INOUT_STAT) INSERT ERROR {}", e.getMessage());
             throw e;
         }
 
         if(isDbDupData) {
-            logger.info("...중복요청건...");
+            logger.warn("...중복요청건...");
 
             try
             {
@@ -193,15 +193,15 @@ public class In03000200Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(">>> [fnDBInsertUpdateFundsInOut] (T_FN_INOUT_STAT) UPDATE ERROR {}", e.getMessage());
+                logger.warn(">>> [fnDBInsertUpdateFundsInOut] (T_FN_INOUT_STAT) UPDATE ERROR {}", e.getMessage());
                 throw e;
             }
 
-            logger.info("!!!처리완료(UPDATE)!!!");
+            logger.warn("!!!처리완료(UPDATE)!!!");
 
         }
 
-        logger.info("!!!처리완료(INSERT)!!!");
+        logger.warn("!!!처리완료(INSERT)!!!");
 
     }
 }

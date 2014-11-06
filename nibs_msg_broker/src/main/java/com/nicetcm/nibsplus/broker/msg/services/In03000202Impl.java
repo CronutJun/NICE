@@ -104,7 +104,7 @@ public class In03000202Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(">>> [T_FN_REALTIME_TRADE] INSERT ERROR {}", e.getMessage());
+            logger.warn(">>> [T_FN_REALTIME_TRADE] INSERT ERROR {}", e.getMessage());
             throw e;
         }
 
@@ -165,7 +165,7 @@ public class In03000202Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(">>> [T_FN_REALTIME_TRADE] UPDATE ERROR {}", e.getMessage());
+                logger.warn(">>> [T_FN_REALTIME_TRADE] UPDATE ERROR {}", e.getMessage());
                 throw e;
             }
 
@@ -207,7 +207,7 @@ public class In03000202Impl extends InMsgHandlerImpl {
                 tFnMacMapper.updateBySpecSelective(tFnMac, tFnMacSpec);
             } catch (Exception e)
             {
-                logger.info("[T_FN_MAC] Update Error {}", e.getMessage());
+                logger.warn("[T_FN_MAC] Update Error {}", e.getMessage());
                 msgTX.rollback(safeData.getTXS());
                 safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
                 /*오류시에도 정상 처리 */

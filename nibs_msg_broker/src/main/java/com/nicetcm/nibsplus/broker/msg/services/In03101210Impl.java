@@ -57,7 +57,7 @@ public class In03101210Impl extends InMsgHandlerImpl {
                     tFnEmartDemandDateMapper.updateBySpecSelective(tFnEmartDemandDate, tFnEmartDemandDateSpec);
                 } catch (Exception e)
                 {
-                    logger.info("[T_FN_EMART_DEMAND_DATE] UPDATE ERROR {}", e.getMessage());
+                    logger.warn("[T_FN_EMART_DEMAND_DATE] UPDATE ERROR {}", e.getMessage());
                     throw e;
                 }
             }//endif
@@ -76,7 +76,7 @@ public class In03101210Impl extends InMsgHandlerImpl {
                     tFnBranchEmartMapper.updateBySpecSelective(tFnBranchEmart, tFnBranchEmartSpec);
                 } catch (Exception e)
                 {
-                    logger.info("[T_FN_BRANCH_EMART] UPDATE ERROR {}", e.getMessage());
+                    logger.warn("[T_FN_BRANCH_EMART] UPDATE ERROR {}", e.getMessage());
                     throw e;
                 }
             }//endif

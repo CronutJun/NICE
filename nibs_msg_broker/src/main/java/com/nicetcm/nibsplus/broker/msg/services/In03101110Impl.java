@@ -173,7 +173,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
                     closeAmt = tMiscMapper.selectCloseAmt(tMacInfo);
                 } catch (Exception e)
                 {
-                    logger.info(">>> [T_CM_CASH] ERROR");
+                    logger.warn(">>> [T_CM_CASH] ERROR");
                     throw e;
                 }
 

@@ -133,7 +133,7 @@ public class In03101220Impl extends InMsgHandlerImpl {
             throw new MsgBrokerException(String.format("[MngCM_AP_SaveJumCloseAmt] 프로시져 오류 2: %s ", ifCashInsert.getvResultMsg()));
         }
 
-        logger.info(String.format("지점별 마감 조회 저장[%s]", ifCashInsert.getvResultMsg()));
+        logger.warn(String.format("지점별 마감 조회 저장[%s]", ifCashInsert.getvResultMsg()));
 
     }//end method
 }

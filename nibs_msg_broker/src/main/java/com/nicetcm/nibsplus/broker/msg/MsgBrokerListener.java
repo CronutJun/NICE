@@ -7,13 +7,19 @@ import javax.jms.JMSException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
- 
+
 public class MsgBrokerListener implements MessageListener {
- 
+
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerListener.class);
-    
+
+    private String type = "";
+
+    public MsgBrokerListener(String type) {
+        this.type = type;
+    }
+
     public void onMessage(Message message) {
-         logger.debug("Thread = " + Thread.currentThread().getId() + ", Got message '" + message.toString() + "'");
+         logger.info("Thread = {}, type = {}, Got message '{}'", Thread.currentThread().getId(), type, message.toString() + "'");
          BytesMessage bInst = (BytesMessage)message;
          try {
              int len = (int)bInst.getBodyLength();
@@ -27,7 +33,7 @@ public class MsgBrokerListener implements MessageListener {
          catch( Exception e ) {
              logger.error(e.getMessage());
          }
-             
+
     }
- 
+
 }

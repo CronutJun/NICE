@@ -83,11 +83,11 @@ public class In03101192Impl extends InMsgHandlerImpl {
             tFnOperfundsInfoMapper.updateBySpecSelective(tFnOperfundsInfo, tFnOperfundsInfoSpec);
         } catch (Exception e)
         {
-            logger.info( "[T_FN_ATMS_ADD_CASH_REPORT] Update Error {}", e.getMessage() );
+            logger.warn( "[T_FN_ATMS_ADD_CASH_REPORT] Update Error {}", e.getMessage() );
             throw e;
         }
 
-        logger.info( "[T_FN_ATMS_ADD_CASH_REPORT] Update OK" );
+        logger.warn( "[T_FN_ATMS_ADD_CASH_REPORT] Update OK" );
 
     }
 }

@@ -72,7 +72,7 @@ public class In01001160Impl extends InMsgHandlerImpl {
                 comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMngSpec);
             } catch (Exception e)
             {
-                logger.info("[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
+                logger.warn("[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
                 throw e;
             }
 
@@ -101,13 +101,13 @@ public class In01001160Impl extends InMsgHandlerImpl {
                 tCtErrorMngMadeComList = tCtErrorMngMadeComMapper.selectBySpec(tCtErrorMngMadeComSpec);
             } catch (Exception e)
             {
-                logger.info(String.format(">>> [T_CT_ERROR_MNG_MADE_COM-ARRIVAL] 2차출동건건검색실패 AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s] [%.200s]",
+                logger.warn(String.format(">>> [T_CT_ERROR_MNG_MADE_COM-ARRIVAL] 2차출동건건검색실패 AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s] [%.200s]",
                                 parsed.getString("trans1_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), horgCallCnt, e.getMessage()));
                 throw e;
             }
 
             if(tCtErrorMngMadeComList == null || tCtErrorMngMadeComList.size() == 0) {
-                logger.info(String.format("[T_CT_ERROR_MNG_MADE_COM-ARRIVAL] 해당데이터가 없습니다. AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
+                logger.warn(String.format("[T_CT_ERROR_MNG_MADE_COM-ARRIVAL] 해당데이터가 없습니다. AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), horgCallCnt));
                 throw new MsgBrokerException(-1);
             }
@@ -123,14 +123,14 @@ public class In01001160Impl extends InMsgHandlerImpl {
 
             /* 이미 완료된 건은 update 하지 않도록 한다. */
             if(nstr(tCtErrorMngMadeCom.getFinishStatus()).equals("7000")) {
-                logger.info(String.format("[SaveErrArrival] 완료 2차출동에 대한 도착통보 수신 AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
+                logger.warn(String.format("[SaveErrArrival] 완료 2차출동에 대한 도착통보 수신 AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), horgCallCnt));
                 throw new MsgBrokerException(-2);
             }
 
             if(tCtErrorMngMadeCom.getArrivalTime() != null
             && Integer.parseInt(tCtErrorMngMadeCom.getArrivalTime()) > 0) {
-                logger.info(String.format("[SaveErrArrival] 이미 도착시간이 설정되어 있습니다. AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
+                logger.warn(String.format("[SaveErrArrival] 이미 도착시간이 설정되어 있습니다. AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), horgCallCnt));
                 throw new MsgBrokerException(-2);
             }
@@ -154,7 +154,7 @@ public class In01001160Impl extends InMsgHandlerImpl {
                 tMiscMapper.updateCtErrorMngMadeCom2(tCtErrorMngMadeCom2);
             } catch (Exception e)
             {
-                logger.info( "[T_CT_ERROR_MNG_MADE_COM-ARRIVAL] Update Err {}", e.getMessage());
+                logger.warn( "[T_CT_ERROR_MNG_MADE_COM-ARRIVAL] Update Err {}", e.getMessage());
                 throw e;
             }
 
@@ -173,12 +173,12 @@ public class In01001160Impl extends InMsgHandlerImpl {
                 tCtErrorMngList = ctErrorMngMap.selectBySpec(tCtErrorMngSpec);
             } catch (Exception e)
             {
-                logger.info(String.format("[SaveErrArrival] 장애건검색실패. create_date[%s], error_no[%s]", parsed.getInt("trans1_date"), parsed.getString("trans1_seq")));
+                logger.warn(String.format("[SaveErrArrival] 장애건검색실패. create_date[%s], error_no[%s]", parsed.getInt("trans1_date"), parsed.getString("trans1_seq")));
                 throw new Exception(String.format("[SaveErrArrival] 장애건검색실패. create_date[%s], error_no[%s]", parsed.getInt("trans1_date"), parsed.getString("trans1_seq")));
             }
 
             if(tCtErrorMngList == null || tCtErrorMngList.size() == 0) {
-                logger.info(String.format("[SaveErrArrival] 해당데이터가 없습니다. create_date[%s], error_no[%s]", parsed.getInt("trans1_date"), parsed.getString("trans1_seq")));
+                logger.warn(String.format("[SaveErrArrival] 해당데이터가 없습니다. create_date[%s], error_no[%s]", parsed.getInt("trans1_date"), parsed.getString("trans1_seq")));
                 throw new Exception(String.format("[SaveErrArrival] 해당데이터가 없습니다. create_date[%s], error_no[%s]", parsed.getInt("trans1_date"), parsed.getString("trans1_seq")));
             }
 
@@ -194,13 +194,13 @@ public class In01001160Impl extends InMsgHandlerImpl {
 
             /* 이미 완료된 건은 update 하지 않도록 한다. */
             if(nstr(tCtErrorMng.getErrorStatus()).equals("7000")) {
-                logger.info(String.format(">>> [SaveErrArrival] 완료장애에 대한 도착통보 수신 create_date[%s], error_no[%s]", parsed.getInt("trans1_date"), parsed.getString("trans1_seq")));
+                logger.warn(String.format(">>> [SaveErrArrival] 완료장애에 대한 도착통보 수신 create_date[%s], error_no[%s]", parsed.getInt("trans1_date"), parsed.getString("trans1_seq")));
                 throw new MsgBrokerException(-2);
             }
 
             if(tCtErrorMng.getArrivalTime() != null
             && Integer.parseInt(tCtErrorMng.getArrivalTime()) > 0) {
-                logger.info(String.format("[SaveErrArrival] 이미 도착시간이 설정되어 있습니다. create_date[%s], error_no[%s], old_arrival_date[%s], old_arrival_time[%s]",
+                logger.warn(String.format("[SaveErrArrival] 이미 도착시간이 설정되어 있습니다. create_date[%s], error_no[%s], old_arrival_date[%s], old_arrival_time[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("trans1_seq"), tCtErrorMng.getArrivalDate(), tCtErrorMng.getArrivalTime()));
                 throw new MsgBrokerException(-2);
             }
@@ -225,11 +225,11 @@ public class In01001160Impl extends InMsgHandlerImpl {
                     comPack.updateErrorMng(tCtErrorMng2, tCtErrorMngSpec2);
                 } catch (Exception e)
                 {
-                    logger.info( "[T_CT_ERROR_MNG] Update Err {}", e.getMessage());
+                    logger.warn( "[T_CT_ERROR_MNG] Update Err {}", e.getMessage());
                     throw e;
                 }
 
-                logger.info( "[T_CT_ERROR_MNG] 통보보다 빠른 도착 통보실패로 ...Update OK" );
+                logger.warn( "[T_CT_ERROR_MNG] 통보보다 빠른 도착 통보실패로 ...Update OK" );
 
                 return;
             }
@@ -246,7 +246,7 @@ public class In01001160Impl extends InMsgHandlerImpl {
 
             /* 경비사에서 수신된 농협 도착 통보는 무시->경비 해제만 인정 함. 20120810 조규석 요청*/
             if(MsgBrokerConst.NONGH_CODE.equals(parsed.getString("CM.org_cd"))) {
-                logger.info( "[T_CT_ERROR_MNG] 농협 경비사 도착 보고 무시" );
+                logger.warn( "[T_CT_ERROR_MNG] 농협 경비사 도착 보고 무시" );
                 return;
             }
 
@@ -276,12 +276,12 @@ public class In01001160Impl extends InMsgHandlerImpl {
                 comPack.updateErrorMng(tCtErrorMng2, tCtErrorMngSpec2);
             } catch (Exception e)
             {
-                logger.info( "[T_CT_ERROR_MNG] Update Err {}", e.getMessage());
+                logger.warn( "[T_CT_ERROR_MNG] Update Err {}", e.getMessage());
                 throw e;
             }
         }
 
-        logger.info( "[T_CT_ERROR_MNG] Update OK" );
+        logger.warn( "[T_CT_ERROR_MNG] Update OK" );
 
         /*************************************************************
         * 기업은행 브랜드제휴 전송

@@ -46,10 +46,10 @@ public class In04101301Impl extends InMsgHandlerImpl {
             tFnSapDetailMapper.updateBySpecSelective(tFnSapDetail, tFnSapDetailSpec);
         } catch (Exception e)
         {
-            logger.info( "[T_FN_SAP_DETAIL] Update Error [{}]", e.getMessage() );
+            logger.warn( "[T_FN_SAP_DETAIL] Update Error [{}]", e.getMessage() );
             throw e;
         }
 
-        logger.info( "[T_FN_SAP_DETAIL] Update OK" );
+        logger.warn( "[T_FN_SAP_DETAIL] Update OK" );
     }
 }

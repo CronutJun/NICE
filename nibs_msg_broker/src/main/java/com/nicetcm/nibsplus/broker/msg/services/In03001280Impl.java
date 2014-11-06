@@ -61,12 +61,12 @@ public class In03001280Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(">>> (T_FN_KIB_MAC_DSUM) INSERT ERROR {}", e.getMessage());
+            logger.warn(">>> (T_FN_KIB_MAC_DSUM) INSERT ERROR {}", e.getMessage());
             throw e;
         }
 
         if(isDbDupData) {
-            logger.info("...기기별 일집계 중복수신 << ...");
+            logger.warn("...기기별 일집계 중복수신 << ...");
 
             TFnKibMacDsum tFnKibMacDsum = new TFnKibMacDsum();
             tFnKibMacDsum.setPreCloseOutAmt    (parsed.getString("pre_close_out_amt"));
@@ -90,14 +90,14 @@ public class In03001280Impl extends InMsgHandlerImpl {
                 tFnKibMacDsumMapper.updateBySpecSelective(tFnKibMacDsum, tFnKibMacDsumSpec);
             } catch (Exception e)
             {
-                logger.info(">>> (T_FN_KIB_MAC_DSUM) UPDATE ERROR {}", e.getMessage());
+                logger.warn(">>> (T_FN_KIB_MAC_DSUM) UPDATE ERROR {}", e.getMessage());
                 throw e;
             }
 
-            logger.info("!!!기기별 일집계 처리완료(UPDATE)!!!");
+            logger.warn("!!!기기별 일집계 처리완료(UPDATE)!!!");
         }
 
 
-        logger.info("!!!확정현송금액 처리완료!!!");
+        logger.warn("!!!확정현송금액 처리완료!!!");
     }
 }

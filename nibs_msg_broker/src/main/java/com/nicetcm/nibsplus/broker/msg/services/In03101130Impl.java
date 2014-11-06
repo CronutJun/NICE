@@ -188,7 +188,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
                 storedProcMapper.spFnMacCloseNh(fnMacClose);
 
-                logger.info("[sp_fn_macClose_nh] 프로시져 결과: {}", fnMacClose.getResult());
+                logger.warn("[sp_fn_macClose_nh] 프로시져 결과: {}", fnMacClose.getResult());
 
                 if("OK".equals(fnMacClose.getResult())) {
                     msgTX.commit(safeData.getTXS());
@@ -250,7 +250,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 storedProcMapper.spIfCashinsert(ifCashInsert2);
 
                 if(ifCashInsert.getvResult() != 0) {
-                    logger.info( "[MngCM_AP_SaveCurrentAmt] 프로시져 오류 3: %s", ifCashInsert2.getvResultMsg() );
+                    logger.warn( "[MngCM_AP_SaveCurrentAmt] 프로시져 오류 3: %s", ifCashInsert2.getvResultMsg() );
                     msgTX.rollback(safeData.getTXS());
                     safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
 
@@ -320,7 +320,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
                     storedProcMapper.spIfCashinsert(ifCashInsert3);
 
                     if(ifCashInsert3.getvResult() != 0) {
-                        logger.info( "[MngCM_AP_SaveCurrentAmt] 프로시져 오류 2: %s", ifCashInsert3.getvResultMsg() );
+                        logger.warn( "[MngCM_AP_SaveCurrentAmt] 프로시져 오류 2: %s", ifCashInsert3.getvResultMsg() );
                         msgTX.rollback(safeData.getTXS());
                         safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
                     } else {
@@ -350,7 +350,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 msgTX.commit(safeData.getTXS());
                 safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
             } else {
-                logger.info("sp_fn_macClose_emart procedure Error. {}", fnMacClose.getResult());
+                logger.warn("sp_fn_macClose_emart procedure Error. {}", fnMacClose.getResult());
                 msgTX.rollback(safeData.getTXS());
                 safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
             }
@@ -417,7 +417,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 msgPsr.clearMessage();
             } catch (Exception e)
             {
-                logger.info(e.getMessage());
+                logger.warn(e.getMessage());
             }
         }
     }//end method

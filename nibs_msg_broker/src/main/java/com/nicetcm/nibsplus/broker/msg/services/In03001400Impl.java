@@ -79,7 +79,7 @@ public class In03001400Impl extends InMsgHandlerImpl {
 
         }
 
-        logger.info(String.format("[MonthUsage]UPDATE SUCCESS - ORG[%s] MAC_NO[%s]", parsed.getString("CM.org_cd"), parsed.getString("mac_no")));
+        logger.warn(String.format("[MonthUsage]UPDATE SUCCESS - ORG[%s] MAC_NO[%s]", parsed.getString("CM.org_cd"), parsed.getString("mac_no")));
 
     }
 }

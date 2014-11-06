@@ -61,7 +61,7 @@ public class In01001111Impl extends InMsgHandlerImpl {
                         comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMng);
                     } catch (Exception e)
                     {
-                        logger.info( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
+                        logger.warn( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
                         throw e;
                     }
                 }
@@ -91,7 +91,7 @@ public class In01001111Impl extends InMsgHandlerImpl {
                 comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMngSpec);
             } catch (Exception e)
             {
-                logger.info( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
+                logger.warn( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
                 throw e;
             }
 
@@ -116,13 +116,13 @@ public class In01001111Impl extends InMsgHandlerImpl {
                 comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMngSpec);
             } catch (Exception e)
             {
-                logger.info( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
+                logger.warn( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
                 throw e;
             }
 
         }
 
-        logger.info( "[T_CT_ERROR_MNG] Update OK" );
+        logger.warn( "[T_CT_ERROR_MNG] Update OK" );
 
     }//end method
 }

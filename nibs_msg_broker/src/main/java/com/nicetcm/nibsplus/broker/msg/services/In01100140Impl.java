@@ -58,7 +58,7 @@ public class In01100140Impl extends InMsgHandlerImpl {
                 tCtErrorMngMadeComMapper.updateBySpecSelective(tCtErrorMngMadeCom, tCtErrorMngMadeComSpec);
             } catch (Exception e)
             {
-                logger.info( "[t_ct_error_mng_made_com] Delete Err [{}]", e.getMessage() );
+                logger.warn( "[t_ct_error_mng_made_com] Delete Err [{}]", e.getMessage() );
             }
 
             return;
@@ -76,10 +76,10 @@ public class In01100140Impl extends InMsgHandlerImpl {
                 tCtErrorMngGuardMapper.deleteBySpec(tCtErrorMngGuardSpec);
             } catch (Exception e)
             {
-                logger.info( "[T_CT_ERROR_MNG_GUARD] Delete Err [{}]", e.getMessage() );
+                logger.warn( "[T_CT_ERROR_MNG_GUARD] Delete Err [{}]", e.getMessage() );
             }
 
-            logger.info( "[T_CT_ERROR_MNG_GUARD] Delete OK" );
+            logger.warn( "[T_CT_ERROR_MNG_GUARD] Delete OK" );
         } else {
 
             String hSEND_YN;
@@ -105,12 +105,12 @@ public class In01100140Impl extends InMsgHandlerImpl {
                 tCtErrorMngGuardMapper.updateBySpecSelective(tCtErrorMngGuard, tCtErrorMngGuardSpec);
             } catch (Exception e)
             {
-                logger.info("[T_CT_ERROR_MNG_GUARD] Update Err [{}]", e.getMessage());
+                logger.warn("[T_CT_ERROR_MNG_GUARD] Update Err [{}]", e.getMessage());
                 throw e;
             }
         }
 
-        logger.info( "[T_CT_ERROR_MNG_GUARD] Update OK" );
+        logger.warn( "[T_CT_ERROR_MNG_GUARD] Update OK" );
 
     }//end method
 }

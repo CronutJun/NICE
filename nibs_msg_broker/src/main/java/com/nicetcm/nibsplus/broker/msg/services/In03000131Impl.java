@@ -38,7 +38,7 @@ public class In03000131Impl extends InMsgHandlerImpl {
 
         safeData.setKeepResData(true);
         if( MsgBrokerConst.TAXRF_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("oper_type").startsWith("A")) {
-            logger.info("KTTR 추가현송 수신");
+            logger.warn("KTTR 추가현송 수신");
             return;
         }
 
@@ -57,19 +57,12 @@ public class In03000131Impl extends InMsgHandlerImpl {
             parsed.setLong("total_out_amt", parsed.getLong("cash_out_amt") + parsed.getLong("check_out_amt"));
         }
 
-        long hTOT_IN_AMT;
-
         /* 실시간 마감통보에는 총 입금액이 안들어온다. */
         /* 20100830 농협은 총입금금액이 들어온다. 총입금금액으로 넣어준다.  0으로 들어오는 경우도 있다. */
         /* 기관에 따라 권종별로 주면서 현금입금액에 만원권을 주던지 권종별 모든것을 합산한 것을 현금입금액에
         주는지 체크해 봐야 한다. */
-        if( parsed.getLong("total_in_amt") == 0 )
-        {
-            hTOT_IN_AMT = parsed.getLong("cash_in_amt") + parsed.getLong("check_in_amt");
-        }
-        else
-        {
-            hTOT_IN_AMT = parsed.getLong("total_in_amt");
+        if( parsed.getLong("total_in_amt") == 0 ) {
+            parsed.setLong("total_in_amt", parsed.getLong("cash_in_amt") + parsed.getLong("check_in_amt"));
         }
 
         parsed.setLong("cash_out_amt", 0);
@@ -165,7 +158,7 @@ public class In03000131Impl extends InMsgHandlerImpl {
 
                 splMap.spFnMacCloseNh(fnMacClose);
 
-                logger.info("[sp_fn_macClose_nh] 프로시져 결과: {}", fnMacClose.getResult());
+                logger.warn("[sp_fn_macClose_nh] 프로시져 결과: {}", fnMacClose.getResult());
 
                 if("OK".equals(fnMacClose.getResult())) {
                     msgTX.commit(safeData.getTXS());

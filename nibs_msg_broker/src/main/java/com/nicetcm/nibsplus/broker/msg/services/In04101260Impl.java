@@ -48,10 +48,10 @@ public class In04101260Impl extends InMsgHandlerImpl {
             tCmSiteEnvCheckMapper.updateBySpecSelective(tCmSiteEnvCheck, tCmSiteEnvCheckSpec);
         } catch (Exception e)
         {
-            logger.info("[T_CM_SITE_ENV_CHECK] Update Error [{}]", e.getMessage());
+            logger.warn("[T_CM_SITE_ENV_CHECK] Update Error [{}]", e.getMessage());
             throw e;
         }
 
-        logger.info("[T_CM_SITE_ENV_CHECK] Update OK");
+        logger.warn("[T_CM_SITE_ENV_CHECK] Update OK");
     }
 }

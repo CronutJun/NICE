@@ -49,10 +49,10 @@ public class In03101208Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(">>> [T_FN_FOREIGNCURRENCY] UPDATE ERROR {}", e.getMessage());
+            logger.warn(">>> [T_FN_FOREIGNCURRENCY] UPDATE ERROR {}", e.getMessage());
             throw e;
         }
 
-        logger.info(">>> [T_FN_FOREIGNCURRENCY] UPDATE OK");
+        logger.warn(">>> [T_FN_FOREIGNCURRENCY] UPDATE OK");
     }
 }

@@ -46,12 +46,12 @@ public class In01001490Impl extends InMsgHandlerImpl {
             tCtManyErrorMngList = tCtManyErrorMngMapper.selectBySpec(tCtManyErrorMngSpec);
         } catch (Exception e)
         {
-            logger.info("[T_CT_MANY_ERROR_MNG_FINISH] 장애건검색실패 call_date[{}], call_no[{}] [{}]", parsed.getString("call_date"), parsed.getString("call_no"), e.getMessage());
+            logger.warn("[T_CT_MANY_ERROR_MNG_FINISH] 장애건검색실패 call_date[{}], call_no[{}] [{}]", parsed.getString("call_date"), parsed.getString("call_no"), e.getMessage());
             throw new Exception("[T_CT_MANY_ERROR_MNG_FINISH] 장애건검색실패 call_date[" + parsed.getString("call_date") + "], call_no[" + parsed.getString("call_no") + "] [" + e.getMessage() + "]");
         }
 
         if(tCtManyErrorMngList == null || tCtManyErrorMngList.size() == 0) {
-            logger.info("[T_CT_MANY_ERROR_MNG_FINISH] 해당데이터가 없습니다. call_date[{}], call_no[{}]", parsed.getString("call_date"), parsed.getString("call_no"));
+            logger.warn("[T_CT_MANY_ERROR_MNG_FINISH] 해당데이터가 없습니다. call_date[{}], call_no[{}]", parsed.getString("call_date"), parsed.getString("call_no"));
             throw new Exception("[T_CT_MANY_ERROR_MNG_FINISH] 해당데이터가 없습니다. call_date[" + parsed.getString("call_date") + "], call_no[" + parsed.getString("call_no") + "]");
         }
 
@@ -83,11 +83,11 @@ public class In01001490Impl extends InMsgHandlerImpl {
             tCtManyErrorMngMapper.updateBySpecSelective(updateTCtManyErrorMng, tCtManyErrorMngSpec2);
         } catch (Exception e)
         {
-            logger.info("[T_CT_MANY_ERROR_MNG-FINISH] Update Err [{}]", e.getMessage());
+            logger.warn("[T_CT_MANY_ERROR_MNG-FINISH] Update Err [{}]", e.getMessage());
             throw new Exception("[T_CT_MANY_ERROR_MNG-FINISH] Update Err [" + e.getMessage() + "]");
         }
 
-        logger.info( "[T_CT_MANY_ERROR_MNG] Update OK" );
+        logger.warn( "[T_CT_MANY_ERROR_MNG] Update OK" );
 
     }//end method
 }

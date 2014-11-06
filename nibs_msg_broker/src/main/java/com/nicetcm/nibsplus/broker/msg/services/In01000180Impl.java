@@ -58,13 +58,13 @@ public class In01000180Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(String.format("기번정보 없음(코너 대표기번 검색 실패),org_cd[%s],jijum_cd[%s], org_site_cd[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("org_site_cd")) );
+                logger.warn(String.format("기번정보 없음(코너 대표기번 검색 실패),org_cd[%s],jijum_cd[%s], org_site_cd[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("org_site_cd")) );
                 throw new Exception(String.format("기번정보 없음(코너 대표기번 검색 실패),org_cd[%s],jijum_cd[%s], org_site_cd[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("org_site_cd")));
             }
 
         }
 
-        logger.info("...고객대기정보 발생껀...");
+        logger.warn("...고객대기정보 발생껀...");
 
         /* 신한은행 2차출동의 경우 별도 테이블에 */
         if(MsgBrokerConst.SHATMS_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("call_cnt_type").equals("2")) {
@@ -79,7 +79,7 @@ public class In01000180Impl extends InMsgHandlerImpl {
                 tMiscMapper.updateCtErrorMngMadeCom4(tCtErrorMngMadeCom);
             } catch (Exception e)
             {
-                logger.info( ">>> [CallIVR_WaitCustomer] (T_CT_ERROR_MNG_MADE_COM) UPDATE ERROR [{}]", e.getMessage());
+                logger.warn( ">>> [CallIVR_WaitCustomer] (T_CT_ERROR_MNG_MADE_COM) UPDATE ERROR [{}]", e.getMessage());
                 throw e;
             }
 
@@ -132,11 +132,11 @@ public class In01000180Impl extends InMsgHandlerImpl {
             comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMngSpec);
         } catch (Exception e)
         {
-            logger.info( ">>> [CallIVR_WaitCustomer] (T_CT_ERROR_MNG) UPDATE ERROR [{}]", e.getMessage());
+            logger.warn( ">>> [CallIVR_WaitCustomer] (T_CT_ERROR_MNG) UPDATE ERROR [{}]", e.getMessage());
             throw e;
         }
 
-        logger.info("!!!고객대기정보 처리완료(T_CT_ERROR_MNG UPDATE)!!!");
+        logger.warn("!!!고객대기정보 처리완료(T_CT_ERROR_MNG UPDATE)!!!");
 
     }//end method
 }

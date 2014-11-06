@@ -82,7 +82,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
             throw new MsgBrokerException( String.format("[01003100] 기기정보 검색 실패 기관[%s] 지점[%s] 기번[%s]",
                                             macInfo.getOrgCd(), macInfo.getMacNo()), -7 );
         }
-        logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+        logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(),
                     macInfo.getMacNm(), macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
 
@@ -214,7 +214,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
                 ctErr = errBasicMap.getErrGroupCd( errBasic );
             }
             catch ( Exception e ) {
-                logger.info("대구은행 비교대상 접수장애 조회실패[{}]", e.getMessage());
+                logger.warn("대구은행 비교대상 접수장애 조회실패[{}]", e.getMessage());
                 ctErr = new TCtError();
             }
             TCmCommonSpec cmCommonSpc = new TCmCommonSpec();
@@ -223,7 +223,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
             try {
                 List<TCmCommon> cmCommons = cmCommonMap.selectBySpec( cmCommonSpc );
                 if( cmCommons.size() == 0 ) {
-                    logger.info("대구은행 그룹장애코드 맵핑 정보 없음 [{}-{}][{}]",
+                    logger.warn("대구은행 그룹장애코드 맵핑 정보 없음 [{}-{}][{}]",
                             errBasic.getBranchCd(), errBasic.getMacNo(), errBasic.getErrorCd() );
                 }
                 else {
@@ -235,7 +235,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
                 }
             }
             catch ( Exception e ) {
-                logger.info("대구은행 그룹장애코드 맵핑 Error[{}-{}][{}][{}]",
+                logger.warn("대구은행 그룹장애코드 맵핑 Error[{}-{}][{}][{}]",
                         errBasic.getBranchCd(), errBasic.getMacNo(), errBasic.getErrorCd(), e.getMessage() );
             }
 
@@ -254,7 +254,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
         TCtErrorBasic rsltErrBasic = errBasicMap.selectByCond1( errBasic );
 
         if( rsltErrBasic == null ) {
-            logger.info("[insertErrMngMadeCom]해당 장애 없음 trans_date[{}] org_msg_no[{}] org_call_cnt[{}]\n",
+            logger.warn("[insertErrMngMadeCom]해당 장애 없음 trans_date[{}] org_msg_no[{}] org_call_cnt[{}]\n",
                     errBasic.getTransDate(), errBasic.getOrgMsgNo(), errMngMadeCom.getOrgCallCnt() );
         }
 

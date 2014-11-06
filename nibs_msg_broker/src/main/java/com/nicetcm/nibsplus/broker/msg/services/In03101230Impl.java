@@ -53,7 +53,7 @@ public class In03101230Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(String.format(">>> [MngCM_AP_SaveLastCheck-최종발행수표조회] 운영부, 지사 검색 오류. [%.200s]", e.getMessage()));
+            logger.warn(String.format(">>> [MngCM_AP_SaveLastCheck-최종발행수표조회] 운영부, 지사 검색 오류. [%.200s]", e.getMessage()));
             throw e;
         }
 
@@ -77,16 +77,16 @@ public class In03101230Impl extends InMsgHandlerImpl {
         {
             tFnCheckListMapper.insertSelective(tFnCheckList);
         } catch( org.springframework.dao.DataIntegrityViolationException e ) {
-            logger.info( "[T_FN_CHECK_LIST] INSERT Duplicate !! 이미 저장된 건이 있습니다. {}", e.getMessage());
+            logger.warn( "[T_FN_CHECK_LIST] INSERT Duplicate !! 이미 저장된 건이 있습니다. {}", e.getMessage());
             /* 정상으로 응답 준다. */
 
         } catch (Exception e)
         {
-            logger.info("[T_FN_CHECK_LIST] INSERT Err {}", e.getMessage());
+            logger.warn("[T_FN_CHECK_LIST] INSERT Err {}", e.getMessage());
             throw e;
         }
 
-        logger.info("[T_FN_CHECK_LIST] INSERT OK");
+        logger.warn("[T_FN_CHECK_LIST] INSERT OK");
 
     }
 }

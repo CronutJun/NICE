@@ -82,16 +82,16 @@ public class In03101112Impl extends InMsgHandlerImpl {
 
             } catch (Exception e1)
             {
-                logger.info(String.format("[T_CT_INPUT_CHECK_LIST] UPDATE Err [%s-%s][%.200s]", parsed.getString("msg_cnt"), parsed.getString("msg_index"), e1.getMessage()));
+                logger.warn(String.format("[T_CT_INPUT_CHECK_LIST] UPDATE Err [%s-%s][%.200s]", parsed.getString("msg_cnt"), parsed.getString("msg_index"), e1.getMessage()));
                 throw e1;
             }
         } catch (Exception e)
         {
-            logger.info(String.format("[T_CT_INPUT_CHECK_LIST] INSERT Err [%s-%s][%.200s]", parsed.getString("msg_cnt"), parsed.getString("msg_index"), e.getMessage()));
+            logger.warn(String.format("[T_CT_INPUT_CHECK_LIST] INSERT Err [%s-%s][%.200s]", parsed.getString("msg_cnt"), parsed.getString("msg_index"), e.getMessage()));
             throw e;
         }
 
-        logger.info(String.format("[T_CT_INPUT_CHECK_LIST] [%s-%s]Save OK\n", parsed.getString("msg_cnt"), parsed.getString("msg_index")));
+        logger.warn(String.format("[T_CT_INPUT_CHECK_LIST] [%s-%s]Save OK\n", parsed.getString("msg_cnt"), parsed.getString("msg_index")));
 
 
     }

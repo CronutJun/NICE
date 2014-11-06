@@ -65,7 +65,7 @@ public class In04101220Impl extends InMsgHandlerImpl {
             resultCnt = tCmEmartMemberMapper.updateBySpecSelective(tCmEmartMember, tCmEmartMemberSpec);
         } catch (Exception e)
         {
-            logger.info(">>> [T_CM_EMART_MEMBER] UPDATE ERROR {}", e.getMessage());
+            logger.warn(">>> [T_CM_EMART_MEMBER] UPDATE ERROR {}", e.getMessage());
             throw e;
         }
 
@@ -85,11 +85,11 @@ public class In04101220Impl extends InMsgHandlerImpl {
                 tCmEmartMemberMapper.insertSelective(tCmEmartMember);
             } catch (Exception e)
             {
-                logger.info( ">>> [MngIQ_AP_SaveCalcCashierInfo] (T_CM_EMART_MEMBER) INSERT ERROR [{}]", e.getMessage());
+                logger.warn( ">>> [MngIQ_AP_SaveCalcCashierInfo] (T_CM_EMART_MEMBER) INSERT ERROR [{}]", e.getMessage());
                 throw e;
             }
         }
 
-        logger.info("!!![MngIQ_AP_SaveCalcCashierInfo] 처리완료(INSERT)!!!");
+        logger.warn("!!![MngIQ_AP_SaveCalcCashierInfo] 처리완료(INSERT)!!!");
     }
 }

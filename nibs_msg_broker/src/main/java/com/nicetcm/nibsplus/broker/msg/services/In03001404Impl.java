@@ -52,10 +52,10 @@ public class In03001404Impl extends InMsgHandlerImpl {
             tFnBrandCommissionFeeMapper.updateBySpecSelective(tFnBrandCommissionFee, tFnBrandCommissionFeeSpec);
         } catch (Exception e)
         {
-            logger.info(">>> [T_FN_BRAND_COMMISSION_FEE] Update ERROR {}", e.getMessage());
+            logger.warn(">>> [T_FN_BRAND_COMMISSION_FEE] Update ERROR {}", e.getMessage());
             throw e;
         }
 
-        logger.info("[T_FN_BRAND_COMMISSION_FEE] Update Complete");
+        logger.warn("[T_FN_BRAND_COMMISSION_FEE] Update Complete");
     }
 }

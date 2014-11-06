@@ -23,10 +23,10 @@ import com.nicetcm.nibsplus.broker.msg.model.TFnAtmsCloseSendSpec;
  * @version 1.0
  * @see
  */
-@Service("in03001132")
-public class In03001132Impl extends InMsgHandlerImpl {
+@Service("in03101134")
+public class In03101134Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(In03001132Impl.class);
+    private static final Logger logger = LoggerFactory.getLogger(In03101134Impl.class);
 
     @Autowired private StoredProcMapper splMap;
 
@@ -51,10 +51,10 @@ public class In03001132Impl extends InMsgHandlerImpl {
             tFnAtmsCloseSendMapper.updateBySpecSelective(tFnAtmsCloseSend, tFnAtmsCloseSendSpec);
         } catch (Exception e)
         {
-            logger.info( "[T_FN_ATMS_CLOSE_SEND] Update Error {}", e.getMessage() );
+            logger.warn( "[T_FN_ATMS_CLOSE_SEND] Update Error {}", e.getMessage() );
             throw e;
         }
 
-        logger.info( "[T_FN_ATMS_CLOSE_SEND] Update OK" );
+        logger.warn( "[T_FN_ATMS_CLOSE_SEND] Update OK" );
     }
 }

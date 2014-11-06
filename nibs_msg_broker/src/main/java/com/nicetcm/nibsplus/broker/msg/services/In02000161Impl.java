@@ -78,12 +78,12 @@ public class In02000161Impl extends InMsgHandlerImpl {
                 macInfoModMap.updateBySpecSelective( macInfoMod, spec );
             }
             catch( Exception e ) {
-                logger.info( ">>> [MngSM_SaveMacModifyInfo] INSERT/UPDATE ERROR [{}]", e.getLocalizedMessage() );
+                logger.warn( ">>> [MngSM_SaveMacModifyInfo] INSERT/UPDATE ERROR [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( ">>> [MngSM_SaveMacModifyInfo] INSERT/UPDATE ERROR [{}]", e.getLocalizedMessage() );
+            logger.warn( ">>> [MngSM_SaveMacModifyInfo] INSERT/UPDATE ERROR [{}]", e.getLocalizedMessage() );
             throw e;
         }
     }

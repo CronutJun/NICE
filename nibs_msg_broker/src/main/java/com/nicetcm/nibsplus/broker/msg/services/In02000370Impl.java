@@ -62,12 +62,12 @@ public class In02000370Impl extends InMsgHandlerImpl {
                     cmSetFacItemMap.updateByPrimaryKeySelective( cmSetFacItem );
                 }
                 catch( Exception e ) {
-                    logger.info( "[T_CM_SET_FAC_ITEM] Update Error [{}]", e.getLocalizedMessage() );
+                    logger.warn( "[T_CM_SET_FAC_ITEM] Update Error [{}]", e.getLocalizedMessage() );
                     throw e;
                 }
             }
             catch( Exception e ) {
-                logger.info( "[T_CM_SET_FAC_ITEM] Insert Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_SET_FAC_ITEM] Insert Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
@@ -92,7 +92,7 @@ public class In02000370Impl extends InMsgHandlerImpl {
                 cmSetFacItemMap.updateBySpecSelective( cmSetFacItem, spec );
             }
             catch( Exception e ) {
-                logger.info( "[T_CM_SET_FAC_ITEM] Update Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_SET_FAC_ITEM] Update Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
@@ -109,7 +109,7 @@ public class In02000370Impl extends InMsgHandlerImpl {
                 cmSetFacItemMap.updateByPrimaryKeySelective( cmSetFacItem );
             }
             catch( Exception e ) {
-                logger.info( "[T_CM_SET_FAC_ITEM] Update Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_SET_FAC_ITEM] Update Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }

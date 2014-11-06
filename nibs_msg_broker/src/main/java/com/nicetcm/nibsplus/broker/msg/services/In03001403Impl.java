@@ -54,10 +54,10 @@ public class In03001403Impl extends InMsgHandlerImpl {
             tFnBrandSvcFeeMapper.updateBySpecSelective(tFnBrandSvcFee, tFnBrandSvcFeeSpec);
         } catch (Exception e)
         {
-            logger.info(">>> [T_FN_BRAND_SVC_FEE] UPDATE ERROR {}", e.getMessage());
+            logger.warn(">>> [T_FN_BRAND_SVC_FEE] UPDATE ERROR {}", e.getMessage());
             throw e;
         }
 
-        logger.info(">>> [T_FN_BRAND_SVC_FEE] UPDATE OK");
+        logger.warn(">>> [T_FN_BRAND_SVC_FEE] UPDATE OK");
     }
 }

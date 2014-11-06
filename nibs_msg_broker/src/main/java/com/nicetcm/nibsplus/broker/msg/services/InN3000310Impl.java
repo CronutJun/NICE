@@ -62,13 +62,13 @@ public class InN3000310Impl extends InMsgHandlerImpl {
                 ctStorekeeperCashFaultMap.updateByPrimaryKeySelective( ctStkprCashFault );
             }
             catch( Exception e ) {
-                logger.info( "[T_CT_JUMJU_CASH_FAULT] UPDATE Err [{}-{}-{}][{}]",
+                logger.warn( "[T_CT_JUMJU_CASH_FAULT] UPDATE Err [{}-{}-{}][{}]",
                         parsed.getString("deal_date"), parsed.getString("mac_no"), parsed.getString("atm_deal_no"), e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( "[T_CT_JUMJU_CASH_FAULT] INSERT Err [{}-{}-{}][{}]",
+            logger.warn( "[T_CT_JUMJU_CASH_FAULT] INSERT Err [{}-{}-{}][{}]",
                     parsed.getString("deal_date"), parsed.getString("mac_no"), parsed.getString("atm_deal_no"), e.getLocalizedMessage() );
             throw e;
         }

@@ -60,13 +60,13 @@ public class In03000136Impl extends InMsgHandlerImpl {
                     cashKioskMap.insertSelective( cashKiosk );
                 }
                 catch( org.springframework.dao.DataIntegrityViolationException de ) {
-                    logger.info( "[T_CM_CASH_KIOSK] INSERT Duplicate !! 이미 저장된 건이 있습니다. [{}]", de.getLocalizedMessage() );
+                    logger.warn( "[T_CM_CASH_KIOSK] INSERT Duplicate !! 이미 저장된 건이 있습니다. [{}]", de.getLocalizedMessage() );
                 }
                 catch( Exception e ) {
-                    logger.info("[T_FN_REALTIME_TRADE_KIOSK] Insert Err [{}]", e.getLocalizedMessage() );
+                    logger.warn("[T_FN_REALTIME_TRADE_KIOSK] Insert Err [{}]", e.getLocalizedMessage() );
                     throw e;
                 }
-                logger.info( "[T_CM_CASH_KIOSK] SAVE OK" );
+                logger.warn( "[T_CM_CASH_KIOSK] SAVE OK" );
             }
         }
     }//end method

@@ -45,11 +45,11 @@ public class In04001400Impl extends InMsgHandlerImpl {
             tMiscMapper.updateCmGoodsApply(tCmGoodsApply);
         } catch (Exception e)
         {
-            logger.info( "[T_CM_GOODS_APPLY] Update Error [{}]", e.getMessage());
+            logger.warn( "[T_CM_GOODS_APPLY] Update Error [{}]", e.getMessage());
             throw e;
         }
 
-        logger.info( "[T_CM_GOODS_APPLY] Update OK" );
+        logger.warn( "[T_CM_GOODS_APPLY] Update OK" );
 
     }
 }

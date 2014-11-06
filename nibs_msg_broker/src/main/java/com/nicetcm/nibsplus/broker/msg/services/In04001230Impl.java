@@ -29,6 +29,6 @@ public class In04001230Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        logger.info( String.format(">>> 관리자 메시지 수신 message_gb[%.*s] message[%.*s] 작성자명[%.*s] 연락처[%.*s]", parsed.getString("message_gb"), parsed.getString("message"), parsed.getString("write_nm"), parsed.getString("write_tel_no")) );
+        logger.warn( String.format(">>> 관리자 메시지 수신 message_gb[%.*s] message[%.*s] 작성자명[%.*s] 연락처[%.*s]", parsed.getString("message_gb"), parsed.getString("message"), parsed.getString("write_nm"), parsed.getString("write_tel_no")) );
     }
 }

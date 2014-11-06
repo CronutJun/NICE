@@ -61,10 +61,10 @@ public class In03101122Impl extends InMsgHandlerImpl {
                     }
                 }
                 catch( Exception e ) {
-                    logger.info("[T_CM_CASH_KIOSK] DB Err [{}]", e.getLocalizedMessage() );
+                    logger.warn("[T_CM_CASH_KIOSK] DB Err [{}]", e.getLocalizedMessage() );
                     throw e;
                 }
-                logger.info( "[T_CM_CASH_KIOSK] SAVE OK" );
+                logger.warn( "[T_CM_CASH_KIOSK] SAVE OK" );
             }
         }
 

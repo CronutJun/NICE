@@ -47,7 +47,7 @@ public class InN5000410Impl extends InMsgHandlerImpl {
             rslt = fnNiceTranMap.selectByJoin1( cond );
             if( rslt == null ) {
                 parsed.setString( "CM.ret_cd", "91" );
-                logger.info( String.format("...해당 거래내역 없음 DEAL_DATE[%s] DEAL_NO[%s]",
+                logger.warn( String.format("...해당 거래내역 없음 DEAL_DATE[%s] DEAL_NO[%s]",
                         parsed.getString("deal_date"), parsed.getString("deal_no")) );
                 throw new MsgBrokerException( String.format("...해당 거래내역 없음 DEAL_DATE[%s] DEAL_NO[%s]",
                         parsed.getString("deal_date"), parsed.getString("deal_no")), -91 );
@@ -55,7 +55,7 @@ public class InN5000410Impl extends InMsgHandlerImpl {
         }
         catch( Exception e ) {
             parsed.setString( "CM.ret_cd", "91" );
-            logger.info( String.format("...해당 거래내역 없음 DEAL_DATE[%s] DEAL_NO[%s][errcd-%s]",
+            logger.warn( String.format("...해당 거래내역 없음 DEAL_DATE[%s] DEAL_NO[%s][errcd-%s]",
                     parsed.getString("deal_date"), parsed.getString("deal_no"), e.getLocalizedMessage()) );
             throw e;
         }

@@ -56,7 +56,7 @@ public class InN5101400Impl extends InMsgHandlerImpl {
                 fnNiceTranMap.updateBySpecSelective( fnNiceTran, fnNiceTranSpec );
             }
             catch( Exception e ) {
-                logger.info( "T_FN_NICE_TRAN UPDATE Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "T_FN_NICE_TRAN UPDATE Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }

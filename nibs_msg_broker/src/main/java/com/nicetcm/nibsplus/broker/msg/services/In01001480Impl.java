@@ -38,7 +38,7 @@ public class In01001480Impl extends InMsgHandlerImpl {
         TMisc tMisc = tMiscMapper.getMadeComCd(parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"));
 
         if(tMisc == null) {
-            logger.info( String.format("[MngEM_SaveManyErrCall] 기기제조사 정보  검색 실패 기관[%s] 지점[%s] 기번[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no") ));
+            logger.warn( String.format("[MngEM_SaveManyErrCall] 기기제조사 정보  검색 실패 기관[%s] 지점[%s] 기번[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no") ));
             throw new MsgBrokerException(-1);
         }
 
@@ -70,12 +70,12 @@ public class In01001480Impl extends InMsgHandlerImpl {
         {
             tCtManyErrorMngMapper.insertSelective(tCtManyErrorMng);
         } catch( org.springframework.dao.DataIntegrityViolationException e ) {
-            logger.info(">>> [MngEM_SaveManyErrCall] T_CT_MANY_ERROR_MNG 같은요청전문 수신");
+            logger.warn(">>> [MngEM_SaveManyErrCall] T_CT_MANY_ERROR_MNG 같은요청전문 수신");
             throw new Exception(">>> [MngEM_SaveManyErrCall] T_CT_MANY_ERROR_MNG 같은요청전문 수신");
 
         } catch (Exception e)
         {
-            logger.info(">>> [MngEM_SaveManyErrCall]  T_CT_MANY_ERROR_MNG INSERT ERROR [{}]", e.getMessage());
+            logger.warn(">>> [MngEM_SaveManyErrCall]  T_CT_MANY_ERROR_MNG INSERT ERROR [{}]", e.getMessage());
             throw new Exception(">>> [MngEM_SaveManyErrCall]  T_CT_MANY_ERROR_MNG INSERT ERROR");
         }
 

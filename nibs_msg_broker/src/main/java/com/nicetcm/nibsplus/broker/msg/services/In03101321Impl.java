@@ -57,7 +57,7 @@ public class In03101321Impl extends InMsgHandlerImpl {
                     }
                 }
                 catch( Exception e ) {
-                    logger.info("[T_FN_DAY_CLOSE_KIOSK] DB Err [{}]", e.getLocalizedMessage() );
+                    logger.warn("[T_FN_DAY_CLOSE_KIOSK] DB Err [{}]", e.getLocalizedMessage() );
                     throw e;
                 }
             }

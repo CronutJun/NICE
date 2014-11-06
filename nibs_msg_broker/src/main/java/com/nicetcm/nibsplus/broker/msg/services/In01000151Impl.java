@@ -77,7 +77,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info(">>> ErrorBasic 장애건검색실패 create_date[{}], error_no[{}] {}]",
+            logger.warn(">>> ErrorBasic 장애건검색실패 create_date[{}], error_no[{}] {}]",
                     parsed.getInt("trans1_date"), parsed.getString("trans1_seq"), e.getLocalizedMessage() );
             throw e;
         }
@@ -93,7 +93,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info(">>> ErrorCall 장애건검색실패 create_date[{}], error_no[{}] {}]",
+            logger.warn(">>> ErrorCall 장애건검색실패 create_date[{}], error_no[{}] {}]",
                     parsed.getInt("trans1_date"), parsed.getString("trans1_seq"), e.getLocalizedMessage() );
             throw e;
         }
@@ -109,7 +109,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info(">>> ErrorNoti 장애건검색실패 create_date[{}], error_no[{}] {}]",
+            logger.warn(">>> ErrorNoti 장애건검색실패 create_date[{}], error_no[{}] {}]",
                     parsed.getInt("trans1_date"), parsed.getString("trans1_seq"), e.getLocalizedMessage() );
             throw e;
         }
@@ -125,7 +125,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info(">>> ErrorTxn 장애건검색실패 create_date[{}], error_no[{}] {}]",
+            logger.warn(">>> ErrorTxn 장애건검색실패 create_date[{}], error_no[{}] {}]",
                     parsed.getString("trans1_date"), parsed.getString("trans1_seq"), e.getLocalizedMessage() );
             throw e;
         }
@@ -134,7 +134,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
          *  이미 완료된 건은 update 하지 않도록 한다.
          */
         if( errBasics.get(0).getErrorStatus().equals("7000") )  {
-            logger.info(">>> 완료장애에 대한 콜수신확인 수신 create_date[{}], error_no[{}]",
+            logger.warn(">>> 완료장애에 대한 콜수신확인 수신 create_date[{}], error_no[{}]",
                     parsed.getInt("trans1_date"), parsed.getString("trans1_seq") );
             throw new MsgBrokerException(String.format(">>> 완료장애에 대한 콜수신확인 수신 create_date[%s], error_no[%s]",
                     parsed.getString("trans1_date"), parsed.getString("trans1_seq")), -2);
@@ -165,7 +165,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
             errNotiMap.updateBySpecSelective( errNoti, errNotiSpec );
         }
         catch( Exception e ) {
-            logger.info( "[T_CT_ERROR_NOTI] Update Err [{}]", e.getLocalizedMessage() );
+            logger.warn( "[T_CT_ERROR_NOTI] Update Err [{}]", e.getLocalizedMessage() );
             throw e;
         }
 
@@ -173,7 +173,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
             errBasicMap.updateBySpecSelective( errBasic, errBasicSpec );
         }
         catch( Exception e ) {
-            logger.info( "[T_CT_ERROR_BASIC] Update Err [{}]", e.getLocalizedMessage() );
+            logger.warn( "[T_CT_ERROR_BASIC] Update Err [{}]", e.getLocalizedMessage() );
             throw e;
         }
 

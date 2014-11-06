@@ -57,7 +57,7 @@ public class InN3000200Impl extends InMsgHandlerImpl {
         }
         int iRtn = compCloseDateTicket( parsed );
         if( iRtn < 0 ) {
-            logger.info( "CompCloseDateTicket function result error" );
+            logger.warn( "CompCloseDateTicket function result error" );
             throw new Exception("CompCloseDateTicket function result error");
         }
         /* 동일일자에 두번 마감을 눌렀을 경우 첫번째 마감을 실 마감으로 보고
@@ -69,7 +69,7 @@ public class InN3000200Impl extends InMsgHandlerImpl {
                 insertNiceCloseTicketTmp( safeData, parsed );
             }
             catch( Exception e ) {
-                logger.info( "insertNiceCloseTicketTmp Error." );
+                logger.warn( "insertNiceCloseTicketTmp Error." );
                 throw e;
             }
         }
@@ -81,7 +81,7 @@ public class InN3000200Impl extends InMsgHandlerImpl {
                 insertNiceCloseTicketSum( safeData, parsed );
             }
             catch( Exception e ) {
-                logger.info( "insertNiceCloseTicketSum Error." );
+                logger.warn( "insertNiceCloseTicketSum Error." );
                 throw e;
             }
         }
@@ -106,12 +106,12 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             fnTicketMacCloseOrgMap.insert( fnTMCO );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
-            logger.info( "[T_FN_TICKET_MAC_CLOSE_ORG] Duplication [{}][{}][{}] !!!",
+            logger.warn( "[T_FN_TICKET_MAC_CLOSE_ORG] Duplication [{}][{}][{}] !!!",
                     parsed.getString("mac_no"), parsed.getString("close_date"), parsed.getString("close_time") );
             throw de;
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_TICKET_MAC_CLOSE_ORG] Insert Error.. {}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_TICKET_MAC_CLOSE_ORG] Insert Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
     }
@@ -134,7 +134,7 @@ public class InN3000200Impl extends InMsgHandlerImpl {
                 }
             }
             catch( Exception e ){
-                logger.info( "CompCloseDateTicket Error mac_no[{}] date[{}] => {}",
+                logger.warn( "CompCloseDateTicket Error mac_no[{}] date[{}] => {}",
                         parsed.getString("mac_no"), parsed.getString("close_date"), e.getMessage() );
                 return -1;
             }
@@ -145,12 +145,12 @@ public class InN3000200Impl extends InMsgHandlerImpl {
                 return 0;
             }
             else {
-                logger.info( "CompCloseDateTicket Error close_date[{}]", rslt.get(0).getCloseDate() );
+                logger.warn( "CompCloseDateTicket Error close_date[{}]", rslt.get(0).getCloseDate() );
                 return -1;
             }
         }
         catch( Exception e ) {
-            logger.info("comCloseDateTicket's error raised!! {}", e.getMessage() );
+            logger.warn("comCloseDateTicket's error raised!! {}", e.getMessage() );
             return -1;
         }
     }
@@ -174,7 +174,7 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             fnTicketMacCloseTmpMap.insert( fnTMCT );
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_TICKET_MAC_CLOSE_TMP] Insert Error.. {}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_TICKET_MAC_CLOSE_TMP] Insert Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
     }
@@ -196,12 +196,12 @@ public class InN3000200Impl extends InMsgHandlerImpl {
         try {
             sum = fnTicketMacCloseTmpMap.selectBySum1( fnTMCTCond );
             if( sum == null ) {
-                logger.info( "[T_FN_TICKET_MAC_CLOSE_TMP] Select Sum Error.." );
+                logger.warn( "[T_FN_TICKET_MAC_CLOSE_TMP] Select Sum Error.." );
                 throw new Exception("[T_FN_TICKET_MAC_CLOSE_TMP] Select Sum Error..");
             }
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_TICKET_MAC_CLOSE_TMP] Select Sum Error..{}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_TICKET_MAC_CLOSE_TMP] Select Sum Error..{}", e.getLocalizedMessage() );
             throw e;
         }
         
@@ -231,7 +231,7 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
+            logger.warn( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
         }
         miscCond.setArgType( "FO" );
         miscCond.setOrgCd( "096" );
@@ -244,7 +244,7 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
+            logger.warn( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
         }
         
         fnTicketMacClose.setInsertDate( safeData.getDSysDate() );
@@ -254,7 +254,7 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             fnTicketMacCloseMap.insert( fnTicketMacClose );
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_TICKET_MAC_CLOSE] Insert Error.. {}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_TICKET_MAC_CLOSE] Insert Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
         
@@ -270,14 +270,14 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             fnTicketMacCloseTmpMap.deleteBySpec( fnTMCTSpec );
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_TICKET_MAC_CLOSE_TMP] Delete Error.. {}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_TICKET_MAC_CLOSE_TMP] Delete Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
         try {
             insertNiceCloseTicketTmp( safeData, parsed );
         }
         catch( Exception e ) {
-            logger.info( "DBInsertNiceCloseTicketSum => DBInsertNiceCloseTicketTmp Error." );
+            logger.warn( "DBInsertNiceCloseTicketSum => DBInsertNiceCloseTicketTmp Error." );
             throw e;
         }
     }

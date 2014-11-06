@@ -60,7 +60,7 @@ public class In03000212Impl extends InMsgHandlerImpl {
                     }
                 }
                 catch( Exception e ) {
-                    logger.info("[T_FN_REALTIME_TRADE_KIOSK] DB Err [{}]", e.getLocalizedMessage() );
+                    logger.warn("[T_FN_REALTIME_TRADE_KIOSK] DB Err [{}]", e.getLocalizedMessage() );
                     throw e;
                 }
             }

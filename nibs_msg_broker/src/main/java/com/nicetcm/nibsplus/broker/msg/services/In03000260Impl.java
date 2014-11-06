@@ -60,7 +60,7 @@ public class In03000260Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(">>> [T_FN_CARRY] INSERT ERROR {}", e.getMessage());
+                logger.warn(">>> [T_FN_CARRY] INSERT ERROR {}", e.getMessage());
                 throw e;
             }
 
@@ -86,7 +86,7 @@ public class In03000260Impl extends InMsgHandlerImpl {
 
                 } catch (Exception e)
                 {
-                    logger.info(">>> [T_FN_CARRY] UPDATE ERROR {}", e.getMessage());
+                    logger.warn(">>> [T_FN_CARRY] UPDATE ERROR {}", e.getMessage());
                     throw e;
                 }
             }
@@ -105,7 +105,7 @@ public class In03000260Impl extends InMsgHandlerImpl {
                 tFnCarryMapper.deleteBySpec(tFnCarrySpec);
             } catch (Exception e)
             {
-                logger.info(">>> [T_FN_CARRY] DELETE ERROR {}", e.getMessage());
+                logger.warn(">>> [T_FN_CARRY] DELETE ERROR {}", e.getMessage());
                 throw e;
             }
         }

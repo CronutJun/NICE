@@ -44,7 +44,7 @@ public class InM1000100Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info(">>> [T_CM_JIJUM_EMARTSUPER] ERROR [{}]", e.getLocalizedMessage() );
+            logger.warn(">>> [T_CM_JIJUM_EMARTSUPER] ERROR [{}]", e.getLocalizedMessage() );
             throw e;
         }
         parsed.setString( "brch_nm",      rslt.getBranchNm() )

@@ -48,7 +48,7 @@ public class In03101150Impl extends InMsgHandlerImpl {
             tMiscMapper.updateFnAtmsReport(tMacInfo);
         } catch (Exception e)
         {
-            logger.info( "[T_FN_ATMS_REPORT] Update Error {}", e.getMessage() );
+            logger.warn( "[T_FN_ATMS_REPORT] Update Error {}", e.getMessage() );
             throw e;
         }
     }

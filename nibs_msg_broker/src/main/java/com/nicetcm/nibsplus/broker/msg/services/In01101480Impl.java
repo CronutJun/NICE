@@ -58,7 +58,7 @@ public class In01101480Impl extends InMsgHandlerImpl {
             tCtManyErrorMngMapper.updateBySpecSelective(tCtManyErrorMng, tCtManyErrorMngSpec);
         } catch (Exception e)
         {
-            logger.info("[T_CT_ERROR_MNG_GUARD] Update Err [{}]", e.getMessage());
+            logger.warn("[T_CT_ERROR_MNG_GUARD] Update Err [{}]", e.getMessage());
             throw new Exception("[T_CT_ERROR_MNG_GUARD] Update Err [" + e.getMessage() + "]");
         }
 

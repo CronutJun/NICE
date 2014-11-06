@@ -70,7 +70,7 @@ public class In01000140Impl extends InMsgHandlerImpl {
                                             macInfo.getOrgCd(), macInfo.getMacNo()), -7 );
         }
 
-        logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+        logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(),
                     macInfo.getMacNm(), macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
 
@@ -98,7 +98,7 @@ public class In01000140Impl extends InMsgHandlerImpl {
                 tCtErrorMngMadeComMapper.updateBySpecSelective(tCtErrorMngMadeCom, tCtErrorMngMadeComSpec);
             } catch (Exception e)
             {
-                logger.info(">>> [ErrCallCancel] (T_CT_ERROR_MNG_MADE_COM) UPDATE ERROR [{}]", e.getMessage());
+                logger.warn(">>> [ErrCallCancel] (T_CT_ERROR_MNG_MADE_COM) UPDATE ERROR [{}]", e.getMessage());
                 throw new MsgBrokerException(-1);
             }
 
@@ -131,7 +131,7 @@ public class In01000140Impl extends InMsgHandlerImpl {
              신한은행의 경우 전일 복구신호를 당일 출동요청건에 대해 보내 주기도 하므로 중복 체크 필요
             ************************************************************************************/
             if(comPack.getDupErrorMng(errBasic, 1) == false) {
-                logger.info( String.format("전문번호 [%s-%s] 의 미완료 출동요청 장애 없음", errBasic.getTransDate(), errBasic.getOrgMsgNo() ));
+                logger.warn( String.format("전문번호 [%s-%s] 의 미완료 출동요청 장애 없음", errBasic.getTransDate(), errBasic.getOrgMsgNo() ));
                 throw new MsgBrokerException(-1);
             }
         }

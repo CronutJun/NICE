@@ -55,7 +55,7 @@ public class MsgBrokerProducer {
 
         byte[] read = new byte[msgPsr.getMessage().limit()];
         msgPsr.getMessage().get(read);
-        logger.warn("O-MSG : [{}],[{}]", read.length, new String(read));
+        logger.error("O-MSG : [{}],[{}]", read.length, new String(read));
         respData.writeBytes(read);
         prd.produce( respData );
 

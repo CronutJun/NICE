@@ -48,10 +48,10 @@ public class In04101250Impl extends InMsgHandlerImpl {
             tCmSiteCheckDayMapper.updateBySpecSelective(tCmSiteCheckDay, tCmSiteCheckDaySpec);
         } catch (Exception e)
         {
-            logger.info("[T_CM_SITE_CHECK_DAY] Update Error [{}]", e.getMessage());
+            logger.warn("[T_CM_SITE_CHECK_DAY] Update Error [{}]", e.getMessage());
             throw e;
         }
 
-        logger.info("[T_CM_SITE_CHECK_DAY] Update OK");
+        logger.warn("[T_CM_SITE_CHECK_DAY] Update OK");
     }
 }

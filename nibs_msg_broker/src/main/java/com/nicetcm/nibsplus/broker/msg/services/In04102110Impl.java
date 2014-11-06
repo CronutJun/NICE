@@ -59,7 +59,7 @@ public class In04102110Impl extends InMsgHandlerImpl {
                     }
                 }
                 catch( Exception e ) {
-                    logger.info("[T_CM_COMMON-large_cd 8950] INSERT/UPDATE Err!! [%s]", e.getLocalizedMessage() );
+                    logger.warn("[T_CM_COMMON-large_cd 8950] INSERT/UPDATE Err!! [%s]", e.getLocalizedMessage() );
                     throw e;
                 }
             }

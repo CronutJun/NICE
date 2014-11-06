@@ -75,7 +75,7 @@ public class In04101130Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(">>> [MngIQ_AP_SaveSendMonthlyFee] T_CT_SERVICE_FEE_MONTHLY INSERT ERROR [{}]", e.getMessage());
+                logger.warn(">>> [MngIQ_AP_SaveSendMonthlyFee] T_CT_SERVICE_FEE_MONTHLY INSERT ERROR [{}]", e.getMessage());
                 throw e;
             }
 
@@ -123,7 +123,7 @@ public class In04101130Impl extends InMsgHandlerImpl {
 
                 } catch (Exception e)
                 {
-                    logger.info(">>> [MngIQ_AP_SaveSendMonthlyFee] T_CT_SERVICE_FEE_MONTHLY UPDATE ERROR [{}]", e.getMessage());
+                    logger.warn(">>> [MngIQ_AP_SaveSendMonthlyFee] T_CT_SERVICE_FEE_MONTHLY UPDATE ERROR [{}]", e.getMessage());
                     throw e;
                 }
 
@@ -194,11 +194,11 @@ public class In04101130Impl extends InMsgHandlerImpl {
                 }
             } catch (Exception e)
             {
-                logger.info("[T_CT_SERVICE_FEE_MONTHLY] Update Error [{}]", e.getMessage());
+                logger.warn("[T_CT_SERVICE_FEE_MONTHLY] Update Error [{}]", e.getMessage());
                 throw e;
             }
 
-            logger.info( "[T_CT_SERVICE_FEE_MONTHLY] Update OK" );
+            logger.warn( "[T_CT_SERVICE_FEE_MONTHLY] Update OK" );
         }
 
     }//end method

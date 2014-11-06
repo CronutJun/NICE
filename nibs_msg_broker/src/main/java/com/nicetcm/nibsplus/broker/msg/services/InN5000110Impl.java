@@ -49,13 +49,13 @@ public class InN5000110Impl extends InMsgHandlerImpl {
                  *  모두 0을 채워 보낸다. 응답코드 '91'
                  */
                 parsed.setString( "CM.ret_cd", "91" );
-                logger.info( "...해당 운영자금데이터 없음" );
+                logger.warn( "...해당 운영자금데이터 없음" );
                 throw new MsgBrokerException( "...해당 운영자금데이터 없음", -91 );
             }
         }
         catch( Exception e ) {
             parsed.setString( "CM.ret_cd", "91" );
-            logger.info( ">>>  운영자금 파악 실패[{}]", e.getLocalizedMessage() );
+            logger.warn( ">>>  운영자금 파악 실패[{}]", e.getLocalizedMessage() );
             throw e;
         }
 

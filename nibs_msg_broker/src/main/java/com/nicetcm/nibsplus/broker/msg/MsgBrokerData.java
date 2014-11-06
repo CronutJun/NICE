@@ -11,7 +11,14 @@ public class MsgBrokerData {
     private String sNSysDate;
     private String sSysTime;
     private Date   dSysDate;
-    private boolean keepResData;
+    /**
+     * Inbound 요청전문의 응답처리시 요청전문 body의 내용을 그대로 내보낼지 여부
+     */
+    private boolean keepResData = false;
+    /**
+     * Outbound Queue에 write여부 (요청여부)
+     */
+    private boolean noOutData = false;
 
     public TransactionStatus getTXS() {
         return txs;
@@ -59,5 +66,13 @@ public class MsgBrokerData {
 
     public void setKeepResData(boolean keepResData) {
         this.keepResData = keepResData;
+    }
+
+    public boolean isNoOutData() {
+        return noOutData;
+    }
+
+    public void setNoOutData(boolean noOutData) {
+        this.noOutData = noOutData;
     }
 }

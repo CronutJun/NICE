@@ -68,11 +68,11 @@ public class In01100180Impl extends InMsgHandlerImpl {
             tCtErrorMngGuardMapper.updateBySpecSelective(tCtErrorMngGuard, tCtErrorMngGuardSpec);
         } catch (Exception e)
         {
-            logger.info("[T_CT_ERROR_MNG_GUARD] Update Err [{}]", e.getMessage());
+            logger.warn("[T_CT_ERROR_MNG_GUARD] Update Err [{}]", e.getMessage());
             throw e;
         }
 
-        logger.info( "[T_CT_ERROR_MNG_GUARD] Update OK" );
+        logger.warn( "[T_CT_ERROR_MNG_GUARD] Update OK" );
 
         /**
          * 2014/10/27 방혜진차장 요청 (원본에는 없는 내용 임)
@@ -92,11 +92,11 @@ public class In01100180Impl extends InMsgHandlerImpl {
             tCtErrorMngMadeComMapper.updateBySpecSelective(tCtErrorMngMadeCom, tCtErrorMngMadeComSpec);
         }
         catch (Exception e) {
-            logger.info("[T_CT_ERROR_MNG_MADE_COM] Update Err [{}]", e.getMessage());
+            logger.warn("[T_CT_ERROR_MNG_MADE_COM] Update Err [{}]", e.getMessage());
             throw e;
         }
 
-        logger.info( "[T_CT_ERROR_MNG_MADE_COM] Update OK" );
+        logger.warn( "[T_CT_ERROR_MNG_MADE_COM] Update OK" );
 
 
     }

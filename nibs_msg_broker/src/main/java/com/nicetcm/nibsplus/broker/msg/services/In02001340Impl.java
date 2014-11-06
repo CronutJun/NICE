@@ -64,7 +64,7 @@ public class In02001340Impl extends InMsgHandlerImpl {
             cmSiteStateMap.updateBySpecSelective( cmSiteState, spec );
         }
         catch( Exception e ) {
-            logger.info( "[T_CM_SITE_STATE] Update Error MAC_NO[{}] [{}]", parsed.getString("mac_no"), e.getLocalizedMessage() );
+            logger.warn( "[T_CM_SITE_STATE] Update Error MAC_NO[{}] [{}]", parsed.getString("mac_no"), e.getLocalizedMessage() );
             throw e;
         }
     }

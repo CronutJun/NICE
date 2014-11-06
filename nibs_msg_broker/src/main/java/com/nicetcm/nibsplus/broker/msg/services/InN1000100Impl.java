@@ -99,13 +99,13 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 insertUpdateCuponTran( safeData, parsed );
             }
             catch ( Exception e ) {
-                logger.info("insertUpdateCuponTran error {}", e.getMessage() );
+                logger.warn("insertUpdateCuponTran error {}", e.getMessage() );
             }
             try {
                 updateFNMacProc( safeData, parsed, "", 0, 1);
             }
             catch ( Exception e ) {
-                logger.info("MacProc Error.>> 1 <<" );
+                logger.warn("MacProc Error.>> 1 <<" );
             }
         }
 
@@ -119,7 +119,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 insertUpdateGiftCardTran( safeData, parsed );
             }
             catch ( Exception e ) {
-                logger.info("insertUpdateGiftCardTran error {}", e.getMessage() );
+                logger.warn("insertUpdateGiftCardTran error {}", e.getMessage() );
             }
         }
         NiceTranReturn ntRet = new NiceTranReturn();
@@ -129,7 +129,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         catch ( MsgBrokerException me ) {
             if( me.getErrorCode() == -999 || me.getErrorCode() == -998 )
                 return;
-            logger.info("NiceTranProc Error.");
+            logger.warn("NiceTranProc Error.");
             throw new Exception("NiceTranProc Error.");
         }
 
@@ -143,12 +143,12 @@ public class InN1000100Impl extends InMsgHandlerImpl {
          * 잔액조회
          */
         ||  parsed.getString("deal_type").equals("31005") ) {
-            logger.info("deal_type : {}", parsed.getString("deal_type") );
+            logger.warn("deal_type : {}", parsed.getString("deal_type") );
             try {
                 updateFNMacProc( safeData, parsed, ntRet.prevDealStatus, ntRet.UpInFlag, 0 );
             }
             catch ( Exception e ) {
-                logger.info("MacProc Error.>> 1 <<" );
+                logger.warn("MacProc Error.>> 1 <<" );
             }
         }
         /*
@@ -195,12 +195,12 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 fnRCInfoMap.updateByPrimaryKeySelective( fnRcInfoRec );
             }
             catch ( Exception e ) {
-                logger.info( ">>> [insertUpdateRCInfo] (T_FN_RC_INFO) UPDATE ERROR [{}]", e.getMessage() );
+                logger.warn( ">>> [insertUpdateRCInfo] (T_FN_RC_INFO) UPDATE ERROR [{}]", e.getMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( ">>> [insertUpdateRCInfo] (T_FN_RC_INFO) INSERT ERROR [{}]", e.getMessage() );
+            logger.warn( ">>> [insertUpdateRCInfo] (T_FN_RC_INFO) INSERT ERROR [{}]", e.getMessage() );
             throw e;
         }
 
@@ -257,12 +257,12 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 fnNiceTranCuponMap.updateByPrimaryKeySelective( fnNTCRec );
             }
             catch ( Exception e ) {
-                logger.info( ">>> [InsertUpdateCuponTran] (T_FN_NICE_TRAN_CUPON) UPDATE ERROR [{}]", e.getMessage() );
+                logger.warn( ">>> [InsertUpdateCuponTran] (T_FN_NICE_TRAN_CUPON) UPDATE ERROR [{}]", e.getMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( ">>> [InsertUpdateCuponTran] (T_FN_NICE_TRAN_CUPON) INSERT ERROR [{}]", e.getMessage() );
+            logger.warn( ">>> [InsertUpdateCuponTran] (T_FN_NICE_TRAN_CUPON) INSERT ERROR [{}]", e.getMessage() );
             throw e;
         }
 
@@ -326,12 +326,12 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 fnNiceTranGiftMap.updateByPrimaryKeySelective( fnNTGRec );
             }
             catch ( Exception e ) {
-                logger.info( ">>> [InsertUpdateGiftTran] (T_FN_NICE_TRAN_GIFT) UPDATE ERROR [{}]", e.getMessage() );
+                logger.warn( ">>> [InsertUpdateGiftTran] (T_FN_NICE_TRAN_GIFT) UPDATE ERROR [{}]", e.getMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( ">>> [InsertUpdateGiftTran] (T_FN_NICE_TRAN_GIFT) INSERT ERROR [{}]", e.getMessage() );
+            logger.warn( ">>> [InsertUpdateGiftTran] (T_FN_NICE_TRAN_GIFT) INSERT ERROR [{}]", e.getMessage() );
             throw e;
         }
 
@@ -410,7 +410,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
          */
         if( fnNiceTranRec.getDealType().equals("1") ) {
             if( fnNiceTranRec.getDealStatus().equals("1") || fnNiceTranRec.getDealStatus().equals("2") ) {
-                logger.info("입금업무에 취소/미완료가 들어옴[{}][{}]",
+                logger.warn("입금업무에 취소/미완료가 들어옴[{}][{}]",
                         ret.prevDealStatus, fnNiceTranRec.getDealStatus() );
                 throw new MsgBrokerException( String.format("입금업무에 취소/미완료가 들어옴 [%s][%s]",
                                                               ret.prevDealStatus, fnNiceTranRec.getDealStatus()),
@@ -455,7 +455,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                     }
                 }
                 catch( Exception e ) {
-                    logger.info(">>> [NiceTranProc] 기거래건 검색실패 DEAL_STATUS [{}]", e.getLocalizedMessage());
+                    logger.warn(">>> [NiceTranProc] 기거래건 검색실패 DEAL_STATUS [{}]", e.getLocalizedMessage());
                     throw e;
                 }
                 /*
@@ -483,11 +483,11 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                                     logger.debug("AdmimsOrgCd Update OK!!!");
                                 }
                                 catch( Exception e ) {
-                                    logger.info( "AdmisOrgCd Update Error [{}]", e.getLocalizedMessage() );
+                                    logger.warn( "AdmisOrgCd Update Error [{}]", e.getLocalizedMessage() );
                                 }
                             }
                             else {
-                                    logger.info("같은 정상Data가 또 들어왔음[{}][{}]",
+                                    logger.warn("같은 정상Data가 또 들어왔음[{}][{}]",
                                                         prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
                             }
 
@@ -500,10 +500,10 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                         if( nstr(prevNiceTran.getDealStatus()).equals("3") ) {
                             try {
                                 fnNiceTranMap.updateByCond2( fnNiceTranRec );
-                                logger.info("ACCOUNT NO Update OK!!!");
+                                logger.warn("ACCOUNT NO Update OK!!!");
                             }
                             catch( Exception e ) {
-                                logger.info( "ACCOUNT NO Update Error [{}]", e.getLocalizedMessage() );
+                                logger.warn( "ACCOUNT NO Update Error [{}]", e.getLocalizedMessage() );
                             }
                             return;
                         }
@@ -518,14 +518,14 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 else if( fnNiceTranRec.getDealType().equals("4") ) {
                     if( fnNiceTranRec.getDealStatus().equals("0") ) {
                         if( nstr(prevNiceTran.getDealStatus()).equals("0") ) {
-                            logger.info( "같은 정상Data가 또 들어왔음[{}][{}]",
+                            logger.warn( "같은 정상Data가 또 들어왔음[{}][{}]",
                                     prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
                             throw new MsgBrokerException(-999);
                         }
                     }
                     else if( fnNiceTranRec.getDealStatus().equals("2") ) {
                         if( nstr(prevNiceTran.getDealStatus()).equals("0") || nstr(prevNiceTran.getDealStatus()).equals("3") ) {
-                            logger.info("prev[{}] curr[{}] Skip...",
+                            logger.warn("prev[{}] curr[{}] Skip...",
                                     prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
                             return;
                         }
@@ -539,7 +539,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 else if( fnNiceTranRec.getDealType().equals("5") && !fnNiceTranRec.getDealClss().equals("5710") ) {
                     if( fnNiceTranRec.getDealStatus().equals("0") ) {
                         if( nstr(prevNiceTran.getDealStatus()).equals("0") ) {
-                            logger.info( "같은 정상Data가 또 들어왔음[{}][{}]",
+                            logger.warn( "같은 정상Data가 또 들어왔음[{}][{}]",
                                     prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
                             throw new MsgBrokerException(-999);
                         }
@@ -548,11 +548,11 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 else {
                     if( fnNiceTranRec.getDealStatus().equals("0") ) {
                         if( nstr(prevNiceTran.getDealStatus()).equals("0") ) {
-                            logger.info( "같은 정상Data가 또 들어왔음[{}][{}]",
+                            logger.warn( "같은 정상Data가 또 들어왔음[{}][{}]",
                                     prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
                             throw new MsgBrokerException(-999);
                         }
-                        logger.info( "prev[{}] curr[{}] Skip...",
+                        logger.warn( "prev[{}] curr[{}] Skip...",
                                 prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
 
                         /*
@@ -564,14 +564,14 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                             logger.debug("ACCOUNT NO Update OK!!!");
                         }
                         catch( Exception e ) {
-                            logger.info( "ACCOUNT NO Update Error [{}]", e.getLocalizedMessage() );
+                            logger.warn( "ACCOUNT NO Update Error [{}]", e.getLocalizedMessage() );
                         }
 
                         return;
                     }
                     else if( fnNiceTranRec.getDealStatus().equals("2") ) {
                         if( nstr(prevNiceTran.getDealStatus()).equals("1") || nstr(prevNiceTran.getDealStatus()).equals("3") ) {
-                            logger.info("prev[{}] curr[{}] Skip...",
+                            logger.warn("prev[{}] curr[{}] Skip...",
                                     prevNiceTran.getDealStatus(), fnNiceTranRec.getDealStatus());
                             return;
                         }
@@ -599,18 +599,18 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 fnNiceTranMap.updateByPrimaryKeySelective( fnNiceTranRec );
             }
             catch ( Exception e ) {
-                logger.info( ">>> [InsertUpdateNiceTran] (T_FN_NICE_TRAN) UPDATE ERROR [{}]", e.getMessage() );
+                logger.warn( ">>> [InsertUpdateNiceTran] (T_FN_NICE_TRAN) UPDATE ERROR [{}]", e.getMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( ">>> [InsertUpdateNiceTran] (T_FN_NICE_TRAN) INSERT ERROR [{}]", e.getMessage() );
+            logger.warn( ">>> [InsertUpdateNiceTran] (T_FN_NICE_TRAN) INSERT ERROR [{}]", e.getMessage() );
             throw e;
         }
-        logger.info("DealType[{}]",    fnNiceTranRec.getDealType()   );
-        logger.info("DealStatus[{}]",  fnNiceTranRec.getDealStatus() );
-        logger.info("deal_type[{}]",   parsed.getString("deal_type")   );
-        logger.info("deal_status[{}]", parsed.getString("deal_status") );
+        logger.warn("DealType[{}]",    fnNiceTranRec.getDealType()   );
+        logger.warn("DealStatus[{}]",  fnNiceTranRec.getDealStatus() );
+        logger.warn("deal_type[{}]",   parsed.getString("deal_type")   );
+        logger.warn("deal_status[{}]", parsed.getString("deal_status") );
 
         /*
          *  전자상품권 판매 데이터가 정상 일 경우 승인번호를 고객에게 SMS 전송 처리
@@ -618,7 +618,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         if( parsed.getString("deal_type").equals("55710") && parsed.getString("deal_status").equals("0") ) {
             String sMsg = String.format("거래일련번호[%s]-쿠폰번호[%s]-쿠폰승인번호[%s]", parsed.getString("deal_no"), parsed.getString("gift_seq_no"),
                     parsed.getString("join_org_deal_no") );
-            logger.info( "[T_FN_NICE_TRAN] {}", sMsg );
+            logger.warn( "[T_FN_NICE_TRAN] {}", sMsg );
             TMisc data = new TMisc();
             data.setTelNo( parsed.getString("real_account_no") );
             data.setSendMsg( sMsg );
@@ -630,7 +630,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         else if( parsed.getString("deal_type").equals("55700") && parsed.getString("deal_status").equals("1") ) {
             String sMsg = String.format("취소완료.거래일련번호[%s]-쿠폰번호[%s]-쿠폰승인번호[%s]", parsed.getString("deal_no"), parsed.getString("gift_seq_no"),
                     parsed.getString("join_org_deal_no") );
-            logger.info( "[T_FN_NICE_TRAN] {}", sMsg );
+            logger.warn( "[T_FN_NICE_TRAN] {}", sMsg );
             TMisc data = new TMisc();
             data.setTelNo( parsed.getString("real_account_no") );
             data.setSendMsg( sMsg );
@@ -666,11 +666,11 @@ public class InN1000100Impl extends InMsgHandlerImpl {
             }
         }
         catch ( Exception e ) {
-            logger.info("[updateFNMacProc] SVC_RELAY_YN Select Error.. {}", e.getMessage() );
+            logger.warn("[updateFNMacProc] SVC_RELAY_YN Select Error.. {}", e.getMessage() );
             throw e;
         }
         if( fnMac.getSvcRelayYn().equals("1") ) {
-            logger.info("SVC_RELAY_YN value [{}]", fnMac.getSvcRelayYn() );
+            logger.warn("SVC_RELAY_YN value [{}]", fnMac.getSvcRelayYn() );
             return;
         }
 
@@ -694,7 +694,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 fnMacMap.updateByPrimaryKeySelective( fnMacUpd );
             }
             catch ( Exception e ) {
-                logger.info( "[T_FN_MAC] Last Time Update Error[{}].. {}",
+                logger.warn( "[T_FN_MAC] Last Time Update Error[{}].. {}",
                         fnMacUpd.getLastDealTime(), e.getMessage() );
                 throw e;
             }
@@ -737,7 +737,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 fnMacMap.updateByPrimaryKeySelective( fnMacUpd );
             }
             catch ( Exception e ) {
-                logger.info( "[T_FN_MAC] Last Time Update Error[{}].. {}",
+                logger.warn( "[T_FN_MAC] Last Time Update Error[{}].. {}",
                         fnMacUpd.getLastDealTime(), e.getMessage() );
                 throw e;
             }
@@ -757,12 +757,12 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnMacUpd.setInMacAmtCw15( fnMac.getInMacAmtCw15() );
         if( upInFlag == MsgBrokerConst.TRAN_INSERT_STATE
         &&  !parsed.getString("deal_status").equals("0") ) {
-            logger.info( "UpdateFNMacProc : 취소,미완료,거절 Data가 처음으로 들어옴" );
+            logger.warn( "UpdateFNMacProc : 취소,미완료,거절 Data가 처음으로 들어옴" );
             return;
         }
         else if( upInFlag == MsgBrokerConst.TRAN_UPDATE_STATE
                 &&  !prevDealStatus.equals("0") ) {
-            logger.info( "UpdateFNMacProc : [{}] => [{}]", prevDealStatus, parsed.getString("deal_status") );
+            logger.warn( "UpdateFNMacProc : [{}] => [{}]", prevDealStatus, parsed.getString("deal_status") );
             return;
         }
         /*
@@ -821,7 +821,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
             fnMacMap.updateByPrimaryKeySelective( fnMacUpd );
         }
         catch ( Exception e ) {
-            logger.info( "[T_FN_MAC] Update Error.. {}", e.getCause().getMessage() );
+            logger.warn( "[T_FN_MAC] Update Error.. {}", e.getCause().getMessage() );
              throw e;
         }
 
@@ -862,7 +862,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
              * 잔액이 현금부족 예보 기준금액 보다 많아 진다면
              * 현금부족예보(기준금액)(NI914) & 현금부족(기준금액)(NI912) 복구
              */
-            logger.info("OLD_IN_MAC_AMT[{}], IN_MAC_AMT[{}], SHORT_CASH_NOTICE[{}], SHORT_CASH[{}]",
+            logger.warn("OLD_IN_MAC_AMT[{}], IN_MAC_AMT[{}], SHORT_CASH_NOTICE[{}], SHORT_CASH[{}]",
                     fnMac.getInMacAmt(), lInMacAmt, fnMac.getShortCashNotice(), fnMac.getShortCash() );
             if( fnMac.getInMacAmt() + lInMacAmt > fnMac.getShortCashNotice() ) {
                 sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "c", null ); /*현금부족 (기준금액)     */

@@ -75,12 +75,12 @@ public class In02000350Impl extends InMsgHandlerImpl {
                 cmSetFacInfoMap.updateByPrimaryKeySelective( cmSetFacInfo );
             }
             catch( Exception e ) {
-                logger.info( "[T_CM_SET_FAC_INFO] Update Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_SET_FAC_INFO] Update Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( "[T_CM_SET_FAC_INFO] Update Error [{}]", e.getLocalizedMessage() );
+            logger.warn( "[T_CM_SET_FAC_INFO] Update Error [{}]", e.getLocalizedMessage() );
             throw e;
         }
     }

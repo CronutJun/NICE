@@ -70,12 +70,12 @@ public class In04002110Impl extends InMsgHandlerImpl {
             {
                 /* 응답코드 '99' */
                 suSendHead.setRetCd("91");
-                logger.info(">>>  운영자금 파악 실패[{}]", e.getMessage());
+                logger.warn(">>>  운영자금 파악 실패[{}]", e.getMessage());
             }
 
             if(tFnWrVanDemandList == null || tFnWrVanDemandList.size() == 0) {
                 suSendHead.setRetCd("91");
-                logger.info( "...해당 운영자금데이터 없음");
+                logger.warn( "...해당 운영자금데이터 없음");
             }
 
             /*  여기까지, 운영자금 데이터를 SendBody에 넣었으므로, 다음은 전문형태를 갖춘다. */
@@ -115,13 +115,13 @@ public class In04002110Impl extends InMsgHandlerImpl {
             {
                 /* 응답코드 '99' */
                 suSendHead2.setRetCd("91");
-                logger.info(">>>  운영자금 파악 실패[{}]", e.getMessage());
+                logger.warn(">>>  운영자금 파악 실패[{}]", e.getMessage());
             }
 
             if(tFnVanDemandDetailList == null || tFnVanDemandDetailList.size() == 0) {
                 /* 모두 0을 채워 보낸다. 응답코드 '91' */
                 suSendHead2.setRetCd("91");
-                logger.info( "...해당 운영자금데이터 없음");
+                logger.warn( "...해당 운영자금데이터 없음");
             }
 
             /*  여기까지, 운영자금 데이터를 SendBody에 넣었으므로, 다음은 전문형태를 갖춘다. */
@@ -151,7 +151,7 @@ public class In04002110Impl extends InMsgHandlerImpl {
                 maxTransSeqNo = tMiscMapper.getMaxTransSeqNo(parsed.getString("CM.org_cd"), parsed.getString("req_date"));
 
                 if(maxTransSeqNo == null) {
-                    logger.info(">>> [T_CT_SEND_ORG_MSG] 결번 데이타 파악 실패");
+                    logger.warn(">>> [T_CT_SEND_ORG_MSG] 결번 데이타 파악 실패");
                     throw new Exception(">>> [T_CT_SEND_ORG_MSG] 결번 데이타 파악 실패");
                 } else {
                     parsed.setString("req_seq", maxTransSeqNo);
@@ -159,7 +159,7 @@ public class In04002110Impl extends InMsgHandlerImpl {
                 }
             } catch (Exception e)
             {
-                logger.info(">>> [T_CT_SEND_ORG_MSG] 결번 데이타 파악 실패 [{}]", e.getMessage());
+                logger.warn(">>> [T_CT_SEND_ORG_MSG] 결번 데이타 파악 실패 [{}]", e.getMessage());
                 throw e;
             }
 
@@ -178,14 +178,14 @@ public class In04002110Impl extends InMsgHandlerImpl {
                 tIfDataLogList = tIfDataLogMapper.selectBySpec(tIfDataLogSpec);
 
                 if(tIfDataLogList == null || tIfDataLogList.size() == 0) {
-                    logger.info("...결번 데이타 없음");
+                    logger.warn("...결번 데이타 없음");
                     throw new Exception("...결번 데이타 없음");
                 } else {
                     comPack.msgSnd(tIfDataLogList.get(0).getTransData().getBytes());
                 }
             } catch (Exception e)
             {
-                logger.info(">>> [T_CT_SEND_ORG_MSG] 결번 데이타 파악 실패 [{}]", e.getMessage());
+                logger.warn(">>> [T_CT_SEND_ORG_MSG] 결번 데이타 파악 실패 [{}]", e.getMessage());
                 throw e;
             }
 

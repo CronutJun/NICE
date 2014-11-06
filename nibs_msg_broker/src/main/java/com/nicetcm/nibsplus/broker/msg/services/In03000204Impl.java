@@ -62,7 +62,7 @@ public class In03000204Impl extends InMsgHandlerImpl {
 
         /* 이마트 일경우에는 원거래 데이터 체크 하나 이랜드는 안한다 */
         if(MsgBrokerConst.EMART_CODE.equals(parsed.getString("CM.org_cd")) && nRtn < 0) {
-            logger.info( String.format("원거래 데이터 없음 [%s][%s][%s]", parsed.getString("mac_no"), parsed.getString("own_trade_date"), parsed.getString("own_seq_no")) );
+            logger.warn( String.format("원거래 데이터 없음 [%s][%s][%s]", parsed.getString("mac_no"), parsed.getString("own_trade_date"), parsed.getString("own_seq_no")) );
             throw new MsgBrokerException(-1);
         }
 
@@ -97,11 +97,11 @@ public class In03000204Impl extends InMsgHandlerImpl {
                     tFnBoxOrgMapper.insertSelective(tFnBoxOrg);
                 } catch (Exception e)
                 {
-                    logger.info( ">>> [MngCM_SaveCalcBoxTicket_부자재] (T_FN_INOUT) INSERT ERROR [{}]", e.getMessage());
+                    logger.warn( ">>> [MngCM_SaveCalcBoxTicket_부자재] (T_FN_INOUT) INSERT ERROR [{}]", e.getMessage());
                     throw new MsgBrokerException(-1);
                 }
 
-                logger.info( "!!!처리완료_부자재(INSERT)!!!" );
+                logger.warn( "!!!처리완료_부자재(INSERT)!!!" );
             } else {
                 String[] szAryKjGb = {
                      "0001"
@@ -189,11 +189,11 @@ public class In03000204Impl extends InMsgHandlerImpl {
                             tFnBoxOrgMapper.insertSelective(tFnBoxOrg);
                         } catch (Exception e)
                         {
-                            logger.info( ">>> [MngCM_SaveCalcBoxTicket] (T_FN_INOUT) INSERT ERROR [{}]", e.getMessage());
+                            logger.warn( ">>> [MngCM_SaveCalcBoxTicket] (T_FN_INOUT) INSERT ERROR [{}]", e.getMessage());
                             throw new MsgBrokerException(-1);
                         }
 
-                        logger.info( "!!!처리완료(INSERT)!!!" );
+                        logger.warn( "!!!처리완료(INSERT)!!!" );
                     }
                 }//end for
 
@@ -288,11 +288,11 @@ public class In03000204Impl extends InMsgHandlerImpl {
                         tFnTicketDealMapper.insertSelective(tFnTicketDeal);
                     } catch (Exception e)
                     {
-                        logger.info( ">>> [MngCM_SaveCalcBoxTicket] (T_FN_TICKET_DEAL) INSERT ERROR [{}]", e.getMessage());
+                        logger.warn( ">>> [MngCM_SaveCalcBoxTicket] (T_FN_TICKET_DEAL) INSERT ERROR [{}]", e.getMessage());
                         throw new MsgBrokerException(-1);
                     }
 
-                    logger.info( "!!!처리완료(INSERT)!!!" );
+                    logger.warn( "!!!처리완료(INSERT)!!!" );
                 }
             }//end for
         }

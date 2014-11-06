@@ -78,12 +78,12 @@ public class In05000120Impl extends InMsgHandlerImpl {
 
         try {
             comPack.getMacInfo( macInfo );
-            logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+            logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(), macInfo.getMacNm(),
                     macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
         }
         catch( Exception e ) {
-            logger.info("기기정보 검색 실패-기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+            logger.warn("기기정보 검색 실패-기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(), macInfo.getMacNm(),
                     macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
             throw e;
@@ -132,7 +132,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
             rslt = errBasicMap.selectByJoin4( errBasic );
         }
         catch( Exception e ) {
-            logger.info(">>> [MngES_SaveNHErrState] Select Error [{}]", e.getLocalizedMessage());
+            logger.warn(">>> [MngES_SaveNHErrState] Select Error [{}]", e.getLocalizedMessage());
             throw e;
         }
         for( TCtErrorBasicJoin errJoin: rslt ) {
@@ -156,7 +156,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
                             errNoti, errCall, errTxn, macInfo, null );
                 }
                 else if( parsed.getString("mac_state").equals(errJoin.getErrorCd().substring(2)) ) {
-                    logger.info( "중복장애응답처리 error_cd[{}]", errJoin.getErrorCd() );
+                    logger.warn( "중복장애응답처리 error_cd[{}]", errJoin.getErrorCd() );
                     /*
                      *  나머지 장애는 발생처리 함
                      */
@@ -172,7 +172,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
                     int iRow = Integer.parseInt(errJoin.getErrorCd().substring(2,4));
                     int iCol = Integer.parseInt(errJoin.getErrorCd().substring(4,5));
                     if( saValidErr[iRow].substring(iCol,iCol+1).equals("1") ) {
-                        logger.info(String.format("즉시출동 항목중 기발생 장애 있음. 중복장애응답처리 error_cd[%s]", errJoin.getErrorCd()));
+                        logger.warn(String.format("즉시출동 항목중 기발생 장애 있음. 중복장애응답처리 error_cd[%s]", errJoin.getErrorCd()));
                         iRtn = -12;
 
                     }
@@ -186,12 +186,12 @@ public class In05000120Impl extends InMsgHandlerImpl {
         ||  parsed.getString("mac_state").equals("f1") ) {
             errBasic.setErrorCd( String.format("ES%s", parsed.getString("mac_state")) );
             comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
-            logger.info( "회선장애 처리 후 다른 상태 skip" );
+            logger.warn( "회선장애 처리 후 다른 상태 skip" );
             /*
              *  AS 기 접수 장애는 장애 정상 발생 처리 후 중복 응답 처리 20101220 농협 회의결과
              */
             if( macInfo.getAsAcptYn().length() == 8) {
-                logger.info( "AS기 접수 장애 중복장애처리 응답");
+                logger.warn( "AS기 접수 장애 중복장애처리 응답");
                 throw new MsgBrokerException("AS기 접수 장애 중복장애처리 응답]", -12);
             }
             if( iRtn == 0 ) return;
@@ -229,11 +229,11 @@ public class In05000120Impl extends InMsgHandlerImpl {
                                         errNoti, errCall, errTxn, macInfo, null );
                             }
                             else {
-                                logger.info("단말상태('00','A3')에의한 복구 아님 SKIP! 단말상태[{}]", parsed.getString("mac_state") );
+                                logger.warn("단말상태('00','A3')에의한 복구 아님 SKIP! 단말상태[{}]", parsed.getString("mac_state") );
                             }
                         }
                         else {
-                            logger.info( "기발생 장애 있음 error_cd[{}]", errBasic.getErrorCd() );
+                            logger.warn( "기발생 장애 있음 error_cd[{}]", errBasic.getErrorCd() );
                             iRtn = -12;
                         }
                     }
@@ -252,12 +252,12 @@ public class In05000120Impl extends InMsgHandlerImpl {
                      *  다른 상태는 무시한다.
                      */
                     if( iRow == 0 && iCol == 2 && (parsed.getBytes("modul_state")[iRow] & usCheckBit[iCol]) == usCheckBit[iCol] ) {
-                        logger.info( "보수모드 처리 후 다른 상태 skip" );
+                        logger.warn( "보수모드 처리 후 다른 상태 skip" );
                         /*
                          *  AS 기 접수 장애는 장애 정상 발생 처리 후 중복 응답 처리 20101220 농협 회의결과
                          */
                         if( macInfo.getAsAcptYn().length() == 8 ) {
-                            logger.info("AS기 접수 장애 중복장애처리 응답");
+                            logger.warn("AS기 접수 장애 중복장애처리 응답");
                             throw new MsgBrokerException("AS기 접수 장애 중복장애처리 응답]", -12);
                         }
                         if( iRtn == 0 ) return;
@@ -287,7 +287,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
          *  AS 기 접수 장애는 장애 정상 발생 처리 후 중복 응답 처리 20101220 농협 회의결과
          */
         if( macInfo.getAsAcptYn().length() == 8) {
-            logger.info( "AS기 접수 장애 중복장애처리 응답");
+            logger.warn( "AS기 접수 장애 중복장애처리 응답");
             throw new MsgBrokerException("AS기 접수 장애 중복장애처리 응답]", -12);
         }
         if( iRtn == 0 ) return;

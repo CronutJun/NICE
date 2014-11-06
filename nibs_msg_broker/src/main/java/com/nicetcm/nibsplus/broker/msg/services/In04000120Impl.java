@@ -35,7 +35,7 @@ public class In04000120Impl extends InMsgHandlerImpl {
             String mbrYn = tMiscMapper.getCmMemberYn(parsed.getString("mbr_idno"), parsed.getString("mbr_nm"));
 
             if(mbrYn == null) {
-                logger.info("...보수요원 데이타 없음");
+                logger.warn("...보수요원 데이타 없음");
                 parsed.setString("mbr_yn", "2");
             } else {
                 parsed.setString("mbr_yn", mbrYn);
@@ -44,7 +44,7 @@ public class In04000120Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(">>> [fnDBGetStaff] 보수요원 파악 실패 [{}]", e.getMessage());
+            logger.warn(">>> [fnDBGetStaff] 보수요원 파악 실패 [{}]", e.getMessage());
             throw new MsgBrokerException(-1);
         }
     }

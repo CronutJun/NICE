@@ -76,12 +76,12 @@ public class In02000111Impl extends InMsgHandlerImpl {
                 macInfoNewMap.updateBySpec( macInfoNew, spec );
             }
             catch( Exception e ) {
-                logger.info( ">>> [MngSM_SaveMacNewInfo] INSERT/UPDATE ERROR [{}]", e.getLocalizedMessage() );
+                logger.warn( ">>> [MngSM_SaveMacNewInfo] INSERT/UPDATE ERROR [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( ">>> [MngSM_SaveMacNewInfo] INSERT/UPDATE ERROR [{}]", e.getLocalizedMessage() );
+            logger.warn( ">>> [MngSM_SaveMacNewInfo] INSERT/UPDATE ERROR [{}]", e.getLocalizedMessage() );
             throw e;
         }
     }

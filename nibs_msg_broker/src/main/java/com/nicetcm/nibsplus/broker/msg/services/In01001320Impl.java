@@ -75,11 +75,11 @@ public class In01001320Impl extends InMsgHandlerImpl {
             comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMngSpec);
         } catch (Exception e)
         {
-            logger.info("[MngEM_AP_SaveAfterMng] Update Err[{}]", e.getMessage());
+            logger.warn("[MngEM_AP_SaveAfterMng] Update Err[{}]", e.getMessage());
             throw e;
         }
 
-        logger.info( "[MngEM_AP_SaveAfterMng] Update OK" );
+        logger.warn( "[MngEM_AP_SaveAfterMng] Update OK" );
 
     }//end method
 }

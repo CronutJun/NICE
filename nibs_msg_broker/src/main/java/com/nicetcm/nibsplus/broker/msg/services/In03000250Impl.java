@@ -64,7 +64,7 @@ public class In03000250Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(">>> [T_FN_EMART_AMT] INSERT ERROR {}", e.getMessage());
+                logger.warn(">>> [T_FN_EMART_AMT] INSERT ERROR {}", e.getMessage());
                 throw e;
             }
 
@@ -92,7 +92,7 @@ public class In03000250Impl extends InMsgHandlerImpl {
                     tFnEmartAmtMapper.updateBySpecSelective(tFnEmartAmt, tFnEmartAmtSpec);
                 } catch (Exception e)
                 {
-                    logger.info(">>> [T_FN_EMART_AMT] UPDATE ERROR {}", e.getMessage());
+                    logger.warn(">>> [T_FN_EMART_AMT] UPDATE ERROR {}", e.getMessage());
                     throw e;
                 }
 
@@ -110,7 +110,7 @@ public class In03000250Impl extends InMsgHandlerImpl {
                 tFnEmartAmtMapper.deleteBySpec(tFnEmartAmtSpec);
             } catch (Exception e)
             {
-                logger.info(">>> [T_FN_EMART_AMT] DELETE ERROR {}", e.getMessage());
+                logger.warn(">>> [T_FN_EMART_AMT] DELETE ERROR {}", e.getMessage());
                 throw e;
             }
         }

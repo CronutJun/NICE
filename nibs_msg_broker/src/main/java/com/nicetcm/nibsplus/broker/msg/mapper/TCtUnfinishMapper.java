@@ -244,7 +244,7 @@ public interface TCtUnfinishMapper {
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="ORG_MSG", property="orgMsg", jdbcType=JdbcType.VARCHAR)
     })
-    TCtUnfinish selectByCond1(TCtErrorBasic record);
+    List<TCtUnfinish> selectByCond1(TCtErrorBasic record);
 
 
     /**
@@ -267,7 +267,7 @@ public interface TCtUnfinishMapper {
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
         @Result(column="ORG_MSG", property="orgMsg", jdbcType=JdbcType.VARCHAR)
     })
-    TCtUnfinish selectByCond2(TCtErrorBasic record);
+    List<TCtUnfinish> selectByCond2(TCtErrorBasic record);
 
 
     /**
@@ -287,7 +287,7 @@ public interface TCtUnfinishMapper {
     @Results({
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true)
     })
-    TCtUnfinish selectByCond3(TCtErrorBasic record);
+    List<TCtUnfinish> selectByCond3(TCtErrorBasic record);
 
     /**
      * CommonPack.getCurrentErrorState 메소드에서 호출 됨 (나이스)

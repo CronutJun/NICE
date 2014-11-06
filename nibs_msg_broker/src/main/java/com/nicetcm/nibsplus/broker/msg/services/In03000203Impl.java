@@ -98,12 +98,12 @@ public class In03000203Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(">>> [MngCM_SaveCalcRealInout] (T_FN_INOUT) Insert ERROR {}", e.getMessage());
+            logger.warn(">>> [MngCM_SaveCalcRealInout] (T_FN_INOUT) Insert ERROR {}", e.getMessage());
             throw e;
         }
 
         if(isDbDupData) {
-            logger.info("...중복요청건...");
+            logger.warn("...중복요청건...");
 
             TFnInoutOrg tFnInoutOrg = new TFnInoutOrg();
             tFnInoutOrg.setMemberId         (parsed.getString("casher_id"));
@@ -157,14 +157,14 @@ public class In03000203Impl extends InMsgHandlerImpl {
                 tFnInoutOrgMapper.updateBySpecSelective(tFnInoutOrg, tFnInoutOrgSpec);
             } catch (Exception e)
             {
-                logger.info(">>> [MngCM_SaveCalcRealInout] (T_FN_INOUT) UPDATE ERROR [{}]", e.getMessage());
+                logger.warn(">>> [MngCM_SaveCalcRealInout] (T_FN_INOUT) UPDATE ERROR [{}]", e.getMessage());
                 throw e;
             }
 
-            logger.info("!!!처리완료(UPDATE)!!!");
+            logger.warn("!!!처리완료(UPDATE)!!!");
 
         }
 
-        logger.info("!!!처리완료(INSERT)!!!");
+        logger.warn("!!!처리완료(INSERT)!!!");
     }
 }

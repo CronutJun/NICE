@@ -19,6 +19,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TFnBoxOrg;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketDeal;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
+import com.nicetcm.nibsplus.broker.msg.model.TPhMessages;
 import com.nicetcm.nibsplus.broker.msg.model.TbPhsPushMessages;
 import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.CloseAmt;
 import com.nicetcm.nibsplus.broker.msg.services.In03101130Impl.CmCash;
@@ -630,7 +631,7 @@ public interface TMiscMapper {
     @Select({
         "select  USER_IDX                                           ",
         "from (select user_idx                                      ",
-        "        from tb_phs_user                                   ",
+        "        from t_ph_user                                     ",
         "       where user_number = #{memberId, jdbcType=VARCHAR}   ",
         "         and status = 'active'                             ",
         "       order by update_date desc)                          ",
@@ -646,6 +647,15 @@ public interface TMiscMapper {
         @Result(column="PUSH_IDX", property="pushIdx", jdbcType=JdbcType.VARCHAR)
     })
     TbPhsPushMessages getSeqPhsPushMessages();
+
+    @Select({
+        "SELECT OP.SEQ_PHS_PUSH_MESSAGES.NEXTVAL AS PUSH_IDX",
+        "FROM DUAL"
+    })
+    @Results({
+        @Result(column="PUSH_IDX", property="pushIdx", jdbcType=JdbcType.VARCHAR)
+    })
+    TPhMessages getSeqPhMessages();
 
     @Select({
         "select * from OP.T_CT_ERROR_MNG                                                                                        ",

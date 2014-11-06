@@ -53,7 +53,7 @@ public class In03000132Impl extends InMsgHandlerImpl {
             tMiscResult = tMiscMapper.selectCountFnChalsiDealDsum(tMiscParam);
         } catch (Exception e)
         {
-            logger.info(">>> [DBCalcMacAmtInsertProc] 마감/시재회수 존재여부 체크오류 {}", e.getMessage());
+            logger.warn(">>> [DBCalcMacAmtInsertProc] 마감/시재회수 존재여부 체크오류 {}", e.getMessage());
             throw e;
         }
 
@@ -62,7 +62,7 @@ public class In03000132Impl extends InMsgHandlerImpl {
         }
 
         if(tMiscResult.getCnt() > 0) {
-            logger.info(">>> [DBCalcMacAmtInsertProc] 마감/시재회수 데이터가 이미 있습니다 ");
+            logger.warn(">>> [DBCalcMacAmtInsertProc] 마감/시재회수 데이터가 이미 있습니다 ");
             return; /* 중복 데이타에 대해 정상응답 전송 */
         }
 
@@ -115,7 +115,7 @@ public class In03000132Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(">>> [T_FN_CHALSI_DEAL_DSUM] INSERT ERROR {}", e.getMessage());
+            logger.warn(">>> [T_FN_CHALSI_DEAL_DSUM] INSERT ERROR {}", e.getMessage());
             throw e;
         }
 
@@ -163,11 +163,11 @@ public class In03000132Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(">>> [T_FN_CHALSI_DEAL_DSUM] UPDATE ERROR {}", e.getMessage());
+                logger.warn(">>> [T_FN_CHALSI_DEAL_DSUM] UPDATE ERROR {}", e.getMessage());
                 throw e;
             }
         }//endif
 
-        logger.info("[T_FN_CHALSI_DEAL_DSUM] Save OK");
+        logger.warn("[T_FN_CHALSI_DEAL_DSUM] Save OK");
     }
 }

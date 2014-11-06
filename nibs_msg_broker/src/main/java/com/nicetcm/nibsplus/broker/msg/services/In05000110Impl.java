@@ -77,7 +77,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
         }
         catch (Exception e) {
             logger.debug("GetMacInfo Error");
-            logger.info( "[01003100] 기기정보 검색 실패 기관[{}] 지점[{}] 기번[{}]",
+            logger.warn( "[01003100] 기기정보 검색 실패 기관[{}] 지점[{}] 기번[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo() );
             /**
              * SMS 전송
@@ -86,7 +86,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
             throw e;
         }
 
-        logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}] 보수모드[{}] 중지여부[{}]",
+        logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}] 보수모드[{}] 중지여부[{}]",
                 macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(), macInfo.getMacNm(),
                 macInfo.getDeptCd(),macInfo.getOfficeCd(), macInfo.getTeamCd(), parsed.getString("state_term_mode"),
                 parsed.getString("state_off_yn"));
@@ -155,7 +155,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
             }
         }
 
-        logger.info(">>>>>>>>>>> parsed.atm_state[{}]", parsed.getString("atm_state") );
+        logger.warn(">>>>>>>>>>> parsed.atm_state[{}]", parsed.getString("atm_state") );
 
         ErrorState errState = new ErrorState();
         errState.setMacType( MsgBrokerConst.CURERR_ATM );
@@ -164,7 +164,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
         errState.setMacNo( errBasic.getMacNo() );
         byte[] retErrStates = comPack.getCurrentErrorState( errState );
         errState.setErrorStates( new String(retErrStates) );
-        logger.info("CUR_ERROR_LIST[{}]", errState.getErrorStates() );
+        logger.warn("CUR_ERROR_LIST[{}]", errState.getErrorStates() );
 
         /*
          * 20090603 개국일 경우 상태전문을 처리하지 않도록 한다. BY.BHJ
@@ -200,7 +200,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                   || macInfo.getMacModel().equals("1200")
                   || macInfo.getMacModel().equals("1500")
                   || macInfo.getMacModel().equals("1600")) ) {
-                    logger.info(">>> [SaveErrState] CD기 입금함 상태 수신 ... 무시...");
+                    logger.warn(">>> [SaveErrState] CD기 입금함 상태 수신 ... 무시...");
                     continue;
                 }
                 /*
@@ -212,7 +212,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                       &&  (macInfo.getCheckYn() == null
                         || macInfo.getCheckYn().equals("0")
                         || macInfo.getCheckYn().length() == 0) ) {
-                   logger.info(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
+                   logger.warn(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
                    continue;
                 }
                 else if( (e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_50000
@@ -221,7 +221,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                       ||  (e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_100000
                         && !parsed.getString("cash_100000_yn").equals("2")
                         && parsed.getString("cash_100000_yn").length() > 0) ) {
-                   logger.info(">>> [SaveErrState] 고액권 거래불가 기기 고액권 관련 장애 수신 ... 무시...");
+                   logger.warn(">>> [SaveErrState] 고액권 거래불가 기기 고액권 관련 장애 수신 ... 무시...");
                    continue;
                 }
 
@@ -292,11 +292,11 @@ public class In05000110Impl extends InMsgHandlerImpl {
                       ||   parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP2
                       ||   parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP3 ) {
                 /*
-                logger.info(">>> [SaveErrState] 상태무시");
+                logger.warn(">>> [SaveErrState] 상태무시");
                 */
                 }
                 else {
-                    logger.info(String.format(">>> [SaveErrState] 잘못된 상태코드 수신 %s-코드(%c) - ex)복구:0,예보:1,장애:2, 무시:' ' or 9",
+                    logger.warn(String.format(">>> [SaveErrState] 잘못된 상태코드 수신 %s-코드(%c) - ex)복구:0,예보:1,장애:2, 무시:' ' or 9",
                             e.getErrorName(), parsed.getBytes("atm_state")[e.ordinal()]) );
                 }
             }
@@ -361,7 +361,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                 && (macInfo.getCheckYn() == null
                  || macInfo.getCheckYn().equals("0")
                  || macInfo.getCheckYn().length() == 0) ) {
-                    logger.info(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
+                    logger.warn(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
                     return;
                 }
                 comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
@@ -378,7 +378,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
              * 폐국
              */
             else if( parsed.getString("error_hw_yn").equals(MsgBrokerConst.HWERR_CLOSE) ) {
-                logger.info(">>> [SaveErrState] 폐국거래 수신 ... 무시...");
+                logger.warn(">>> [SaveErrState] 폐국거래 수신 ... 무시...");
             }
             /*
              *  H/W 장애 복구
@@ -488,7 +488,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                 }
             }
             else {
-                logger.info(">>> [SaveErrState] 잘못된 HW 장애 여부 코드 수신 코드(%c)", parsed.getBytes("error_hw_yn")[0] );
+                logger.warn(">>> [SaveErrState] 잘못된 HW 장애 여부 코드 수신 코드(%c)", parsed.getBytes("error_hw_yn")[0] );
             }
         }
     }

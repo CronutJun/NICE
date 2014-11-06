@@ -20,13 +20,12 @@ import com.nicetcm.nibsplus.broker.msg.mapper.TFnKebCheckMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnOnsiteAmtMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnSendMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TbPhsPushMessagesMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TPhMessagesMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCheckMaster;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCheckMasterSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCommon;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCommonSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TCtSiteLockHistory;
 import com.nicetcm.nibsplus.broker.msg.model.TFnKebCheck;
 import com.nicetcm.nibsplus.broker.msg.model.TFnKebCheckSpec;
@@ -34,7 +33,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TFnOnsiteAmt;
 import com.nicetcm.nibsplus.broker.msg.model.TFnOnsiteAmtSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TFnSend;
 import com.nicetcm.nibsplus.broker.msg.model.TFnSendSpec;
-import com.nicetcm.nibsplus.broker.msg.model.TbPhsPushMessages;
+import com.nicetcm.nibsplus.broker.msg.model.TPhMessages;
 
 /**
  *
@@ -60,7 +59,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
     @Autowired private TCmCheckMasterMapper tCmCheckMasterMapper;
 
-    @Autowired private TbPhsPushMessagesMapper tbPhsPushMessagesMapper;
+    @Autowired private TPhMessagesMapper tPhMessagesMapper;
 
     @Autowired private TFnKebCheckMapper tFnKebCheckMapper;
 
@@ -97,12 +96,12 @@ public class In01000161Impl extends InMsgHandlerImpl {
         }
 
         if(errMsg.equals("") == false || tCmCommonList == null || tCmCommonList.size() == 0) {
-            logger.info(String.format(">>> [SaveUnLockTime] (T_CM_COMMON) 경비사 코드[%s] 검색실패 [%.200s]", parsed.getString("CM.org_cd"), errMsg));
+            logger.warn(String.format(">>> [SaveUnLockTime] (T_CM_COMMON) 경비사 코드[%s] 검색실패 [%.200s]", parsed.getString("CM.org_cd"), errMsg));
             throw new Exception(String.format(">>> [SaveUnLockTime] (T_CM_COMMON) 경비사 코드[%s] 검색실패 [%.200s]", parsed.getString("CM.org_cd"), errMsg));
         }
 
         /*===> 대구은행 경비사 사이트 등록 완료시 삭제 필요 2013.11.02 */
-        if(MsgBrokerConst.DGB_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("brch_cd").length() == 3) {
+        if(MsgBrokerConst.DGB_CODE.equals(parsed.getString("org_cd")) && parsed.getString("brch_cd").length() == 3) {
             String szJijumCd = null;
             String szSiteCd = null;
 
@@ -114,13 +113,13 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info( ">>> [MngEM_SaveUnLockTime] 코너정보 mapping실패 [{}]", e.getMessage());
+                logger.warn( ">>> [MngEM_SaveUnLockTime] 코너정보 mapping실패 [{}]", e.getMessage());
             }
 
             if(szSiteCd.equals("")) {
-                logger.info( ">>> [MngEM_SaveUnLockTime] mapping 테이블 데이터 없음 grd.jijum_cd[{}], grd.site_cd[{}]", parsed.getString("brch_cd"), parsed.getString("site_cd"));
+                logger.warn( ">>> [MngEM_SaveUnLockTime] mapping 테이블 데이터 없음 grd.jijum_cd[{}], grd.site_cd[{}]", parsed.getString("brch_cd"), parsed.getString("site_cd"));
             } else {
-                logger.info( ">>> [MngEM_SaveUnLockTime] 기초정보 mapping jijum_cd[{}->{}], site_cd[{}->{}]", parsed.getString("brch_cd"), szJijumCd, parsed.getString("site_cd"), szSiteCd );
+                logger.warn( ">>> [MngEM_SaveUnLockTime] 기초정보 mapping jijum_cd[{}->{}], site_cd[{}->{}]", parsed.getString("brch_cd"), szJijumCd, parsed.getString("site_cd"), szSiteCd );
             }
         }
 
@@ -128,7 +127,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
         TCmCommon tCmCommon = tCmCommonList.get(0);
 
         TCtSiteLockHistory tCtSiteLockHistory = new TCtSiteLockHistory();
-        tCtSiteLockHistory.setOrgCd     (parsed.getString("CM.org_cd"));
+        tCtSiteLockHistory.setOrgCd     (parsed.getString("org_cd"));
         tCtSiteLockHistory.setBranchCd  (parsed.getString("brch_cd"));
         tCtSiteLockHistory.setSiteCd    (parsed.getString("site_cd"));
         tCtSiteLockHistory.setGuardComCd(tCmCommon.getSmallCd());
@@ -143,14 +142,14 @@ public class In01000161Impl extends InMsgHandlerImpl {
         {
             tCtSiteLockHistoryMapper.insertSelective(tCtSiteLockHistory);
 
-            logger.info( ">>> [SaveUnLockTime] (T_CT_SITE_LOCK_HISTORY) INSERT OK" );
+            logger.warn( ">>> [SaveUnLockTime] (T_CT_SITE_LOCK_HISTORY) INSERT OK" );
 
         } catch( org.springframework.dao.DataIntegrityViolationException e ) {
-            logger.info( ">>> [SaveUnLockTime] (T_CT_SITE_LOCK_HISTORY) INSERT 중복 ERROR [{}]", e.getMessage());
+            logger.warn( ">>> [SaveUnLockTime] (T_CT_SITE_LOCK_HISTORY) INSERT 중복 ERROR [{}]", e.getMessage());
             /* 전문 중복으로 인한 INSERT 실패시에도 LG로 전문 송신은 해야 한다. */
         } catch (Exception e)
         {
-            logger.info( ">>> [SaveUnLockTime] (T_CT_SITE_LOCK_HISTORY) INSERT ERROR [{}]", e.getMessage());
+            logger.warn( ">>> [SaveUnLockTime] (T_CT_SITE_LOCK_HISTORY) INSERT ERROR [{}]", e.getMessage());
         }
 
 
@@ -161,7 +160,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             /* 해당테이블의 대상 Data를 검색하여 Update 치고 push 테이블에도 insert 처리 */
 
             TCmCheckMaster tCmCheckMasterParam = new TCmCheckMaster();
-            tCmCheckMasterParam.setOrgCd(parsed.getString("CM.org_cd"));
+            tCmCheckMasterParam.setOrgCd(parsed.getString("org_cd"));
             tCmCheckMasterParam.setBranchCd(parsed.getString("brch_cd"));
             tCmCheckMasterParam.setSiteCd(parsed.getString("site_cd"));
             tCmCheckMasterParam.setAcceptDate(parsed.getString("arrival_date"));
@@ -179,7 +178,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info( ">>> [T_CM_CHECK_MASTER] Cursor Open Error [{}]", e.getMessage());
+                logger.warn( ">>> [T_CM_CHECK_MASTER] Cursor Open Error [{}]", e.getMessage());
                 throw e;
             }
 
@@ -190,7 +189,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                     TCmCheckMasterSpec tCmCheckMasterSpec = new TCmCheckMasterSpec();
                     tCmCheckMasterSpec.createCriteria()
-                    .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                    .andOrgCdEqualTo(parsed.getString("org_cd"))
                     .andBranchCdEqualTo(parsed.getString("brch_cd"))
                     .andSiteCdEqualTo(parsed.getString("site_cd"))
                     .andAcceptDateEqualTo(parsed.getString("arrival_date"))
@@ -202,7 +201,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                     {
                         tCmCheckMasterMapper.updateBySpecSelective(updateTCmCheckMaster, tCmCheckMasterSpec);
 
-                        logger.info(" [T_CM_CHECK_MASTER] Update Complete.");
+                        logger.warn(" [T_CM_CHECK_MASTER] Update Complete.");
 
                         /* 푸시 테이블에 insert 해주기 위한 작업*/
 
@@ -213,34 +212,34 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             userIdx = tMiscMapper.getUserIdx(tCmCheckMaster.getMemberId());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A01@%s@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), parsed.getString("arrival_date"), tCmCheckMaster.getAcceptTime(), tCmCheckMaster.getMemberId(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A01@%s@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), parsed.getString("arrival_date"), tCmCheckMaster.getAcceptTime(), tCmCheckMaster.getMemberId(), 4, parsed.getString("arrival_time"));
 
-                            TbPhsPushMessages tbPhsPushMessages = tMiscMapper.getSeqPhsPushMessages();
+                            TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
-                            tbPhsPushMessages.setUserIdx      (Long.parseLong(userIdx));
-                            tbPhsPushMessages.setMessage      (v_PushMsg);
-                            tbPhsPushMessages.setRead         ("0");
-                            tbPhsPushMessages.setStatus       ("queued");
-                            tbPhsPushMessages.setDeliveryDate ("");
-                            tbPhsPushMessages.setDeliveryTime ("");
-                            tbPhsPushMessages.setCreateDate   (MsgBrokerLib.SysDate());
-                            tbPhsPushMessages.setCreateTime   (MsgBrokerLib.SysTime());
-                            tbPhsPushMessages.setWorker       (tCmCheckMaster.getMemberId());
-                            tbPhsPushMessages.setSender       ("");
-                            tbPhsPushMessages.setInsertGubun  ("0003");
-                            tbPhsPushMessages.setEtcGubun1    ("");
-                            tbPhsPushMessages.setEtcGubun2    ("");
-                            tbPhsPushMessages.setEtcGubun3    ("");
+                            tPhMessages.setUserIdx      (Long.parseLong(userIdx));
+                            tPhMessages.setMessage      (v_PushMsg);
+                            tPhMessages.setRead         ("0");
+                            tPhMessages.setStatus       ("queued");
+                            tPhMessages.setDeliveryDate ("");
+                            tPhMessages.setDeliveryTime ("");
+                            tPhMessages.setCreateDate   (MsgBrokerLib.SysDate());
+                            tPhMessages.setCreateTime   (MsgBrokerLib.SysTime());
+                            tPhMessages.setWorker       (tCmCheckMaster.getMemberId());
+                            tPhMessages.setSender       ("");
+                            tPhMessages.setInsertGubun  ("0003");
+                            tPhMessages.setEtcGubun1    ("");
+                            tPhMessages.setEtcGubun2    ("");
+                            tPhMessages.setEtcGubun3    ("");
 
                             try
                             {
-                                tbPhsPushMessagesMapper.insertSelective(tbPhsPushMessages);
+                                tPhMessagesMapper.insertSelective(tPhMessages);
 
-                                logger.info(" [tb_phs_push_messages] insert Complete.");
+                                logger.warn(" [t_ph_messages] insert Complete.");
 
                             } catch (Exception e)
                             {
-                                logger.info( ">>> [tb_phs_push_messages] insert 실패 [{}]", e.getMessage());
+                                logger.warn( ">>> [t_ph_messages] insert 실패 [{}]", e.getMessage());
                                 /* 실패시에도 그냥 처리 */
                             }
 
@@ -249,24 +248,24 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             }
                         } catch (Exception e)
                         {
-                            logger.info( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
+                            logger.warn( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
                             /* 실패시에도 그냥 처리 */
                         }
 
                     } catch (Exception e)
                     {
-                        logger.info(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
+                        logger.warn(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
                     }
 
                 }//end for (EXEC SQL CLOSE CURCMA;)
             }//end list
 
 
-            if(MsgBrokerConst.KEB_CODE.equals(parsed.getString("CM.org_cd"))) {
+            if(MsgBrokerConst.KEB_CODE.equals(parsed.getString("org_cd"))) {
                 /* 해당테이블의 대상 Data를 검색하여 Update 치고 push 테이블에도 insert 처리 */
                 TFnKebCheckSpec tFnKebCheckSpec = new TFnKebCheckSpec();
                 tFnKebCheckSpec.createCriteria()
-                .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                .andOrgCdEqualTo(parsed.getString("org_cd"))
                 .andBranchCdEqualTo(parsed.getString("brch_cd"))
                 .andSiteCdEqualTo(parsed.getString("site_cd"))
                 .andBaseDateEqualTo(parsed.getString("arrival_date"))
@@ -286,7 +285,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                 } catch (Exception e)
                 {
-                    logger.info( ">>> [t_fn_keb_check] Cursor Open Error [{}]", e.getMessage());
+                    logger.warn( ">>> [t_fn_keb_check] Cursor Open Error [{}]", e.getMessage());
                     throw e;
                 }
 
@@ -299,7 +298,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         TFnKebCheckSpec tFnKebCheckSpec2 = new TFnKebCheckSpec();
                         tFnKebCheckSpec2.createCriteria()
-                        .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                        .andOrgCdEqualTo(parsed.getString("org_cd"))
                         .andBranchCdEqualTo(parsed.getString("brch_cd"))
                         .andMacNoEqualTo(tFnKebCheck.getMacNo())
                         .andBaseDateEqualTo(parsed.getString("arrival_date"));
@@ -309,7 +308,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                         {
                             tFnKebCheckMapper.updateBySpecSelective(updateTFnKebCheck, tFnKebCheckSpec2);
 
-                            logger.info(" [t_fn_keb_check] Update Complete.");
+                            logger.warn(" [t_fn_keb_check] Update Complete.");
 
                             /* 푸시 테이블에 insert 해주기 위한 작업*/
 
@@ -320,34 +319,34 @@ public class In01000161Impl extends InMsgHandlerImpl {
                                 userIdx = tMiscMapper.getUserIdx(tFnKebCheck.getMemberId());
 
                                 String v_PushMsg = null;
-                                v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), tFnKebCheck.getMacNo(), tFnKebCheck.getMemberId(), 4, parsed.getString("arrival_time"));
+                                v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), tFnKebCheck.getMacNo(), tFnKebCheck.getMemberId(), 4, parsed.getString("arrival_time"));
 
-                                TbPhsPushMessages tbPhsPushMessages = tMiscMapper.getSeqPhsPushMessages();
+                                TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
-                                tbPhsPushMessages.setUserIdx      (Long.parseLong(userIdx));
-                                tbPhsPushMessages.setMessage      (v_PushMsg);
-                                tbPhsPushMessages.setRead         ("0");
-                                tbPhsPushMessages.setStatus       ("queued");
-                                tbPhsPushMessages.setDeliveryDate ("");
-                                tbPhsPushMessages.setDeliveryTime ("");
-                                tbPhsPushMessages.setCreateDate   (MsgBrokerLib.SysDate());
-                                tbPhsPushMessages.setCreateTime   (MsgBrokerLib.SysTime());
-                                tbPhsPushMessages.setWorker       (tFnKebCheck.getMemberId());
-                                tbPhsPushMessages.setSender       ("");
-                                tbPhsPushMessages.setInsertGubun  ("0005");
-                                tbPhsPushMessages.setEtcGubun1    ("");
-                                tbPhsPushMessages.setEtcGubun2    ("");
-                                tbPhsPushMessages.setEtcGubun3    ("");
+                                tPhMessages.setUserIdx      (Long.parseLong(userIdx));
+                                tPhMessages.setMessage      (v_PushMsg);
+                                tPhMessages.setRead         ("0");
+                                tPhMessages.setStatus       ("queued");
+                                tPhMessages.setDeliveryDate ("");
+                                tPhMessages.setDeliveryTime ("");
+                                tPhMessages.setCreateDate   (MsgBrokerLib.SysDate());
+                                tPhMessages.setCreateTime   (MsgBrokerLib.SysTime());
+                                tPhMessages.setWorker       (tFnKebCheck.getMemberId());
+                                tPhMessages.setSender       ("");
+                                tPhMessages.setInsertGubun  ("0005");
+                                tPhMessages.setEtcGubun1    ("");
+                                tPhMessages.setEtcGubun2    ("");
+                                tPhMessages.setEtcGubun3    ("");
 
                                 try
                                 {
-                                    tbPhsPushMessagesMapper.insertSelective(tbPhsPushMessages);
+                                    tPhMessagesMapper.insertSelective(tPhMessages);
 
-                                    logger.info(" [tb_phs_push_messages] insert Complete.");
+                                    logger.warn(" [t_ph_messages] insert Complete.");
 
                                 } catch (Exception e)
                                 {
-                                    logger.info( ">>> [tb_phs_push_messages] insert 실패 [{}]", e.getMessage());
+                                    logger.warn( ">>> [t_ph_messages] insert 실패 [{}]", e.getMessage());
                                     /* 실패시에도 그냥 처리 */
                                 }
 
@@ -356,13 +355,13 @@ public class In01000161Impl extends InMsgHandlerImpl {
                                 }
                             } catch (Exception e)
                             {
-                                logger.info( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
+                                logger.warn( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
                                 /* 실패시에도 그냥 처리 */
                             }
 
                         } catch (Exception e)
                         {
-                            logger.info(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
+                            logger.warn(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
                         }
                     }//end for (EXEC SQL CLOSE CURCMA;)
                 }//end list
@@ -372,7 +371,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             /* 해당테이블의 대상 Data를 검색하여 Update 치고 push 테이블에도 insert 처리 */
             TFnOnsiteAmtSpec tFnOnsiteAmtSpec = new TFnOnsiteAmtSpec();
             tFnOnsiteAmtSpec.createCriteria()
-            .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+            .andOrgCdEqualTo(parsed.getString("org_cd"))
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
             .andSiteCdEqualTo(parsed.getString("site_cd"))
             .andSendDateEqualTo(parsed.getString("arrival_date"))
@@ -392,7 +391,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info( ">>> [t_fn_onsite_amt] Cursor Open Error [{}]", e.getMessage());
+                logger.warn( ">>> [t_fn_onsite_amt] Cursor Open Error [{}]", e.getMessage());
                 throw e;
             }
 
@@ -405,7 +404,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                     TFnOnsiteAmtSpec tFnOnsiteAmtSpec2 = new TFnOnsiteAmtSpec();
                     tFnOnsiteAmtSpec2.createCriteria()
-                    .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                    .andOrgCdEqualTo(parsed.getString("org_cd"))
                     .andBranchCdEqualTo(parsed.getString("brch_cd"))
                     .andMacNoEqualTo(tFnOnsiteAmt.getMacNo())
                     .andSendDateEqualTo(parsed.getString("arrival_date"));
@@ -414,7 +413,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                     {
                         tFnOnsiteAmtMapper.updateBySpecSelective(updateTFnOnsiteAmt, tFnOnsiteAmtSpec2);
 
-                        logger.info(" [t_fn_onsite_amt] Update Complete.");
+                        logger.warn(" [t_fn_onsite_amt] Update Complete.");
 
                         /* 푸시 테이블에 insert 해주기 위한 작업*/
 
@@ -425,34 +424,34 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             userIdx = tMiscMapper.getUserIdx(tFnOnsiteAmt.getMemberId());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), tFnOnsiteAmt.getMacNo(), tFnOnsiteAmt.getMemberId(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), tFnOnsiteAmt.getMacNo(), tFnOnsiteAmt.getMemberId(), 4, parsed.getString("arrival_time"));
 
-                            TbPhsPushMessages tbPhsPushMessages = tMiscMapper.getSeqPhsPushMessages();
+                            TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
-                            tbPhsPushMessages.setUserIdx      (Long.parseLong(userIdx));
-                            tbPhsPushMessages.setMessage      (v_PushMsg);
-                            tbPhsPushMessages.setRead         ("0");
-                            tbPhsPushMessages.setStatus       ("queued");
-                            tbPhsPushMessages.setDeliveryDate ("");
-                            tbPhsPushMessages.setDeliveryTime ("");
-                            tbPhsPushMessages.setCreateDate   (MsgBrokerLib.SysDate());
-                            tbPhsPushMessages.setCreateTime   (MsgBrokerLib.SysTime());
-                            tbPhsPushMessages.setWorker       (tFnOnsiteAmt.getMemberId());
-                            tbPhsPushMessages.setSender       ("");
-                            tbPhsPushMessages.setInsertGubun  ("0004");
-                            tbPhsPushMessages.setEtcGubun1    ("");
-                            tbPhsPushMessages.setEtcGubun2    ("");
-                            tbPhsPushMessages.setEtcGubun3    ("");
+                            tPhMessages.setUserIdx      (Long.parseLong(userIdx));
+                            tPhMessages.setMessage      (v_PushMsg);
+                            tPhMessages.setRead         ("0");
+                            tPhMessages.setStatus       ("queued");
+                            tPhMessages.setDeliveryDate ("");
+                            tPhMessages.setDeliveryTime ("");
+                            tPhMessages.setCreateDate   (MsgBrokerLib.SysDate());
+                            tPhMessages.setCreateTime   (MsgBrokerLib.SysTime());
+                            tPhMessages.setWorker       (tFnOnsiteAmt.getMemberId());
+                            tPhMessages.setSender       ("");
+                            tPhMessages.setInsertGubun  ("0004");
+                            tPhMessages.setEtcGubun1    ("");
+                            tPhMessages.setEtcGubun2    ("");
+                            tPhMessages.setEtcGubun3    ("");
 
                             try
                             {
-                                tbPhsPushMessagesMapper.insertSelective(tbPhsPushMessages);
+                                tPhMessagesMapper.insertSelective(tPhMessages);
 
-                                logger.info(" [tb_phs_push_messages] insert Complete.");
+                                logger.warn(" [t_ph_messages] insert Complete.");
 
                             } catch (Exception e)
                             {
-                                logger.info( ">>> [tb_phs_push_messages] insert 실패 [{}]", e.getMessage());
+                                logger.warn( ">>> [t_ph_messages] insert 실패 [{}]", e.getMessage());
                                 /* 실패시에도 그냥 처리 */
                             }
 
@@ -461,13 +460,13 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             }
                         } catch (Exception e)
                         {
-                            logger.info( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
+                            logger.warn( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
                             /* 실패시에도 그냥 처리 */
                         }
 
                     } catch (Exception e)
                     {
-                        logger.info(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
+                        logger.warn(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
                     }
                 }//end for (EXEC SQL CLOSE CURCMA;)
             }//end list
@@ -475,7 +474,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             /* 해당테이블의 대상 Data를 검색하여 Update 치고 push 테이블에도 insert 처리 */
             TFnSendSpec tFnSendSpec = new TFnSendSpec();
             tFnSendSpec.createCriteria()
-            .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+            .andOrgCdEqualTo(parsed.getString("org_cd"))
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
             .andSiteCdEqualTo(parsed.getString("site_cd"))
             .andSendDateEqualTo(parsed.getString("arrival_date"))
@@ -498,7 +497,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info( ">>> [t_fn_send] Cursor Open Error [{}]", e.getMessage());
+                logger.warn( ">>> [t_fn_send] Cursor Open Error [{}]", e.getMessage());
                 throw e;
             }
 
@@ -512,7 +511,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                     TFnSendSpec tFnSendSpec2 = new TFnSendSpec();
                     tFnSendSpec2.createCriteria()
                     .andSendDateEqualTo(parsed.getString("arrival_date"))
-                    .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                    .andOrgCdEqualTo(parsed.getString("org_cd"))
                     .andBranchCdEqualTo(parsed.getString("brch_cd"))
                     .andMacNoEqualTo(tFnSend.getMacNo())
                     .andInsertTimeEqualTo(tFnSend.getInsertTime())
@@ -522,7 +521,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                     {
                         tFnSendMapper.updateBySpecSelective(updateTFnSend, tFnSendSpec2);
 
-                        logger.info(" [t_fn_send] Update Complete.");
+                        logger.warn(" [t_fn_send] Update Complete.");
 
                         /* 푸시 테이블에 insert 해주기 위한 작업*/
 
@@ -533,34 +532,34 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             userIdx = tMiscMapper.getUserIdx(tFnSend.getCashTeamCd());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A07@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), tFnSend.getCashTeamCd(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A07@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), tFnSend.getCashTeamCd(), 4, parsed.getString("arrival_time"));
 
-                            TbPhsPushMessages tbPhsPushMessages = tMiscMapper.getSeqPhsPushMessages();
+                            TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
-                            tbPhsPushMessages.setUserIdx      (Long.parseLong(userIdx));
-                            tbPhsPushMessages.setMessage      (v_PushMsg);
-                            tbPhsPushMessages.setRead         ("0");
-                            tbPhsPushMessages.setStatus       ("queued");
-                            tbPhsPushMessages.setDeliveryDate ("");
-                            tbPhsPushMessages.setDeliveryTime ("");
-                            tbPhsPushMessages.setCreateDate   (MsgBrokerLib.SysDate());
-                            tbPhsPushMessages.setCreateTime   (MsgBrokerLib.SysTime());
-                            tbPhsPushMessages.setWorker       (tFnSend.getCashTeamCd());
-                            tbPhsPushMessages.setSender       ("");
-                            tbPhsPushMessages.setInsertGubun  ("0006");
-                            tbPhsPushMessages.setEtcGubun1    ("");
-                            tbPhsPushMessages.setEtcGubun2    ("");
-                            tbPhsPushMessages.setEtcGubun3    ("");
+                            tPhMessages.setUserIdx      (Long.parseLong(userIdx));
+                            tPhMessages.setMessage      (v_PushMsg);
+                            tPhMessages.setRead         ("0");
+                            tPhMessages.setStatus       ("queued");
+                            tPhMessages.setDeliveryDate ("");
+                            tPhMessages.setDeliveryTime ("");
+                            tPhMessages.setCreateDate   (MsgBrokerLib.SysDate());
+                            tPhMessages.setCreateTime   (MsgBrokerLib.SysTime());
+                            tPhMessages.setWorker       (tFnSend.getCashTeamCd());
+                            tPhMessages.setSender       ("");
+                            tPhMessages.setInsertGubun  ("0006");
+                            tPhMessages.setEtcGubun1    ("");
+                            tPhMessages.setEtcGubun2    ("");
+                            tPhMessages.setEtcGubun3    ("");
 
                             try
                             {
-                                tbPhsPushMessagesMapper.insertSelective(tbPhsPushMessages);
+                                tPhMessagesMapper.insertSelective(tPhMessages);
 
-                                logger.info(" [tb_phs_push_messages] insert Complete.");
+                                logger.warn(" [t_ph_messages] insert Complete.");
 
                             } catch (Exception e)
                             {
-                                logger.info( ">>> [tb_phs_push_messages] insert 실패 [{}]", e.getMessage());
+                                logger.warn( ">>> [t_ph_messages] insert 실패 [{}]", e.getMessage());
                                 /* 실패시에도 그냥 처리 */
                             }
 
@@ -569,13 +568,13 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             }
                         } catch (Exception e)
                         {
-                            logger.info( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
+                            logger.warn( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
                             /* 실패시에도 그냥 처리 */
                         }
 
                     } catch (Exception e)
                     {
-                        logger.info(" [t_fn_send] Update Err [{}]", e.getMessage() );
+                        logger.warn(" [t_fn_send] Update Err [{}]", e.getMessage() );
                     }
                 }//end for (EXEC SQL CLOSE CURCMA;)
             }//end list
@@ -586,7 +585,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
 
             TCmCheckMaster tCmCheckMasterParam = new TCmCheckMaster();
-            tCmCheckMasterParam.setOrgCd(parsed.getString("CM.org_cd"));
+            tCmCheckMasterParam.setOrgCd(parsed.getString("org_cd"));
             tCmCheckMasterParam.setBranchCd(parsed.getString("brch_cd"));
             tCmCheckMasterParam.setSiteCd(parsed.getString("site_cd"));
             tCmCheckMasterParam.setAcceptDate(parsed.getString("arrival_date"));
@@ -604,7 +603,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info( ">>> [T_CM_CHECK_MASTER] Cursor Open Error [{}]", e.getMessage());
+                logger.warn( ">>> [T_CM_CHECK_MASTER] Cursor Open Error [{}]", e.getMessage());
                 throw e;
             }
 
@@ -615,7 +614,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                     TCmCheckMasterSpec tCmCheckMasterSpec = new TCmCheckMasterSpec();
                     tCmCheckMasterSpec.createCriteria()
-                    .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                    .andOrgCdEqualTo(parsed.getString("org_cd"))
                     .andBranchCdEqualTo(parsed.getString("brch_cd"))
                     .andSiteCdEqualTo(parsed.getString("site_cd"))
                     .andAcceptDateEqualTo(parsed.getString("arrival_date"))
@@ -627,7 +626,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                     {
                         tCmCheckMasterMapper.updateBySpecSelective(updateTCmCheckMaster, tCmCheckMasterSpec);
 
-                        logger.info(" [T_CM_CHECK_MASTER] Update Complete.");
+                        logger.warn(" [T_CM_CHECK_MASTER] Update Complete.");
 
                         /* 푸시 테이블에 insert 해주기 위한 작업*/
 
@@ -638,34 +637,34 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             userIdx = tMiscMapper.getUserIdx(tCmCheckMaster.getMemberId());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A01@%s@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), parsed.getString("arrival_date"), tCmCheckMaster.getAcceptTime(), tCmCheckMaster.getMemberId(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A01@%s@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), parsed.getString("arrival_date"), tCmCheckMaster.getAcceptTime(), tCmCheckMaster.getMemberId(), 4, parsed.getString("arrival_time"));
 
-                            TbPhsPushMessages tbPhsPushMessages = tMiscMapper.getSeqPhsPushMessages();
+                            TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
-                            tbPhsPushMessages.setUserIdx      (Long.parseLong(userIdx));
-                            tbPhsPushMessages.setMessage      (v_PushMsg);
-                            tbPhsPushMessages.setRead         ("0");
-                            tbPhsPushMessages.setStatus       ("queued");
-                            tbPhsPushMessages.setDeliveryDate ("");
-                            tbPhsPushMessages.setDeliveryTime ("");
-                            tbPhsPushMessages.setCreateDate   (MsgBrokerLib.SysDate());
-                            tbPhsPushMessages.setCreateTime   (MsgBrokerLib.SysTime());
-                            tbPhsPushMessages.setWorker       (tCmCheckMaster.getMemberId());
-                            tbPhsPushMessages.setSender       ("");
-                            tbPhsPushMessages.setInsertGubun  ("0003");
-                            tbPhsPushMessages.setEtcGubun1    ("");
-                            tbPhsPushMessages.setEtcGubun2    ("");
-                            tbPhsPushMessages.setEtcGubun3    ("");
+                            tPhMessages.setUserIdx      (Long.parseLong(userIdx));
+                            tPhMessages.setMessage      (v_PushMsg);
+                            tPhMessages.setRead         ("0");
+                            tPhMessages.setStatus       ("queued");
+                            tPhMessages.setDeliveryDate ("");
+                            tPhMessages.setDeliveryTime ("");
+                            tPhMessages.setCreateDate   (MsgBrokerLib.SysDate());
+                            tPhMessages.setCreateTime   (MsgBrokerLib.SysTime());
+                            tPhMessages.setWorker       (tCmCheckMaster.getMemberId());
+                            tPhMessages.setSender       ("");
+                            tPhMessages.setInsertGubun  ("0003");
+                            tPhMessages.setEtcGubun1    ("");
+                            tPhMessages.setEtcGubun2    ("");
+                            tPhMessages.setEtcGubun3    ("");
 
                             try
                             {
-                                tbPhsPushMessagesMapper.insertSelective(tbPhsPushMessages);
+                                tPhMessagesMapper.insertSelective(tPhMessages);
 
-                                logger.info(" [tb_phs_push_messages] insert Complete.");
+                                logger.warn(" [t_ph_messages] insert Complete.");
 
                             } catch (Exception e)
                             {
-                                logger.info( ">>> [tb_phs_push_messages] insert 실패 [{}]", e.getMessage());
+                                logger.warn( ">>> [t_ph_messages] insert 실패 [{}]", e.getMessage());
                                 /* 실패시에도 그냥 처리 */
                             }
 
@@ -674,23 +673,23 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             }
                         } catch (Exception e)
                         {
-                            logger.info( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
+                            logger.warn( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
                             /* 실패시에도 그냥 처리 */
                         }
 
                     } catch (Exception e)
                     {
-                        logger.info(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
+                        logger.warn(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
                     }
 
                 }//end for (EXEC SQL CLOSE CURCMA;)
             }//end list
 
-            if(MsgBrokerConst.KEB_CODE.equals(parsed.getString("CM.org_cd"))) {
+            if(MsgBrokerConst.KEB_CODE.equals(parsed.getString("org_cd"))) {
                 /* 해당테이블의 대상 Data를 검색하여 Update 치고 push 테이블에도 insert 처리 */
                 TFnKebCheckSpec tFnKebCheckSpec = new TFnKebCheckSpec();
                 tFnKebCheckSpec.createCriteria()
-                .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                .andOrgCdEqualTo(parsed.getString("org_cd"))
                 .andBranchCdEqualTo(parsed.getString("brch_cd"))
                 .andSiteCdEqualTo(parsed.getString("site_cd"))
                 .andBaseDateEqualTo(parsed.getString("arrival_date"))
@@ -710,7 +709,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                 } catch (Exception e)
                 {
-                    logger.info( ">>> [t_fn_keb_check] Cursor Open Error [{}]", e.getMessage());
+                    logger.warn( ">>> [t_fn_keb_check] Cursor Open Error [{}]", e.getMessage());
                     throw e;
                 }
 
@@ -723,7 +722,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         TFnKebCheckSpec tFnKebCheckSpec2 = new TFnKebCheckSpec();
                         tFnKebCheckSpec2.createCriteria()
-                        .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                        .andOrgCdEqualTo(parsed.getString("org_cd"))
                         .andBranchCdEqualTo(parsed.getString("brch_cd"))
                         .andMacNoEqualTo(tFnKebCheck.getMacNo())
                         .andBaseDateEqualTo(parsed.getString("arrival_date"));
@@ -733,7 +732,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                         {
                             tFnKebCheckMapper.updateBySpecSelective(updateTFnKebCheck, tFnKebCheckSpec2);
 
-                            logger.info(" [t_fn_keb_check] Update Complete.");
+                            logger.warn(" [t_fn_keb_check] Update Complete.");
 
                             /* 푸시 테이블에 insert 해주기 위한 작업*/
 
@@ -744,34 +743,34 @@ public class In01000161Impl extends InMsgHandlerImpl {
                                 userIdx = tMiscMapper.getUserIdx(tFnKebCheck.getMemberId());
 
                                 String v_PushMsg = null;
-                                v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), tFnKebCheck.getMacNo(), tFnKebCheck.getMemberId(), 4, parsed.getString("arrival_time"));
+                                v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), tFnKebCheck.getMacNo(), tFnKebCheck.getMemberId(), 4, parsed.getString("arrival_time"));
 
-                                TbPhsPushMessages tbPhsPushMessages = tMiscMapper.getSeqPhsPushMessages();
+                                TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
-                                tbPhsPushMessages.setUserIdx      (Long.parseLong(userIdx));
-                                tbPhsPushMessages.setMessage      (v_PushMsg);
-                                tbPhsPushMessages.setRead         ("0");
-                                tbPhsPushMessages.setStatus       ("queued");
-                                tbPhsPushMessages.setDeliveryDate ("");
-                                tbPhsPushMessages.setDeliveryTime ("");
-                                tbPhsPushMessages.setCreateDate   (MsgBrokerLib.SysDate());
-                                tbPhsPushMessages.setCreateTime   (MsgBrokerLib.SysTime());
-                                tbPhsPushMessages.setWorker       (tFnKebCheck.getMemberId());
-                                tbPhsPushMessages.setSender       ("");
-                                tbPhsPushMessages.setInsertGubun  ("0005");
-                                tbPhsPushMessages.setEtcGubun1    ("");
-                                tbPhsPushMessages.setEtcGubun2    ("");
-                                tbPhsPushMessages.setEtcGubun3    ("");
+                                tPhMessages.setUserIdx      (Long.parseLong(userIdx));
+                                tPhMessages.setMessage      (v_PushMsg);
+                                tPhMessages.setRead         ("0");
+                                tPhMessages.setStatus       ("queued");
+                                tPhMessages.setDeliveryDate ("");
+                                tPhMessages.setDeliveryTime ("");
+                                tPhMessages.setCreateDate   (MsgBrokerLib.SysDate());
+                                tPhMessages.setCreateTime   (MsgBrokerLib.SysTime());
+                                tPhMessages.setWorker       (tFnKebCheck.getMemberId());
+                                tPhMessages.setSender       ("");
+                                tPhMessages.setInsertGubun  ("0005");
+                                tPhMessages.setEtcGubun1    ("");
+                                tPhMessages.setEtcGubun2    ("");
+                                tPhMessages.setEtcGubun3    ("");
 
                                 try
                                 {
-                                    tbPhsPushMessagesMapper.insertSelective(tbPhsPushMessages);
+                                    tPhMessagesMapper.insertSelective(tPhMessages);
 
-                                    logger.info(" [tb_phs_push_messages] insert Complete.");
+                                    logger.warn(" [t_ph_messages] insert Complete.");
 
                                 } catch (Exception e)
                                 {
-                                    logger.info( ">>> [tb_phs_push_messages] insert 실패 [{}]", e.getMessage());
+                                    logger.warn( ">>> [t_ph_messages] insert 실패 [{}]", e.getMessage());
                                     /* 실패시에도 그냥 처리 */
                                 }
 
@@ -780,13 +779,13 @@ public class In01000161Impl extends InMsgHandlerImpl {
                                 }
                             } catch (Exception e)
                             {
-                                logger.info( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
+                                logger.warn( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
                                 /* 실패시에도 그냥 처리 */
                             }
 
                         } catch (Exception e)
                         {
-                            logger.info(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
+                            logger.warn(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
                         }
                     }//end for (EXEC SQL CLOSE CURCMA;)
                 }//end list
@@ -796,7 +795,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             /* 해당테이블의 대상 Data를 검색하여 Update 치고 push 테이블에도 insert 처리 */
             TFnOnsiteAmtSpec tFnOnsiteAmtSpec = new TFnOnsiteAmtSpec();
             tFnOnsiteAmtSpec.createCriteria()
-            .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+            .andOrgCdEqualTo(parsed.getString("org_cd"))
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
             .andSiteCdEqualTo(parsed.getString("site_cd"))
             .andSendDateEqualTo(parsed.getString("arrival_date"))
@@ -816,7 +815,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info( ">>> [t_fn_onsite_amt] Cursor Open Error [{}]", e.getMessage());
+                logger.warn( ">>> [t_fn_onsite_amt] Cursor Open Error [{}]", e.getMessage());
                 throw e;
             }
 
@@ -829,7 +828,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                     TFnOnsiteAmtSpec tFnOnsiteAmtSpec2 = new TFnOnsiteAmtSpec();
                     tFnOnsiteAmtSpec2.createCriteria()
-                    .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                    .andOrgCdEqualTo(parsed.getString("org_cd"))
                     .andBranchCdEqualTo(parsed.getString("brch_cd"))
                     .andMacNoEqualTo(tFnOnsiteAmt.getMacNo())
                     .andSendDateEqualTo(parsed.getString("arrival_date"));
@@ -838,7 +837,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                     {
                         tFnOnsiteAmtMapper.updateBySpecSelective(updateTFnOnsiteAmt, tFnOnsiteAmtSpec2);
 
-                        logger.info(" [t_fn_onsite_amt] Update Complete.");
+                        logger.warn(" [t_fn_onsite_amt] Update Complete.");
 
                         /* 푸시 테이블에 insert 해주기 위한 작업*/
 
@@ -849,34 +848,34 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             userIdx = tMiscMapper.getUserIdx(tFnOnsiteAmt.getMemberId());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), tFnOnsiteAmt.getMacNo(), tFnOnsiteAmt.getMemberId(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), tFnOnsiteAmt.getMacNo(), tFnOnsiteAmt.getMemberId(), 4, parsed.getString("arrival_time"));
 
-                            TbPhsPushMessages tbPhsPushMessages = tMiscMapper.getSeqPhsPushMessages();
+                            TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
-                            tbPhsPushMessages.setUserIdx      (Long.parseLong(userIdx));
-                            tbPhsPushMessages.setMessage      (v_PushMsg);
-                            tbPhsPushMessages.setRead         ("0");
-                            tbPhsPushMessages.setStatus       ("queued");
-                            tbPhsPushMessages.setDeliveryDate ("");
-                            tbPhsPushMessages.setDeliveryTime ("");
-                            tbPhsPushMessages.setCreateDate   (MsgBrokerLib.SysDate());
-                            tbPhsPushMessages.setCreateTime   (MsgBrokerLib.SysTime());
-                            tbPhsPushMessages.setWorker       (tFnOnsiteAmt.getMemberId());
-                            tbPhsPushMessages.setSender       ("");
-                            tbPhsPushMessages.setInsertGubun  ("0004");
-                            tbPhsPushMessages.setEtcGubun1    ("");
-                            tbPhsPushMessages.setEtcGubun2    ("");
-                            tbPhsPushMessages.setEtcGubun3    ("");
+                            tPhMessages.setUserIdx      (Long.parseLong(userIdx));
+                            tPhMessages.setMessage      (v_PushMsg);
+                            tPhMessages.setRead         ("0");
+                            tPhMessages.setStatus       ("queued");
+                            tPhMessages.setDeliveryDate ("");
+                            tPhMessages.setDeliveryTime ("");
+                            tPhMessages.setCreateDate   (MsgBrokerLib.SysDate());
+                            tPhMessages.setCreateTime   (MsgBrokerLib.SysTime());
+                            tPhMessages.setWorker       (tFnOnsiteAmt.getMemberId());
+                            tPhMessages.setSender       ("");
+                            tPhMessages.setInsertGubun  ("0004");
+                            tPhMessages.setEtcGubun1    ("");
+                            tPhMessages.setEtcGubun2    ("");
+                            tPhMessages.setEtcGubun3    ("");
 
                             try
                             {
-                                tbPhsPushMessagesMapper.insertSelective(tbPhsPushMessages);
+                                tPhMessagesMapper.insertSelective(tPhMessages);
 
-                                logger.info(" [tb_phs_push_messages] insert Complete.");
+                                logger.warn(" [t_ph_messages] insert Complete.");
 
                             } catch (Exception e)
                             {
-                                logger.info( ">>> [tb_phs_push_messages] insert 실패 [{}]", e.getMessage());
+                                logger.warn( ">>> [t_ph_messages] insert 실패 [{}]", e.getMessage());
                                 /* 실패시에도 그냥 처리 */
                             }
 
@@ -885,13 +884,13 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             }
                         } catch (Exception e)
                         {
-                            logger.info( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
+                            logger.warn( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
                             /* 실패시에도 그냥 처리 */
                         }
 
                     } catch (Exception e)
                     {
-                        logger.info(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
+                        logger.warn(" [T_CM_CHECK_MASTER] Update Err [{}]", e.getMessage() );
                     }
                 }//end for (EXEC SQL CLOSE CURCMA;)
             }//end list
@@ -899,7 +898,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             /* 해당테이블의 대상 Data를 검색하여 Update 치고 push 테이블에도 insert 처리 */
             TFnSendSpec tFnSendSpec = new TFnSendSpec();
             tFnSendSpec.createCriteria()
-            .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+            .andOrgCdEqualTo(parsed.getString("org_cd"))
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
             .andSiteCdEqualTo(parsed.getString("site_cd"))
             .andSendDateEqualTo(parsed.getString("arrival_date"))
@@ -922,7 +921,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info( ">>> [t_fn_send] Cursor Open Error [{}]", e.getMessage());
+                logger.warn( ">>> [t_fn_send] Cursor Open Error [{}]", e.getMessage());
                 throw e;
             }
 
@@ -936,7 +935,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                     TFnSendSpec tFnSendSpec2 = new TFnSendSpec();
                     tFnSendSpec2.createCriteria()
                     .andSendDateEqualTo(parsed.getString("arrival_date"))
-                    .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
+                    .andOrgCdEqualTo(parsed.getString("org_cd"))
                     .andBranchCdEqualTo(parsed.getString("brch_cd"))
                     .andMacNoEqualTo(tFnSend.getMacNo())
                     .andInsertTimeEqualTo(tFnSend.getInsertTime())
@@ -946,7 +945,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                     {
                         tFnSendMapper.updateBySpecSelective(updateTFnSend, tFnSendSpec2);
 
-                        logger.info(" [t_fn_send] Update Complete.");
+                        logger.warn(" [t_fn_send] Update Complete.");
 
                         /* 푸시 테이블에 insert 해주기 위한 작업*/
 
@@ -957,34 +956,34 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             userIdx = tMiscMapper.getUserIdx(tFnSend.getCashTeamCd());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A07@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), tFnSend.getCashTeamCd(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A07@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), tFnSend.getCashTeamCd(), 4, parsed.getString("arrival_time"));
 
-                            TbPhsPushMessages tbPhsPushMessages = tMiscMapper.getSeqPhsPushMessages();
+                            TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
-                            tbPhsPushMessages.setUserIdx      (Long.parseLong(userIdx));
-                            tbPhsPushMessages.setMessage      (v_PushMsg);
-                            tbPhsPushMessages.setRead         ("0");
-                            tbPhsPushMessages.setStatus       ("queued");
-                            tbPhsPushMessages.setDeliveryDate ("");
-                            tbPhsPushMessages.setDeliveryTime ("");
-                            tbPhsPushMessages.setCreateDate   (MsgBrokerLib.SysDate());
-                            tbPhsPushMessages.setCreateTime   (MsgBrokerLib.SysTime());
-                            tbPhsPushMessages.setWorker       (tFnSend.getCashTeamCd());
-                            tbPhsPushMessages.setSender       ("");
-                            tbPhsPushMessages.setInsertGubun  ("0006");
-                            tbPhsPushMessages.setEtcGubun1    ("");
-                            tbPhsPushMessages.setEtcGubun2    ("");
-                            tbPhsPushMessages.setEtcGubun3    ("");
+                            tPhMessages.setUserIdx      (Long.parseLong(userIdx));
+                            tPhMessages.setMessage      (v_PushMsg);
+                            tPhMessages.setRead         ("0");
+                            tPhMessages.setStatus       ("queued");
+                            tPhMessages.setDeliveryDate ("");
+                            tPhMessages.setDeliveryTime ("");
+                            tPhMessages.setCreateDate   (MsgBrokerLib.SysDate());
+                            tPhMessages.setCreateTime   (MsgBrokerLib.SysTime());
+                            tPhMessages.setWorker       (tFnSend.getCashTeamCd());
+                            tPhMessages.setSender       ("");
+                            tPhMessages.setInsertGubun  ("0006");
+                            tPhMessages.setEtcGubun1    ("");
+                            tPhMessages.setEtcGubun2    ("");
+                            tPhMessages.setEtcGubun3    ("");
 
                             try
                             {
-                                tbPhsPushMessagesMapper.insertSelective(tbPhsPushMessages);
+                                tPhMessagesMapper.insertSelective(tPhMessages);
 
-                                logger.info(" [tb_phs_push_messages] insert Complete.");
+                                logger.warn(" [t_ph_messages] insert Complete.");
 
                             } catch (Exception e)
                             {
-                                logger.info( ">>> [tb_phs_push_messages] insert 실패 [{}]", e.getMessage());
+                                logger.warn( ">>> [t_ph_messages] insert 실패 [{}]", e.getMessage());
                                 /* 실패시에도 그냥 처리 */
                             }
 
@@ -993,13 +992,13 @@ public class In01000161Impl extends InMsgHandlerImpl {
                             }
                         } catch (Exception e)
                         {
-                            logger.info( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
+                            logger.warn( ">>> [tb_phs_user] 검색 실패 [{}]", e.getMessage());
                             /* 실패시에도 그냥 처리 */
                         }
 
                     } catch (Exception e)
                     {
-                        logger.info(" [t_fn_send] Update Err [{}]", e.getMessage() );
+                        logger.warn(" [t_fn_send] Update Err [{}]", e.getMessage() );
                     }
                 }//end for (EXEC SQL CLOSE CURCMA;)
             }//end list
@@ -1024,7 +1023,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                    수신된 최초시간만 20090310 김희천 요청 */
 
                 TCtErrorMng tCtErrorMngParam = new TCtErrorMng();
-                tCtErrorMngParam.setOrgCd(parsed.getString("CM.org_cd"));
+                tCtErrorMngParam.setOrgCd(parsed.getString("org_cd"));
                 tCtErrorMngParam.setBranchCd(parsed.getString("brch_cd"));
                 tCtErrorMngParam.setSiteCd(parsed.getString("site_cd"));
                 tCtErrorMngParam.setUnlockDate(parsed.getString("arrival_date"));
@@ -1052,11 +1051,11 @@ public class In01000161Impl extends InMsgHandlerImpl {
                         {
                             comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMng);
 
-                            logger.info( "[T_CT_ERROR_MNG] Update OK");
+                            logger.warn( "[T_CT_ERROR_MNG] Update OK");
 
                         } catch (Exception e)
                         {
-                            logger.info( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
+                            logger.warn( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
                             throw e;
                         }
                     }
@@ -1070,7 +1069,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                 /* 통보완료된건에 대해서만 20090309 김희천 추가                         */
 
                 TCtErrorMng tCtErrorMngParam = new TCtErrorMng();
-                tCtErrorMngParam.setOrgCd(parsed.getString("CM.org_cd"));
+                tCtErrorMngParam.setOrgCd(parsed.getString("org_cd"));
                 tCtErrorMngParam.setBranchCd(parsed.getString("brch_cd"));
                 tCtErrorMngParam.setSiteCd(parsed.getString("site_cd"));
                 tCtErrorMngParam.setUnlockDate(parsed.getString("arrival_date"));
@@ -1094,11 +1093,11 @@ public class In01000161Impl extends InMsgHandlerImpl {
                         {
                             comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMng);
 
-                            logger.info( "[T_CT_ERROR_MNG] Update OK");
+                            logger.warn( "[T_CT_ERROR_MNG] Update OK");
 
                         } catch (Exception e)
                         {
-                            logger.info( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
+                            logger.warn( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
                             throw e;
                         }
                     }

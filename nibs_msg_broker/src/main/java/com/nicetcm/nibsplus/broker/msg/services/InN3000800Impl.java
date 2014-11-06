@@ -47,7 +47,7 @@ public class InN3000800Impl extends InMsgHandlerImpl {
             rslt = fnNiceTranMap.selectBySpec( fnNiceTranSpec );
         }
         catch( Exception e ) {
-            logger.info("MngNC_NiceOrgDealNo [T_FN_NICE_TRAN] Update Error.. {}", e.getLocalizedMessage());
+            logger.warn("MngNC_NiceOrgDealNo [T_FN_NICE_TRAN] Update Error.. {}", e.getLocalizedMessage());
             throw e;
         }
         for( TFnNiceTran fnNiceTran: rslt ) {
@@ -59,7 +59,7 @@ public class InN3000800Impl extends InMsgHandlerImpl {
                 fnNiceTranMap.updateByPrimaryKeySelective( updFnNiceTran );
             }
             catch( Exception e ) {
-                logger.info( "[T_FN_NICE_TRAN] Update Error..{}", e.getLocalizedMessage() );
+                logger.warn( "[T_FN_NICE_TRAN] Update Error..{}", e.getLocalizedMessage() );
                 throw e;
             }
         }

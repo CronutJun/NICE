@@ -53,7 +53,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
             try {
                 rslt = errBasicMap.selectBySpec( errBasicSpec );
                 if( rslt.size() == 0 ) {
-                    logger.info( String.format("[SaveIBKBrandErrState][ERR][Pri] NO_DATA: CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
+                    logger.warn( String.format("[SaveIBKBrandErrState][ERR][Pri] NO_DATA: CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
                             parsed.getString("create_date"), parsed.getString("create_time"), 
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd")) );
                     throw new Exception( String.format("[SaveIBKBrandErrState][ERR][Pri] NO_DATA: CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
@@ -62,7 +62,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                 }
             }
             catch( Exception e) {
-                logger.info( String.format("[SaveIBKBrandErrState][ERR][Pri] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
+                logger.warn( String.format("[SaveIBKBrandErrState][ERR][Pri] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
                         parsed.getString("create_date"), parsed.getString("create_time"), 
                         parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                 throw e;
@@ -80,7 +80,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                     errBasicMap.updateByPrimaryKeySelective( updBasic );
                 }
                 catch( Exception e ) {
-                    logger.info( String.format("[SaveIBKBrandErrState][ERR][Pri] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
+                    logger.warn( String.format("[SaveIBKBrandErrState][ERR][Pri] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
                             parsed.getString("create_date"), parsed.getString("create_time"), 
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                     throw e;
@@ -98,17 +98,17 @@ public class In05001130Impl extends InMsgHandlerImpl {
             try {
                 sqlCnt = errBasicMap.countByCond2( cond );
                 if( sqlCnt == 0 ) {
-                    logger.info("[SaveIBKBrandErrState][ERR][Etc] No Data");
+                    logger.warn("[SaveIBKBrandErrState][ERR][Etc] No Data");
                 }
             }
             catch( Exception e ) {
-                logger.info("[SaveIBKBrandErrState][ERR][Etc] Error [{}]", e.getLocalizedMessage() );
+                logger.warn("[SaveIBKBrandErrState][ERR][Etc] Error [{}]", e.getLocalizedMessage() );
             }
             if( sqlCnt > 0 ) {
                 try {
                     rslt = errBasicMap.selectByCond5( cond );
                     if( rslt.size() == 0 ) {
-                        logger.info( String.format("[SaveIBKBrandErrState][ERR][Etc] NO DATA : CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s]",
+                        logger.warn( String.format("[SaveIBKBrandErrState][ERR][Etc] NO DATA : CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s]",
                                 parsed.getString("create_date"), parsed.getString("create_time"), 
                                 parsed.getString("mac_no"), parsed.getString("mac_error_cd")) );
                         throw new Exception( String.format("[SaveIBKBrandErrState][ERR][Etc] NO DATA : CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s]",
@@ -117,7 +117,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                     }
                 }
                 catch( Exception e ) {
-                    logger.info( String.format("[SaveIBKBrandErrState][ERR][Etc] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
+                    logger.warn( String.format("[SaveIBKBrandErrState][ERR][Etc] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
                             parsed.getString("create_date"), parsed.getString("create_time"), 
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                     throw e;
@@ -134,7 +134,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                         errBasicMap.updateByPrimaryKeySelective( updBasic );
                     }
                     catch( Exception e ) {
-                        logger.info( String.format("[SaveIBKBrandErrState][ERR][Etc] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
+                        logger.warn( String.format("[SaveIBKBrandErrState][ERR][Etc] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
                                 parsed.getString("create_date"), parsed.getString("create_time"), 
                                 parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                         throw e;
@@ -153,7 +153,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
             try {
                 rslt = errBasicMap.selectByJoin5( cond );
                 if( rslt.size() == 0 ) {
-                    logger.info( String.format("[SaveIBKBrandErrState][FIN] NO DATA : CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s]",
+                    logger.warn( String.format("[SaveIBKBrandErrState][FIN] NO DATA : CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s]",
                             parsed.getString("create_date"), parsed.getString("create_time"), 
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd")) );
                     throw new Exception( String.format("[SaveIBKBrandErrState][FIN] NO DATA : CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s]",
@@ -163,7 +163,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                 }
             }
             catch( Exception e ) {
-                logger.info( String.format("[SaveIBKBrandErrState][FIN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%.300s]", 
+                logger.warn( String.format("[SaveIBKBrandErrState][FIN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%.300s]", 
                         parsed.getString("create_date"), parsed.getString("create_time"), 
                         parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                 throw e;
@@ -181,7 +181,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                     errBasicMap.updateByPrimaryKeySelective( updBasic );
                 }
                 catch( Exception e ) {
-                    logger.info( String.format("[SaveIBKBrandErrState][ERR][FIN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
+                    logger.warn( String.format("[SaveIBKBrandErrState][ERR][FIN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
                             parsed.getString("create_date"), parsed.getString("create_time"), 
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                     throw e;
@@ -199,7 +199,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
             try {
                 rslt = errBasicMap.selectByJoin6( cond );
                 if( rslt.size() == 0 ) {
-                    logger.info( String.format("[SaveIBKBrandErrState][OPEN] NO DATA : CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s]",
+                    logger.warn( String.format("[SaveIBKBrandErrState][OPEN] NO DATA : CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s]",
                             parsed.getString("create_date"), parsed.getString("create_time"), 
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd")) );
                     throw new Exception( String.format("[SaveIBKBrandErrState][FIN] NO DATA : CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s]",
@@ -209,7 +209,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                 }
             }
             catch( Exception e ) {
-                logger.info( String.format("[SaveIBKBrandErrState][OPEN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%.300s]", 
+                logger.warn( String.format("[SaveIBKBrandErrState][OPEN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%.300s]", 
                         parsed.getString("create_date"), parsed.getString("create_time"), 
                         parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                 throw e;
@@ -227,7 +227,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                     errBasicMap.updateByPrimaryKeySelective( updBasic );
                 }
                 catch( Exception e ) {
-                    logger.info( String.format("[SaveIBKBrandErrState][ERR][OPEN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
+                    logger.warn( String.format("[SaveIBKBrandErrState][ERR][OPEN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]", 
                             parsed.getString("create_date"), parsed.getString("create_time"), 
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                     throw e;

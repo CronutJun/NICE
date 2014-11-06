@@ -69,12 +69,12 @@ public class InN3100700Impl extends InMsgHandlerImpl {
                 cmNiceEnvCheckMap.updateByPrimaryKeySelective( cmNiceEnvCheck );
             }
             catch( Exception e ) {
-                logger.info( "[T_CM_NICE_ENV_CHECK] Update Error [%.200s]\n", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_NICE_ENV_CHECK] Update Error [%.200s]\n", e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( "[T_CM_NICE_ENV_CHECK] Insert Error {}", e.getLocalizedMessage() );
+            logger.warn( "[T_CM_NICE_ENV_CHECK] Insert Error {}", e.getLocalizedMessage() );
             throw e;
         }
     }

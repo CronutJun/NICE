@@ -50,10 +50,10 @@ public class InN4101600Impl extends InMsgHandlerImpl {
                 cmMacMap.updateByPrimaryKeySelective( cmMac );
             }
             catch( Exception e ) {
-                logger.info( "[T_CM_MAC] Update Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_MAC] Update Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
-        logger.info( "T_CM_MAC] Update OK" );
+        logger.warn( "T_CM_MAC] Update OK" );
     }
 }

@@ -73,7 +73,7 @@ public class In02000310Impl extends InMsgHandlerImpl {
                 cmChangeSiteInfoMap.insert( cmCSInfo );
             }
             catch( Exception e ) {
-                logger.info( "[T_CM_CHANGE_SITE_INFO] Save Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_CHANGE_SITE_INFO] Save Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
@@ -122,12 +122,12 @@ public class In02000310Impl extends InMsgHandlerImpl {
                     cmSetSiteInfoMap.updateByPrimaryKeySelective( cmSSInfo );
                 }
                 catch( Exception e ) {
-                    logger.info( "[T_CM_SET_SITE_INFO] Save Error [{}]", e.getLocalizedMessage() );
+                    logger.warn( "[T_CM_SET_SITE_INFO] Save Error [{}]", e.getLocalizedMessage() );
                     throw e;
                 }
             }
             catch( Exception e ) {
-                logger.info( "[T_CM_SET_SITE_INFO] Save Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_SET_SITE_INFO] Save Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }

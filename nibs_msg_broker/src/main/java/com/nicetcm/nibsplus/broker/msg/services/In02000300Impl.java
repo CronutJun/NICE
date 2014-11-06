@@ -62,12 +62,12 @@ public class In02000300Impl extends InMsgHandlerImpl {
                 cmSetScheduleMap.updateByPrimaryKeySelective( cmSetSchedule );
             }
             catch( Exception e ) {
-                logger.info( "[T_CM_SET_SCHEDULE] Save Error [{}]", e.getLocalizedMessage() );
+                logger.warn( "[T_CM_SET_SCHEDULE] Save Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( "[T_CM_SET_SCHEDULE] Save Error [{}]", e.getLocalizedMessage() );
+            logger.warn( "[T_CM_SET_SCHEDULE] Save Error [{}]", e.getLocalizedMessage() );
             throw e;
         }
     }

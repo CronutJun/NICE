@@ -48,11 +48,11 @@ public class In03101193Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(String.format("[T_FN_WR_VAN_DEMAND] Update Err!! Err_cd[%d] Demand_date[%s] OrgCd[%s]", e.getMessage(), parsed.getString("demand_date"), parsed.getString("CM.org_cd")));
+            logger.warn(String.format("[T_FN_WR_VAN_DEMAND] Update Err!! Err_cd[%d] Demand_date[%s] OrgCd[%s]", e.getMessage(), parsed.getString("demand_date"), parsed.getString("CM.org_cd")));
             throw e;
         }
 
-        logger.info("[T_FN_WR_VAN_DEMAND] Update Success!! Demand_date[%s] OrgCd[%s]\n", parsed.getString("demand_date"), parsed.getString("CM.org_cd"));
+        logger.warn("[T_FN_WR_VAN_DEMAND] Update Success!! Demand_date[%s] OrgCd[%s]\n", parsed.getString("demand_date"), parsed.getString("CM.org_cd"));
     }
 
 

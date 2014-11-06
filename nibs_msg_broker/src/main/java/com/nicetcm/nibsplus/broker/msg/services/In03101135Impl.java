@@ -50,14 +50,14 @@ public class In03101135Impl extends InMsgHandlerImpl {
         try {
             List<TCmCashKiosk> cntChk = cashKioskMap.selectBySpec( cashKioskSpec );
             if( cntChk.size() > 0 ) {
-                logger.info( "[MngCM_AP_SaveCloseAmtKiosk] 기 마감건 있음 [{}-{}-{}-{}]",
+                logger.warn( "[MngCM_AP_SaveCloseAmtKiosk] 기 마감건 있음 [{}-{}-{}-{}]",
                     parsed.getString("inq_date"), parsed.getString("CM.org_cd"),
                     parsed.getString("branch_cd"), parsed.getString("mac_no") );
                 return;
             }
         }
         catch( Exception e ) {
-            logger.info( ">>> [T_CM_CASH_KIOSK] ERROR [{}]", e.getLocalizedMessage() );
+            logger.warn( ">>> [T_CM_CASH_KIOSK] ERROR [{}]", e.getLocalizedMessage() );
             return;
         }
 
@@ -83,13 +83,13 @@ public class In03101135Impl extends InMsgHandlerImpl {
                     cashKioskMap.insertSelective( cashKiosk );
                 }
                 catch( org.springframework.dao.DataIntegrityViolationException de ) {
-                    logger.info( "[T_CM_CASH_KIOSK] INSERT Duplicate !! 이미 저장된 건이 있습니다. [{}]", de.getLocalizedMessage() );
+                    logger.warn( "[T_CM_CASH_KIOSK] INSERT Duplicate !! 이미 저장된 건이 있습니다. [{}]", de.getLocalizedMessage() );
                 }
                 catch( Exception e ) {
-                    logger.info("[T_FN_REALTIME_TRADE_KIOSK] Insert Err [{}]", e.getLocalizedMessage() );
+                    logger.warn("[T_FN_REALTIME_TRADE_KIOSK] Insert Err [{}]", e.getLocalizedMessage() );
                     throw e;
                 }
-                logger.info( "[T_CM_CASH_KIOSK] SAVE OK" );
+                logger.warn( "[T_CM_CASH_KIOSK] SAVE OK" );
             }
         }
 

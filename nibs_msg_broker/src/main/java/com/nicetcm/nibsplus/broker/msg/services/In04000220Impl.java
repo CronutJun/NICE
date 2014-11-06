@@ -68,7 +68,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
                     }
 
                     if(siteCd == null || siteCd.equals("")) {
-                        logger.info(String.format("[SavePenaltyList] 브랜드제휴 페널티 사이트코드 없음. org_cd[%s] mac_no[%s]", parsed.getString("CM.org_cd"), parsed.getString("mac_no")));
+                        logger.warn(String.format("[SavePenaltyList] 브랜드제휴 페널티 사이트코드 없음. org_cd[%s] mac_no[%s]", parsed.getString("CM.org_cd"), parsed.getString("mac_no")));
                     };
 
                     /*******************************************************************
@@ -128,7 +128,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
 
                         } catch (Exception e)
                         {
-                            logger.info("[T_CT_PENALTY_LIST] Insert Error(브랜드) [{}]", e.getMessage());
+                            logger.warn("[T_CT_PENALTY_LIST] Insert Error(브랜드) [{}]", e.getMessage());
                             throw e;
                         }
 
@@ -176,7 +176,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
                                 tCtPenaltyListMapper.updateBySpecSelective(tCtPenaltyList, tCtPenaltyListSpec);
                             } catch (Exception e)
                             {
-                                logger.info("[T_CT_PENALTY_LIST] 1차 명세통보 Update Error(브랜드) [{}]", e.getMessage());
+                                logger.warn("[T_CT_PENALTY_LIST] 1차 명세통보 Update Error(브랜드) [{}]", e.getMessage());
                                 throw e;
                             }
 
@@ -184,7 +184,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
 
                         }
 
-                        logger.info( String.format("[T_CT_PENALTY_LIST] 1차 명세통보 Insert/Update 완료(브랜드) BRAND_ORG_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
+                        logger.warn( String.format("[T_CT_PENALTY_LIST] 1차 명세통보 Insert/Update 완료(브랜드) BRAND_ORG_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
                                         parsed.getString("CM.org_cd"), parsed.getString("mac_no"), parsed.getString("create_date"), parsed.getString("create_time"))  );
                     } else if(parsed.getString("notice_type").equals("2")) {
                         /* 2차 명세통보(최종) */
@@ -210,14 +210,14 @@ public class In04000220Impl extends InMsgHandlerImpl {
                             tCtPenaltyListMapper.updateBySpecSelective(tCtPenaltyList, tCtPenaltyListSpec);
                         } catch (Exception e)
                         {
-                            logger.info("[T_CT_PENALTY_LIST] 2차 명세통보 Update 실패(브랜드) [{}]", e.getMessage());
+                            logger.warn("[T_CT_PENALTY_LIST] 2차 명세통보 Update 실패(브랜드) [{}]", e.getMessage());
                             throw e;
                         }
 
-                        logger.info( String.format("[T_CT_PENALTY_LIST] 2차 명세통보 Update 완료(브랜드) BRAND_ORG_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
+                        logger.warn( String.format("[T_CT_PENALTY_LIST] 2차 명세통보 Update 완료(브랜드) BRAND_ORG_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
                                         parsed.getString("CM.org_cd"), parsed.getString("mac_no"), parsed.getString("create_date"), parsed.getString("create_time")  ));
                     } else {
-                        logger.info("[T_CT_PENALTY_LIST] 통보유형(통보/최종통보)코드 없음");
+                        logger.warn("[T_CT_PENALTY_LIST] 통보유형(통보/최종통보)코드 없음");
                         throw new MsgBrokerException(-1);
                     }
 
@@ -273,7 +273,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
 
                     } catch (Exception e)
                     {
-                        logger.info("[T_CT_PENALTY_LIST] Insert Error(브랜드) [{}]", e.getMessage());
+                        logger.warn("[T_CT_PENALTY_LIST] Insert Error(브랜드) [{}]", e.getMessage());
                         throw e;
                     }
 
@@ -321,7 +321,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
                             tCtPenaltyListMapper.updateBySpecSelective(tCtPenaltyList, tCtPenaltyListSpec);
                         } catch (Exception e)
                         {
-                            logger.info("[T_CT_PENALTY_LIST] Update Error(브랜드) [{}]", e.getMessage());
+                            logger.warn("[T_CT_PENALTY_LIST] Update Error(브랜드) [{}]", e.getMessage());
                             throw e;
                         }
 
@@ -329,7 +329,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
 
                     }
 
-                    logger.info( String.format("[T_CT_PENALTY_LIST] Insert/Update Complete(브랜드) BRAND_ORG_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
+                    logger.warn( String.format("[T_CT_PENALTY_LIST] Insert/Update Complete(브랜드) BRAND_ORG_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
                                     parsed.getString("CM.org_cd"), parsed.getString("mac_no"), parsed.getString("create_date"), parsed.getString("create_time"))  );
 
 
@@ -392,7 +392,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
 
                         } catch (Exception e)
                         {
-                            logger.info("[T_CT_PENALTY_LIST] 1차 통보 Insert Error [{}]", e.getMessage());
+                            logger.warn("[T_CT_PENALTY_LIST] 1차 통보 Insert Error [{}]", e.getMessage());
                             throw e;
                         }
 
@@ -439,7 +439,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
                                 tCtPenaltyListMapper.updateBySpecSelective(tCtPenaltyList, tCtPenaltyListSpec);
                             } catch (Exception e)
                             {
-                                logger.info("[T_CT_PENALTY_LIST] 1차 통보 Update Error [{}]", e.getMessage());
+                                logger.warn("[T_CT_PENALTY_LIST] 1차 통보 Update Error [{}]", e.getMessage());
                                 throw e;
                             }
 
@@ -476,12 +476,12 @@ public class In04000220Impl extends InMsgHandlerImpl {
                             tCtPenaltyListMapper.updateBySpecSelective(tCtPenaltyList, tCtPenaltyListSpec);
                         } catch (Exception e)
                         {
-                            logger.info("[T_CT_PENALTY_LIST] 2차 명세통보 Update Error [{}]", e.getMessage());
+                            logger.warn("[T_CT_PENALTY_LIST] 2차 명세통보 Update Error [{}]", e.getMessage());
                             throw e;
                         }
                     } else {
                         /* 통보유형 없음. 등록하지 않는다. */
-                        logger.info("[T_CT_PENALTY_LIST] 통보유형(통보/최종통보)코드 없음");
+                        logger.warn("[T_CT_PENALTY_LIST] 통보유형(통보/최종통보)코드 없음");
                         throw new MsgBrokerException(-1);
                     }
 
@@ -536,7 +536,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
 
                     } catch (Exception e)
                     {
-                        logger.info("[T_CT_PENALTY_LIST] Insert Error [{}]", e.getMessage());
+                        logger.warn("[T_CT_PENALTY_LIST] Insert Error [{}]", e.getMessage());
                         throw e;
                     }
 
@@ -586,7 +586,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
                             tCtPenaltyListMapper.updateBySpecSelective(tCtPenaltyList, tCtPenaltyListSpec);
                         } catch (Exception e)
                         {
-                            logger.info("[T_CT_PENALTY_LIST] Update Error [{}]", e.getMessage());
+                            logger.warn("[T_CT_PENALTY_LIST] Update Error [{}]", e.getMessage());
                             throw e;
                         }
                     }
@@ -618,11 +618,11 @@ public class In04000220Impl extends InMsgHandlerImpl {
                 tCtPenaltyListMapper.updateBySpecSelective(tCtPenaltyList, tCtPenaltyListSpec);
             } catch (Exception e)
             {
-                logger.info("[T_CT_PENALTY_LIST] Update Error [{}]", e.getMessage());
+                logger.warn("[T_CT_PENALTY_LIST] Update Error [{}]", e.getMessage());
                 throw e;
             }
 
-            logger.info( String.format("[T_CT_PENALTY_LIST] Update Complete ORG_CD[%s] JIJUM_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
+            logger.warn( String.format("[T_CT_PENALTY_LIST] Update Complete ORG_CD[%s] JIJUM_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
                             parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("create_date"), parsed.getString("create_time"))  );
         }//endof 나이스에서 송신한 요청에 대한 응답일경우
     }//end method

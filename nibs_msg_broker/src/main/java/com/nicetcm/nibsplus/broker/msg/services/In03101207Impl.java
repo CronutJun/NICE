@@ -52,10 +52,10 @@ public class In03101207Impl extends InMsgHandlerImpl {
 
         } catch (Exception e)
         {
-            logger.info(">>> [T_FN_NOTEND_EMART_FRGN] UPDATE ERROR {}", e.getMessage());
+            logger.warn(">>> [T_FN_NOTEND_EMART_FRGN] UPDATE ERROR {}", e.getMessage());
             throw e;
         }
 
-        logger.info(">>> [T_FN_NOTEND_EMART_FRGN] UPDATE OK");
+        logger.warn(">>> [T_FN_NOTEND_EMART_FRGN] UPDATE OK");
     }
 }

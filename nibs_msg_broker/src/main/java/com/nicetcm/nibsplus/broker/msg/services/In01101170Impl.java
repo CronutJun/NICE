@@ -72,7 +72,7 @@ public class In01101170Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(String.format("기번정보 없음(코너 대표기번 검색 실패),org_cd[%s],jijum_cd[%s], org_site_cd[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("org_site_cd")) );
+                logger.warn(String.format("기번정보 없음(코너 대표기번 검색 실패),org_cd[%s],jijum_cd[%s], org_site_cd[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("org_site_cd")) );
                 throw new Exception(String.format("기번정보 없음(코너 대표기번 검색 실패),org_cd[%s],jijum_cd[%s], org_site_cd[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("org_site_cd")));
             }
 
@@ -117,16 +117,16 @@ public class In01101170Impl extends InMsgHandlerImpl {
                     resultCnt = tCtErrorMngMadeComMapper.updateBySpecSelective(tCtErrorMngMadeCom, tCtErrorMngMadeComSpec);
                 } catch (Exception e)
                 {
-                    logger.info( ">>> [MngEM_AP_SAVEaRRIVAL] (T_CT_ERROR_MNG_MADE_COM) UPDATE ERROR [%.200s]", e.getMessage());
+                    logger.warn( ">>> [MngEM_AP_SAVEaRRIVAL] (T_CT_ERROR_MNG_MADE_COM) UPDATE ERROR [%.200s]", e.getMessage());
                     throw e;
                 }
 
                 if(resultCnt == 0) {
-                    logger.info( "...해당 장애 없음 trans_date[{}] org_msg_no[{}]", parsed.getString("trans1_date"), parsed.getString("trans1_seq"));
+                    logger.warn( "...해당 장애 없음 trans_date[{}] org_msg_no[{}]", parsed.getString("trans1_date"), parsed.getString("trans1_seq"));
                     /* 아래부분에서 t_ct_error_mng update 치도록 함. */
                 }
 
-                logger.info("!!! 신한은행 2차출동 도착보고  처리완료(T_CT_ERROR_MNG_MADE_COM UPDATE)!!!");
+                logger.warn("!!! 신한은행 2차출동 도착보고  처리완료(T_CT_ERROR_MNG_MADE_COM UPDATE)!!!");
 
                 return;
             }
@@ -142,7 +142,7 @@ public class In01101170Impl extends InMsgHandlerImpl {
                     hSEND_YN = "d";
                 }
             } else {
-                logger.info("[MngEM_AP_SaveArrival] 응답코드[{}]수신", parsed.getString("CM.ret_cd_src") + parsed.getString("CM.ret_cd"));
+                logger.warn("[MngEM_AP_SaveArrival] 응답코드[{}]수신", parsed.getString("CM.ret_cd_src") + parsed.getString("CM.ret_cd"));
                 return;
             }
 
@@ -186,7 +186,7 @@ public class In01101170Impl extends InMsgHandlerImpl {
                         hSEND_YN = "d";
                     }
                 } else {
-                    logger.info("[MngEM_AP_SaveMngResult] 응답코드[{}]수신", parsed.getString("CM.ret_cd_src") + parsed.getString("CM.ret_cd"));
+                    logger.warn("[MngEM_AP_SaveMngResult] 응답코드[{}]수신", parsed.getString("CM.ret_cd_src") + parsed.getString("CM.ret_cd"));
                     return;
                 }
 
@@ -207,12 +207,12 @@ public class In01101170Impl extends InMsgHandlerImpl {
                         hSEND_YN = "d";
                     }
                 } else {
-                    logger.info("[MngEM_AP_SaveMngResult] 응답코드[{}]수신", parsed.getString("CM.ret_cd_src") + parsed.getString("CM.ret_cd"));
+                    logger.warn("[MngEM_AP_SaveMngResult] 응답코드[{}]수신", parsed.getString("CM.ret_cd_src") + parsed.getString("CM.ret_cd"));
                     return;
                 }
 
             } else {
-                logger.info("[MngEM_AP_SaveMngResult] 조치결과가 지원되지 않는 기관입니다.[%s]", parsed.getString("CM.org_cd"));
+                logger.warn("[MngEM_AP_SaveMngResult] 조치결과가 지원되지 않는 기관입니다.[%s]", parsed.getString("CM.org_cd"));
                 throw new Exception("[MngEM_AP_SaveMngResult] 조치결과가 지원되지 않는 기관입니다.[" + parsed.getString("CM.org_cd") + "]");
             }
 
@@ -242,7 +242,7 @@ public class In01101170Impl extends InMsgHandlerImpl {
             comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMngSpec);
         }
 
-        logger.info( "[MngEM_AP_SaveMngResult] Update OK" );
+        logger.warn( "[MngEM_AP_SaveMngResult] Update OK" );
 
     }//end method
 }

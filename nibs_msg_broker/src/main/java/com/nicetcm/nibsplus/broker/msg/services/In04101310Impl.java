@@ -46,10 +46,10 @@ public class In04101310Impl extends InMsgHandlerImpl {
             tFnElandCouponMapper.updateBySpecSelective(tFnElandCoupon, tFnElandCouponSpec);
         } catch (Exception e)
         {
-            logger.info( "[T_FN_ELAND_COUPON] Update Error [{}]", e.getMessage());
+            logger.warn( "[T_FN_ELAND_COUPON] Update Error [{}]", e.getMessage());
             throw e;
         }
 
-        logger.info( "[T_FN_ELAND_COUPON] Update OK" );
+        logger.warn( "[T_FN_ELAND_COUPON] Update OK" );
     }
 }

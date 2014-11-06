@@ -48,7 +48,7 @@ public class In04002280Impl extends InMsgHandlerImpl {
                 }
             } catch (Exception e)
             {
-                logger.info(">>> [f_get_org_site_cd] 기관 코너코드 파악 실패 [{}]", e.getMessage());
+                logger.warn(">>> [f_get_org_site_cd] 기관 코너코드 파악 실패 [{}]", e.getMessage());
                 throw e;
             }
 

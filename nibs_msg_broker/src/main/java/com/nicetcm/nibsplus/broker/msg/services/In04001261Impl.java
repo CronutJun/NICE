@@ -54,11 +54,11 @@ public class In04001261Impl extends InMsgHandlerImpl {
                 tCmNiceEnvCheckMapper.updateBySpecSelective(tCmNiceEnvCheck, tCmNiceEnvCheckSpec);
             } catch (Exception e)
             {
-                logger.info(">>> [DBUpdateEnvCheckBrand] (T_CM_SITE_ENV_CHECK_BRAND) CANCEL ERROR [{}]", e.getMessage());
+                logger.warn(">>> [DBUpdateEnvCheckBrand] (T_CM_SITE_ENV_CHECK_BRAND) CANCEL ERROR [{}]", e.getMessage());
                 throw e;
             }
 
-            logger.info(String.format("UPDATE SUCCES - ORG[%s] MAC_NO[%s]", parsed.getString("CM.org_cd"), parsed.getString("mac_no")));
+            logger.warn(String.format("UPDATE SUCCES - ORG[%s] MAC_NO[%s]", parsed.getString("CM.org_cd"), parsed.getString("mac_no")));
 
         } else {
             /* 브랜드제휴가 아닌 기기     */

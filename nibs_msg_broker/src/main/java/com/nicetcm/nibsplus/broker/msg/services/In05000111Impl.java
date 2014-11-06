@@ -63,12 +63,12 @@ public class In05000111Impl extends InMsgHandlerImpl {
 
         try {
             comPack.getMacInfo( macInfo );
-            logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+            logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(), macInfo.getMacNm(),
                     macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
         }
         catch( Exception e ) {
-            logger.info("기기정보 검색 실패-기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+            logger.warn("기기정보 검색 실패-기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(), macInfo.getMacNm(),
                     macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
             throw e;
@@ -156,18 +156,18 @@ public class In05000111Impl extends InMsgHandlerImpl {
                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                         errNoti, errCall, errTxn, macInfo, retErrStates );
 
-                /*logger.info(">>> [SaveCalcMacErrState] 기관[{}] 상태[index-{}][{}][{}] ... 복구...",
+                /*logger.warn(">>> [SaveCalcMacErrState] 기관[{}] 상태[index-{}][{}][{}] ... 복구...",
                 parsed.getString("CM.org_cd"), e.ordinal(), parsed.getBytes("atm_state")[e.ordinal()], errBasic.getErrorCd());*/
             }
             else if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP1
                  ||  parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP2
                  ||  parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_SKIP3 ) {
             /*
-                logger.info(">>> [SaveCalcMacErrState] 상태무시");
+                logger.warn(">>> [SaveCalcMacErrState] 상태무시");
             */
             }
             else {
-                logger.info(">>> [SaveCalcMacErrState] 잘못된 상태코드 수신-코드({}) - ex)복구:0,예보:1,장애:2, 무시:' ' or 9",
+                logger.warn(">>> [SaveCalcMacErrState] 잘못된 상태코드 수신-코드({}) - ex)복구:0,예보:1,장애:2, 무시:' ' or 9",
                      parsed.getString("atm_state").substring(e.ordinal(), e.ordinal()+1) );
             }
         }
@@ -212,7 +212,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
         if( parsed.getBytes("atm_monitor")[0] == MsgBrokerConst.CALC_MAC_SUPERVISOR ) {  // 슈퍼바이저 모드일 경우
             errBasic.setErrorCd( String.format("NE%d%02s", 2, MsgBrokerConst.CD_CALC_MAC_SUPERVISOR) );
 
-            logger.info(">>> [SaveCalcMacErrState] [정산기 슈퍼바이져 상태] {}", errBasic.getErrorCd() );
+            logger.warn(">>> [SaveCalcMacErrState] [정산기 슈퍼바이져 상태] {}", errBasic.getErrorCd() );
 
             comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             /*
@@ -257,7 +257,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
             if ( nCnt == -1 )
                 throw new Exception("getFtpFileCnt Error");
             else if ( nCnt < parsed.getInt("ftp_cnt") ) {
-                logger.info("MngES_SaveCalcMacErrState : file 개수 맞지 않음 [{}][{}]", parsed.getString("ftp_cnt"),  nCnt);
+                logger.warn("MngES_SaveCalcMacErrState : file 개수 맞지 않음 [{}][{}]", parsed.getString("ftp_cnt"),  nCnt);
                 throw new MsgBrokerException(String.format("MngES_SaveCalcMacErrState : file 개수 맞지 않음 [%d][%s]",
                         parsed.getInt("ftp_cnt"), nCnt), -7 );
             }

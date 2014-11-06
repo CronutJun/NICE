@@ -67,7 +67,7 @@ public class In01000310Impl extends InMsgHandlerImpl {
 
             } catch (Exception e)
             {
-                logger.info(String.format("기번정보 없음(코너 대표기번 검색 실패),org_cd[%s],jijum_cd[%s], org_site_cd[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("org_site_cd")) );
+                logger.warn(String.format("기번정보 없음(코너 대표기번 검색 실패),org_cd[%s],jijum_cd[%s], org_site_cd[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("org_site_cd")) );
                 throw new Exception(String.format("기번정보 없음(코너 대표기번 검색 실패),org_cd[%s],jijum_cd[%s], org_site_cd[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("org_site_cd")));
             }
 
@@ -200,13 +200,13 @@ public class In01000310Impl extends InMsgHandlerImpl {
                 comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMngSpec);
             } catch (Exception e)
             {
-                logger.info(">>> [MngEM_SaveAfterCall] (T_CT_ERROR_MNG) UPDATE ERROR [{}]", e.getMessage());
+                logger.warn(">>> [MngEM_SaveAfterCall] (T_CT_ERROR_MNG) UPDATE ERROR [{}]", e.getMessage());
                 throw e;
             }
 
-            logger.info("!!! 후처리 요청 기관 특이사항  처리완료(T_CT_ERROR_MNG UPDATE)!!!");
+            logger.warn("!!! 후처리 요청 기관 특이사항  처리완료(T_CT_ERROR_MNG UPDATE)!!!");
 
-            logger.info( ">>> [MngEM_SaveAfterCall] 1차통지 거래일 ({}), 전문추적번호 ({}) , 장애코드 ({}) 중복출동 수신",
+            logger.warn( ">>> [MngEM_SaveAfterCall] 1차통지 거래일 ({}), 전문추적번호 ({}) , 장애코드 ({}) 중복출동 수신",
                             parsed.getString("create_date"), parsed.getString("trans1_seq"), errBasic.getErrorCd());
             /* return RET_INSERT_DUP_ERROR; */
             /* 중복 출동 요청 수신이라도 은행에는 정상 응답 */

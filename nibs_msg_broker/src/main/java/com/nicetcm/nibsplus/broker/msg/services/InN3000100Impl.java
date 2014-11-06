@@ -62,7 +62,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         }
         int iRtn = compCloseDate( parsed.getString("mac_no"), parsed.getString("close_date") );
         if( iRtn < 0 ) {
-            logger.info( "CompCloseDate function result error" );
+            logger.warn( "CompCloseDate function result error" );
             throw new Exception("CompCloseDate function result error");
         }
         /*
@@ -75,7 +75,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
                 insertNiceCloseTmp( safeData, parsed );
             }
             catch( Exception e ) {
-                logger.info( "insertNiceCloseTmp Error." );
+                logger.warn( "insertNiceCloseTmp Error." );
                 throw e;
             }
         }
@@ -87,7 +87,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
                 insertNiceCloseSum( safeData, parsed );
             }
             catch( Exception e ) {
-                logger.info( "insertNiceCloseSum Error." );
+                logger.warn( "insertNiceCloseSum Error." );
                 throw e;
             }
             logger.debug( "close_date[{}], mac_no[{}], update_uid[{}]",
@@ -101,7 +101,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             try {
                 splMap.spFnMacClose( macClose );
                 if( !macClose.getResult().equals("OK") )
-                    logger.info( "sp_fn_macclose procedure Error. [{}]", macClose.getResult() );
+                    logger.warn( "sp_fn_macclose procedure Error. [{}]", macClose.getResult() );
             }
             catch( Exception e ) {
                 
@@ -130,10 +130,10 @@ public class InN3000100Impl extends InMsgHandlerImpl {
                 fnNiceCloseGiftMap.insert( fnNCG );
             }
             catch( org.springframework.dao.DataIntegrityViolationException de ) {
-                logger.info("]T_FN_NICE_CLOSE_GIFT] dup Error!!!");
+                logger.warn("]T_FN_NICE_CLOSE_GIFT] dup Error!!!");
             }
             catch( Exception e ) {
-                logger.info("[T_FN_NICE_CLOSE_GIFT] Insert Error [{}]", e.getLocalizedMessage() );
+                logger.warn("[T_FN_NICE_CLOSE_GIFT] Insert Error [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
@@ -191,12 +191,12 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             fnNiceCloseOrgMap.insert( fnNCO );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
-            logger.info( "[T_FN_NICE_CLOSE_ORG] Duplication [{}][{}][{}] !!!",
+            logger.warn( "[T_FN_NICE_CLOSE_ORG] Duplication [{}][{}][{}] !!!",
                     parsed.getString("mac_no"), parsed.getString("close_date"), parsed.getString("close_time") );
             throw de;
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_NICE_CLOSE_ORG] Insert Error.. {}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_NICE_CLOSE_ORG] Insert Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
     }
@@ -215,7 +215,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info( "CompCloseDate Error mac_no[{}] date[{}] => {}",
+            logger.warn( "CompCloseDate Error mac_no[{}] date[{}] => {}",
                     macNo, chkDate, e.getLocalizedMessage() );
             return -1;
         }
@@ -226,7 +226,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             return 0;
         }
         else {
-            logger.info( "CompCloseDate Error close_date[{}]", rslt.get(0).getCloseDate() );
+            logger.warn( "CompCloseDate Error close_date[{}]", rslt.get(0).getCloseDate() );
             return -1;
         }
     }
@@ -285,7 +285,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             fnNiceCloseTmpMap.insert( fnNCT );
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_NICE_CLOSE_TMP] Insert Error.. {}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_NICE_CLOSE_TMP] Insert Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
 
@@ -342,12 +342,12 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         try {
             sum = fnNiceCloseTmpMap.selectBySum1( cond );
             if( sum == null) {
-                logger.info( "[T_FN_NICE_CLOSE_TMP] Select Sum is nothing" );
+                logger.warn( "[T_FN_NICE_CLOSE_TMP] Select Sum is nothing" );
                 throw new Exception("[T_FN_NICE_CLOSE_TMP] Select Sum is nothing");
             }
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_NICE_CLOSE_TMP] Select Sum Error.. {}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_NICE_CLOSE_TMP] Select Sum Error.. {}", e.getLocalizedMessage() );
             throw e;
 
         }
@@ -379,7 +379,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
+            logger.warn( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
         }
         miscCond.setArgType( "FO" );
         miscCond.setOrgCd( "096" );
@@ -392,7 +392,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.info( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
+            logger.warn( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
         }
         
         fnNiceClose.setInsertDate( safeData.getDSysDate() );
@@ -401,7 +401,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             fnNiceCloseMap.insert( fnNiceClose );
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_NICE_CLOSE] Insert Error.. {}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_NICE_CLOSE] Insert Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
         
@@ -412,14 +412,14 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             fnNiceCloseTmpMap.deleteBySpec( fnNCTSpec );
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_NICE_CLOSE_TMP] Delete Error.. {}", e.getLocalizedMessage() );
+            logger.warn( "[T_FN_NICE_CLOSE_TMP] Delete Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
         try {
             insertNiceCloseTmp( safeData, parsed );
         }
         catch( Exception e ) {
-            logger.info( "DBInsertNiceCloseSum => DBInsertNiceCloseTmp Error." );
+            logger.warn( "DBInsertNiceCloseSum => DBInsertNiceCloseTmp Error." );
             throw e;
         }
     }

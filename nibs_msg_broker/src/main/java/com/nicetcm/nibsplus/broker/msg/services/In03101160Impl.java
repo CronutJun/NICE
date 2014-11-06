@@ -79,11 +79,11 @@ public class In03101160Impl extends InMsgHandlerImpl {
                 tFnAtmsAddCashReportMapper.updateBySpecSelective(tFnAtmsAddCashReport, tFnAtmsAddCashReportSpec);
             } catch (Exception e)
             {
-                logger.info( "[T_FN_ATMS_ADD_CASH_REPORT] Update Error {}", e.getMessage() );
+                logger.warn( "[T_FN_ATMS_ADD_CASH_REPORT] Update Error {}", e.getMessage() );
                 throw e;
             }
 
-            logger.info( "[T_FN_ATMS_ADD_CASH_REPORT] Update OK" );
+            logger.warn( "[T_FN_ATMS_ADD_CASH_REPORT] Update OK" );
 
         } else if(parsed.getString("addcash_type").equals("A")) {
             /* 시티은행의 경우 일반 추가 현송과, 미현송 기기의 강제마감에 따른 추가 현송을 구별해 주어야 하므로
@@ -129,11 +129,11 @@ public class In03101160Impl extends InMsgHandlerImpl {
                 tFnAtmsAddNhReportMapper.updateBySpecSelective(tFnAtmsAddNhReport, tFnAtmsAddNhReportSpec);
             } catch (Exception e)
             {
-                logger.info( "[T_FN_ATMS_ADD_NH_REPORT] Update Error {}", e.getMessage() );
+                logger.warn( "[T_FN_ATMS_ADD_NH_REPORT] Update Error {}", e.getMessage() );
                 throw e;
             }
 
-            logger.info( "[T_FN_ATMS_ADD_NH_REPORT] Update OK" );
+            logger.warn( "[T_FN_ATMS_ADD_NH_REPORT] Update OK" );
         }//endif
 
     }//end method

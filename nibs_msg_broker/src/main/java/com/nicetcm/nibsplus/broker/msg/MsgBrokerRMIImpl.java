@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerRMI;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerTimeoutException;
+import com.nicetcm.nibsplus.broker.msg.services.OutMsgHandler;
 
 public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
@@ -26,7 +26,6 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
     private StoredProcMapper splMap;
 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerRMIImpl.class);
-    private FileOutputStream fOut;
 
     public MsgBrokerRMIImpl() {
     }
@@ -36,6 +35,9 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         byte[] respMsg = null;
         int defTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout"));
         BlockingQueue<byte[]> waitQ = new LinkedBlockingQueue<byte[]>();
+        MsgBrokerData msgThrdSafeData = new MsgBrokerData();
+
+        msgThrdSafeData.setNoOutData( false );
 
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
         logger.debug("QNm = {}", ret.QNm);
@@ -58,27 +60,41 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                 if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
                     throw new Exception("trans_seq_no is empty!!");
 
-                rmiSyncAns.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), waitQ);
                 try {
-                    MsgBrokerProducer.putDataToPrd(msgPsr);
-
-                    /**
-                     * TImeout 무시한다.
-                    if( timeout > 0)
-                        defTimeout = timeout;
+                    /*
+                     *  Find and invoke method of instance of biz
                      */
+                    OutMsgHandler bizBranch = (OutMsgHandler)MsgBrokerSpringMain
+                            .sprCtx.getBean("out" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
+                    bizBranch.outMsgHandle( msgThrdSafeData, msgPsr );
+                }
+                catch( Exception e ) {
+                    logger.debug("There's no spring bean : {}", "out" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
+                }
 
-                    respMsg = waitQ.poll(defTimeout, TimeUnit.SECONDS);
-                    if( respMsg == null )
-                        throw new MsgBrokerTimeoutException(String.format("Timeout [%d]", timeout));
-                 }
-                 catch (InterruptedException ie ) {
-                     logger.debug("Interrupted..");
-                 }
-                 catch ( MsgBrokerTimeoutException re ) {
-                     logger.debug("callBrokerSync Timeout error raised.. {}", re.getMessage());
-                     throw re;
-                 }
+                if( !msgThrdSafeData.isNoOutData() ) {
+                    rmiSyncAns.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), waitQ);
+                    try {
+                        MsgBrokerProducer.putDataToPrd(msgPsr);
+
+                        /**
+                         * TImeout 무시한다.
+                        if( timeout > 0)
+                            defTimeout = timeout;
+                         */
+
+                        respMsg = waitQ.poll(defTimeout, TimeUnit.SECONDS);
+                        if( respMsg == null )
+                            throw new MsgBrokerTimeoutException(String.format("Timeout [%d]", timeout));
+                     }
+                     catch (InterruptedException ie ) {
+                         logger.debug("Interrupted..");
+                     }
+                     catch ( MsgBrokerTimeoutException re ) {
+                         logger.debug("callBrokerSync Timeout error raised.. {}", re.getMessage());
+                         throw re;
+                     }
+                }
             }
             catch( Exception e ) {
                 logger.error("Error raised. Message = {}", e.getMessage() );
@@ -96,6 +112,9 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
     }
 
     public void callBrokerAsync(byte[] msg) throws Exception {
+        MsgBrokerData msgThrdSafeData = new MsgBrokerData();
+
+        msgThrdSafeData.setNoOutData( false );
 
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
         logger.debug("QNm = {}", ret.QNm);
@@ -117,7 +136,21 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                 if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
                     throw new Exception("trans_seq_no is empty!!");
 
-                MsgBrokerProducer.putDataToPrd(msgPsr);
+                try {
+                    /*
+                     *  Find and invoke method of instance of biz
+                     */
+                    OutMsgHandler bizBranch = (OutMsgHandler)MsgBrokerSpringMain
+                            .sprCtx.getBean("out" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
+                    bizBranch.outMsgHandle( msgThrdSafeData, msgPsr );
+                }
+                catch( Exception e ) {
+                    logger.debug("There's no spring bean : {}", "out" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
+                }
+
+                if( !msgThrdSafeData.isNoOutData() ) {
+                    MsgBrokerProducer.putDataToPrd(msgPsr);
+                }
             }
             catch( Exception e ) {
                 logger.error("Error raised. Message = {}", e.getMessage() );

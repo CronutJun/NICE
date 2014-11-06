@@ -199,7 +199,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             comPack.getMacInfo( macInfo );
         }
         catch ( Exception e) {
-            logger.info("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
+            logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(), macInfo.getMacNm(),
                     macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
             throw e;
@@ -225,7 +225,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         errState.setMacNo( errBasic.getMacNo() );
 
         byte[] retErrState = comPack.getCurrentErrorState( errState );
-        logger.info(" CUR_ERROR_LIST[{}]", errState.getErrorStates() );
+        logger.warn(" CUR_ERROR_LIST[{}]", errState.getErrorStates() );
 
         /*
          * 점주관리 기기의 경우 t_ct_nice_mng에만 저장하고 장애 발생 하지 않는다.
@@ -259,14 +259,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                  }
              }
 
-             logger.info( "점주관리기기-[%s] skip", parsed.getString("mac_no") );
+             logger.warn( "점주관리기기-[%s] skip", parsed.getString("mac_no") );
              return;
          }
 
         /*
          * 개시전문
          */
-        logger.info( "network_info[{}]", parsed.getString("network_info") );
+        logger.warn( "network_info[{}]", parsed.getString("network_info") );
         if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_START) ) {
             insertNiceOpenData( safeData, parsed, macInfo, retErrState );
 
@@ -890,7 +890,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             }
         }
         else {
-            logger.info(">>> [NICE] ERROR-전문이상 - 알수없는전문입니다.");
+            logger.warn(">>> [NICE] ERROR-전문이상 - 알수없는전문입니다.");
             throw new Exception(">>> [NICE] ERROR-전문이상 - 알수없는전문입니다.");
         }
 
@@ -1079,7 +1079,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 fnArpcFaultMap.insertSelective( fnArpcFault );
             }
             catch( Exception e ) {
-                logger.info( "T_FN_ARPC_FAULT[DEAL_NO=%{}] Insert 오류 ... 정상진행..", parsed.getString("arpc_fault_dealno") );
+                logger.warn( "T_FN_ARPC_FAULT[DEAL_NO=%{}] Insert 오류 ... 정상진행..", parsed.getString("arpc_fault_dealno") );
             }
         }
         /*
@@ -1165,9 +1165,9 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             niceMngMap.insertSelective( niceMng );
         }
         catch ( Exception e ){
-            logger.info( ">>> [DBInsertNICE_MNG] (T_CT_NICE_MNG) INSERT ERROR [{}]",e.getMessage() );
-            logger.info( "         J_DATE[{}] J_TIME[{}]", niceMng.getjDate(), niceMng.getjTime() );
-            logger.info( "         MAC_NO[{}] NET_S [{}]", niceMng.getMacNo(), niceMng.getNetS() );
+            logger.warn( ">>> [DBInsertNICE_MNG] (T_CT_NICE_MNG) INSERT ERROR [{}]",e.getMessage() );
+            logger.warn( "         J_DATE[{}] J_TIME[{}]", niceMng.getjDate(), niceMng.getjTime() );
+            logger.warn( "         MAC_NO[{}] NET_S [{}]", niceMng.getMacNo(), niceMng.getNetS() );
             throw e;
         }
     }
@@ -1251,12 +1251,12 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 fnBrandSetStateMap.updateByPrimaryKeySelective( fnBrandSetState );
             }
             catch (Exception e) {
-                logger.info( ">>> [DBInsertUpdateBrandOrg] (T_FN_BRAND_SET_STATE) UPDATE ERROR [{}]", e.getLocalizedMessage());
+                logger.warn( ">>> [DBInsertUpdateBrandOrg] (T_FN_BRAND_SET_STATE) UPDATE ERROR [{}]", e.getLocalizedMessage());
                 throw e;
             }
         }
         catch ( Exception e ) {
-            logger.info( ">>> [DBInsertUpdateBrandOrg] (T_FN_BRAND_SET_STATE) INSERT ERROR [{}]", e.getLocalizedMessage() );
+            logger.warn( ">>> [DBInsertUpdateBrandOrg] (T_FN_BRAND_SET_STATE) INSERT ERROR [{}]", e.getLocalizedMessage() );
             throw e;
         }
     }
@@ -1279,12 +1279,12 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 fnRcCntMap.updateByPrimaryKeySelective( fnRcCnt );
             }
             catch (Exception e) {
-                logger.info( ">>> [DBInsertUpdateRCCnt] (T_FN_RC_CNT) UPDATE ERROR [{}]", e.getLocalizedMessage() );
+                logger.warn( ">>> [DBInsertUpdateRCCnt] (T_FN_RC_CNT) UPDATE ERROR [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch ( Exception e ) {
-            logger.info( ">>> [DBInsertUpdateRCCnt] (T_FN_RC_CNT) INSERT ERROR [{}]", e.getLocalizedMessage() );
+            logger.warn( ">>> [DBInsertUpdateRCCnt] (T_FN_RC_CNT) INSERT ERROR [{}]", e.getLocalizedMessage() );
             throw e;
         }
     }
@@ -1309,12 +1309,12 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         try {
             cmMac = cmMacMap.selectByPrimaryKey( cmMacKey );
             if( cmMac == null ) {
-                logger.info( ">>> [DBGetNICECashBox] 지폐함 갯수 파악 실패 [NOT FOUND]" );
+                logger.warn( ">>> [DBGetNICECashBox] 지폐함 갯수 파악 실패 [NOT FOUND]" );
                 throw new Exception( ">>> [DBGetNICECashBox] 지폐함 갯수 파악 실패" );
             }
         }
         catch ( Exception e ) {
-            logger.info( ">>> [DBGetNICECashBox] 지폐함 갯수 파악 실패 [{}]", e.getLocalizedMessage() );
+            logger.warn( ">>> [DBGetNICECashBox] 지폐함 갯수 파악 실패 [{}]", e.getLocalizedMessage() );
             throw e;
         }
 
@@ -1342,12 +1342,12 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         try {
             fnMac = fnMacMap.selectByPrimaryKey( fnMacKey );
             if( fnMac == null ) {
-                logger.info( ">>> [DBGetIsCashState] 기기 잔액 파악 실패 [NOT FOUND]" );
+                logger.warn( ">>> [DBGetIsCashState] 기기 잔액 파악 실패 [NOT FOUND]" );
                 return 0;
             }
         }
         catch ( Exception e ) {
-            logger.info( ">>> [DBGetIsCashState] 기기 잔액 파악 실패 [{}]", e.getLocalizedMessage() );
+            logger.warn( ">>> [DBGetIsCashState] 기기 잔액 파악 실패 [{}]", e.getLocalizedMessage() );
             return 0;
         }
 
@@ -1373,13 +1373,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         try {
             List<TCtErrorBasic> rslt = errBasicMap.selectBySpec( errBasicSpec );
             if( rslt.size() == 0 ) {
-                logger.debug( "...해당 장애 없음 create_date[{}] error_no[{}]", createDate, errorNo );
+                logger.warn( "...해당 장애 없음 create_date[{}] error_no[{}]", createDate, errorNo );
                 return;
             }
             errBasic = rslt.get(0);
         }
         catch ( Exception e ) {
-            logger.info(">>>  원격요청 장애 파악 실패[{}] create_date[{}] error_no[{}]",
+            logger.warn(">>>  원격요청 장애 파악 실패[{}] create_date[{}] error_no[{}]",
                     e.getLocalizedMessage(), createDate, errorNo );
                 return ;
         }
@@ -1389,13 +1389,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         try {
             List<TCtErrorTxn> rslt = errTxnMap.selectBySpec( errTxnSpec );
             if( rslt.size() == 0 ) {
-                logger.debug( "...해당 장애 없음 create_date[{}] error_no[{}]", createDate, errorNo );
+                logger.warn( "...해당 장애 없음 create_date[{}] error_no[{}]", createDate, errorNo );
                 return;
             }
             errTxn = rslt.get(0);
         }
         catch ( Exception e ) {
-            logger.info(">>>  원격요청 장애 파악 실패[{}] create_date[{}] error_no[{}]",
+            logger.warn(">>>  원격요청 장애 파악 실패[{}] create_date[{}] error_no[{}]",
                     e.getLocalizedMessage(), createDate, errorNo );
                 return ;
         }
@@ -1428,13 +1428,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         rmtHist.setExeDate( safeData.getDSysDate());
         try {
             if( remoteHistoryMap.updateBySpecSelective( rmtHist, rmtHistSpec ) == 0) {
-                logger.info("[t_ct_remote_history] 상태전문수신 - 원격요청값 없음 CREATE_DATE[{}]-ERROR_NO[{}]-CREATE_SEQ[{}]",
+                logger.warn("[t_ct_remote_history] 상태전문수신 - 원격요청값 없음 CREATE_DATE[{}]-ERROR_NO[{}]-CREATE_SEQ[{}]",
                         createDate, errorNo, rmSeq );
                 return;
             }
         }
         catch ( Exception e ) {
-            logger.info( "샹태전문 수신 t_ct_remote_history UPDATE Error [{}]", e.getLocalizedMessage() );
+            logger.warn( "샹태전문 수신 t_ct_remote_history UPDATE Error [{}]", e.getLocalizedMessage() );
             return ;
         }
     }
@@ -1479,15 +1479,15 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 errCustInfoMap.updateByPrimaryKeySelective( errCustInfo );
             }
             catch ( Exception e) {
-                logger.info( ">>> [DBInsertUpdateCustInfo] (T_CT_ERROR_CUST_INFO) UPDATE ERROR [{}]", e.getLocalizedMessage() );
+                logger.warn( ">>> [DBInsertUpdateCustInfo] (T_CT_ERROR_CUST_INFO) UPDATE ERROR [{}]", e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e) {
-            logger.info(">>> [DBInsertUpdateCustInfo] T_CT_ERROR_CUST_INFO INSERT ERROR [{}]", e.getLocalizedMessage() );
+            logger.warn(">>> [DBInsertUpdateCustInfo] T_CT_ERROR_CUST_INFO INSERT ERROR [{}]", e.getLocalizedMessage() );
             throw e;
         }
-        logger.info(">>> [DBInsertUpdateCustInfo] 고객정보 [{}-{}-{}] 저장  완료",
+        logger.warn(">>> [DBInsertUpdateCustInfo] 고객정보 [{}-{}-{}] 저장  완료",
                 parsed.getString("create_date"), parsed.getString("mac_no"), parsed.getString("atm_deal_no") );
     }
 

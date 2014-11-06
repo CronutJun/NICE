@@ -62,13 +62,13 @@ public class InN3000300Impl extends InMsgHandlerImpl {
                 fnStorekeeperDayCloseMap.updateByPrimaryKeySelective( fnStkprDayClose );
             }
             catch( Exception e ) {
-                logger.info( "[T_FN_JUMJU_DAY_CLOSE] UPDATE Err [{}-{}][{}]",
+                logger.warn( "[T_FN_JUMJU_DAY_CLOSE] UPDATE Err [{}-{}][{}]",
                         parsed.getString("close_date"), parsed.getString("mac_no"), e.getLocalizedMessage() );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( "[T_FN_JUMJU_DAY_CLOSE] INSERT Err [{}-{}][{}]",
+            logger.warn( "[T_FN_JUMJU_DAY_CLOSE] INSERT Err [{}-{}][{}]",
                     parsed.getString("close_date"), parsed.getString("mac_no"), e.getLocalizedMessage() );
             throw e;
         }

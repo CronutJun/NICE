@@ -143,7 +143,7 @@ public class In01100130Impl implements InMsgHandler {
                 }
             }
             catch ( Exception e ) {
-                logger.info("Error raised message = [{}][{}]", e.getMessage(), e.getStackTrace().toString() );
+                logger.warn("Error raised message = [{}][{}]", e.getMessage(), e.getStackTrace().toString() );
                 throw e;
             }
 

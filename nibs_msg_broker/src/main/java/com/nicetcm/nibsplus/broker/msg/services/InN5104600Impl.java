@@ -53,14 +53,14 @@ public class InN5104600Impl extends InMsgHandlerImpl {
                 cmBatchResultMap.updateByPrimaryKey( cmBatchResult );
             }
             catch( Exception e ) {
-                logger.info( "batch 테이블 기록 덮어씌우기 실패" );
+                logger.warn( "batch 테이블 기록 덮어씌우기 실패" );
                 throw e;
             }
         }
         catch( Exception e ) {
-            logger.info( "batch 테이블 기록 실패 [{}]", e.getLocalizedMessage() );
+            logger.warn( "batch 테이블 기록 실패 [{}]", e.getLocalizedMessage() );
             throw e;
         }
-        logger.info( "batch 테이블 기록 성공" );
+        logger.warn( "batch 테이블 기록 성공" );
     }
 }
