@@ -47,6 +47,7 @@ public class In01001170Impl extends InMsgHandlerImpl {
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
+        
         if(MsgBrokerConst.SHATMS_CODE.equals(parsed.getString("CM.org_cd"))) {
             /* 신한은행 부분관리의 경우 무조건 완료로 처리 */
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();

@@ -211,6 +211,7 @@
              '','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_CASH_PLAN
         WHERE org_send_confirm_yn = '0'
+         AND CASH_DATE >= TO_CHAR(sysdate, 'yyyymmdd')
          AND org_cd = '039'
          AND OP.FC_GET_MAP_MAC_NO(0, ORG_CD, BRANCH_CD, MAC_NO) IS NOT NULL
     ]]>
@@ -246,6 +247,7 @@
              '','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_CASH_PLAN
         WHERE org_send_confirm_yn = '0'
+         AND CASH_DATE >= TO_CHAR(sysdate, 'yyyymmdd')
          AND org_cd = '020'
          AND MAC_NO IS NOT NULL
     ]]>
@@ -424,6 +426,7 @@
              '','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_CASH_PLAN
         WHERE org_send_confirm_yn = '0'
+         AND CASH_DATE >= TO_CHAR(sysdate, 'yyyymmdd')
          AND org_cd = #{orgCd}
     ]]>
     </select>

@@ -195,6 +195,7 @@
         FROM OP.T_FN_ATMS_ADD_CASH_REPORT
         <where>
             AND org_send_yn = '0'
+            AND add_date >= to_char(sysdate-10, 'yyyymmdd')
             <choose>
                <when test='orgCd == "011" or orgCd == "032" or orgCd == "031"'>and demand_date = TO_CHAR( SYSDATE, 'YYYYMMDD' )</when>
                <when test='orgCd == "020"'>AND MAC_NO IS NOT NULL</when>

@@ -47,6 +47,9 @@ public class In04002110Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+
+        safeData.setKeepResData(false);
+
         /***************************************************************************
          [기업은행] 브랜드제휴 재전송 - 일련번호 상관 없이, 요청일자 운영자금, 상세 전송
         ***************************************************************************/

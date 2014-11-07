@@ -896,7 +896,7 @@
                  '0800228252' finish_tel_no,
                  '나이스' manager_nm,
                  MNG.arrival_date schdule_date,
-                 MNG.arrival_time||'00' schdule_time,
+                 MNG.arrival_time schdule_time,
                  '',
                  MNG.msg memo,
                  '',

@@ -205,7 +205,8 @@
              '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_COLLECT
         WHERE  org_send_yn = '0'
-         AND org_cd = '003'
+          AND close_date >= to_char(sysdate -30, 'YYYYMMDD')
+          AND org_cd = #{orgCd}
     ]]>
     </select>
 </mapper>

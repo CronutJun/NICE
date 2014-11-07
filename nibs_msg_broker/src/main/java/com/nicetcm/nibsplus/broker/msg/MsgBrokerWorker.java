@@ -37,7 +37,8 @@ public class MsgBrokerWorker implements Runnable {
             msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
             logger.debug("Parse OK");
             msgThrdSafeData = new MsgBrokerData();
-            msgThrdSafeData.setKeepResData(false);
+            msgThrdSafeData.setKeepResData(true);
+            msgThrdSafeData.setSkipAnswer(false);
             try {
                 try {
                     /*
@@ -112,10 +113,10 @@ public class MsgBrokerWorker implements Runnable {
                      */
                     else {
                         BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(msgPsr.getString("CM.trans_seq_no"));
-                        if( waitQ != null ) {
+                        if( waitQ != null && !msgThrdSafeData.isSkipAnswer() ) {
                             waitQ.put( msg );
                         }
-                        else {
+                        else if( !msgThrdSafeData.isSkipAnswer() ) {
                             MsgBrokerManageRMIImpl.ansRMIAvailability( msg );
                         }
                     }
@@ -148,10 +149,10 @@ public class MsgBrokerWorker implements Runnable {
                      */
                     else {
                         BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(msgPsr.getString("CM.trans_seq_no"));
-                        if( waitQ != null ) {
+                        if( waitQ != null && !msgThrdSafeData.isSkipAnswer() ) {
                             waitQ.put( msg );
                         }
-                        else {
+                        else if( !msgThrdSafeData.isSkipAnswer() ) {
                             MsgBrokerManageRMIImpl.ansRMIAvailability( msg );
                         }
                     }
@@ -182,10 +183,10 @@ public class MsgBrokerWorker implements Runnable {
                      */
                     else {
                         BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(msgPsr.getString("CM.trans_seq_no"));
-                        if( waitQ != null ) {
+                        if( waitQ != null && !msgThrdSafeData.isSkipAnswer() ) {
                             waitQ.put( msg );
                         }
-                        else {
+                        else if( !msgThrdSafeData.isSkipAnswer() ) {
                             MsgBrokerManageRMIImpl.ansRMIAvailability( msg );
                         }
                     }

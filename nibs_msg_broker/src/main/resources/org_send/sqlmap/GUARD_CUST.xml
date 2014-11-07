@@ -66,7 +66,7 @@
                '',
                '',
                SUBSTR(grd.org_msg, 1, 190) memo,
-               grd.org_call_cnt call_cnt,
+               LPAD(grd.org_call_cnt, 2, '0') call_cnt,
                grd.SITE_CD org_site_cd,
                grd.CALL_CANCEL_TYPE type_cd,
                grd.org_cd,
@@ -122,8 +122,9 @@
                err.group_error_cd error_cd,
                mng.send_date as call_date,
                mng.send_time as call_time,
-               SUBSTR(grd.org_msg, 1, 190) memo,
-               SUBSTR(DECODE(MNG.org_cd, '088', '해피콜대상 '|| grd.org_msg, grd.org_msg), 1, 190) call_cnt,
+              /* SUBSTR(grd.org_msg, 1, 190) memo,*/
+               SUBSTR(DECODE(MNG.org_cd, '088', '해피콜대상 '|| grd.org_msg, grd.org_msg), 1, 190) memo,
+               '' call_cnt,
 
                CASE WHEN grd.org_cd = '031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN CASE WHEN OP.FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL
@@ -182,11 +183,12 @@
                grd.create_date trans1_date,
                grd.create_time create_time,
                grd.error_no trans1_seq,
-               err.group_error_cd,
+               err.group_error_cd error_cd,
                mng.send_date as call_date,
                mng.send_time as call_time,
-               SUBSTR(grd.org_msg, 1, 190) memo,
-               SUBSTR(DECODE(MNG.org_cd, '088', '해피콜대상 '|| grd.org_msg, grd.org_msg), 1, 190) call_cnt,
+               /*SUBSTR(grd.org_msg, 1, 190) memo,*/
+               SUBSTR(DECODE(MNG.org_cd, '088', '해피콜대상 '|| grd.org_msg, grd.org_msg), 1, 190) memo,
+               '' call_cnt,
 
                CASE WHEN grd.org_cd = '031'
                     THEN CASE WHEN OP.FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL
@@ -233,8 +235,9 @@
                err.group_error_cd error_cd,
                mng.send_date as call_date,
                mng.send_time as call_time,
-               SUBSTR(grd.org_msg, 1, 190) memo,
-               SUBSTR(DECODE(MNG.org_cd, '088', '해피콜대상 '|| grd.org_msg, grd.org_msg), 1, 190) call_cnt,
+               /*SUBSTR(grd.org_msg, 1, 190) memo,*/
+               SUBSTR(DECODE(MNG.org_cd, '088', '해피콜대상 '|| grd.org_msg, grd.org_msg), 1, 190) memo,
+               '' call_cnt,
 
         /*     CASE WHEN grd.org_cd = '031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN CASE WHEN FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL

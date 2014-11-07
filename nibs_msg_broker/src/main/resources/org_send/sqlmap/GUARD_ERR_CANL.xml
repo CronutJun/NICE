@@ -85,6 +85,7 @@
         from   op.t_ct_error_mng_made_com grd
         where  grd.org_send_yn = 'D'
         and    grd.trans_date > to_char( sysdate - 3, 'yyyymmdd' )
+        /*AND GRD.TRANS_DATE = '20140901'*/
         and    grd.made_com_cd in ('1300', '1400') /*caps-2000*/
     ]]>
     </select>

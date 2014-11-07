@@ -30,6 +30,7 @@ public class In04000120Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+        safeData.setKeepResData(false);
         try
         {
             String mbrYn = tMiscMapper.getCmMemberYn(parsed.getString("mbr_idno"), parsed.getString("mbr_nm"));

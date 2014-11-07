@@ -51,6 +51,7 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     @Override
     public String hotSwapBean(String beanClassName) {
         String beanName = "";
+        String retMsg = "";
 
         try {
             MsgBrokerClassLoader classLoader = new MsgBrokerClassLoader();
@@ -88,17 +89,19 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
             }
             catch( org.springframework.beans.factory.NoSuchBeanDefinitionException e ) {
                 beanName = beanName.substring(0,1).toLowerCase() + beanName.substring(1);
-                changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName);
+                try { changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName); } catch ( Exception se ) {}
             }
             logger.debug("bean {} is {}", beanName, changedInstance);
 
+            if( changedInstance != null ) {
+                logger.debug("Going to destroyBean: {}", beanClassName );
+                ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).removeBeanDefinition(beanName);
+                retMsg = "Successfully Swaped";
+            }
+
             changedInstance = changeClass.newInstance();
 
-            logger.debug("Going to destroyBean: {}", beanClassName );
-            ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).removeBeanDefinition(beanName);
-            //((DefaultListableBeanFactory)MsgBrokerSpringMain.sprCtx.getBeanFactory()).destroySingleton(beanName);
             logger.debug("Going to registerBean: {}", beanClassName );
-            //BeanDefinition beanDef = new RootBeanDefinition(changedInstance.getClass());
             GenericBeanDefinition beanDef = new GenericBeanDefinition();
             beanDef.setBeanClass(changeClass);
             beanDef.setLazyInit(false);
@@ -106,12 +109,14 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
             beanDef.setAutowireCandidate(true);
             beanDef.setScope(BeanDefinition.SCOPE_SINGLETON);
             ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).registerBeanDefinition(beanName, beanDef);
-            //MsgBrokerSpringMain.sprCtx.getBeanFactory().registerSingleton(beanName, changedInstance);
 
             changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName);
             logger.debug("Is there {}? {}", beanName, changedInstance);
 
-            return "Successfully Swaped";
+            if( retMsg.length() == 0 )
+                return "Succcessfully Registered.";
+            else
+                return retMsg;
         }
         catch( Exception e ) {
             logger.error("hotSwapBean exception is raised: {}", e.getMessage() );

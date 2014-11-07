@@ -35,6 +35,8 @@ public class InN5000410Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+        safeData.setKeepResData(false);
+
         TFnNiceTranJoin cond = new TFnNiceTranJoin();
         TFnNiceTranJoin rslt = null;
 

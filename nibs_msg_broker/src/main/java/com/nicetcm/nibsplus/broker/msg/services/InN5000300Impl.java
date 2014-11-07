@@ -35,6 +35,9 @@ public class InN5000300Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+
+        safeData.setKeepResData(false);
+
         BNetCalc cond = new BNetCalc();
         BNetCalc rslt = null;
 

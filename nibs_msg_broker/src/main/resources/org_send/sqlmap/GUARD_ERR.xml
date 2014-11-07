@@ -237,7 +237,7 @@
                OP.t_cm_common          co1
         where  grd.guard_send_yn in ( 'N', 'E')
         AND    nvl(grd.repair_time, '999999') = '999999'
-        and    grd.create_date > TO_NUMBER(to_char( sysdate - 50, 'yyyymmdd' ))
+        and    grd.create_date > TO_NUMBER(to_char( sysdate - 3, 'yyyymmdd' ))
         and    grd.org_cd = err.org_cd(+)
         and    grd.error_cd = err.error_cd(+)
         and    grd.org_cd   = site.org_cd(+)

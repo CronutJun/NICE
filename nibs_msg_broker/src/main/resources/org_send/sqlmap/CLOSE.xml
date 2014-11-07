@@ -172,7 +172,7 @@
                 '',
                 '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM    OP.T_CM_MAC MAC
-        WHERE   MAC.org_cd = #{orgCd}#
+        WHERE   MAC.org_cd = #{orgCd}
         AND     MAC.open_date <= TO_CHAR(SYSDATE, 'YYYYMMDD')
         AND    (    MAC.close_date IS NULL
                 OR  MAC.close_date > TO_CHAR(SYSDATE, 'YYYYMMDD')
@@ -202,7 +202,7 @@
                 '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM   OP.T_CM_CASH CLS
         WHERE  CLS.CASH_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
-        AND CLS.ORG_CD = #{orgCd}#
+        AND CLS.ORG_CD = #{orgCd}
         AND CLS.CASH_TYPE = '2'
 
     </select>

@@ -14,6 +14,8 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmCheckMasterMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmCommonMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCmOrgMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCmSiteMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorMngMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtSiteLockHistoryMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnKebCheckMapper;
@@ -25,6 +27,9 @@ import com.nicetcm.nibsplus.broker.msg.model.TCmCheckMaster;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCheckMasterSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCommon;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCommonSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCmOrg;
+import com.nicetcm.nibsplus.broker.msg.model.TCmSite;
+import com.nicetcm.nibsplus.broker.msg.model.TCmSiteKey;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
 import com.nicetcm.nibsplus.broker.msg.model.TCtSiteLockHistory;
 import com.nicetcm.nibsplus.broker.msg.model.TFnKebCheck;
@@ -69,8 +74,17 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
     @Autowired private TCtErrorMngMapper tCtErrorMngMapper;
 
+    @Autowired private TCmOrgMapper tCmOrgMapper;
+
+    @Autowired private TCmSiteMapper tCmSiteMapper;
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
+
+        TCmOrg  cmOrg        = null;
+        TCmSite cmSite       = null;
+        TCmSiteKey cmSiteKey = new TCmSiteKey();
+
         /* 도착통보 기관전송에 대한 응답을 받은경우 아무 처리 하지 않고 응답없음으로 return */
         if(MsgBrokerConst.EM_ANS.equals(parsed.getString("CM.msg_type"))) {
             throw new MsgBrokerException(-99);
@@ -209,10 +223,30 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         try
                         {
+                            try {
+                                cmOrg = tCmOrgMapper.selectByPrimaryKey( parsed.getString("org_cd") );
+                                if( cmOrg == null ) {
+                                    cmOrg = new TCmOrg();
+                                    logger.warn(String.format("기관없음: %s", parsed.getString("org_cd")));
+                                }
+                                cmSiteKey.setOrgCd   ( parsed.getString("org_cd")  );
+                                cmSiteKey.setBranchCd( parsed.getString("brch_cd") );
+                                cmSiteKey.setSiteCd  ( parsed.getString("site_cd") );
+                                cmSite = tCmSiteMapper.selectByPrimaryKey( cmSiteKey );
+                                if( cmSite == null ) {
+                                    cmSite = new TCmSite();
+                                    logger.warn(String.format("사이트없음: %s-%s-%s", parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd")));
+                                }
+                            }
+                            catch( Exception e ) {
+                                if( cmOrg == null ) cmOrg = new TCmOrg();
+                                if( cmSite == null ) cmSite = new TCmSite();
+                                logger.warn("[기관명: {}, 사이트명: {} 조회 에러]{}", parsed.getString("org_cd"), parsed.getString("site_cd"), e.getMessage());
+                            }
                             userIdx = tMiscMapper.getUserIdx(tCmCheckMaster.getMemberId());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A01@%s@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), parsed.getString("arrival_date"), tCmCheckMaster.getAcceptTime(), tCmCheckMaster.getMemberId(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A01@%s@%s@%s@%s@%s@A@%s@%.*s", cmOrg.getOrgNm(), parsed.getString("brch_cd"), cmSite.getSiteNm(), parsed.getString("arrival_date"), tCmCheckMaster.getAcceptTime(), tCmCheckMaster.getMemberId(), 4, parsed.getString("arrival_time"));
 
                             TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
@@ -316,10 +350,21 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                             try
                             {
+                                try {
+                                    cmOrg = tCmOrgMapper.selectByPrimaryKey( parsed.getString("org_cd") );
+                                    if( cmOrg == null ) {
+                                        cmOrg = new TCmOrg();
+                                        logger.warn(String.format("기관없음: %s", parsed.getString("org_cd")));
+                                    }
+                                }
+                                catch( Exception e ) {
+                                    if( cmOrg == null ) cmOrg = new TCmOrg();
+                                    logger.warn("[기관명: {} 조회 에러]{}", parsed.getString("org_cd"), e.getMessage());
+                                }
                                 userIdx = tMiscMapper.getUserIdx(tFnKebCheck.getMemberId());
 
                                 String v_PushMsg = null;
-                                v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), tFnKebCheck.getMacNo(), tFnKebCheck.getMemberId(), 4, parsed.getString("arrival_time"));
+                                v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), cmOrg.getOrgNm(), parsed.getString("brch_cd"), tFnKebCheck.getMacNo(), tFnKebCheck.getMemberId(), 4, parsed.getString("arrival_time"));
 
                                 TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
@@ -421,10 +466,21 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         try
                         {
+                            try {
+                                cmOrg = tCmOrgMapper.selectByPrimaryKey( parsed.getString("org_cd") );
+                                if( cmOrg == null ) {
+                                    cmOrg = new TCmOrg();
+                                    logger.warn(String.format("기관없음: %s", parsed.getString("org_cd")));
+                                }
+                            }
+                            catch( Exception e ) {
+                                if( cmOrg == null ) cmOrg = new TCmOrg();
+                                logger.warn("[기관명: {} 조회 에러]{}", parsed.getString("org_cd"), e.getMessage());
+                            }
                             userIdx = tMiscMapper.getUserIdx(tFnOnsiteAmt.getMemberId());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), tFnOnsiteAmt.getMacNo(), tFnOnsiteAmt.getMemberId(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), cmOrg.getOrgNm(), parsed.getString("brch_cd"), tFnOnsiteAmt.getMacNo(), tFnOnsiteAmt.getMemberId(), 4, parsed.getString("arrival_time"));
 
                             TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
@@ -529,10 +585,21 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         try
                         {
+                            try {
+                                cmOrg = tCmOrgMapper.selectByPrimaryKey( parsed.getString("org_cd") );
+                                if( cmOrg == null ) {
+                                    cmOrg = new TCmOrg();
+                                    logger.warn(String.format("기관없음: %s", parsed.getString("org_cd")));
+                                }
+                            }
+                            catch( Exception e ) {
+                                if( cmOrg == null ) cmOrg = new TCmOrg();
+                                logger.warn("[기관명: {} 조회 에러]{}", parsed.getString("org_cd"), e.getMessage());
+                            }
                             userIdx = tMiscMapper.getUserIdx(tFnSend.getCashTeamCd());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A07@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), tFnSend.getCashTeamCd(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A07@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("arrival_date"), cmOrg.getOrgNm(), parsed.getString("brch_cd"), parsed.getString("site_cd"), tFnSend.getCashTeamCd(), 4, parsed.getString("arrival_time"));
 
                             TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
@@ -634,10 +701,30 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         try
                         {
+                            try {
+                                cmOrg = tCmOrgMapper.selectByPrimaryKey( parsed.getString("org_cd") );
+                                if( cmOrg == null ) {
+                                    cmOrg = new TCmOrg();
+                                    logger.warn(String.format("기관없음: %s", parsed.getString("org_cd")));
+                                }
+                                cmSiteKey.setOrgCd   ( parsed.getString("org_cd")  );
+                                cmSiteKey.setBranchCd( parsed.getString("brch_cd") );
+                                cmSiteKey.setSiteCd  ( parsed.getString("site_cd") );
+                                cmSite = tCmSiteMapper.selectByPrimaryKey( cmSiteKey );
+                                if( cmSite == null ) {
+                                    cmSite = new TCmSite();
+                                    logger.warn(String.format("사이트없음: %s-%s-%s", parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd")));
+                                }
+                            }
+                            catch( Exception e ) {
+                                if( cmOrg == null ) cmOrg = new TCmOrg();
+                                if( cmSite == null ) cmSite = new TCmSite();
+                                logger.warn("[기관명: {}, 사이트명: {} 조회 에러]{}", parsed.getString("org_cd"), parsed.getString("site_cd"), e.getMessage());
+                            }
                             userIdx = tMiscMapper.getUserIdx(tCmCheckMaster.getMemberId());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A01@%s@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), parsed.getString("arrival_date"), tCmCheckMaster.getAcceptTime(), tCmCheckMaster.getMemberId(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A01@%s@%s@%s@%s@%s@A@%s@%.*s", cmOrg.getOrgNm(), parsed.getString("brch_cd"), cmSite.getSiteNm(), parsed.getString("arrival_date"), tCmCheckMaster.getAcceptTime(), tCmCheckMaster.getMemberId(), 4, parsed.getString("arrival_time"));
 
                             TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
@@ -740,10 +827,21 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                             try
                             {
+                                try {
+                                    cmOrg = tCmOrgMapper.selectByPrimaryKey( parsed.getString("org_cd") );
+                                    if( cmOrg == null ) {
+                                        cmOrg = new TCmOrg();
+                                        logger.warn(String.format("기관없음: %s", parsed.getString("org_cd")));
+                                    }
+                                }
+                                catch( Exception e ) {
+                                    if( cmOrg == null ) cmOrg = new TCmOrg();
+                                    logger.warn("[기관명: {} 조회 에러]{}", parsed.getString("org_cd"), e.getMessage());
+                                }
                                 userIdx = tMiscMapper.getUserIdx(tFnKebCheck.getMemberId());
 
                                 String v_PushMsg = null;
-                                v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), tFnKebCheck.getMacNo(), tFnKebCheck.getMemberId(), 4, parsed.getString("arrival_time"));
+                                v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), cmOrg.getOrgNm(), parsed.getString("brch_cd"), tFnKebCheck.getMacNo(), tFnKebCheck.getMemberId(), 4, parsed.getString("arrival_time"));
 
                                 TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
@@ -845,10 +943,21 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         try
                         {
+                            try {
+                                cmOrg = tCmOrgMapper.selectByPrimaryKey( parsed.getString("org_cd") );
+                                if( cmOrg == null ) {
+                                    cmOrg = new TCmOrg();
+                                    logger.warn(String.format("기관없음: %s", parsed.getString("org_cd")));
+                                }
+                            }
+                            catch( Exception e ) {
+                                if( cmOrg == null ) cmOrg = new TCmOrg();
+                                logger.warn("[기관명: {} 조회 에러]{}", parsed.getString("org_cd"), e.getMessage());
+                            }
                             userIdx = tMiscMapper.getUserIdx(tFnOnsiteAmt.getMemberId());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), tFnOnsiteAmt.getMacNo(), tFnOnsiteAmt.getMemberId(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A06@%s@%s@%s@%s@F@%s@%.*s", parsed.getString("arrival_date"), cmOrg.getOrgNm(), parsed.getString("brch_cd"), tFnOnsiteAmt.getMacNo(), tFnOnsiteAmt.getMemberId(), 4, parsed.getString("arrival_time"));
 
                             TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 
@@ -953,10 +1062,30 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         try
                         {
+                            try {
+                                cmOrg = tCmOrgMapper.selectByPrimaryKey( parsed.getString("org_cd") );
+                                if( cmOrg == null ) {
+                                    cmOrg = new TCmOrg();
+                                    logger.warn(String.format("기관없음: %s", parsed.getString("org_cd")));
+                                }
+                                cmSiteKey.setOrgCd   ( parsed.getString("org_cd")  );
+                                cmSiteKey.setBranchCd( parsed.getString("brch_cd") );
+                                cmSiteKey.setSiteCd  ( parsed.getString("site_cd") );
+                                cmSite = tCmSiteMapper.selectByPrimaryKey( cmSiteKey );
+                                if( cmSite == null ) {
+                                    cmSite = new TCmSite();
+                                    logger.warn(String.format("사이트없음: %s-%s-%s", parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd")));
+                                }
+                            }
+                            catch( Exception e ) {
+                                if( cmOrg == null ) cmOrg = new TCmOrg();
+                                if( cmSite == null ) cmSite = new TCmSite();
+                                logger.warn("[기관명: {}, 사이트명: {} 조회 에러]{}", parsed.getString("org_cd"), parsed.getString("site_cd"), e.getMessage());
+                            }
                             userIdx = tMiscMapper.getUserIdx(tFnSend.getCashTeamCd());
 
                             String v_PushMsg = null;
-                            v_PushMsg = String.format("#A07@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("arrival_date"), parsed.getString("org_cd"), parsed.getString("brch_cd"), parsed.getString("site_cd"), tFnSend.getCashTeamCd(), 4, parsed.getString("arrival_time"));
+                            v_PushMsg = String.format("#A07@%s@%s@%s@%s@A@%s@%.*s", parsed.getString("arrival_date"), cmOrg.getOrgNm(), parsed.getString("brch_cd"), cmSite.getSiteNm(), tFnSend.getCashTeamCd(), 4, parsed.getString("arrival_time"));
 
                             TPhMessages tPhMessages = tMiscMapper.getSeqPhMessages();
 

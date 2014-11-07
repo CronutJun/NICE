@@ -16,9 +16,13 @@ public class MsgBrokerData {
      */
     private boolean keepResData = false;
     /**
-     * Outbound Queue에 write여부 (요청여부)
+     * Outbound Queue에 write여부 (요청여부), WEB(AP)에서 요청을 바로 기관에 전달하지 않고 통신서버가 응답하는 경우가 있음.
      */
     private boolean noOutData = false;
+    /**
+     * WEB(AP)요청의 응답을 WEB으로 전달할지, 아니면 SKIP할지 여부
+     */
+    private boolean skipAnswer = false;
 
     public TransactionStatus getTXS() {
         return txs;
@@ -74,5 +78,13 @@ public class MsgBrokerData {
 
     public void setNoOutData(boolean noOutData) {
         this.noOutData = noOutData;
+    }
+
+    public boolean isSkipAnswer() {
+        return skipAnswer;
+    }
+
+    public void setSkipAnswer(boolean skipAnswer) {
+        this.skipAnswer = skipAnswer;
     }
 }

@@ -4,12 +4,12 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * Copyright 2014 The NIBS+ Project
  *
  * MSG Broker 집계처리 ROUTINE을 CALL
- * 
+ *
  * <pre>
  * MngNC_NiceMacClose
  * </pre>
- * 
- *           2014. 07. 30    K.D.J. 
+ *
+ *           2014. 07. 30    K.D.J.
  */
 
 import java.util.List;
@@ -40,14 +40,14 @@ import com.nicetcm.nibsplus.broker.msg.model.FnMacClose;
 public class InN3000100Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(InN3000100Impl.class);
-    
+
     @Autowired private StoredProcMapper splMap;
     @Autowired private TFnNiceCloseOrgMapper fnNiceCloseOrgMap;
     @Autowired private TFnNiceCloseTmpMapper fnNiceCloseTmpMap;
     @Autowired private TFnNiceCloseMapper fnNiceCloseMap;
     @Autowired private TFnNiceCloseGiftMapper fnNiceCloseGiftMap;
-    
-    
+
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         try {
@@ -104,7 +104,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
                     logger.warn( "sp_fn_macclose procedure Error. [{}]", macClose.getResult() );
             }
             catch( Exception e ) {
-                
+
             }
         }
         msgTX.rollback(safeData.getTXS());
@@ -115,7 +115,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
          */
         if( parsed.getInt("gv_out_cnt") > 0 ) {
             TFnNiceCloseGift fnNCG = new TFnNiceCloseGift();
-            
+
             fnNCG.setOrgCd     ( "096"                          );
             fnNCG.setBranchCd  ( "9600"                         );
             fnNCG.setMacNo     ( parsed.getString("mac_no"    ) );
@@ -138,9 +138,9 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             }
         }
     }
-    
+
     private void insertNiceCloseOrg( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
-        
+
         TFnNiceCloseOrg fnNCO = new TFnNiceCloseOrg();
         fnNCO.setMacNo               (  parsed.getString("mac_no"                ) );
         fnNCO.setCloseDate           (  parsed.getString("close_date"            ) );
@@ -200,11 +200,11 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             throw e;
         }
     }
-    
+
     private int compCloseDate( String macNo, String chkDate ) {
-        
+
         TFnNiceCloseTmp fnNCTCond = new TFnNiceCloseTmp();
-        
+
         fnNCTCond.setCloseDate( chkDate );
         fnNCTCond.setMacNo( macNo );
         List<TFnNiceCloseTmp> rslt = null;
@@ -230,11 +230,11 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             return -1;
         }
     }
-    
+
     private void insertNiceCloseTmp( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
-        
+
         TFnNiceCloseTmp fnNCT = new TFnNiceCloseTmp();
-        
+
         fnNCT.setMacNo               ( parsed.getString("mac_no"                ) );
         fnNCT.setCloseDate           ( parsed.getString("close_date"            ) );
         fnNCT.setCloseTime           ( parsed.getString("close_time"            ) );
@@ -280,7 +280,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         fnNCT.setCheckOutCnt         ( parsed.getInt   ("check_out_cnt"         ) );
         fnNCT.setCheckOutAmt         ( parsed.getLong  ("check_out_amt"         ) );
         fnNCT.setTrackUseType        ( parsed.getString("track_use_type"        ) );
-        
+
         try {
             fnNiceCloseTmpMap.insert( fnNCT );
         }
@@ -290,11 +290,11 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         }
 
     }
-    
+
     private void insertNiceCloseSum( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
-        
+
         TFnNiceCloseTmp cond = new TFnNiceCloseTmp();
-        
+
         cond.setMacNo               ( parsed.getString("mac_no"                ) );
         cond.setCloseDate           ( parsed.getString("close_date"            ) );
         cond.setCloseTime           ( parsed.getString("close_time"            ) );
@@ -337,7 +337,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         cond.setCheckInAmt          ( parsed.getLong  ("check_in_amt"          ) );
         cond.setCheckOutCnt         ( parsed.getInt   ("check_out_cnt"         ) );
         cond.setCheckOutAmt         ( parsed.getLong  ("check_out_amt"         ) );
-        
+
         TFnNiceCloseTmp sum = null;
         try {
             sum = fnNiceCloseTmpMap.selectBySum1( cond );
@@ -351,21 +351,21 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             throw e;
 
         }
-        
+
         /*
          *  차세대 NTMS 운영부 및 지사 필드에 자금부서 와 자금지사코드를 넣도록함
          * 송호석 과장 요청
          */
-        
+
         TFnNiceClose fnNiceClose = new TFnNiceClose();
-        
+
         BeanUtils.copyProperties( fnNiceClose, sum );
-        
+
         fnNiceClose.setCloseDate( parsed.getString("close_date") );
         fnNiceClose.setCloseTime( parsed.getString("close_time") );
         fnNiceClose.setMacNo( parsed.getString("mac_no") );
         fnNiceClose.setTrackUseType( parsed.getString("track_use_type") );
-        
+
         TMisc miscCond = new TMisc();
         TMisc rsltMisc = null;
         miscCond.setArgType( "FD" );
@@ -394,7 +394,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         catch( Exception e ) {
             logger.warn( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
         }
-        
+
         fnNiceClose.setInsertDate( safeData.getDSysDate() );
         fnNiceClose.setInsertUid( parsed.getString("CM.msg_id") );
         try {
@@ -404,7 +404,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             logger.warn( "[T_FN_NICE_CLOSE] Insert Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
-        
+
         TFnNiceCloseTmpSpec fnNCTSpec = new TFnNiceCloseTmpSpec();
         fnNCTSpec.createCriteria().andMacNoEqualTo( cond.getMacNo() )
                                   .andCloseDateLessThan( cond.getCloseDate() );
