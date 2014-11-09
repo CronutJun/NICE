@@ -1,6 +1,7 @@
 package com.nicetcm.nibsplus.scheduler.main;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.nicetcm.nibsplus.orgsend.common.OrgSend;
 import com.nicetcm.nibsplus.orgsend.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.scheduler.model.JobVO;
 import com.nicetcm.nibsplus.scheduler.model.SchedulerVO;
@@ -36,21 +38,23 @@ public class NibsScheduleExecuter {
 	public static void main(String[] args) {
         try {
         	ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:/scheduler/spring/context-scheduler.xml");
+        	ApplicationContext orgSendBeanContext = new ClassPathXmlApplicationContext("classpath:/org_send/spring/context-orgsend-bean.xml");
             ScheduleInfoProvider scheduleInfoProvider = applicationContext.getBean("ScheduleDBInfoProvider", ScheduleInfoProvider.class);
+            Map<String, String> mtype = ((OrgSend)orgSendBeanContext.getBean("orgSend", OrgSend.class)).getOrgSendMtype();
 
             if (args[0].equals("-L")) {
             	List<SchedulerVO> scheduleList = scheduleInfoProvider.selectScheduleJobGroup();
             	int count = 1;
             	
-            	System.out.println(StringUtils.leftPad("", 50, "-"));
-            	System.out.println(String.format("%3s\t%-20s%s", "NO", "QuartzNodeName", "JobGroup"));
-            	System.out.println(StringUtils.leftPad("", 50, "-"));
+            	System.out.println(StringUtils.leftPad("", 65, "-"));
+            	System.out.println(String.format("%3s\t%-20s%-25s%s", "NO", "QuartzNodeName", "JobGroup", "MessageCode"));
+            	System.out.println(StringUtils.leftPad("", 65, "-"));
             	
             	for (SchedulerVO jobGroup : scheduleList) {
-            		System.out.println(String.format("%3d\t%-20s%s", count++, jobGroup.getQuartzNodeName(), jobGroup.getJobGroup()));
+            		System.out.println(String.format("%3d\t%-20s%-25s%s", count++, jobGroup.getQuartzNodeName(), jobGroup.getJobGroup(), mtype.get(jobGroup.getJobGroup())));
             	}
 
-            	System.out.println(StringUtils.leftPad("", 50, "-"));
+            	System.out.println(StringUtils.leftPad("", 65, "-"));
             } else {
 	            JobVO jobVO = new JobVO();
 	            jobVO.setQuartzNodeName(args[0]); // "OrgSendService");

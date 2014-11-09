@@ -76,7 +76,7 @@ public class In03001280Impl extends InMsgHandlerImpl {
             tFnKibMacDsum.setOutTotalAmt       (parsed.getString("out_amt"));
             tFnKibMacDsum.setInTotalAmt        (parsed.getString("in_amt"));
             tFnKibMacDsum.setInsertDate        (safeData.getDSysDate());
-            tFnKibMacDsum.setInsertUid         (parsed.getString("MNG_UP"));
+            tFnKibMacDsum.setInsertUid         ("MNG_UP");
 
             TFnKibMacDsumSpec tFnKibMacDsumSpec = new TFnKibMacDsumSpec();
             tFnKibMacDsumSpec.createCriteria()

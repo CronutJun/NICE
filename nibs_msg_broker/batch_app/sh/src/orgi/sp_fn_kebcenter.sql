@@ -1,2 +1,0 @@
-exec pkg_fn_KebAtms_DemandManager.sp_KebAtms_batchProcess;
-exit;

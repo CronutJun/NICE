@@ -147,7 +147,7 @@
                         SUBSTR(grd.org_msg, 1, 190) memo,
                     </when>
                     <when test='orgCd == "0KT" or orgCd == "0JE"'>
-                        grd.org_msg,
+                        grd.org_msg memo,
                     </when>
                 </choose>
     <![CDATA[

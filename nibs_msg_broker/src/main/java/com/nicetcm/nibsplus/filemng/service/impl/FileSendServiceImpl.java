@@ -54,7 +54,6 @@ public class FileSendServiceImpl implements FileSendService {
 	public void execute(int argc, String... argv) throws Exception {
 		String szTransDate = null;
 		String szOrgCd = null;
-		int MAX_ORG_CNT = 29;
 		String[] szaryOrg= {
 			"0BC",
 			"1BC",
@@ -86,6 +85,7 @@ public class FileSendServiceImpl implements FileSendService {
 			"000",
 			"0GV"
 		};
+		int MAX_ORG_CNT = szaryOrg.length;
 
 		if ( argc != 1 ) {
 			szTransDate = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
