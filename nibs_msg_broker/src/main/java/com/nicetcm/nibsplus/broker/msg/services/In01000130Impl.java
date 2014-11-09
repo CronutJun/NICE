@@ -258,6 +258,12 @@ public class In01000130Impl extends InMsgHandlerImpl {
                     errBasic.getTransDate(), errBasic.getOrgMsgNo(), errMngMadeCom.getOrgCallCnt() );
         }
 
-        errMngMadeComMap.insert( errMngMadeCom );
+        try {
+            errMngMadeComMap.insert( errMngMadeCom );
+        }
+        catch( org.springframework.dao.DataIntegrityViolationException de ) {
+            logger.warn(">>> [DBInsertErrMngMadeCom] T_CT_ERROR_MNG_MADE_COM 같은요청전문 수신");
+            throw de;
+        }
     }
 }
