@@ -29,20 +29,17 @@ import com.nicetcm.nibsplus.scheduler.service.ScheduleInfoProvider;
  */
 public class NibsScheduleExecuter {
     private final static Logger logger = LoggerFactory.getLogger(NibsScheduleExecuter.class);
-
-	public static void main11(String[] args) {
-		System.out.println(StringUtils.leftPad("", 100, "-"));
-	}
-	
+    
     @SuppressWarnings("unchecked")
-	public static void main(String[] args) {
+	public NibsScheduleExecuter(String[] args) {
         try {
         	ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:/scheduler/spring/context-scheduler.xml");
-        	ApplicationContext orgSendBeanContext = new ClassPathXmlApplicationContext("classpath:/org_send/spring/context-orgsend-bean.xml");
             ScheduleInfoProvider scheduleInfoProvider = applicationContext.getBean("ScheduleDBInfoProvider", ScheduleInfoProvider.class);
-            Map<String, String> mtype = ((OrgSend)orgSendBeanContext.getBean("orgSend", OrgSend.class)).getOrgSendMtype();
 
             if (args[0].equals("-L")) {
+            	ApplicationContext orgSendBeanContext = new ClassPathXmlApplicationContext("classpath:/org_send/spring/context-orgsend-bean.xml");
+                Map<String, String> mtype = ((OrgSend)orgSendBeanContext.getBean("orgSend", OrgSend.class)).getOrgSendMtype();
+                
             	List<SchedulerVO> scheduleList = scheduleInfoProvider.selectScheduleJobGroup();
             	int count = 1;
             	
@@ -82,6 +79,11 @@ public class NibsScheduleExecuter {
         	logger.error("Nibs Quartz Scheduler를 [비정상적] 으로 종료 되었습니다.\n" + e.getMessage());
         	e.printStackTrace();
         }
+    	
+    }
+
+	public static void main(String[] args) {
+		new NibsScheduleExecuter(args);
 
         System.exit(-1);
     }

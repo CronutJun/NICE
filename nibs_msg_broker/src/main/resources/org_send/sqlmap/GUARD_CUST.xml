@@ -50,7 +50,7 @@
         where  grd.org_send_yn not in ('0', 'D', 'Q' )
         AND    grd.CHANGE_SEND_YN = '1'
         and    grd.trans_date > to_char( sysdate - 3, 'yyyymmdd' )
-        and    grd.made_com_cd  = '1200'
+        and    grd.made_com_cd  = '1500'
     ]]>
     </select>
 

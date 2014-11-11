@@ -567,7 +567,7 @@ public interface TMiscMapper {
     @Select({
         "select op.f_get_nice_branch_cd(#{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{orgSiteCd, jdbcType=VARCHAR}, #{macNo, jdbcType=VARCHAR}) from dual"
     })
-    String fGetNiceJijumCd(@Param("orgCd") String orgCd, @Param("branchCd") String branchCd, @Param("orgSiteCd") String orgSiteCd, @Param("macNo") String macNo);
+    String fGetNiceBranchCd(@Param("orgCd") String orgCd, @Param("branchCd") String branchCd, @Param("orgSiteCd") String orgSiteCd, @Param("macNo") String macNo);
 
     @Select({
         "select op.FC_GET_MAP_SITE_CD(#{cType, jdbcType=VARCHAR}, #{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, #{siteCd, jdbcType=VARCHAR}) from dual"

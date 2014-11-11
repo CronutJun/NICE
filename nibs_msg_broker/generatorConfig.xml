@@ -10,8 +10,7 @@
     <javaModelGenerator targetPackage="com.nicetcm.nibsplus.broker.msg.model" targetProject="nibs_msg_broker" />
     <sqlMapGenerator targetPackage="com.nicetcm.nibsplus.broker.msg.mapper" targetProject="nibs_msg_broker" />
     <javaClientGenerator targetPackage="com.nicetcm.nibsplus.broker.msg.mapper" targetProject="nibs_msg_broker" type="ANNOTATEDMAPPER" />
-    <table schema="op" tableName="T_CM_ORG" >
-      <!-- <columnOverride column="as_seq" property="AsSeq" /> -->
+    <table schema="op" tableName="T_CM_SET_CHANGE_SITE_STATE" >
     </table>
   </context>
 </generatorConfiguration>

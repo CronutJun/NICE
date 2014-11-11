@@ -182,7 +182,14 @@ public class In05000110Impl extends InMsgHandlerImpl {
             /*
              *현금, 수표, 전표 관련 장애 처리
              */
-            for( MsgBrokerConst.EnumOrgErrorState e: MsgBrokerConst.EnumOrgErrorState.values() ){
+            for( MsgBrokerConst.EnumOrgErrorState e: MsgBrokerConst.EnumOrgErrorState.values() ) {
+                TCtErrorBasic errBasicL = new TCtErrorBasic();
+                TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                TCtErrorNoti errNotiL = new TCtErrorNoti();
+                TCtErrorCall errCallL = new TCtErrorCall();
+                TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
                 /*
                  * 해당 상태관련 장애 무시
                  */
@@ -228,9 +235,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
                 /*
                  * 복구일 경우는 NE0**, 예보일 경우는 NE1**, 장애일 경우는 NE2**
                  */
-                errBasic.setErrorCd( String.format("NE%c%s", parsed.getBytes("atm_state")[e.ordinal()], lpad(e.getErrorCd(), 2, "0")) );
-                errTxn.setRepairDate(null);
-                errTxn.setRepairTime(null);
+                errBasicL.setErrorCd( String.format("NE%c%s", parsed.getBytes("atm_state")[e.ordinal()], lpad(e.getErrorCd(), 2, "0")) );
 
                 /*
                  * 예보 및 장애
@@ -242,10 +247,10 @@ public class In05000110Impl extends InMsgHandlerImpl {
                      */
                     if( macInfo.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) ) {
                         if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_NEAR )
-                            comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                            comPack.insertErrBasic( safeData, errBasicL,  errRcptL, errNotiL, errCallL, errTxnL, macInfo, "");
                     }
                     else {
-                        comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+                        comPack.insertErrBasic( safeData, errBasicL,  errRcptL, errNotiL, errCallL, errTxnL, macInfo, "");
                     }
                 }
                 /*
@@ -255,36 +260,36 @@ public class In05000110Impl extends InMsgHandlerImpl {
                     /*
                      *  1. 복구일자(발생일자)
                      */
-                    errTxn.setRepairDate( parsed.getString("create_date") );
+                    errTxnL.setRepairDate( parsed.getString("create_date") );
                     /*
                      *  2. 복구시간(발생시간)
                      */
-                    errTxn.setRepairTime( parsed.getString("create_time") );
+                    errTxnL.setRepairTime( parsed.getString("create_time") );
 
                     /*
                      * 복구 일때는 예보와 장애 모두를 복구 시킨다.
                      */
-                    errBasic.setErrorCd( String.format("NE1%2s", lpad(e.getErrorCd(),2,"0")) );
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt, errNoti, errCall,
-                            errTxn, macInfo, retErrStates );
-                    errBasic.setErrorCd( String.format("NE2%2s", lpad(e.getErrorCd(),2,"0")) );
-                    comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt, errNoti, errCall,
-                            errTxn, macInfo, retErrStates );
+                    errBasicL.setErrorCd( String.format("NE1%2s", lpad(e.getErrorCd(),2,"0")) );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL, errNotiL, errCallL,
+                            errTxnL, macInfo, retErrStates );
+                    errBasicL.setErrorCd( String.format("NE2%2s", lpad(e.getErrorCd(),2,"0")) );
+                    comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL, errNotiL, errCallL,
+                            errTxnL, macInfo, retErrStates );
                     /*
                      * 20100225 양유석주임요청 하나은행의 경우 현금부족이나 수표부족 상태 복구시
                      * 출동요청으로 들어온 현금부족(HN90B)와 수표부족(HN90E)도 복구
                      */
                     if( macInfo.getOrgCd().equals(MsgBrokerConst.HANAATMS_CODE) ) {
-                        errBasic.setErrorCd("");
+                        errBasicL.setErrorCd("");
                         if( e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CASH ) {
-                            errBasic.setErrorCd("HN90B");
-                            comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt, errNoti, errCall,
-                                    errTxn, macInfo, retErrStates );
+                            errBasicL.setErrorCd("HN90B");
+                            comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL, errNotiL, errCallL,
+                                    errTxnL, macInfo, retErrStates );
                         }
                         else if( e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CHECK ) {
-                            errBasic.setErrorCd("HN90E");
-                            comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt, errNoti, errCall,
-                                    errTxn, macInfo, retErrStates );
+                            errBasicL.setErrorCd("HN90E");
+                            comPack.updateErrBasic(  safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL, errNotiL, errCallL,
+                                    errTxnL, macInfo, retErrStates );
                         }
                     }
                 }

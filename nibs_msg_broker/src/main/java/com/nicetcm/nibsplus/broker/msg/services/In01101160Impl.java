@@ -270,7 +270,7 @@ public class In01101160Impl extends InMsgHandlerImpl {
                      ===> 임시 정상 코드가 정의 되지 않았다.
                     *********************************************************************************************/
 
-                    if(parsed.getString("CM.ret_cd").equals("")) {
+                    if(parsed.getString("CM.ret_cd").equals("") || parsed.getInt("CM.ret_cd") == 0) {
                         hSEND_YN = "2";
                     }
 
@@ -326,7 +326,8 @@ public class In01101160Impl extends InMsgHandlerImpl {
 
             }
 
-            String branchCd = comPack.fGetNiceJijumCd(parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), "", parsed.getString("mac_no"));
+            String branchCd = comPack.fGetNiceBranchCd(parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), "", parsed.getString("mac_no"));
+            logger.warn("BranchCd = {}, hSendYN = {}", branchCd, hSEND_YN);
 
             TCtErrorMng updateTCtErrorMng = new TCtErrorMng();
             updateTCtErrorMng.setOrgSendYn(hSEND_YN);

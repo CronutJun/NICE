@@ -1,7 +1,7 @@
 -- 신규사원 비밀번호 암호화(매일 07시 실행)
 
 UPDATE T_CM_MEMBER
-SET PASS_WORD = FN_MD5(member_id), --사번 암호화로 변경
+SET PASS_WORD = SHA1_HASH(member_id), --사번 암호화로 변경
     UPDATE_UID = '0000000'
 WHERE UPDATE_UID = '9999999';
 
@@ -15,7 +15,7 @@ set dept_cd = (select mis.dept_cd
     office_cd = (select mis.office_cd 
 				from t_cm_dept_mis mis 
 				where mis.dept_code = member.mis_org_cd	),
-    jiso_cd = (select mis.jiso_cd 
+    team_cd = (select mis.team_cd 
 				from t_cm_dept_mis mis 
 				where mis.dept_code = member.mis_org_cd	),
 	update_date = sysdate,

@@ -2796,9 +2796,8 @@ public class CommonPackImpl implements CommonPack {
      * @return
      */
     @Override
-    @Deprecated
-    public String fGetNiceJijumCd(String orgCd, String branchCd, String orgSiteCd, String macNo) {
-        String returnValue = miscMap.fGetNiceJijumCd(orgCd, branchCd, orgSiteCd, macNo);
+    public String fGetNiceBranchCd(String orgCd, String branchCd, String orgSiteCd, String macNo) {
+        String returnValue = miscMap.fGetNiceBranchCd(orgCd, branchCd, orgSiteCd, macNo);
         return returnValue == null ? "" : returnValue;
     }
 

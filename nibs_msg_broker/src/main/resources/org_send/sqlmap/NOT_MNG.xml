@@ -47,7 +47,7 @@
              unattended_amt,
     ]]>
             <choose>
-                <when test='orgCd == "005" or orgCd == "011"'>notend_date,</when>
+                <when test='orgCd == "005" or orgCd == "011"'>notend_date close_date,</when>
             </choose>
 
 

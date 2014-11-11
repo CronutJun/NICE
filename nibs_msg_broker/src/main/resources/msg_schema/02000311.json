@@ -1,0 +1,14 @@
+{
+   "name" : "02000410",                    "kname" : "코너 상태번경 통보",
+   "response" : { "code" : "02000410",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "SM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "work_seq",               "kname" : "작업일련번호",           "type" : "AN",  "length"  : 10  },      
+      { "name" : "org_brch_cd",            "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "org_site_cd",            "kname" : "기관코너코드",           "type" : "AN",  "length"  : 6   },
+      { "name" : "org_site_nm",            "kname" : "기관코너명",             "type" : "AN",  "length"  : 80  },
+      { "name" : "work_date",              "kname" : "작업일자",               "type" : "AN",  "length"  : 8   },
+      { "name" : "work_cont",              "kname" : "작업내용",               "type" : "AN",  "length"  : 600 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 50  }
+   ]
+}

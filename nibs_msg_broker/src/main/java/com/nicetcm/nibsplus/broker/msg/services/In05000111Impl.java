@@ -15,6 +15,7 @@ package com.nicetcm.nibsplus.broker.msg.services;
 
 import java.io.File;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +112,13 @@ public class In05000111Impl extends InMsgHandlerImpl {
          *  현금, 수표, 전표 관련 장애 처리
          */
         for( MsgBrokerConst.EnumCalcErrorState e: MsgBrokerConst.EnumCalcErrorState.values() ) {
+            TCtErrorBasic errBasicL = new TCtErrorBasic();
+            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+            TCtErrorNoti errNotiL = new TCtErrorNoti();
+            TCtErrorCall errCallL = new TCtErrorCall();
+            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+            BeanUtils.copyProperties( errBasicL, errBasic );
             /*
              *  해당 상태관련 장애 무시
              */
@@ -121,14 +129,14 @@ public class In05000111Impl extends InMsgHandlerImpl {
             /*
              *  복구일 경우는 NE0**, 예보일 경우는 NE1**, 장애일 경우는 NE2**
              */
-            errBasic.setErrorCd( String.format("NE%c%02s", parsed.getBytes("atm_state")[e.ordinal()], e.getErrorCd()) );
+            errBasicL.setErrorCd( String.format("NE%c%02s", parsed.getBytes("atm_state")[e.ordinal()], e.getErrorCd()) );
 
             /*
              *  예보 및 장애
              */
             if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_NEAR
             ||  parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_END ) {
-                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
 
                 /*
                  *  회선장애가 발생한 상태라면 이후 장애는 체크하지 않는다.
@@ -142,19 +150,19 @@ public class In05000111Impl extends InMsgHandlerImpl {
             }
             /* 복구 */
             else if ( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_CLEAR ) {
-                errTxn.setRepairDate( parsed.getString("create_date") );                        // 1. 복구일자(발생일자)
-                errTxn.setRepairTime( parsed.getString("create_time") );                        // 2. 복구시간(발생시간)
+                errTxnL.setRepairDate( parsed.getString("create_date") );                        // 1. 복구일자(발생일자)
+                errTxnL.setRepairTime( parsed.getString("create_time") );                        // 2. 복구시간(발생시간)
 
                 /*
                  *  복구 일때는 예보와 장애 모두를 복구 시킨다.
                  */
-                errBasic.setErrorCd( String.format("NE1%02s", e.getErrorCd()) );
-                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                        errNoti, errCall, errTxn, macInfo, retErrStates );
+                errBasicL.setErrorCd( String.format("NE1%02s", e.getErrorCd()) );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                        errNotiL, errCallL, errTxnL, macInfo, retErrStates );
 
-                errBasic.setErrorCd( String.format("NE2%02s", e.getErrorCd()) );
-                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                        errNoti, errCall, errTxn, macInfo, retErrStates );
+                errBasicL.setErrorCd( String.format("NE2%02s", e.getErrorCd()) );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                        errNotiL, errCallL, errTxnL, macInfo, retErrStates );
 
                 /*logger.warn(">>> [SaveCalcMacErrState] 기관[{}] 상태[index-{}][{}][{}] ... 복구...",
                 parsed.getString("CM.org_cd"), e.ordinal(), parsed.getBytes("atm_state")[e.ordinal()], errBasic.getErrorCd());*/

@@ -1,0 +1,981 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:lang="http://www.springframework.org/schema/lang"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/tool classpath:/org/springframework/beans/factory/xml/spring-tool-3.2.xsd
+       http://www.springframework.org/schema/aop classpath:/org/springframework/aop/config/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
+       http://www.springframework.org/schema/lang classpath:/org/springframework/scripting/config/spring-lang-3.2.xsd
+       http://www.springframework.org/schema/tx classpath:/org/springframework/transaction/config/spring-tx-3.2.xsd">
+    <!-- 환경설정파일 로딩 -->
+    
+	<bean id="sp_cm_fax.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>PKG_CM_FAXMASTER.SP_BATCHPROCESS(TO_CHAR(SYSDATE,'YYYYMMDD'),'')</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_cm_mac_rank.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_CM_MAC_RANK(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_cm_personnel.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_cm_personnel(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_cm_update_plan_focus.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_CM_UPDATE_PLAN_FOCUS(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_ct_check_0EL_alert.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_ct_check_0EL_alert('0EL', null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_ct_check_alert_039.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_ct_check_alert(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_ct_check_alert_nh_file.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_ct_check_alert_039(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_ct_check_alert.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_ct_check_alert_nh_file(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_ct_delete_day.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_CT_DELETE_DAY(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_ct_report_day_2007.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_ct_report_day_2007(null, null)</value>
+				<value>sp_ct_reportoper_modify(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_bscenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_BsAtms_DemandManager.sp_BsAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_cashflow_endamt.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_cashflow_endamt(TO_CHAR(SYSDATE,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_center.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_DemandManager.sp_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_close_send_wc.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_close_send_wc(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_ctcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_CtAtms_DemandManager.sp_CtAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_day_close_ktis.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_DAY_CLOSE_KTIS(null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_deal_forecast.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_DEAL_FORECAST(TO_CHAR(SYSDATE,'YYYYMMDD'),null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_dealcount.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_dealCount(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_dgbcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_DGBAtms_DemandManager.sp_DGBAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_eland_amt.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_eland_amt(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_err_trade.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_err_trade(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_etc_msum.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_lease_msum(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+				<value>sp_fn_cms_close_msum(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+				<value>sp_fn_eis_msum(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_forcast_addsend_center.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_forcast_addsend_center(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_forcast_data_dsum_atm.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_forcast_data_dsum(TO_CHAR(SYSDATE,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_forcast_data_dsum.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_forcast_data_dsum_atm(TO_CHAR(SYSDATE,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_hncenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_HnAtms_DemandManager.sp_HnAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_imsi_jan.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_IMSI_JAN(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_jjcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_JjAtms_DemandManager.sp_JjAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_kbcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_KbAtms_DemandManager.sp_KbAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_kebcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_KebAtms_DemandManager.sp_KebAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_kncenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_KNAtms_DemandManager.sp_KNAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_ktiscenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_KTISAtms_DemandManager.sp_KTISAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_kucenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_KuAtms_DemandManager.sp_KuAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_largemonth.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_LARGEMONTH()</value>
+				<value>sp_fn_risk_month(TO_CHAR(SYSDATE-1,'YYYYMM'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_mac_stock_amt.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_MAC_STOCK_AMT(TO_CHAR(SYSDATE-1,'YYYYMMDD'),null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_maccount.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_MACCOUNT(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_man.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_MAN(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+				<value>sp_fn_risk_day(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nhcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_NhAtms_DemandManager.sp_NhAtms_batchProcess(null, null, null)}</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_deal_byday.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_nice_deal_byday(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_deal_byhour.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_nice_deal_byhour(null)</value>
+				<value>sp_fn_nice_deal_byhour_amt(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_dsum_bc.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_update_tran_nh(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+				<value>sp_fn_nice_dsum_demand(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+				<value>SP_FN_NICE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+				<value>SP_FN_MAC_DEALTYPE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD'),null)</value>
+				<value>SP_FN_FORECAST_BASE_NICE(TO_CHAR(SYSDATE-1,'YYYYMMDD'),null)</value>
+				<!-- <value>- -SP_FN_MAC_STOCK(TO_CHAR(SYSDATE-1,'YYYYMMDD'),null)</value> -->
+				<value>SP_FN_FORECAST_BASE_CLOSE(TO_CHAR(SYSDATE-1,'YYYYMMDD'),null)</value>
+				<value>SP_FN_CARRY_FEE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_dsum.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_nice_dsum_0bc(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_endamt.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_NICE_ENDAMT(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_every_insert.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_nice_every_insert(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_ticket_cnt.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_nice_ticket_cnt(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_tran_gift_dsum.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_NICE_TRAN_GIFT_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_tran_total.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_nice_tran_total(null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_nice_ts_insert.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_nice_ts_insert(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_notclose_cancel.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_notclose_cancel(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_notend_nice.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_NOTEND_NICE(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_officeclose.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_OFFICECLOSE()</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_onlycashdatamacclose.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_onlyCashDataMacClose()</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_operfundssh.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_OperfundsSh(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_recv_amt_bs.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_recv_amt_bs(TO_CHAR(SYSDATE,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_sendplan_confirm_bs.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_SENDPLAN_CONFIRM(TO_CHAR(SYSDATE,'YYYYMMDD'),null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_sendplan_confirm_sh.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_SENDPLAN_CONFIRM_BS(TO_CHAR(SYSDATE,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_sendplan_confirm.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_sendplan_confirm_sh(TO_CHAR(SYSDATE,'YYYYMMDD'),null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_sendplan_reform.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_sendplan_reform(TO_CHAR(SYSDATE,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_sendplan_upload_sh.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_sendplan_upload_sh(TO_CHAR(SYSDATE,'YYYYMMDD'),null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_servicesend.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_SERVICESEND(TO_CHAR(SYSDATE-1,'YYYYMMDD'))</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_sh_opcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_ShAtms_OpDemandManager.sp_ShAtms_batchProcess(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_shcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_ShAtms_DemandManager.sp_ShAtms_batchProcess(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_sitecount.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>SP_FN_SITECOUNT(TO_CHAR(SYSDATE-1,'YYYYMMDD'))}</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_smcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_SmAtms_DemandManager.sp_SMAtms_batchProcess(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_wccenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_WCAtms_DemandManager.sp_WCAtms_batchProcess(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_wr_van_demand.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_fn_wr_van_demand(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_fn_wrcenter.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>pkg_fn_WrAtms_DemandManager.sp_WrAtms_batchProcess(null, null, null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_if_SendSMSCashLack.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_if_SendSMSCashLack('088')</value>
+				<value>sp_if_SendSMSCashLack('004')</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_job_nice_short_cash_config.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_job_nice_short_cash_config()</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_phs_push_messages.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_phs_push_messages(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_su_multireport_all.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_su_multireport_day_01(null)</value>
+				<value>sp_su_multireport_day_02(null)</value>
+				<value>sp_su_multireport_day_03(null)</value>
+				<value>sp_su_multireport_day_04(null)</value>
+				<value>sp_su_multireport_day_05(null)</value>
+				<value>sp_su_multireport_day_06(null)</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="sp_update_site.sh" class="org.springframework.beans.factory.config.ListFactoryBean">
+		<property name="targetListClass" value="java.util.LinkedList"/>
+		<property name="sourceList">
+			<list>
+				<value>sp_update_site()</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="scheduledJob" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="targetMapClass" value="java.util.LinkedHashMap"/>
+		<property name="sourceMap">
+			<map>
+				<entry key="sp_cm_fax.sh" value-ref="sp_cm_fax.sh"/>
+				<entry key="sp_cm_mac_rank.sh" value-ref="sp_cm_mac_rank.sh"/>
+				<entry key="sp_cm_personnel.sh" value-ref="sp_cm_personnel.sh"/>
+				<entry key="sp_cm_update_plan_focus.sh" value-ref="sp_cm_update_plan_focus.sh"/>
+				<entry key="sp_ct_check_0EL_alert.sh" value-ref="sp_ct_check_0EL_alert.sh"/>
+				<entry key="sp_ct_check_alert_039.sh" value-ref="sp_ct_check_alert_039.sh"/>
+				<entry key="sp_ct_check_alert_nh_file.sh" value-ref="sp_ct_check_alert_nh_file.sh"/>
+				<entry key="sp_ct_check_alert.sh" value-ref="sp_ct_check_alert.sh"/>
+				<entry key="sp_ct_delete_day.sh" value-ref="sp_ct_delete_day.sh"/>
+				<entry key="sp_ct_report_day_2007.sh" value-ref="sp_ct_report_day_2007.sh"/>
+				<entry key="sp_fn_bscenter.sh" value-ref="sp_fn_bscenter.sh"/>
+				<entry key="sp_fn_cashflow_endamt.sh" value-ref="sp_fn_cashflow_endamt.sh"/>
+				<entry key="sp_fn_center.sh" value-ref="sp_fn_center.sh"/>
+				<entry key="sp_fn_close_send_wc.sh" value-ref="sp_fn_close_send_wc.sh"/>
+				<entry key="sp_fn_ctcenter.sh" value-ref="sp_fn_ctcenter.sh"/>
+				<entry key="sp_fn_day_close_ktis.sh" value-ref="sp_fn_day_close_ktis.sh"/>
+				<entry key="sp_fn_deal_forecast.sh" value-ref="sp_fn_deal_forecast.sh"/>
+				<entry key="sp_fn_dealcount.sh" value-ref="sp_fn_dealcount.sh"/>
+				<entry key="sp_fn_dgbcenter.sh" value-ref="sp_fn_dgbcenter.sh"/>
+				<entry key="sp_fn_eland_amt.sh" value-ref="sp_fn_eland_amt.sh"/>
+				<entry key="sp_fn_err_trade.sh" value-ref="sp_fn_err_trade.sh"/>
+				<entry key="sp_fn_etc_msum.sh" value-ref="sp_fn_etc_msum.sh"/>
+				<entry key="sp_fn_forcast_addsend_center.sh" value-ref="sp_fn_forcast_addsend_center.sh"/>
+				<entry key="sp_fn_forcast_data_dsum_atm.sh" value-ref="sp_fn_forcast_data_dsum_atm.sh"/>
+				<entry key="sp_fn_forcast_data_dsum.sh" value-ref="sp_fn_forcast_data_dsum.sh"/>
+				<entry key="sp_fn_hncenter.sh" value-ref="sp_fn_hncenter.sh"/>
+				<entry key="sp_fn_imsi_jan.sh" value-ref="sp_fn_imsi_jan.sh"/>
+				<entry key="sp_fn_jjcenter.sh" value-ref="sp_fn_jjcenter.sh"/>
+				<entry key="sp_fn_kbcenter.sh" value-ref="sp_fn_kbcenter.sh"/>
+				<entry key="sp_fn_kebcenter.sh" value-ref="sp_fn_kebcenter.sh"/>
+				<entry key="sp_fn_kncenter.sh" value-ref="sp_fn_kncenter.sh"/>
+				<entry key="sp_fn_ktiscenter.sh" value-ref="sp_fn_ktiscenter.sh"/>
+				<entry key="sp_fn_kucenter.sh" value-ref="sp_fn_kucenter.sh"/>
+				<entry key="sp_fn_largemonth.sh" value-ref="sp_fn_largemonth.sh"/>
+				<entry key="sp_fn_mac_stock_amt.sh" value-ref="sp_fn_mac_stock_amt.sh"/>
+				<entry key="sp_fn_maccount.sh" value-ref="sp_fn_maccount.sh"/>
+				<entry key="sp_fn_man.sh" value-ref="sp_fn_man.sh"/>
+				<entry key="sp_fn_nhcenter.sh" value-ref="sp_fn_nhcenter.sh"/>
+				<entry key="sp_fn_nice_deal_byday.sh" value-ref="sp_fn_nice_deal_byday.sh"/>
+				<entry key="sp_fn_nice_deal_byhour.sh" value-ref="sp_fn_nice_deal_byhour.sh"/>
+				<entry key="sp_fn_nice_dsum_bc.sh" value-ref="sp_fn_nice_dsum_bc.sh"/>
+				<entry key="sp_fn_nice_dsum.sh" value-ref="sp_fn_nice_dsum.sh"/>
+				<entry key="sp_fn_nice_endamt.sh" value-ref="sp_fn_nice_endamt.sh"/>
+				<entry key="sp_fn_nice_every_insert.sh" value-ref="sp_fn_nice_every_insert.sh"/>
+				<entry key="sp_fn_nice_ticket_cnt.sh" value-ref="sp_fn_nice_ticket_cnt.sh"/>
+				<entry key="sp_fn_nice_tran_gift_dsum.sh" value-ref="sp_fn_nice_tran_gift_dsum.sh"/>
+				<entry key="sp_fn_nice_tran_total.sh" value-ref="sp_fn_nice_tran_total.sh"/>
+				<entry key="sp_fn_nice_ts_insert.sh" value-ref="sp_fn_nice_ts_insert.sh"/>
+				<entry key="sp_fn_notclose_cancel.sh" value-ref="sp_fn_notclose_cancel.sh"/>
+				<entry key="sp_fn_notend_nice.sh" value-ref="sp_fn_notend_nice.sh"/>
+				<entry key="sp_fn_officeclose.sh" value-ref="sp_fn_officeclose.sh"/>
+				<entry key="sp_fn_onlycashdatamacclose.sh" value-ref="sp_fn_onlycashdatamacclose.sh"/>
+				<entry key="sp_fn_operfundssh.sh" value-ref="sp_fn_operfundssh.sh"/>
+				<entry key="sp_fn_recv_amt_bs.sh" value-ref="sp_fn_recv_amt_bs.sh"/>
+				<entry key="sp_fn_sendplan_confirm_bs.sh" value-ref="sp_fn_sendplan_confirm_bs.sh"/>
+				<entry key="sp_fn_sendplan_confirm_sh.sh" value-ref="sp_fn_sendplan_confirm_sh.sh"/>
+				<entry key="sp_fn_sendplan_confirm.sh" value-ref="sp_fn_sendplan_confirm.sh"/>
+				<entry key="sp_fn_sendplan_reform.sh" value-ref="sp_fn_sendplan_reform.sh"/>
+				<entry key="sp_fn_sendplan_upload_sh.sh" value-ref="sp_fn_sendplan_upload_sh.sh"/>
+				<entry key="sp_fn_servicesend.sh" value-ref="sp_fn_servicesend.sh"/>
+				<entry key="sp_fn_sh_opcenter.sh" value-ref="sp_fn_sh_opcenter.sh"/>
+				<entry key="sp_fn_shcenter.sh" value-ref="sp_fn_shcenter.sh"/>
+				<entry key="sp_fn_sitecount.sh" value-ref="sp_fn_sitecount.sh"/>
+				<entry key="sp_fn_smcenter.sh" value-ref="sp_fn_smcenter.sh"/>
+				<entry key="sp_fn_wccenter.sh" value-ref="sp_fn_wccenter.sh"/>
+				<entry key="sp_fn_wr_van_demand.sh" value-ref="sp_fn_wr_van_demand.sh"/>
+				<entry key="sp_fn_wrcenter.sh" value-ref="sp_fn_wrcenter.sh"/>
+				<entry key="sp_if_SendSMSCashLack.sh" value-ref="sp_if_SendSMSCashLack.sh"/>
+				<entry key="sp_job_nice_short_cash_config.sh" value-ref="sp_job_nice_short_cash_config.sh"/>
+				<entry key="sp_phs_push_messages.sh" value-ref="sp_phs_push_messages.sh"/>
+				<entry key="sp_su_multireport_all.sh" value-ref="sp_su_multireport_all.sh"/>
+				<entry key="sp_update_site.sh" value-ref="sp_update_site.sh"/>
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="scheduledJobExpression" class="org.springframework.beans.factory.config.MapFactoryBean">
+		<property name="targetMapClass" value="java.util.LinkedHashMap"/>
+		<property name="sourceMap">
+			<map>
+				<entry key="sp_cm_fax.sh" value="0 30 5 * * ?"/>
+				<entry key="sp_cm_mac_rank.sh" value="0 10 6 1 * ?"/>
+				<entry key="sp_cm_personnel.sh" value="0 7 4 * * ?"/>
+				<entry key="sp_cm_update_plan_focus.sh" value="0 40 4 * * ?"/>
+				<entry key="sp_ct_check_0EL_alert.sh" value="0 0/10 * * * ?"/>
+				<entry key="sp_ct_check_alert_039.sh" value="0 0 8 * * ?"/>
+				<entry key="sp_ct_check_alert_nh_file.sh" value="0 0 17 * * ?"/>
+				<entry key="sp_ct_check_alert.sh" value="0 30 8 * * ?"/>
+				<entry key="sp_ct_delete_day.sh" value="0 20 0 * * ?"/>
+				<entry key="sp_ct_report_day_2007.sh" value="0 15 5 * * ?"/>
+				<entry key="sp_fn_bscenter.sh" value="0 30 7 * * ?"/>
+				<entry key="sp_fn_cashflow_endamt.sh" value="0 0 6 * * ?"/>
+				<entry key="sp_fn_center.sh" value="0 30 4 * * ?"/>
+				<entry key="sp_fn_close_send_wc.sh" value="0 50 16 * * ?"/>
+				<entry key="sp_fn_ctcenter.sh" value="0 30 5 * * ?"/>
+				<entry key="sp_fn_day_close_ktis.sh" value="0 10,40 1 * * ?"/>
+				<entry key="sp_fn_deal_forecast.sh" value="0 0 4 * * ?"/>
+				<entry key="sp_fn_dealcount.sh" value="0 0 5 1 * ?"/>
+				<entry key="sp_fn_dgbcenter.sh" value="0 51 4 * * ?"/>
+				<entry key="sp_fn_eland_amt.sh" value="0 0 8 * * ?"/>
+				<entry key="sp_fn_err_trade.sh" value="0 0 6 1 * ?"/>
+				<entry key="sp_fn_etc_msum.sh" value="0 30 7 1 * ?"/>
+				<entry key="sp_fn_forcast_addsend_center.sh" value="0 30 6 * * ?"/>
+				<entry key="sp_fn_forcast_data_dsum_atm.sh" value="0 0 5 * * ?"/>
+				<entry key="sp_fn_forcast_data_dsum.sh" value="0 40 3 * * ?"/>
+				<entry key="sp_fn_hncenter.sh" value="0 40 8 * * ?"/>
+				<entry key="sp_fn_imsi_jan.sh" value="0 30 4 * * ?"/>
+				<entry key="sp_fn_jjcenter.sh" value="0 48 4 * * ?"/>
+				<entry key="sp_fn_kbcenter.sh" value="0 40 4 * * ?"/>
+				<entry key="sp_fn_kebcenter.sh" value="0 0 5 * * ?"/>
+				<entry key="sp_fn_kncenter.sh" value="0 0 6 * * ?"/>
+				<entry key="sp_fn_ktiscenter.sh" value="0 0 6 * * ?"/>
+				<entry key="sp_fn_kucenter.sh" value="0 46 4 * * ?"/>
+				<entry key="sp_fn_largemonth.sh" value="0 0 5 1 * ?"/>
+				<entry key="sp_fn_mac_stock_amt.sh" value="0 20 4 * * ?"/>
+				<entry key="sp_fn_maccount.sh" value="0 30 0 * * ?"/>
+				<entry key="sp_fn_man.sh" value="0 13 4 * * ?"/>
+				<entry key="sp_fn_nhcenter.sh" value="0 45 4 * * ?"/>
+				<entry key="sp_fn_nice_deal_byday.sh" value="0 5 4 * * ?"/>
+				<entry key="sp_fn_nice_deal_byhour.sh" value="0 8 4 * * ?"/>
+				<entry key="sp_fn_nice_dsum_bc.sh" value="0 0 3 * * ?"/>
+				<entry key="sp_fn_nice_dsum.sh" value="0 10 4 * * ?"/>
+				<entry key="sp_fn_nice_endamt.sh" value="0 48 4 * * ?"/>
+				<entry key="sp_fn_nice_every_insert.sh" value="0 10 5 * * ?"/>
+				<entry key="sp_fn_nice_ticket_cnt.sh" value="0 10 5 * * ?"/>
+				<entry key="sp_fn_nice_tran_gift_dsum.sh" value="0 30 3 * * ?"/>
+				<entry key="sp_fn_nice_tran_total.sh" value="0 45 4 * * ?"/>
+				<entry key="sp_fn_nice_ts_insert.sh" value="0 5 5 * * ?"/>
+				<entry key="sp_fn_notclose_cancel.sh" value="0 40 16 * * ?"/>
+				<entry key="sp_fn_notend_nice.sh" value="0 15 4 * * ?"/>
+				<entry key="sp_fn_officeclose.sh" value="0 10 4 * * ?"/>
+				<entry key="sp_fn_onlycashdatamacclose.sh" value="0 25 3 * * ?"/>
+				<entry key="sp_fn_operfundssh.sh" value="0 25 8 * * ?"/>
+				<entry key="sp_fn_recv_amt_bs.sh" value="0 0 17 * * ?"/>
+				<entry key="sp_fn_sendplan_confirm_bs.sh" value="0 0 14 * * ?"/>
+				<entry key="sp_fn_sendplan_confirm_sh.sh" value="0 0 16 * * ?"/>
+				<entry key="sp_fn_sendplan_confirm.sh" value="0 0 12 * * ?"/>
+				<entry key="sp_fn_sendplan_reform.sh" value="0 35 3 * * ?"/>
+				<entry key="sp_fn_sendplan_upload_sh.sh" value="0 0 16 * * ?"/>
+				<entry key="sp_fn_servicesend.sh" value="0 12 4 * * ?"/>
+				<entry key="sp_fn_sh_opcenter.sh" value="0 30 8 * * ?"/>
+				<entry key="sp_fn_shcenter.sh" value="0 7 6 * * ?"/>
+				<entry key="sp_fn_sitecount.sh" value="0 45 3 * * ?"/>
+				<entry key="sp_fn_smcenter.sh" value="0 5 6 * * ?"/>
+				<entry key="sp_fn_wccenter.sh" value="0 0 6 * * ?"/>
+				<entry key="sp_fn_wr_van_demand.sh" value="0 20 8 * * ?"/>
+				<entry key="sp_fn_wrcenter.sh" value="0 10 6 * * ?"/>
+				<entry key="sp_if_SendSMSCashLack.sh" value="0 0/5 * * * ?"/>
+				<entry key="sp_job_nice_short_cash_config.sh" value="0 25 0 * * ?"/>
+				<entry key="sp_phs_push_messages.sh" value="0 15 0 * * ?"/>
+				<entry key="sp_su_multireport_all.sh" value="0 15 6 * * ?"/>
+				<entry key="sp_update_site.sh" value="0 1 0 20 2 ?"/>
+				
+				<entry key="sp_cm_password_change.sh" value="0 30 6 * * ?"/>
+				<entry key="sp_ct_month_use_status_003.sh" value="0 20 7 5 * ?"/>
+				<entry key="t_ct_error_mng_003_brand_temp.sh" value="0 5 * * * ?"/>
+			</map>
+		</property>
+	</bean>
+
+    <!-- 개발자 Local-PC 환경 -->
+    <beans profile="local">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/sqlservice/properties/context-sqlservice.local.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:sqlservice/properties/context-sqlservice-log4j.local.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- DEV 환경 -Dspring.profiles.active=dev -->
+    <beans profile="dev">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/sqlservice/properties/context-sqlservice.dev.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:sqlservice/properties/context-sqlservice-log4j.dev.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- stage1 환경 -Dspring.profiles.active=stage1 -->
+    <beans profile="stage1">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/sqlservice/properties/context-sqlservice.stage.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:sqlservice/properties/context-sqlservice-log4j.stage.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- stage2 환경 -Dspring.profiles.active=stage2 -->
+    <beans profile="stage2">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/sqlservice/properties/context-sqlservice.stage.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:sqlservice/properties/context-sqlservice-log4j.stage.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <beans>
+        <!-- Spring Service Bean 로딩 -->
+        <context:component-scan base-package="com.nicetcm.nibsplus.sqlservice">
+            <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+        </context:component-scan>
+
+        <!-- DB Connection Pool 설정 -->
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+            <property name="driverClassName"><value>#{config['jdbc.class']}</value></property>
+            <property name="url"><value>#{config['jdbc.url']}</value></property>
+            <property name="username"><value>#{config['jdbc.username']}</value></property>
+            <property name="password"><value>#{config['jdbc.password']}</value></property>
+            <property name="initialSize" value="4"/>
+            <property name="maxActive" value="4"/>
+            <property name="maxIdle" value="4"/>
+            <property name="maxWait" value="30000"/>
+            <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
+            <property name="testOnBorrow" value="true"/>
+            <property name="testOnReturn" value="false"/>
+            <property name="testWhileIdle" value="true"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        </bean>
+
+        <!-- DB Logging -->
+        <bean id="dataSource_OP" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+            <constructor-arg ref="dataSource" />
+            <property name="logFormatter">
+                <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+                    <property name="loggingType" value="MULTI_LINE" />
+                </bean>
+            </property>
+        </bean>
+
+        <bean id="sqlSessionFactory_OP" class="org.mybatis.spring.SqlSessionFactoryBean">
+            <property name="dataSource" ref="dataSource_OP"></property>
+            <property name="configLocation" value="classpath:/sqlservice/mybatis/mybatis-config.xml"></property>
+            <property name="mapperLocations" value="classpath:/sqlservice/sqlmap/**/*.xml"></property>
+        </bean>
+
+        <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+            <property name="basePackage" value="com.nicetcm.nibsplus.sqlservice" />
+            <!-- <property name="annotationClass" value="com.kt.pdfbill.foundation.annotation.DatasourceIM" /> -->
+            <property name="sqlSessionFactory" ref="sqlSessionFactory_OP" />
+        </bean>
+    </beans>
+</beans>

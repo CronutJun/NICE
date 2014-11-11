@@ -14,10 +14,13 @@ package com.nicetcm.nibsplus.broker.msg.services;
 
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
@@ -64,10 +67,6 @@ public class In05000120Impl extends InMsgHandlerImpl {
 
         TMacInfo macInfo = new TMacInfo();
         TCtErrorBasic errBasic = new TCtErrorBasic();
-        TCtErrorRcpt errRcpt = new TCtErrorRcpt();
-        TCtErrorNoti errNoti = new TCtErrorNoti();
-        TCtErrorCall errCall = new TCtErrorCall();
-        TCtErrorTxn  errTxn  = new TCtErrorTxn();
 
         for(int i = 0; i < saOldErrList.length; i++ )
             saOldErrList[i] = "00000000";
@@ -76,7 +75,15 @@ public class In05000120Impl extends InMsgHandlerImpl {
         macInfo.setBranchCd( parsed.getString("brch_cd") );
         macInfo.setMacNo( parsed.getString("mac_no") );
 
+        byte[] bModState = parsed.getBytes("modul_state");
+        String sModState = "";
+        for( byte ms: bModState )
+            sModState += String.format("%2X ", ms );
+        logger.warn( "module_state = {}", sModState );
+
         try {
+
+
             comPack.getMacInfo( macInfo );
             logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(), macInfo.getMacNm(),
@@ -117,12 +124,20 @@ public class In05000120Impl extends InMsgHandlerImpl {
          *  개국전문 수신시 미개국 장애 복구처리
          */
         if( parsed.getString("state_type").equals("1") ) {
+            TCtErrorBasic errBasicL = new TCtErrorBasic();
+            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+            TCtErrorNoti errNotiL = new TCtErrorNoti();
+            TCtErrorCall errCallL = new TCtErrorCall();
+            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+            BeanUtils.copyProperties( errBasicL, errBasic );
+
             comPack.insertUpdateMacOpen( safeData, macInfo, errBasic ); // 개시관리에
-            errBasic.setErrorCd( "USR01" );
-            errTxn.setRepairDate( parsed.getString("create_date") ); // 1. 복구일자(개국일자)
-            errTxn.setRepairTime( parsed.getString("create_time") ); // 2. 복구시간(개국시간)
-            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ONE_CLEAR, errBasic, errRcpt,
-                    errNoti, errCall, errTxn, macInfo, null );
+            errBasicL.setErrorCd( "USR01" );
+            errTxnL.setRepairDate( parsed.getString("create_date") ); // 1. 복구일자(개국일자)
+            errTxnL.setRepairTime( parsed.getString("create_time") ); // 2. 복구시간(개국시간)
+            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ONE_CLEAR, errBasicL, errRcptL,
+                    errNotiL, errCallL, errTxnL, macInfo, null );
         }
         /*
          *  해당 기기의 미완료 장애 중 미도착건에 대해 기존 장애가 있는지 체크
@@ -136,6 +151,14 @@ public class In05000120Impl extends InMsgHandlerImpl {
             throw e;
         }
         for( TCtErrorBasicJoin errJoin: rslt ) {
+            TCtErrorBasic errBasicL = new TCtErrorBasic();
+            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+            TCtErrorNoti errNotiL = new TCtErrorNoti();
+            TCtErrorCall errCallL = new TCtErrorCall();
+            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+            BeanUtils.copyProperties( errBasicL, errBasic );
+
             /*
              *  단말상태는 F0:기기off, F1:기기on(ping미응답) 일경우만 출동, 복구 처리
              */
@@ -149,11 +172,11 @@ public class In05000120Impl extends InMsgHandlerImpl {
                  */
                 if( !parsed.getString("mac_state").equals("f0")
                 &&  !parsed.getString("mac_state").equals("f1") ) {
-                    errBasic.setErrorCd( errJoin.getErrorCd().substring(0, 4) );
-                    errTxn.setRepairDate( parsed.getString("create_date") ); // 1. 복구일자(개국일자)
-                    errTxn.setRepairTime( parsed.getString("create_time") ); // 2. 복구시간(개국시간)
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, null );
+                    errBasicL.setErrorCd( errJoin.getErrorCd().substring(0, 4) );
+                    errTxnL.setRepairDate( parsed.getString("create_date") ); // 1. 복구일자(개국일자)
+                    errTxnL.setRepairTime( parsed.getString("create_time") ); // 2. 복구시간(개국시간)
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, null );
                 }
                 else if( parsed.getString("mac_state").equals(errJoin.getErrorCd().substring(2)) ) {
                     logger.warn( "중복장애응답처리 error_cd[{}]", errJoin.getErrorCd() );
@@ -184,13 +207,21 @@ public class In05000120Impl extends InMsgHandlerImpl {
         }
         if( parsed.getString("mac_state").equals("f0")
         ||  parsed.getString("mac_state").equals("f1") ) {
-            errBasic.setErrorCd( String.format("ES%s", parsed.getString("mac_state")) );
-            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            TCtErrorBasic errBasicL = new TCtErrorBasic();
+            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+            TCtErrorNoti errNotiL = new TCtErrorNoti();
+            TCtErrorCall errCallL = new TCtErrorCall();
+            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+            BeanUtils.copyProperties( errBasicL, errBasic );
+
+            errBasicL.setErrorCd( String.format("ES%s", parsed.getString("mac_state")) );
+            comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
             logger.warn( "회선장애 처리 후 다른 상태 skip" );
             /*
              *  AS 기 접수 장애는 장애 정상 발생 처리 후 중복 응답 처리 20101220 농협 회의결과
              */
-            if( macInfo.getAsAcptYn().length() == 8) {
+            if( nstr(macInfo.getAsAcptYn()).length() == 8) {
                 logger.warn( "AS기 접수 장애 중복장애처리 응답");
                 throw new MsgBrokerException("AS기 접수 장애 중복장애처리 응답]", -12);
             }
@@ -205,13 +236,21 @@ public class In05000120Impl extends InMsgHandlerImpl {
         int iAllNormal = 1;
         for( int iRow = 0; iRow < saValidErr.length; iRow++ ) {
             for( int iCol = 0; iCol < saValidErr[iRow].length(); iCol++ ) {
+                TCtErrorBasic errBasicL = new TCtErrorBasic();
+                TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                TCtErrorNoti errNotiL = new TCtErrorNoti();
+                TCtErrorCall errCallL = new TCtErrorCall();
+                TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                BeanUtils.copyProperties( errBasicL, errBasic );
+
                 /*
                  *  유효한 장애인지 체크
                  */
                 if( saValidErr[iRow].charAt(iCol) == '1'
                 ||  saValidErr[iRow].charAt(iCol) == '2'
                 ||  saValidErr[iRow].charAt(iCol) == '3' ) {
-                    errBasic.setErrorCd( String.format("ES%02d%01d", iRow, iCol) );
+                    errBasicL.setErrorCd( String.format("ES%02d%01d", iRow, iCol) );
                     /*
                      *  발생장애에 대한 복구 여부 체크
                      */
@@ -223,10 +262,10 @@ public class In05000120Impl extends InMsgHandlerImpl {
                              */
                             if( parsed.getString("mac_state").equals("00")
                             ||  parsed.getString("mac_state").equals("A3") ) {
-                                errTxn.setRepairDate( parsed.getString("create_date") ); // 1. 복구일자(개국일자)
-                                errTxn.setRepairTime( parsed.getString("create_time") ); // 2. 복구시간(개국시간)
-                                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                        errNoti, errCall, errTxn, macInfo, null );
+                                errTxnL.setRepairDate( parsed.getString("create_date") ); // 1. 복구일자(개국일자)
+                                errTxnL.setRepairTime( parsed.getString("create_time") ); // 2. 복구시간(개국시간)
+                                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                                        errNotiL, errCallL, errTxnL, macInfo, null );
                             }
                             else {
                                 logger.warn("단말상태('00','A3')에의한 복구 아님 SKIP! 단말상태[{}]", parsed.getString("mac_state") );
@@ -239,7 +278,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
                     }
                     else {
                         if( (parsed.getBytes("modul_state")[iRow] & usCheckBit[iCol]) == usCheckBit[iCol] ) {
-                            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                            comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                         }
                     }
                     if( parsed.getString("mac_state").equals("A1") ) {
@@ -256,7 +295,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
                         /*
                          *  AS 기 접수 장애는 장애 정상 발생 처리 후 중복 응답 처리 20101220 농협 회의결과
                          */
-                        if( macInfo.getAsAcptYn().length() == 8 ) {
+                        if( nstr(macInfo.getAsAcptYn()).length() == 8 ) {
                             logger.warn("AS기 접수 장애 중복장애처리 응답");
                             throw new MsgBrokerException("AS기 접수 장애 중복장애처리 응답]", -12);
                         }
@@ -274,11 +313,19 @@ public class In05000120Impl extends InMsgHandlerImpl {
             for( int iRow = 0; iRow < saValidErr.length; iRow++ ) {
                 for( int iCol = 0; iCol < saValidErr[iRow].length(); iCol++ ) {
                     if( saOldErrList[iRow].charAt(iCol) == '1' ) {
-                        errBasic.setErrorCd( String.format("ES%02d%01d", iRow, iCol) );
-                        errTxn.setRepairDate( parsed.getString("create_date") ); // 1. 복구일자(개국일자)
-                        errTxn.setRepairTime( parsed.getString("create_time") ); // 2. 복구시간(개국시간)
-                        comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                errNoti, errCall, errTxn, macInfo, null );
+                        TCtErrorBasic errBasicL = new TCtErrorBasic();
+                        TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                        TCtErrorNoti errNotiL = new TCtErrorNoti();
+                        TCtErrorCall errCallL = new TCtErrorCall();
+                        TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                        BeanUtils.copyProperties( errBasicL, errBasic );
+
+                        errBasicL.setErrorCd( String.format("ES%02d%01d", iRow, iCol) );
+                        errTxnL.setRepairDate( parsed.getString("create_date") ); // 1. 복구일자(개국일자)
+                        errTxnL.setRepairTime( parsed.getString("create_time") ); // 2. 복구시간(개국시간)
+                        comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                                errNotiL, errCallL, errTxnL, macInfo, null );
                     }
                 }
             }

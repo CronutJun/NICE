@@ -119,7 +119,7 @@ public class MsgBrokerMain {
 
     private static void startJMXConnectorServer() throws Exception {
 
-        final int rmiRegistryPort = Integer.parseInt(System.getProperty("com.nicetcm.nibsplus.broker.jmxremote.port","10899"));
+        final int rmiRegistryPort = Integer.parseInt(System.getProperty("com.nicetcm.nibsplus.broker.msg.jmxremote.port","10899"));
         final int rmiServerPort   = rmiRegistryPort - 1;
         final String hostname     = System.getProperty("java.rmi.server.hostname","localhost");
 

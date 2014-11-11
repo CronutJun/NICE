@@ -27,17 +27,17 @@ BEGIN
 -- 1. 003 브랜드제휴 월건수 및 수수료
 
 insert into t_ct_use_status_monthly (
-YEAR_MON, ORG_CD, JIJUM_CD, MAC_NO, SET_TYPE, SET_DATE, USE_DAY, MONTH_FEE, BOOTH_TYPE
+YEAR_MON, ORG_CD, BRANCH_CD, MAC_NO, SET_TYPE, SET_DATE, USE_DAY, MONTH_FEE, BOOTH_TYPE
 , USE_CNT_TOTAL_WITHDRAW, USE_CNT_TOTAL_TRANSFER, USE_CNT_TOTAL_DEPOSIT	, USE_CNT_TOTAL_SUM
 , USE_CNT_SAME_WITHDRAW	, USE_CNT_SAME_TRANSFER	, USE_CNT_SAME_DEPOSIT	, USE_CNT_SAME_SUM
 , USE_CNT_DIFF_WITHDRAW	, USE_CNT_DIFF_TRANSFER	, USE_CNT_DIFF_DEPOSIT	, USE_CNT_DIFF_SUM
 , BANKBOOK_UPDATE_CNT, EARNED_FEE_IBK, EARNED_FEE_VAN
-, ORG_SEND_YN, INSERT_UID, INSERT_DATE, UPDATE_UID, UPDATE_DATE, JIJUM_NM /* , SEQ */
+, ORG_SEND_YN, INSERT_UID, INSERT_DATE, UPDATE_UID, UPDATE_DATE, BRANCH_NM /* , SEQ */
 )
 select 
   cnt.year_mon																							--YEAR_MON              
   ,nvl(SST.BRAND_org_cd,'003')                                                                                     --ORG_CD                
-  ,nvl(SST.mng_jijum_cd,'0784')                                                                                     --JIJUM_CD              
+  ,nvl(SST.mng_BRANCH_cd,'0784')                                                                                     --BRANCH_CD              
   ,cnt.mac_no                                                                                           --MAC_NO                
   ,nvl(SST.set_type,'99')                                                                                         --SET_TYPE              
   ,SITE.open_date                                                                                       --SET_DATE              
@@ -80,7 +80,7 @@ select
     , sysdate  -- insert_date                                                                           --INSERT_DATE     
     , '' --update_uid                                                                                   --UPDATE_UID      
     , sysdate  -- update_date                                                                                --UPDATE_DATE     
-    , '' -- jijum_nm                                                                                    --JIJUM_NM        
+    , '' -- BRANCH_nm                                                                                    --BRANCH_NM        
     /*,''                                                                                                 --SEQ  */
 from
     (
@@ -142,7 +142,7 @@ from
           ,T_FN_NICE_MAC_ORG_DSUM BOOK
       where DSUM.deal_date between TO_CHAR(SYSDATE-25,'YYYYMM')||'01' AND TO_CHAR(LAST_DAY(SYSDATE-25),'YYYYMMDD')
       and DSUM.mac_no in
-        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and jijum_cd = '9600' and join_cd = '003')
+        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and BRANCH_cd = '9600' and join_cd = '003')
       AND DSUM.DEAL_DATE = DEPO.DEAL_DATE(+)
       AND DSUM.MAC_NO = DEPO.MAC_NO(+)
       AND DEPO.ORG_CD(+) = '003'
@@ -161,15 +161,15 @@ from
     , T_CM_SITE     	SITE
 where
  cnt.mac_no = MAC.mac_no
- AND MAC.ORG_CD = '096' AND MAC.JIJUM_CD = '9600'
+ AND MAC.ORG_CD = '096' AND MAC.BRANCH_CD = '9600'
  AND MAC.MAC_MODEL <> '7000'					-- 키오스크 제외
  AND MAC.ORG_CD = SITE.ORG_CD
- AND MAC.JIJUM_CD = SITE.JIJUM_CD
+ AND MAC.BRANCH_CD = SITE.BRANCH_CD
  AND MAC.SITE_CD = SITE.SITE_CD
  AND SITE.ORG_CD = SST.ORG_CD(+)
- AND SITE.JIJUM_CD = SST.JIJUM_CD(+)
+ AND SITE.BRANCH_CD = SST.BRANCH_CD(+)
  AND SITE.SITE_CD = SST.SITE_CD(+)
-  and sst.org_Cd(+) = '096' and sst.jijum_cd(+) = '9600';
+  and sst.org_Cd(+) = '096' and sst.BRANCH_cd(+) = '9600';
 
 
   COMMIT;
@@ -184,17 +184,17 @@ BEGIN
   
 --2. 0BK 경륜장 가상기기(0000) 구하기
 insert into t_ct_use_status_monthly (
-YEAR_MON, ORG_CD, JIJUM_CD, MAC_NO, SET_TYPE, SET_DATE, USE_DAY, MONTH_FEE, BOOTH_TYPE
+YEAR_MON, ORG_CD, BRANCH_CD, MAC_NO, SET_TYPE, SET_DATE, USE_DAY, MONTH_FEE, BOOTH_TYPE
 , USE_CNT_TOTAL_WITHDRAW, USE_CNT_TOTAL_TRANSFER, USE_CNT_TOTAL_DEPOSIT	, USE_CNT_TOTAL_SUM
 , USE_CNT_SAME_WITHDRAW	, USE_CNT_SAME_TRANSFER	, USE_CNT_SAME_DEPOSIT	, USE_CNT_SAME_SUM
 , USE_CNT_DIFF_WITHDRAW	, USE_CNT_DIFF_TRANSFER	, USE_CNT_DIFF_DEPOSIT	, USE_CNT_DIFF_SUM
 , BANKBOOK_UPDATE_CNT, EARNED_FEE_IBK, EARNED_FEE_VAN
-, ORG_SEND_YN, INSERT_UID, INSERT_DATE, UPDATE_UID, UPDATE_DATE, JIJUM_NM  /*, SEQ */
+, ORG_SEND_YN, INSERT_UID, INSERT_DATE, UPDATE_UID, UPDATE_DATE, BRANCH_NM  /*, SEQ */
 )
 select 
   cnt.year_mon																			--YEAR_MON              
   ,'003'			                                                                                    --ORG_CD                
-  ,'0000'			                                                                                    --JIJUM_CD              
+  ,'0000'			                                                                                    --BRANCH_CD              
   ,'0000'	                                                                                            --MAC_NO                
   ,'99'			                                                                                        --SET_TYPE              
   ,'20130801'                                                                                       --SET_DATE              
@@ -244,7 +244,7 @@ select
     , sysdate  -- insert_date                                                                           --INSERT_DATE     
     , '' --update_uid                                                                                   --UPDATE_UID      
     , sysdate  -- update_date                                                                                --UPDATE_DATE     
-    , '' -- jijum_nm                                                                                    --JIJUM_NM        
+    , '' -- BRANCH_nm                                                                                    --BRANCH_NM        
 /*    ,''                                                                                                 --SEQ             */
     /*
     ( (otherTimeCustFee + otherOtCustFee)
@@ -316,7 +316,7 @@ from
           ,T_FN_NICE_MAC_ORG_DSUM BOOK
       where DSUM.deal_date between TO_CHAR(SYSDATE-25,'YYYYMM')||'01' AND TO_CHAR(LAST_DAY(SYSDATE-25),'YYYYMMDD')
       and DSUM.mac_no in
-        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and jijum_cd = '9600' and join_cd = '0BK')
+        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and BRANCH_cd = '9600' and join_cd = '0BK')
       AND DSUM.DEAL_DATE = DEPO.DEAL_DATE(+)
       AND DSUM.MAC_NO = DEPO.MAC_NO(+)
       AND DEPO.ORG_CD(+) = '003'
