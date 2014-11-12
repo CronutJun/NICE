@@ -1049,6 +1049,13 @@ public class CommonPackImpl implements CommonPack {
                 ""
             };
         /*
+         *  복구 일자 시간은 전문의 create_date, time 항목으로
+         *===> 확인 필요
+         */
+        ErrTxn.setRepairDate( ErrBasic.getCreateDate().toString() );
+        ErrTxn.setRepairTime( ErrBasic.getCreateTime() );
+
+        /*
          *  상태전문 - 개국, 장애복구전문 처리
          */
         if( WorkType == MsgBrokerConst.DB_UPDATE_ERROR_MNG ) {

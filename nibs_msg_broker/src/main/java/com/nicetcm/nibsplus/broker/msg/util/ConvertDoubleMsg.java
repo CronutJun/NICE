@@ -53,7 +53,6 @@ public class ConvertDoubleMsg {
                 System.out.println(line);
                 byte[] lineBytes = line.getBytes("EUC-KR");
                 srcBuf = ByteBuffer.allocateDirect(lineBytes.length);
-                destBuf = ByteBuffer.allocateDirect(lineBytes.length * 2);
                 srcBuf.put(lineBytes);
                 srcBuf.position(MsgBrokerConst.MSG_TYPE_OFS);
                 srcBuf.get(bMsgType);
@@ -67,11 +66,13 @@ public class ConvertDoubleMsg {
 
                 sMsgPsr = MsgParser.getInstance(inQNm).parseMessage(srcBuf);
 
-                destBuf.position(0);
                 inQNm = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + new String(bWrkType) + ".json";
                 System.out.println("Target QNm = " + inQNm);
 
-                tMsgPsr = MsgParser.getInstance(inQNm).newMessage(destBuf);
+                tMsgPsr = MsgParser.getInstance(inQNm);
+                destBuf = ByteBuffer.allocateDirect(tMsgPsr.getSchemaLength());
+                destBuf.position(0);
+                tMsgPsr.newMessage(destBuf);
                 destBuf.position(0);
 
                 for(Entry<String, MsgData> entry: sMsgPsr.getAllFields().entrySet()) {

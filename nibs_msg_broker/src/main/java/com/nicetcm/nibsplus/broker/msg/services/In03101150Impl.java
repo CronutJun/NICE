@@ -40,8 +40,8 @@ public class In03101150Impl extends InMsgHandlerImpl {
         tMacInfo.setOrgCd( parsed.getString("CM.org_cd") );
         tMacInfo.setBranchCd( parsed.getString("brch_cd") );
         tMacInfo.setMacNo( parsed.getString("mac_no") );
-        tMacInfo.setSerialNo(parsed.getString("trade_date"));
-        tMacInfo.setTradeDate(parsed.getString("serial_no"));
+        tMacInfo.setSerialNo(parsed.getString("serial_no"));
+        tMacInfo.setTradeDate(parsed.getString("trade_date"));
 
         try
         {

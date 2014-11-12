@@ -52,13 +52,6 @@ public class In04000900Impl extends InMsgHandlerImpl {
                 suHeadSend.setMsgType(MsgBrokerConst.ES_REQ);
                 suHeadSend.setWorkType("0110");
 
-                //memcpy( suES.create_date        , suOrgState.create_date    , strlen(suOrgState.create_date ));
-                //memcpy( suES.create_time        , suOrgState.create_time    , strlen(suOrgState.create_time ));
-                //memcpy( suES.jijum_cd           , suOrgState.jijum_cd   , strlen(suOrgState.jijum_cd        ));
-                //memcpy( suES.mac_no             , suOrgState.mac_no     , strlen(suOrgState.mac_no      ));
-                //memcpy( suES.mac_model          , suOrgState.mac_model  , strlen(suOrgState.mac_model   ));
-                //memcpy( suES.mac_made_com_cd    , suOrgState.mac_comp   , strlen(suOrgState.mac_comp        ));
-
                 Map<String, String> columnMap = new HashMap<String, String>();
                 columnMap.put("create_date", parsed.getString("create_date"));
                 columnMap.put("create_time", parsed.getString("create_time"));
@@ -90,12 +83,6 @@ public class In04000900Impl extends InMsgHandlerImpl {
                     }
                 }
 
-                //memcpy( suES.state_term_mode        , suOrgState.term_mode  , strlen(suOrgState.term_mode   ));
-                //memcpy( suES.state_off_yn       , suOrgState.stop_yn    , strlen(suOrgState.stop_yn ));
-                //memcpy( suES.error_hw_yn        , suOrgState.hw_yn  , strlen(suOrgState.hw_yn   ));
-                //memcpy( suES.error_cd       , suOrgState.error_cd   , strlen(suOrgState.error_cd    ));
-                //memcpy( suES.error_mtc_cd       , suOrgState.lc_cd  , strlen(suOrgState.lc_cd   ));
-
                 columnMap.put("state_term_mode", parsed.getString("term_mode"));
                 columnMap.put("state_off_yn", parsed.getString("stop_yn"));
                 columnMap.put("error_hw_yn", parsed.getString("hw_yn"));
@@ -114,19 +101,6 @@ public class In04000900Impl extends InMsgHandlerImpl {
                     logger.warn( String.format("[MngEM_SaveManyErrCall] 기기제조사 정보  검색 실패 기관[%s] 지점[%s] 기번[%s]", parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no") ));
                     throw new MsgBrokerException(-1);
                 }
-
-                //memcpy( suCompBody.create_date      , suOrgState.create_date        ,   strlen( suOrgState.create_date      ) );
-                //memcpy( suCompBody.create_time      , suOrgState.create_time        ,   strlen( suOrgState.create_time      ) );
-                //memcpy( suCompBody.jijum_cd         , suOrgState.jijum_cd       ,   strlen( suOrgState.jijum_cd         ) );
-                //memcpy( suCompBody.jijum_nm         , suOrgState.jijum_nm       ,   strlen( suOrgState.jijum_nm         ) );
-                //memcpy( suCompBody.jijum_tel_no     , suOrgState.jijum_tel_no   ,   strlen( suOrgState.jijum_tel_no     ) );
-                //memcpy( suCompBody.site_cd          , suOrgState.site_cd            ,   strlen( suOrgState.site_cd          ) );
-                //memcpy( suCompBody.site_nm          , suOrgState.site_nm            ,   strlen( suOrgState.site_nm          ) );
-                //memcpy( suCompBody.mac_no           , suOrgState.mac_no         ,   strlen( suOrgState.mac_no           ) );
-                //memcpy( suCompBody.place_gb         , suOrgState.place_gb       ,   strlen( suOrgState.place_gb         ) );
-                //memcpy( suCompBody.oper_type        , suOrgState.oper_type      ,   strlen( suOrgState.oper_type            ) );
-                //memcpy( suCompBody.oper_time        , suOrgState.oper_time      ,   strlen( suOrgState.oper_time            ) );
-                //memcpy( suCompBody.serial_no        , suOrgState.serial_no      ,   strlen( suOrgState.serial_no            ) );
 
                 Map<String, String> suCompBody = new HashMap<String, String>();
                 suCompBody.put("create_date"  , parsed.getString("create_date"  ));

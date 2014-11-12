@@ -21,6 +21,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -52,28 +54,29 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     public String hotSwapBean(String beanClassName) {
         String beanName = "";
         String retMsg = "";
+        //AutowireCapableBeanFactory beanFactory;
 
         try {
             MsgBrokerClassLoader classLoader = new MsgBrokerClassLoader();
-            Class changeClass = classLoader.loadClass(beanClassName);
+            Class<?> changeClass = classLoader.loadClass(beanClassName);
 
             if( changeClass.isAnnotationPresent(org.springframework.stereotype.Component.class) ) {
-                logger.debug("Component annotation is present");
+                logger.warn("Component annotation is present");
                 beanName = ((org.springframework.stereotype.Component)changeClass
                                .getAnnotation(org.springframework.stereotype.Component.class)).value();
             }
             else if( changeClass.isAnnotationPresent(org.springframework.stereotype.Service.class) ) {
-                logger.debug("Service annotation is present");
+                logger.warn("Service annotation is present");
                 beanName = ((org.springframework.stereotype.Service)changeClass
                                .getAnnotation(org.springframework.stereotype.Service.class)).value();
             }
             else if( changeClass.isAnnotationPresent(org.springframework.stereotype.Repository.class) ) {
-                logger.debug("Repository annotation is present");
+                logger.warn("Repository annotation is present");
                 beanName = ((org.springframework.stereotype.Repository)changeClass
                                .getAnnotation(org.springframework.stereotype.Repository.class)).value();
             }
             else if( changeClass.isAnnotationPresent(org.springframework.stereotype.Controller.class) ) {
-                logger.debug("Controller annotation is present");
+                logger.warn("Controller annotation is present");
                 beanName = ((org.springframework.stereotype.Controller)changeClass
                                .getAnnotation(org.springframework.stereotype.Controller.class)).value();
             }
@@ -91,17 +94,17 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
                 beanName = beanName.substring(0,1).toLowerCase() + beanName.substring(1);
                 try { changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName); } catch ( Exception se ) {}
             }
-            logger.debug("bean {} is {}", beanName, changedInstance);
+            logger.warn("bean {} is {}", beanName, changedInstance);
 
             if( changedInstance != null ) {
-                logger.debug("Going to destroyBean: {}", beanClassName );
+                logger.warn("Going to destroyBean: {}", beanClassName );
                 ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).removeBeanDefinition(beanName);
                 retMsg = "Successfully Swaped";
             }
 
             changedInstance = changeClass.newInstance();
 
-            logger.debug("Going to registerBean: {}", beanClassName );
+            logger.warn("Going to registerBean: {}", beanClassName );
             GenericBeanDefinition beanDef = new GenericBeanDefinition();
             beanDef.setBeanClass(changeClass);
             beanDef.setLazyInit(false);
@@ -111,7 +114,9 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
             ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).registerBeanDefinition(beanName, beanDef);
 
             changedInstance = MsgBrokerSpringMain.sprCtx.getBean(beanName);
-            logger.debug("Is there {}? {}", beanName, changedInstance);
+            logger.warn("Is there {}? {}", beanName, changedInstance);
+
+            //beanFactory = MsgBrokerSpringMain.sprCtx.getBean(AutowireCapableBeanFactory.class);
 
             if( retMsg.length() == 0 )
                 return "Succcessfully Registered.";
