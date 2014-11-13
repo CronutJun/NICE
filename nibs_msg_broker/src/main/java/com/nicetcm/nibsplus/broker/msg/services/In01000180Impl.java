@@ -38,7 +38,7 @@ public class In01000180Impl extends InMsgHandlerImpl {
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
-        comPack.checkBranchMacLength(parsed);
+        try{ comPack.checkBranchMacLength(parsed); } catch( Exception e ) {}
 
         if(parsed.getString("mac_no").equals("0000") || parsed.getString("mac_no").equals("    ") || parsed.getString("mac_no").equals("")
            || (MsgBrokerConst.KEB_CODE.equals(parsed.getString("CM.org_cd")) && parsed.getString("mac_no").equals("999"))

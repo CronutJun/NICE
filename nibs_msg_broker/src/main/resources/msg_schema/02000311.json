@@ -1,14 +1,22 @@
 {
-   "name" : "02000410",                    "kname" : "코너 상태번경 통보",
-   "response" : { "code" : "02000410",     "type" : "SELF" },
-   "columns" : [
-      { "name" : "SM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "work_seq",               "kname" : "작업일련번호",           "type" : "AN",  "length"  : 10  },      
-      { "name" : "org_brch_cd",            "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
-      { "name" : "org_site_cd",            "kname" : "기관코너코드",           "type" : "AN",  "length"  : 6   },
-      { "name" : "org_site_nm",            "kname" : "기관코너명",             "type" : "AN",  "length"  : 80  },
-      { "name" : "work_date",              "kname" : "작업일자",               "type" : "AN",  "length"  : 8   },
-      { "name" : "work_cont",              "kname" : "작업내용",               "type" : "AN",  "length"  : 600 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 50  }
+   "name" : "02000311",                    "kname" : "코너 상태번경 통보",
+   "response" : { "code" : "02000311",     "type" : "SELF" },
+"columns" : [
+      { "name" : "SM",					"kname" : "공통헤더",		"type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "work_seq",			"kname" : "작업일련번호",	"type" : "AN",  "length"  : 10  },      
+      { "name" : "change_no",			"kname" : "변경차수",		"type" : "AN",  "length"  : 2   },
+      { "name" : "org_brch_cd",         "kname" : "영업점코드",		"type" : "AN",  "length"  : 8   },
+      { "name" : "org_site_cd",         "kname" : "기관코너코드",	"type" : "AN",  "length"  : 6   },
+      { "name" : "org_site_nm",         "kname" : "기관코너명",		"type" : "AN",  "length"  : 80  },
+      { "name" : "data_type",           "kname" : "전문구분",		"type" : "AN",  "length"  : 1   },
+      { "name" : "close_date",          "kname" : "폐쇄(철수)일자",	"type" : "AN",  "length"  : 8   },
+      { "name" : "reopen_type",         "kname" : "재가동구분",		"type" : "AN",  "length"  : 1   },
+      { "name" : "reopen_date",         "kname" : "재가동일자",		"type" : "AN",  "length"  : 8   },
+      { "name" : "set_type",            "kname" : "변경항목구분",	"type" : "AN",  "length"  : 1   },
+      { "name" : "oper_start_time",     "kname" : "운영시작시간",	"type" : "AN",  "length"  : 4   },
+      { "name" : "oper_end_time",       "kname" : "운영종료시간",	"type" : "AN",  "length"  : 4   },
+      { "name" : "check_yn",            "kname" : "수표운영",		"type" : "AN",  "length"  : 1   },
+      { "name" : "apply_date",          "kname" : "적용일",			"type" : "AN",  "length"  : 8   },
+      { "name" : "filler",              "kname" : "여유공간",		"type" : "AN",  "length"  : 320 }
    ]
 }

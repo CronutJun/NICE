@@ -9,9 +9,9 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
+import com.nicetcm.nibsplus.broker.msg.model.CloseAmt;
 import com.nicetcm.nibsplus.broker.msg.model.IfCashInsert;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
@@ -54,7 +54,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
         /**
          * 지점코드, 기번 길이 검증
          */
-        comPack.checkBranchMacLength( parsed );
+        try { comPack.checkBranchMacLength( parsed ); } catch( Exception e ) {}
 
         TMisc tMisc = new TMisc();
         tMisc.sethCashType("1");
@@ -308,42 +308,6 @@ public class In03101110Impl extends InMsgHandlerImpl {
 
 
     }//end method
-
-    public class CloseAmt {
-
-        private long closeInAmt;
-        private long closeOutAmt;
-
-        /**
-         * @return the closeInAmt
-         */
-        public long getCloseInAmt()
-        {
-            return closeInAmt;
-        }
-        /**
-         * @param closeInAmt the closeInAmt to set
-         */
-        public void setCloseInAmt(long closeInAmt)
-        {
-            this.closeInAmt = closeInAmt;
-        }
-        /**
-         * @return the closeOutAmt
-         */
-        public long getCloseOutAmt()
-        {
-            return closeOutAmt;
-        }
-        /**
-         * @param closeOutAmt the closeOutAmt to set
-         */
-        public void setCloseOutAmt(long closeOutAmt)
-        {
-            this.closeOutAmt = closeOutAmt;
-        }
-    }
-
 
 
     public class IfCashInsertEmart {

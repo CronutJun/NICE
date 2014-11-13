@@ -2,7 +2,6 @@ package com.nicetcm.nibsplus.scheduler.main;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.nicetcm.nibsplus.orgsend.common.OrgSend;
-import com.nicetcm.nibsplus.orgsend.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.scheduler.model.JobVO;
 import com.nicetcm.nibsplus.scheduler.model.SchedulerVO;
 import com.nicetcm.nibsplus.scheduler.service.JobExecuter;
@@ -64,7 +62,6 @@ public class NibsScheduleExecuter {
 	            	logger.info("해당하는 스케쥴이 존재하지 않습니다.");
 	            } else {
 	                ApplicationContext jobContext = scheduleInfoProvider.getApplicationContext(schedulerVO.getSpringContextXml());
-	                MsgBrokerCallAgent.msgBrokerConfig = (Properties)jobContext.getBean("msgBrokerConfig");
 	
 	                Class<JobExecuter> jobClass = null;
 	                jobClass = (Class<JobExecuter>)Class.forName(schedulerVO.getJobClass());

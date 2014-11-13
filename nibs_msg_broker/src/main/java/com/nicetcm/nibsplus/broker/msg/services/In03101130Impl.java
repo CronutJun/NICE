@@ -2,8 +2,6 @@ package com.nicetcm.nibsplus.broker.msg.services;
 
 import java.nio.ByteBuffer;
 
-import javax.jms.BytesMessage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,7 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
+import com.nicetcm.nibsplus.broker.msg.model.CmCash;
 import com.nicetcm.nibsplus.broker.msg.model.FnMacClose;
 import com.nicetcm.nibsplus.broker.msg.model.IfCashInsert;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
@@ -86,7 +85,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
         }
 
         //변경해야함 (AS-IS에서는 해당 전문을 직접 수정함
-        comPack.checkBranchMacLength(parsed);
+        try { comPack.checkBranchMacLength(parsed); } catch( Exception e ) {}
 
 
         long hpreAmt = 0;
@@ -421,87 +420,5 @@ public class In03101130Impl extends InMsgHandlerImpl {
             }
         }
     }//end method
-
-    public static class CmCash {
-        private String inqDate;
-        private String orgCd;
-        private String branchCd;
-        private String macNo;
-
-        private long hisClose;
-
-        /**
-         * @return the inqDate
-         */
-        public String getInqDate()
-        {
-            return inqDate;
-        }
-        /**
-         * @param inqDate the inqDate to set
-         */
-        public void setInqDate(String inqDate)
-        {
-            this.inqDate = inqDate;
-        }
-        /**
-         * @return the orgCd
-         */
-        public String getOrgCd()
-        {
-            return orgCd;
-        }
-        /**
-         * @param orgCd the orgCd to set
-         */
-        public void setOrgCd(String orgCd)
-        {
-            this.orgCd = orgCd;
-        }
-        /**
-         * @return the jijumCd
-         */
-        public String getBranchCd()
-        {
-            return branchCd;
-        }
-        /**
-         * @param jijumCd the jijumCd to set
-         */
-        public void setBranchCd(String branchCd)
-        {
-            this.branchCd = branchCd;
-        }
-        /**
-         * @return the macNo
-         */
-        public String getMacNo()
-        {
-            return macNo;
-        }
-        /**
-         * @param macNo the macNo to set
-         */
-        public void setMacNo(String macNo)
-        {
-            this.macNo = macNo;
-        }
-        /**
-         * @return the hisClose
-         */
-        public long getHisClose()
-        {
-            return hisClose;
-        }
-        /**
-         * @param hisClose the hisClose to set
-         */
-        public void setHisClose(long hisClose)
-        {
-            this.hisClose = hisClose;
-        }
-
-    }
-
 
 }

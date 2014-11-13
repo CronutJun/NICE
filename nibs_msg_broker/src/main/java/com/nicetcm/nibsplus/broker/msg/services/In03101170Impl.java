@@ -35,7 +35,7 @@ public class In03101170Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        comPack.checkBranchMacLength( parsed );
+        try { comPack.checkBranchMacLength( parsed ); } catch( Exception e ) {}
 
         String hORG_SEND_YN;
 

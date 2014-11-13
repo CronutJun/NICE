@@ -1,0 +1,1308 @@
+/****************************************************************************/
+/* 01. 프로그램명 		: {CasherFilemng.pc}		                        */
+/* 02. 작  성  자       	: {방혜진}                                          	*/
+/* 03. 작 성 일 자      	: {2007/05/09}                                      */
+/* 04. 프로그램기능     	: {}												*/
+/* 05. 입력FILE         	: 													*/
+/* 06. 출력FILE         	:													*/ 
+/* 07. 입력DATA HEADER  	: {}                                                */
+/* 08. 출력DATA HEADER  	: {}                                                */
+/* 09. 프로그램TYPE     	: {LIBRARY}                                         */
+/* 10. LINK LIBRARY     : {}                                                */
+/* 11. 작업주기         	: {0건/0일}                                         	*/
+/* 12. TR-CODE          : {}                                                */
+/* 13. 사용부서         	: {전산부}                                          	*/
+/* 14. POWER SERVICE    : {0}                                               */
+/* 15. REMARKS 사항     	: {}                                                */
+/****************************************************************************/
+
+/****************************************************************************/
+/* SYSTEM HEADER 정의                                                       	*/
+/****************************************************************************/
+#include	<stdio.h>
+#include	<string.h>
+#include	<stdlib.h>
+#include	<errno.h>
+#include	<signal.h>
+#include	<fcntl.h>
+#include	<netdb.h>
+#include	<math.h>
+#include	<ftw.h>
+#include	<sys/ioctl.h>
+#include	<sys/types.h>
+#include	<netinet/in.h>
+#include	<arpa/inet.h>
+
+/****************************************************************************/
+/* 사용자 HEADER 정의                                                       */
+/****************************************************************************/
+#include    "../include/dberrno.h"
+#include    "../include/commdef.h"
+
+#define APP_NAME	"CasherFilemng"
+#define	LOG_NAME	"CasherFilemng"
+
+#define TYPE_TR		0
+#define	TYPE_CK		1
+#define	TYPE_TK		2
+
+EXEC SQL INCLUDE SQLCA;
+
+/****************************************************************************/
+/* FUNCTION PROTO TYPE 정의                                                 */
+/****************************************************************************/
+int 	list( char * pName, struct stat * psuStatus, int nType );
+int 	ReadFileProc( char * pFile );
+int		InsertCasherTranData(struct CASHER_TRAN_LIST * psuCasher );
+int		InsertCheckDetailData(struct CHECK_DETAIL_LIST * psuCheck );
+int		InsertTicketDetailData(struct TICKET_DETAIL_LIST * psuTicket );
+void    CleanUp(int Sig);
+
+/****************************************************************************/
+/* 사용자 외부변수 및 공용변수 정의                                         */
+/****************************************************************************/
+varchar huid[20];
+varchar hpid[20];
+
+short   logflg;							/* log function(logger) on/off flag */
+int     logdev;							/* log function(logger) file desc.  */
+
+pid_t	process_id = 0;
+
+/*
+struct CASHER_TRAN_LIST
+{
+	char	szOrg_Cd[3+5];
+	char	szJijum_Cd[4+5];
+	char	szDeal_Date[8+5];
+	char	szDeal_No[5+5];
+	char	szDeal_Type[4+5];
+	char	szMac_No[4+5];
+	char	szTenant_Cd[4+5];
+	char	szPos_No[4+5];
+	char	szClose_Date[8+5];
+	char	szCasher_Id[6+5];
+	char	szDeal_Time[6+5];
+	char	szDevicever_Id[8+5];
+	char	szAcudiv[1+5];
+	char	szInmon_Flag[1+5];
+	char	szCash_100000_Cnt[10+5];
+	char	szCash_100000_Amt[10+5];
+	char	szCash_50000_Cnt[10+5];
+	char	szCash_50000_Amt[10+5];
+	char	szCash_10000_Cnt[10+5];
+	char	szCash_10000_Amt[10+5];
+	char	szCash_5000_Cnt[10+5];
+	char	szCash_5000_Amt[10+5];
+	char	szCash_1000_Cnt[10+5];
+	char	szCash_1000_Amt[10+5];
+	char	szCash_500_Cnt[10+5];
+	char	szCash_500_Amt[10+5];
+	char	szCash_100_Cnt[10+5];
+	char	szCash_100_Amt[10+5];
+	char	szCash_50_Cnt[10+5];
+	char	szCash_50_Amt[10+5];
+	char	szCash_10_Cnt[10+5];
+	char	szCash_10_Amt[10+5];
+	char	szCheck_100_Cnt[10+5];
+	char	szCheck_100_Amt[10+5];
+	char	szCheck_50_Cnt[10+5];
+	char	szCheck_50_Amt[10+5];
+	char	szCheck_30_Cnt[10+5];
+	char	szCheck_30_Amt[10+5];
+	char	szCheck_10_Cnt[10+5];
+	char	szCheck_10_Amt[10+5];
+	char	szCheck_Etc_Amt[10+5];
+	char	szBox_Cash_Amt[10+5];
+	char	szBox_Coin_Amt[10+5];
+	char	szBox_Check_Amt[10+5];
+	char	szBox_Incom_Amt[10+5];
+	char	szBox_Outcom_Amt[10+5];
+	char	szBox_Ppcard_Amt[10+5];
+};
+*/
+
+struct CASHER_TRAN_LIST
+{
+	char	szOrg_Cd[3+5];
+	char	szJijum_Cd[4+5];
+	char	szDeal_Date[8+5];
+	char	szDeal_No[5+5];
+	char	szDeal_Type[4+5];
+	char	szMac_No[4+5];
+	char	szTenant_Cd[4+5];
+	char	szPos_No[4+5];
+	char	szClose_Date[8+5];
+	char	szCasher_Id[6+5];
+	char	szDeal_Time[6+5];
+	char	szDevicever_Id[8+5];
+	char	szAcudiv[1+5];
+	char	szInmon_Flag[1+5];
+	char	szCash_100000_Cnt[10+5];
+	char	szCash_100000_Amt[10+5];
+	char	szCash_50000_Cnt[10+5];
+	char	szCash_50000_Amt[10+5];
+	char	szCash_10000_Cnt[10+5];
+	char	szCash_10000_Amt[10+5];
+	char	szCash_5000_Cnt[10+5];
+	char	szCash_5000_Amt[10+5];
+	char	szCash_1000_Cnt[10+5];
+	char	szCash_1000_Amt[10+5];
+	char	szCash_500_Cnt[10+5];
+	char	szCash_500_Amt[10+5];
+	char	szCash_100_Cnt[10+5];
+	char	szCash_100_Amt[10+5];
+	char	szCash_50_Cnt[10+5];
+	char	szCash_50_Amt[10+5];
+	char	szCash_10_Cnt[10+5];
+	char	szCash_10_Amt[10+5];
+	char	szCheck_100_Cnt[10+5];
+	char	szCheck_100_Amt[10+5];
+	char	szCheck_50_Cnt[10+5];
+	char	szCheck_50_Amt[10+5];
+	char	szCheck_30_Cnt[10+5];
+	char	szCheck_30_Amt[10+5];
+	char	szCheck_10_Cnt[10+5];
+	char	szCheck_10_Amt[10+5];
+	char	szCheck_Etc_Amt[10+5];
+	char	szBox_Cash_Amt[10+5];
+	char	szBox_Coin_Amt[10+5];
+	char	szBox_Check_Amt[10+5];
+	char	szBox_Incom_Amt[10+5];
+	char	szBox_Outcom_Amt[10+5];
+	char	szBox_Ppcard_Amt[10+5];
+	char	szTick_Own_1000_cnt		[10+5];
+	char	szTick_Own_2000_cnt		[10+5];
+	char	szTick_Own_3000_cnt		[10+5];
+	char	szTick_Own_5000_cnt		[10+5];
+	char	szTick_Own_10000_cnt	[10+5];
+	char	szTick_Own_30000_cnt	[10+5];
+	char	szTick_Own_50000_cnt	[10+5];
+	char	szTick_Own_70000_cnt	[10+5];
+	char	szTick_Own_100000_cnt	[10+5];
+	char	szTick_Own_300000_cnt	[10+5];
+	char	szTick_Own_500000_cnt	[10+5];
+	char	szTick_Own_1000000_cnt	[10+5];
+	char	szTick_Etc_1000_cnt		[10+5];
+	char	szTick_Etc_2000_cnt		[10+5];
+	char	szTick_Etc_3000_cnt		[10+5];
+	char	szTick_Etc_5000_cnt		[10+5];
+	char	szTick_Etc_10000_cnt	[10+5];
+	char	szTick_Etc_30000_cnt	[10+5];
+	char	szTick_Etc_50000_cnt	[10+5];
+	char	szTick_Etc_70000_cnt	[10+5];
+	char	szTick_Etc_100000_cnt	[10+5];
+	char	szTick_Etc_300000_cnt	[10+5];
+	char	szTick_Etc_500000_cnt	[10+5];
+	char	szTick_Etc_1000000_cnt	[10+5];
+};
+
+struct CHECK_DETAIL_LIST
+{
+	char 	szOrgCd[3+5];
+	char 	szJijumCd[4+5];
+	char	szDealDate[8+5];
+	char 	szDealNo[5+5];
+	char 	szDealType[4+5];
+	char 	szMacNo[4+5];
+	char 	szTenantCd[4+5];
+	char 	szPosNo[4+5];
+	char 	szCloseDate[8+5];
+	char 	szCasherId[6+5];
+	char 	szDealTime[6+5];
+	char 	szDeviceverId[8+5];
+	char 	szAcudiv[1+5];
+	char 	szInmonFlag[1+5];
+	char 	szCheckType[7+5];
+	char 	szCheckNo[30+5];
+};
+
+
+struct TICKET_DETAIL_LIST
+{
+	char 	szOrgCd[3+5];
+	char 	szJijumCd[4+5];
+	char	szDealDate[8+5];
+	char 	szDealNo[5+5];
+	char 	szDealType[4+5];
+	char 	szMacNo[4+5];
+	char 	szTenantCd[4+5];
+	char 	szPosNo[4+5];
+	char 	szCloseDate[8+5];
+	char 	szCasherId[6+5];
+	char 	szDealTime[6+5];
+	char 	szDeviceverId[8+5];
+	char 	szAcudiv[1+5];
+	char 	szInmonFlag[1+5];
+	char 	szPublishCd[4+5];
+	char 	szTicketType[10+5];
+	char 	szTicketNo[30+5];
+};
+
+void main(int argc, char *argv[])
+{
+	long	lPrevDate;
+	char	szPath[1024];
+	
+	if ( fnCheckApplState( APP_NAME ) < 0 )
+	{
+		printf( "[%s]Appl is already started ... Exit\n\n", APP_NAME );
+		exit(0);
+	}
+	
+	lPrevDate = GetCurDate();
+	/* log 파일 형식 지정 LOG - text type HEX - hexa type */
+	logflg = LOG;
+	if ( fnCheckLogFile( LOG_NAME ) < 0 )
+	{
+		printf( ">>> [main] log file create fail\n");
+		/* LogFile Error 이라도 작업 진행 */
+	}
+	/*- LOG FILE 처리 ------------------------------------------------------*/
+
+	char	szDBUser[50];
+	char	szDBPwd[50];
+	char	szDBSID[50];
+	char 	hDBConn[100];
+
+	memset((char *)szDBUser	, 	(int)0x00, sizeof(szDBUser	));
+	memset((char *)szDBPwd	, 	(int)0x00, sizeof(szDBPwd	));
+	memset((char *)szDBSID	, 	(int)0x00, sizeof(szDBSID	));
+
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)"DB_USER=", szDBUser ) < 0 )
+	{
+		printf( "main : rd_cnfg_pram DB USER Get Error \n" );
+   		exit(0);
+	}
+
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)"DB_PWD=", szDBPwd ) < 0 )
+	{
+		printf( "main : rd_cnfg_pram DB PWD Get Error \n" );
+   		exit(0);
+	}
+
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)"DB_SID=", szDBSID ) < 0 )
+	{
+		printf( "main : rd_cnfg_pram DB SID Get Error \n" );
+   		exit(0);
+	}
+	
+	memset( hDBConn, 0x00, sizeof( hDBConn ) );
+
+	sprintf( hDBConn, "%s/%s@%s", szDBUser, szDBPwd, szDBSID );
+
+	EXEC SQL CONNECT :hDBConn;
+	
+	if ( sqlca.sqlcode != DB_SUCCESS )
+	{
+		logger( "Connect Err: %.100s\n", SqlErrMsg );
+		CleanUp(0);
+	}	
+	
+	memset((char *)szPath, 	(int)0x00, sizeof(szPath));
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)CASHER_FILE_PATH, szPath ) < 0 )
+	{
+		logger( "main : rd_cnfg_pram CASHER_FILE_PATH Get Error = [%s]\n", szPath );
+   		CleanUp(0);
+	}
+	
+	ftw(szPath, list, 1);
+	
+	
+	exit(0);
+}
+
+int list( char * pName, struct stat * psuStatus, int nType )
+{
+	char szBackName[512];
+	
+	/* if the stat call failed, just return */
+	if( nType == FTW_NS )
+	{
+		return (0);		
+	}
+	
+	/*
+	 *	otherwise print object name,
+	 *	permissions and "*" postfix
+	 *	if object is a directory
+	 */
+	if( nType == FTW_F )
+	{		
+		/* printf( "%-30s\t0%3o\n", pName, psuStatus->st_mode&0777);*/
+
+/*printf( "%-30s\t%ld\n", pName, psuStatus->st_size );*/
+
+		if( !memcmp(&pName[strlen(pName) - 4], ".lst", 4 ) )		
+		{
+			if( psuStatus->st_size == 0 || ReadFileProc( pName ) == 0 )
+			{
+				memset( szBackName, 0x00, sizeof(szBackName) );
+				
+				memcpy( szBackName, pName, strlen(pName) - 4 );
+				strcat( szBackName, ".bak" );
+				
+				rename(pName, szBackName);
+			}
+		}
+		
+	}
+	/*
+	else
+	{
+		printf( "%-30s*\t0%3o\n", pName, psuStatus->st_mode&0777);		
+	}
+	*/
+	
+	return (0);
+}
+
+/*
+void ReadFileProc( char * pFile )
+{
+	FILE 	*fp;
+	
+	char 	szRead[1024];
+	int		i;
+	int		nCnt;
+	int		nIndex;
+	int		nColStart;	
+	char 	szMacNo[12+5];
+	char 	szIP[15+5];	
+	
+		
+	memset( szRead, 0x00, sizeof(szRead) );
+
+	if( (fp = fopen(pFile, "r")) == NULL ) return;
+	
+	char szTemp[512];
+
+	while( fgets(szRead, sizeof(szRead), fp) != NULL )
+	{
+		nCnt = 0;
+		nIndex = 0;
+		nColStart = 1;
+
+		for( i = 0; i < strlen(szRead); i++ )
+		{
+			if( nColStart == 1 )
+			{
+				nIndex = i;
+				nColStart = 0;
+			}
+			
+			if(szRead[i] == ',')
+			{	
+				if( nCnt == 1 )
+				{
+					memset( szMacNo, 0x00, sizeof(szMacNo) );
+					memcpy( szMacNo, &szRead[i - 4], 4 );
+				}
+				else if( nCnt == 7 )
+				{
+					memset( szIP, 0x00, sizeof(szIP) );
+					memcpy( szIP, &szRead[nIndex], (i - nIndex) );					
+					break;
+				}
+				
+				nCnt ++;
+				nColStart = 1;
+			}
+		}
+		
+		/=printf("MacNo = <%s>	,IPAddr = <%s> \n", szMacNo, szIP);=/
+		UpdateVPNData( szMacNo, szIP );
+
+		memset(szRead, 0x00, sizeof(szRead));
+	}
+	
+	fclose(fp);
+}
+*/
+
+#define VER_OLD	0
+#define VER_NEW	1
+
+int ReadFileProc( char * pFile )
+{
+	FILE 	*fp;
+	
+	char 	szRead[1024];
+	int		nIndex;
+	char	*token;
+	int		nFileType;
+	int		nRtn = -1;
+	
+	int		nVersion = 0;
+		
+	struct CASHER_TRAN_LIST suCasher;
+	struct CHECK_DETAIL_LIST suCheck;
+	struct TICKET_DETAIL_LIST suTicket;
+	char	*p;
+		
+	memset( szRead, 0x00, sizeof(szRead) );
+	
+	if( strncmp(&pFile[strlen(pFile) - 24], "TR", 2) == 0 )
+	{
+		nFileType = TYPE_TR;
+	}
+	else if( strncmp(&pFile[strlen(pFile) - 24], "CK", 2) == 0 )
+	{
+		nFileType = TYPE_CK;
+	}
+	else if( strncmp(&pFile[strlen(pFile) - 24], "TK", 2) == 0 )
+	{
+		nFileType = TYPE_TK;
+	}
+	else
+	{
+		printf("unknown file [%s]\n", pFile);
+		return -1;
+	}
+
+	if( (fp = fopen(pFile, "r")) == NULL ) return -1;
+	
+
+	while( fgets(szRead, sizeof(szRead), fp) != NULL )
+	{
+		nIndex = 0;
+
+		/*szRead[strlen(szRead)-1] = 0x00;*/
+
+		memset( &suCasher, 0x00, sizeof(suCasher));
+		memset( &suCheck, 0x00, sizeof(suCheck));
+		memset( &suTicket, 0x00, sizeof(suTicket));
+		
+	    /* Establish string and get the first token: */
+		token = strtok( szRead, "," );
+		
+		if( nFileType == TYPE_TR )
+		{			
+			while( token != NULL )
+			{
+				p = strchr( token, '\n' );		
+				/* While there are tokens in "string" */								
+				if( p )
+					*p = '\0';
+					
+				p = strchr( token, '\r' );
+				/* While there are tokens in "string" */								
+				if( p )
+					*p = '\0';
+
+				switch(nIndex)
+				{
+					case  0 : strcpy( suCasher.szJijum_Cd       , (char *)token); break;
+					case  1 : strcpy( suCasher.szDeal_Date      , (char *)token); break;
+					case  2 : strcpy( suCasher.szDeal_No        , (char *)token); break;
+					case  3 : strcpy( suCasher.szDeal_Type      , (char *)token); break;
+					case  4 : strcpy( suCasher.szMac_No         , (char *)token); break;
+					case  5 : strcpy( suCasher.szTenant_Cd      , (char *)token); break;
+					case  6 : strcpy( suCasher.szPos_No         , (char *)token); break;
+					case  7 : strcpy( suCasher.szClose_Date     , (char *)token); break;
+					case  8 : strcpy( suCasher.szCasher_Id      , (char *)token); break;
+					case  9 : strcpy( suCasher.szDeal_Time      , (char *)token); break;
+					case 10 : strcpy( suCasher.szDevicever_Id   , (char *)token); 
+							  	if( atoi( suCasher.szDevicever_Id ) >= 20022 )
+							  	{
+							  		nVersion = VER_NEW;
+								}
+								else
+								{
+									nVersion = VER_OLD;
+								}
+						      break;
+					case 11 : strcpy( suCasher.szAcudiv         , (char *)token); break;
+					case 12 : strcpy( suCasher.szInmon_Flag     , (char *)token); break;
+					case 13 : strcpy( suCasher.szCash_100000_Cnt, (char *)token); break;
+					case 14 : strcpy( suCasher.szCash_100000_Amt, (char *)token); break;
+					case 15 : strcpy( suCasher.szCash_50000_Cnt , (char *)token); break;
+					case 16 : strcpy( suCasher.szCash_50000_Amt , (char *)token); break;
+					case 17 : strcpy( suCasher.szCash_10000_Cnt , (char *)token); break;
+					case 18 : strcpy( suCasher.szCash_10000_Amt , (char *)token); break;
+					case 19 : strcpy( suCasher.szCash_5000_Cnt  , (char *)token); break;
+					case 20 : strcpy( suCasher.szCash_5000_Amt  , (char *)token); break;
+					case 21 : strcpy( suCasher.szCash_1000_Cnt  , (char *)token); break;
+					case 22 : strcpy( suCasher.szCash_1000_Amt  , (char *)token); break;
+					case 23 : strcpy( suCasher.szCash_500_Cnt   , (char *)token); break;
+					case 24 : strcpy( suCasher.szCash_500_Amt   , (char *)token); break;
+					case 25 : strcpy( suCasher.szCash_100_Cnt   , (char *)token); break;
+					case 26 : strcpy( suCasher.szCash_100_Amt   , (char *)token); break;
+					case 27 : strcpy( suCasher.szCash_50_Cnt    , (char *)token); break;
+					case 28 : strcpy( suCasher.szCash_50_Amt    , (char *)token); break;
+					case 29 : strcpy( suCasher.szCash_10_Cnt	, (char *)token); break;
+					case 30 : strcpy( suCasher.szCash_10_Amt    , (char *)token); break;
+					case 31 : strcpy( suCasher.szCheck_100_Cnt  , (char *)token); break;
+					case 32 : strcpy( suCasher.szCheck_100_Amt  , (char *)token); break;
+					case 33 : strcpy( suCasher.szCheck_50_Cnt   , (char *)token); break;
+					case 34 : strcpy( suCasher.szCheck_50_Amt   , (char *)token); break;
+					case 35 : strcpy( suCasher.szCheck_30_Cnt   , (char *)token); break;
+					case 36 : strcpy( suCasher.szCheck_30_Amt   , (char *)token); break;
+					case 37 : strcpy( suCasher.szCheck_10_Cnt   , (char *)token); break;
+					case 38 : strcpy( suCasher.szCheck_10_Amt   , (char *)token); break;
+					case 39 : strcpy( suCasher.szCheck_Etc_Amt  , (char *)token); break;
+					case 40 : strcpy( suCasher.szBox_Cash_Amt   , (char *)token); break;
+					case 41 : strcpy( suCasher.szBox_Coin_Amt   , (char *)token); break;
+					case 42 : strcpy( suCasher.szBox_Check_Amt  , (char *)token); break;
+					case 43 : strcpy( suCasher.szBox_Incom_Amt  , (char *)token); break;
+					case 44 : strcpy( suCasher.szBox_Outcom_Amt , (char *)token); break;
+					case 45 : strcpy( suCasher.szBox_Ppcard_Amt , (char *)token); break;
+					case 46 : strcpy( suCasher.szTick_Own_1000_cnt		 , (char *)token); break;
+					case 47 : strcpy( suCasher.szTick_Own_2000_cnt		 , (char *)token); break;
+					case 48 : strcpy( suCasher.szTick_Own_3000_cnt		 , (char *)token); break;
+					case 49 : strcpy( suCasher.szTick_Own_5000_cnt		 , (char *)token); break;
+					case 50 : strcpy( suCasher.szTick_Own_10000_cnt	     , (char *)token); break;
+					case 51 : strcpy( suCasher.szTick_Own_30000_cnt	     , (char *)token); break;
+					case 52 : strcpy( suCasher.szTick_Own_50000_cnt	     , (char *)token); break;
+					case 53 : strcpy( suCasher.szTick_Own_70000_cnt	     , (char *)token); break;
+					case 54 : strcpy( suCasher.szTick_Own_100000_cnt	 , (char *)token); break;
+					case 55 : strcpy( suCasher.szTick_Own_300000_cnt	 , (char *)token); break;
+					case 56 : strcpy( suCasher.szTick_Own_500000_cnt	 , (char *)token); break;
+					case 57 : strcpy( suCasher.szTick_Own_1000000_cnt	 , (char *)token); break;
+					case 58 : strcpy( suCasher.szTick_Etc_1000_cnt		 , (char *)token); break;
+					case 59 : strcpy( suCasher.szTick_Etc_2000_cnt		 , (char *)token); break;
+					case 60 : strcpy( suCasher.szTick_Etc_3000_cnt		 , (char *)token); break;
+					case 61 : strcpy( suCasher.szTick_Etc_5000_cnt		 , (char *)token); break;
+					case 62 : strcpy( suCasher.szTick_Etc_10000_cnt	     , (char *)token); break;
+					case 63 : strcpy( suCasher.szTick_Etc_30000_cnt	     , (char *)token); break;
+					case 64 : strcpy( suCasher.szTick_Etc_50000_cnt	     , (char *)token); break;
+					case 65 : strcpy( suCasher.szTick_Etc_70000_cnt	     , (char *)token); break;
+					case 66 : strcpy( suCasher.szTick_Etc_100000_cnt	 , (char *)token); break;
+					case 67 : strcpy( suCasher.szTick_Etc_300000_cnt	 , (char *)token); break;
+					case 68 : strcpy( suCasher.szTick_Etc_500000_cnt	 , (char *)token); break;
+					case 69 : strcpy( suCasher.szTick_Etc_1000000_cnt	 , (char *)token); break;
+					default : break;
+				}
+				
+				printf("TR-data[%d] = <%s> \n", nIndex, token);
+				nIndex++;
+	
+				/* Get next token: */
+				token = strtok( NULL, "," );
+			}
+			
+			if( /*suCasher.szDeal_Date[0] != 0x00 &&*/ strlen(suCasher.szDeal_Date) == 8 )
+			{
+				nRtn = InsertCasherTranData( &suCasher );
+			}
+		}
+		else if( nFileType == TYPE_CK )
+		{
+			while( token != NULL )
+			{
+				p = strchr( token, '\n' );		
+				if( p )
+					*p = '\0';
+					
+				p = strchr( token, '\r' );				
+				if( p )
+					*p = '\0';
+					
+				/* While there are tokens in "string" */			
+				switch(nIndex)
+				{
+					case  0 : strcpy(suCheck.szJijumCd    , (char *)token); break;
+					case  1 : strcpy(suCheck.szDealDate   , (char *)token); break;
+					case  2 : strcpy(suCheck.szDealNo     , (char *)token); break;
+					case  3 : strcpy(suCheck.szDealType   , (char *)token); break;
+					case  4 : strcpy(suCheck.szMacNo      , (char *)token); break;
+					case  5 : strcpy(suCheck.szTenantCd   , (char *)token); break;
+					case  6 : strcpy(suCheck.szPosNo      , (char *)token); break;
+					case  7 : strcpy(suCheck.szCloseDate  , (char *)token); break;
+					case  8 : strcpy(suCheck.szCasherId   , (char *)token); break;
+					case  9 : strcpy(suCheck.szDealTime   , (char *)token); break;
+					case 10 : strcpy(suCheck.szDeviceverId, (char *)token); break;
+					case 11 : strcpy(suCheck.szAcudiv     , (char *)token); break;
+					case 12 : strcpy(suCheck.szInmonFlag  , (char *)token); break;
+					case 13 : strcpy(suCheck.szCheckType  , (char *)token); break;
+					case 14 : strcpy(suCheck.szCheckNo    , (char *)token); break;
+					default : break;
+				}
+					
+				
+				printf("CK-data[%d] = <%s> \n", nIndex, token);
+				
+				nIndex++;
+	
+				/* Get next token: */
+				token = strtok( NULL, "," );
+			}
+			
+			if( /*suCasher.szDeal_Date[0] != 0x00 &&*/ strlen(suCheck.szDealDate) == 8 )
+			{
+				nRtn = InsertCheckDetailData( &suCheck );				
+			}
+		}
+		else
+		{
+			while( token != NULL )
+			{
+				p = strchr( token, '\n' );		
+				if( p )
+					*p = '\0';
+					
+				p = strchr( token, '\r' );				
+				if( p )
+					*p = '\0';
+					
+				/* While there are tokens in "string" */			
+				switch(nIndex)
+				{
+					case  0 : strcpy(suTicket.szJijumCd    , (char *)token); break;
+					case  1 : strcpy(suTicket.szDealDate   , (char *)token); break;
+					case  2 : strcpy(suTicket.szDealNo     , (char *)token); break;
+					case  3 : strcpy(suTicket.szDealType   , (char *)token); break;
+					case  4 : strcpy(suTicket.szMacNo      , (char *)token); break;
+					case  5 : strcpy(suTicket.szTenantCd   , (char *)token); break;
+					case  6 : strcpy(suTicket.szPosNo      , (char *)token); break;
+					case  7 : strcpy(suTicket.szCloseDate  , (char *)token); break;
+					case  8 : strcpy(suTicket.szCasherId   , (char *)token); break;
+					case  9 : strcpy(suTicket.szDealTime   , (char *)token); break;
+					case 10 : strcpy(suTicket.szDeviceverId, (char *)token); break;
+					case 11 : strcpy(suTicket.szAcudiv     , (char *)token); break;
+					case 12 : strcpy(suTicket.szInmonFlag  , (char *)token); break;
+					case 13 : strcpy(suTicket.szPublishCd  , (char *)token); break;
+					case 14 : strcpy(suTicket.szTicketType , (char *)token); break;
+					case 15 : strcpy(suTicket.szTicketNo   , (char *)token); break;
+					default : break;
+				}
+					
+				
+				printf("TK-data[%d] = <%s> \n", nIndex, token);
+				
+				nIndex++;
+	
+				/* Get next token: */
+				token = strtok( NULL, "," );
+			}
+			
+			if( /*suCasher.szDeal_Date[0] != 0x00 &&*/ strlen(suTicket.szDealDate) == 8 )
+			{
+				nRtn = InsertTicketDetailData( &suTicket );				
+			}
+		}
+		
+		memset(szRead, 0x00, sizeof(szRead));
+	}
+	
+	fclose(fp);
+	
+	
+	return nRtn;
+}
+
+
+int	InsertCasherTranData(struct CASHER_TRAN_LIST * psuCasher )
+{
+			
+			logger(" psuCasher->szJijum_Cd    [%s]\n", psuCasher->szJijum_Cd      );  
+			logger(" psuCasher->szDeal_Date   [%s]\n", psuCasher->szDeal_Date     );  
+			logger(" psuCasher->szDeal_No     [%s]\n", psuCasher->szDeal_No       );  
+			logger(" psuCasher->szDeal_Type   [%s]\n", psuCasher->szDeal_Type     );  
+			logger(" psuCasher->szMac_No      [%s]\n", psuCasher->szMac_No        );  
+			logger(" psuCasher->szTenant_Cd   [%s]\n", psuCasher->szTenant_Cd     );  
+			logger(" psuCasher->szPos_No      [%s]\n", psuCasher->szPos_No        );  
+			logger(" psuCasher->szClose_Date  [%s]\n", psuCasher->szClose_Date    );  
+			logger(" psuCasher->szCasher_Id   [%s]\n", psuCasher->szCasher_Id     );  
+			logger(" psuCasher->szDeal_Time   [%s]\n", psuCasher->szDeal_Time     );  
+			logger(" psuCasher->szDevicever_Id[%s]\n", psuCasher->szDevicever_Id  );  
+			logger(" psuCasher->szAcudiv      [%s]\n", psuCasher->szAcudiv        );  
+			logger(" psuCasher->szInmon_Flag  [%s]\n", psuCasher->szInmon_Flag    );  
+
+/*	
+ 			logger(" psuCasher->szCash_100000_Cnt[%s]\n", psuCasher->szCash_100000_Cnt);
+			logger(" psuCasher->szCash_100000_Amt[%s]\n", psuCasher->szCash_100000_Amt);
+			logger(" psuCasher->szCash_50000_Cnt [%s]\n", psuCasher->szCash_50000_Cnt );
+			logger(" psuCasher->szCash_50000_Amt [%s]\n", psuCasher->szCash_50000_Amt );
+			logger(" psuCasher->szCash_10000_Cnt [%s]\n", psuCasher->szCash_10000_Cnt );
+			logger(" psuCasher->szCash_10000_Amt [%s]\n", psuCasher->szCash_10000_Amt );
+			logger(" psuCasher->szCash_5000_Cnt  [%s]\n", psuCasher->szCash_5000_Cnt  );
+			logger(" psuCasher->szCash_5000_Amt  [%s]\n", psuCasher->szCash_5000_Amt  );
+			logger(" psuCasher->szCash_1000_Cnt  [%s]\n", psuCasher->szCash_1000_Cnt  );
+			logger(" psuCasher->szCash_1000_Amt  [%s]\n", psuCasher->szCash_1000_Amt  );
+			logger(" psuCasher->szCash_500_Cnt   [%s]\n", psuCasher->szCash_500_Cnt   );
+			logger(" psuCasher->szCash_500_Amt   [%s]\n", psuCasher->szCash_500_Amt   );
+			logger(" psuCasher->szCash_100_Cnt   [%s]\n", psuCasher->szCash_100_Cnt   );
+			logger(" psuCasher->szCash_100_Amt   [%s]\n", psuCasher->szCash_100_Amt   );
+			logger(" psuCasher->szCash_50_Cnt    [%s]\n", psuCasher->szCash_50_Cnt    );
+			logger(" psuCasher->szCash_50_Amt    [%s]\n", psuCasher->szCash_50_Amt    );
+			logger(" psuCasher->szCash_10_Cnt	[%s]\n", psuCasher->szCash_10_Cnt	  );
+			logger(" psuCasher->szCash_10_Amt    [%s]\n", psuCasher->szCash_10_Amt    );
+			logger(" psuCasher->szCheck_100_Cnt  [%s]\n", psuCasher->szCheck_100_Cnt  );
+			logger(" psuCasher->szCheck_100_Amt  [%s]\n", psuCasher->szCheck_100_Amt  );
+			logger(" psuCasher->szCheck_50_Cnt   [%s]\n", psuCasher->szCheck_50_Cnt   );
+			logger(" psuCasher->szCheck_50_Amt   [%s]\n", psuCasher->szCheck_50_Amt   );
+			logger(" psuCasher->szCheck_30_Cnt   [%s]\n", psuCasher->szCheck_30_Cnt   );
+			logger(" psuCasher->szCheck_30_Amt   [%s]\n", psuCasher->szCheck_30_Amt   );
+			logger(" psuCasher->szCheck_10_Cnt   [%s]\n", psuCasher->szCheck_10_Cnt   );
+			logger(" psuCasher->szCheck_10_Amt   [%s]\n", psuCasher->szCheck_10_Amt   );
+			logger(" psuCasher->szCheck_Etc_Amt  [%s]\n", psuCasher->szCheck_Etc_Amt  );
+			logger(" psuCasher->szBox_Cash_Amt   [%s]\n", psuCasher->szBox_Cash_Amt   );
+			logger(" psuCasher->szBox_Coin_Amt   [%s]\n", psuCasher->szBox_Coin_Amt   );
+			logger(" psuCasher->szBox_Check_Amt  [%s]\n", psuCasher->szBox_Check_Amt  );
+			logger(" psuCasher->szBox_Incom_Amt  [%s]\n", psuCasher->szBox_Incom_Amt  );
+			logger(" psuCasher->szBox_Outcom_Amt [%s]\n", psuCasher->szBox_Outcom_Amt );
+			logger(" psuCasher->szBox_Ppcard_Amt [%s]\n", psuCasher->szBox_Ppcard_Amt );
+
+*/	
+
+	if( atoi( psuCasher->szDevicever_Id ) >= 20022 )	/* 상품권이 추가된 신 버전 */
+  	{
+		EXEC SQL	INSERT INTO T_FN_CHALSI_DEAL
+						( 
+							org_cd         , 
+							Jijum_Cd       ,        
+							Deal_Date      ,        
+							Deal_No        ,        
+							Deal_Type      ,        
+							Mac_No         ,        
+							Tenant_Cd      ,        
+							Pos_No         ,        
+							Close_Date     ,        
+							Casher_Id      ,        
+							Deal_Time      ,        
+							Devicever_Id   ,        
+							Acudiv         ,        
+							Inmon_Flag     ,        
+							Cash_100000_Cnt,        
+							Cash_100000_Amt,        
+							Cash_50000_Cnt ,        
+							Cash_50000_Amt ,        
+							Cash_10000_Cnt ,        
+							Cash_10000_Amt ,        
+							Cash_5000_Cnt  ,        
+							Cash_5000_Amt  ,        
+							Cash_1000_Cnt  ,        
+							Cash_1000_Amt  ,        
+							Cash_500_Cnt   ,        
+							Cash_500_Amt   ,        
+							Cash_100_Cnt   ,        
+							Cash_100_Amt   ,        
+							Cash_50_Cnt    ,        
+							Cash_50_Amt    ,        
+							Cash_10_Cnt	   ,        
+							Cash_10_Amt    ,        
+							Check_100_Cnt  ,        
+							Check_100_Amt  ,        
+							Check_50_Cnt   ,        
+							Check_50_Amt   ,        
+							Check_30_Cnt   ,        
+							Check_30_Amt   ,								
+							Check_10_Cnt   ,        
+							Check_10_Amt   ,
+							Check_Etc_Amt   ,
+							Box_Cash_Amt   ,        
+							Box_Coin_Amt   ,        
+							Box_Check_Amt  ,        
+							Box_Incom_Amt  ,        
+							Box_Outcom_Amt ,        
+							Box_Ppcard_Amt ,
+							IN_TICKET_1000_CNT, 
+							IN_TICKET_1000_AMT, 
+							IN_TICKET_2000_CNT, 
+							IN_TICKET_2000_AMT, 
+							IN_TICKET_3000_CNT, 
+							IN_TICKET_3000_AMT, 
+							IN_TICKET_5000_CNT, 
+							IN_TICKET_5000_AMT, 
+							IN_TICKET_10000_CNT, 
+							IN_TICKET_10000_AMT, 
+							IN_TICKET_30000_CNT, 
+							IN_TICKET_30000_AMT, 
+							IN_TICKET_50000_CNT, 
+							IN_TICKET_50000_AMT, 
+							IN_TICKET_70000_CNT, 
+							IN_TICKET_70000_AMT, 
+							IN_TICKET_10MAN_CNT, 
+							IN_TICKET_10MAN_AMT, 
+							IN_TICKET_30MAN_CNT, 
+							IN_TICKET_30MAN_AMT, 
+							IN_TICKET_50MAN_CNT, 
+							IN_TICKET_50MAN_AMT, 
+							IN_TICKET_100MAN_CNT, 
+							IN_TICKET_100MAN_AMT, 
+							OUT_TICKET_1000_CNT, 
+							OUT_TICKET_1000_AMT, 
+							OUT_TICKET_2000_CNT, 
+							OUT_TICKET_2000_AMT, 
+							OUT_TICKET_3000_CNT, 
+							OUT_TICKET_3000_AMT, 
+							OUT_TICKET_5000_CNT, 
+							OUT_TICKET_5000_AMT, 
+							OUT_TICKET_10000_CNT, 
+							OUT_TICKET_10000_AMT, 
+							OUT_TICKET_30000_CNT, 
+							OUT_TICKET_30000_AMT, 
+							OUT_TICKET_50000_CNT, 
+							OUT_TICKET_50000_AMT, 
+							OUT_TICKET_70000_CNT, 
+							OUT_TICKET_70000_AMT, 
+							OUT_TICKET_10MAN_CNT, 
+							OUT_TICKET_10MAN_AMT, 
+							OUT_TICKET_30MAN_CNT, 
+							OUT_TICKET_30MAN_AMT, 
+							OUT_TICKET_50MAN_CNT, 
+							OUT_TICKET_50MAN_AMT, 
+							OUT_TICKET_100MAN_CNT, 
+							OUT_TICKET_100MAN_AMT, 
+/*
+							IN_TICKET_1000_CNT, 
+							IN_TICKET_2000_CNT, 
+							IN_TICKET_3000_CNT, 
+							IN_TICKET_5000_CNT, 
+							IN_TICKET_10000_CNT, 
+							IN_TICKET_30000_CNT, 
+							IN_TICKET_50000_CNT, 
+							IN_TICKET_70000_CNT, 
+							IN_TICKET_10MAN_CNT, 
+							IN_TICKET_30MAN_CNT, 
+							IN_TICKET_50MAN_CNT, 
+							IN_TICKET_100MAN_CNT, 
+							OUT_TICKET_1000_CNT, 
+							OUT_TICKET_2000_CNT, 
+							OUT_TICKET_3000_CNT, 
+							OUT_TICKET_5000_CNT, 
+							OUT_TICKET_10000_CNT, 
+							OUT_TICKET_30000_CNT, 
+							OUT_TICKET_50000_CNT, 
+							OUT_TICKET_70000_CNT, 
+							OUT_TICKET_10MAN_CNT, 
+							OUT_TICKET_30MAN_CNT, 
+							OUT_TICKET_50MAN_CNT, 
+							OUT_TICKET_100MAN_CNT,   
+*/								
+							insert_date    ,        
+							insert_uid       )      
+				VALUES (	'0CS'					  ,
+							LTRIM(RTRIM(:psuCasher->szJijum_Cd       )),
+							LTRIM(RTRIM(:psuCasher->szDeal_Date      )),
+							LTRIM(RTRIM(:psuCasher->szDeal_No        )),
+							LTRIM(RTRIM(:psuCasher->szDeal_Type      )),
+							LTRIM(RTRIM(:psuCasher->szMac_No         )),
+							LTRIM(RTRIM(:psuCasher->szTenant_Cd      )),
+							LTRIM(RTRIM(:psuCasher->szPos_No         )),
+							LTRIM(RTRIM(:psuCasher->szClose_Date     )),
+							LTRIM(RTRIM(:psuCasher->szCasher_Id      )),
+							LTRIM(RTRIM(:psuCasher->szDeal_Time      )),
+							LTRIM(RTRIM(:psuCasher->szDevicever_Id   )),
+							LTRIM(RTRIM(:psuCasher->szAcudiv         )),
+							LTRIM(RTRIM(:psuCasher->szInmon_Flag     )),
+							LTRIM(RTRIM(:psuCasher->szCash_100000_Cnt)),
+							LTRIM(RTRIM(:psuCasher->szCash_100000_Amt)),
+							LTRIM(RTRIM(:psuCasher->szCash_50000_Cnt )),
+							LTRIM(RTRIM(:psuCasher->szCash_50000_Amt )),
+							LTRIM(RTRIM(:psuCasher->szCash_10000_Cnt )),
+							LTRIM(RTRIM(:psuCasher->szCash_10000_Amt )),
+							LTRIM(RTRIM(:psuCasher->szCash_5000_Cnt  )),
+							LTRIM(RTRIM(:psuCasher->szCash_5000_Amt  )),
+							LTRIM(RTRIM(:psuCasher->szCash_1000_Cnt  )),
+							LTRIM(RTRIM(:psuCasher->szCash_1000_Amt  )),
+							LTRIM(RTRIM(:psuCasher->szCash_500_Cnt   )),
+							LTRIM(RTRIM(:psuCasher->szCash_500_Amt   )),
+							LTRIM(RTRIM(:psuCasher->szCash_100_Cnt   )),
+							LTRIM(RTRIM(:psuCasher->szCash_100_Amt   )),
+							LTRIM(RTRIM(:psuCasher->szCash_50_Cnt    )),
+							LTRIM(RTRIM(:psuCasher->szCash_50_Amt    )),
+							LTRIM(RTRIM(:psuCasher->szCash_10_Cnt	 )),
+							LTRIM(RTRIM(:psuCasher->szCash_10_Amt    )),
+							LTRIM(RTRIM(:psuCasher->szCheck_100_Cnt  )),
+							LTRIM(RTRIM(:psuCasher->szCheck_100_Amt  )),
+							LTRIM(RTRIM(:psuCasher->szCheck_50_Cnt   )),
+							LTRIM(RTRIM(:psuCasher->szCheck_50_Amt   )),
+							LTRIM(RTRIM(:psuCasher->szCheck_30_Cnt   )),
+							LTRIM(RTRIM(:psuCasher->szCheck_30_Amt   )),
+							LTRIM(RTRIM(:psuCasher->szCheck_10_Cnt   )),
+							LTRIM(RTRIM(:psuCasher->szCheck_10_Amt   )),
+							LTRIM(RTRIM(:psuCasher->szCheck_Etc_Amt   )),
+							LTRIM(RTRIM(:psuCasher->szBox_Cash_Amt   )),
+							LTRIM(RTRIM(:psuCasher->szBox_Coin_Amt   )),
+							LTRIM(RTRIM(:psuCasher->szBox_Check_Amt  )),
+							LTRIM(RTRIM(:psuCasher->szBox_Incom_Amt  )),
+							LTRIM(RTRIM(:psuCasher->szBox_Outcom_Amt )),
+							LTRIM(RTRIM(:psuCasher->szBox_Ppcard_Amt )),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_1000_cnt		 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_1000_cnt		 ), 0) * 1000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_2000_cnt		 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_2000_cnt		 ), 0) * 2000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_3000_cnt		 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_3000_cnt		 ), 0) * 3000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_5000_cnt		 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_5000_cnt		 ), 0) * 5000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_10000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_10000_cnt		 ), 0) * 10000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_30000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_30000_cnt		 ), 0) * 30000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_50000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_50000_cnt		 ), 0) * 50000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_70000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_70000_cnt		 ), 0) * 70000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_100000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_100000_cnt		 ), 0) * 100000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_300000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_300000_cnt		 ), 0) * 300000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_500000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Own_500000_cnt		 ), 0) * 500000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Own_1000000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_1000000_cnt	 ), 0) * 1000000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_1000_cnt		 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_1000_cnt		 ), 0) * 1000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_2000_cnt		 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_2000_cnt		 ), 0) * 2000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_3000_cnt		 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_3000_cnt		 ), 0) * 3000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_5000_cnt		 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_5000_cnt		 ), 0) * 5000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_10000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_10000_cnt		 ), 0) * 10000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_30000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_30000_cnt		 ), 0) * 30000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_50000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_50000_cnt		 ), 0) * 50000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_70000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_70000_cnt		 ), 0) * 70000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_100000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_100000_cnt		 ), 0) * 100000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_300000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_300000_cnt		 ), 0) * 300000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_500000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_500000_cnt		 ), 0) * 500000)),
+							LTRIM(RTRIM(:psuCasher->szTick_Etc_1000000_cnt	 )),
+							LTRIM(TO_NUMBER(NVL(RTRIM(:psuCasher->szTick_Etc_1000000_cnt	 ), 0) * 1000000)),
+							sysdate						,
+							'online'					  );
+  		
+	}
+	else /* 상품권 추가 전 구버전 */
+	{
+		
+		EXEC SQL	INSERT INTO T_FN_CHALSI_DEAl
+								( 
+									org_cd         , 
+									Jijum_Cd       ,        
+									Deal_Date      ,        
+									Deal_No        ,        
+									Deal_Type      ,        
+									Mac_No         ,        
+									Tenant_Cd      ,        
+									Pos_No         ,        
+									Close_Date     ,        
+									Casher_Id      ,        
+									Deal_Time      ,        
+									Devicever_Id   ,        
+									Acudiv         ,        
+									Inmon_Flag     ,        
+									Cash_100000_Cnt,        
+									Cash_100000_Amt,        
+									Cash_50000_Cnt ,        
+									Cash_50000_Amt ,        
+									Cash_10000_Cnt ,        
+									Cash_10000_Amt ,        
+									Cash_5000_Cnt  ,        
+									Cash_5000_Amt  ,        
+									Cash_1000_Cnt  ,        
+									Cash_1000_Amt  ,        
+									Cash_500_Cnt   ,        
+									Cash_500_Amt   ,        
+									Cash_100_Cnt   ,        
+									Cash_100_Amt   ,        
+									Cash_50_Cnt    ,        
+									Cash_50_Amt    ,        
+									Cash_10_Cnt	   ,        
+									Cash_10_Amt    ,        
+									Check_100_Cnt  ,        
+									Check_100_Amt  ,        
+									Check_50_Cnt   ,        
+									Check_50_Amt   ,        
+									Check_30_Cnt   ,        
+									Check_30_Amt   ,								
+									Check_10_Cnt   ,        
+									Check_10_Amt   ,
+									Check_Etc_Amt   ,
+									Box_Cash_Amt   ,        
+									Box_Coin_Amt   ,        
+									Box_Check_Amt  ,        
+									Box_Incom_Amt  ,        
+									Box_Outcom_Amt ,        
+									Box_Ppcard_Amt ,        
+									insert_date    ,        
+									insert_uid       )      
+						VALUES (	'0CS'					  ,
+									LTRIM(RTRIM(:psuCasher->szJijum_Cd       )),
+									LTRIM(RTRIM(:psuCasher->szDeal_Date      )),
+									LTRIM(RTRIM(:psuCasher->szDeal_No        )),
+									LTRIM(RTRIM(:psuCasher->szDeal_Type      )),
+									LTRIM(RTRIM(:psuCasher->szMac_No         )),
+									LTRIM(RTRIM(:psuCasher->szTenant_Cd      )),
+									LTRIM(RTRIM(:psuCasher->szPos_No         )),
+									LTRIM(RTRIM(:psuCasher->szClose_Date     )),
+									LTRIM(RTRIM(:psuCasher->szCasher_Id      )),
+									LTRIM(RTRIM(:psuCasher->szDeal_Time      )),
+									LTRIM(RTRIM(:psuCasher->szDevicever_Id   )),
+									LTRIM(RTRIM(:psuCasher->szAcudiv         )),
+									LTRIM(RTRIM(:psuCasher->szInmon_Flag     )),
+									LTRIM(RTRIM(:psuCasher->szCash_100000_Cnt)),
+									LTRIM(RTRIM(:psuCasher->szCash_100000_Amt)),
+									LTRIM(RTRIM(:psuCasher->szCash_50000_Cnt )),
+									LTRIM(RTRIM(:psuCasher->szCash_50000_Amt )),
+									LTRIM(RTRIM(:psuCasher->szCash_10000_Cnt )),
+									LTRIM(RTRIM(:psuCasher->szCash_10000_Amt )),
+									LTRIM(RTRIM(:psuCasher->szCash_5000_Cnt  )),
+									LTRIM(RTRIM(:psuCasher->szCash_5000_Amt  )),
+									LTRIM(RTRIM(:psuCasher->szCash_1000_Cnt  )),
+									LTRIM(RTRIM(:psuCasher->szCash_1000_Amt  )),
+									LTRIM(RTRIM(:psuCasher->szCash_500_Cnt   )),
+									LTRIM(RTRIM(:psuCasher->szCash_500_Amt   )),
+									LTRIM(RTRIM(:psuCasher->szCash_100_Cnt   )),
+									LTRIM(RTRIM(:psuCasher->szCash_100_Amt   )),
+									LTRIM(RTRIM(:psuCasher->szCash_50_Cnt    )),
+									LTRIM(RTRIM(:psuCasher->szCash_50_Amt    )),
+									LTRIM(RTRIM(:psuCasher->szCash_10_Cnt	 )),
+									LTRIM(RTRIM(:psuCasher->szCash_10_Amt    )),
+									LTRIM(RTRIM(:psuCasher->szCheck_100_Cnt  )),
+									LTRIM(RTRIM(:psuCasher->szCheck_100_Amt  )),
+									LTRIM(RTRIM(:psuCasher->szCheck_50_Cnt   )),
+									LTRIM(RTRIM(:psuCasher->szCheck_50_Amt   )),
+									LTRIM(RTRIM(:psuCasher->szCheck_30_Cnt   )),
+									LTRIM(RTRIM(:psuCasher->szCheck_30_Amt   )),
+									LTRIM(RTRIM(:psuCasher->szCheck_10_Cnt   )),
+									LTRIM(RTRIM(:psuCasher->szCheck_10_Amt   )),
+									LTRIM(RTRIM(:psuCasher->szCheck_Etc_Amt   )),
+									LTRIM(RTRIM(:psuCasher->szBox_Cash_Amt   )),
+									LTRIM(RTRIM(:psuCasher->szBox_Coin_Amt   )),
+									LTRIM(RTRIM(:psuCasher->szBox_Check_Amt  )),
+									LTRIM(RTRIM(:psuCasher->szBox_Incom_Amt  )),
+									LTRIM(RTRIM(:psuCasher->szBox_Outcom_Amt )),
+									LTRIM(RTRIM(:psuCasher->szBox_Ppcard_Amt )),
+									sysdate						,
+									'online'					  );
+	}
+
+	if ( sqlca.sqlcode == DB_DUP_DATA )
+	{
+
+		logger( "[T_FN_CHALSI_DEAl] 데이터 중복!! Jijum_Cd[%s], Deal_Date[%s], Deal_No[%s],\
+ Deal_Type[%s], Mac_No[%s], Tenant_Cd[%s], Pos_No[%s] , Close_Date[%s], Casher_Id[%s],\
+ Deal_Time[%s], Devicever_Id[%s], Acudiv[%s], Inmon_Flag[%s]\n", 
+ 				psuCasher->szJijum_Cd, psuCasher->szDeal_Date, psuCasher->szDeal_No,
+ 				psuCasher->szDeal_Type, psuCasher->szMac_No, psuCasher->szTenant_Cd,
+ 				psuCasher->szPos_No , psuCasher->szClose_Date, psuCasher->szCasher_Id,
+ 				psuCasher->szDeal_Time, psuCasher->szDevicever_Id, psuCasher->szAcudiv,
+ 				psuCasher->szInmon_Flag );
+ 
+		return 0;
+	}
+	else if ( sqlca.sqlcode )
+	{
+		logger( "[T_FN_CHALSI_DEAl] Insert Error!! [%.200s] Jijum_Cd[%s], Deal_Date[%s], Deal_No[%s],\
+ Deal_Type[%s], Mac_No[%s], Tenant_Cd[%s], Pos_No[%s] , Close_Date[%s], Casher_Id[%s],\
+ Deal_Time[%s], Devicever_Id[%s], Acudiv[%s], Inmon_Flag[%s]\n", SqlErrMsg,
+ 				psuCasher->szJijum_Cd, psuCasher->szDeal_Date, psuCasher->szDeal_No,
+ 				psuCasher->szDeal_Type, psuCasher->szMac_No, psuCasher->szTenant_Cd,
+ 				psuCasher->szPos_No , psuCasher->szClose_Date, psuCasher->szCasher_Id,
+ 				psuCasher->szDeal_Time, psuCasher->szDevicever_Id, psuCasher->szAcudiv,
+ 				psuCasher->szInmon_Flag );
+ 				
+ 				
+		EXEC SQL ROLLBACK;
+		return -1;
+	}
+	EXEC SQL COMMIT WORK;
+	logger( "[T_FN_CHALSI_DEAl] OK!! Jijum_Cd[%s], Deal_Date[%s], Deal_No[%s],\
+ Deal_Type[%s], Mac_No[%s], Tenant_Cd[%s], Pos_No[%s] , Close_Date[%s], Casher_Id[%s],\
+ Deal_Time[%s], Devicever_Id[%s], Acudiv[%s], Inmon_Flag[%s]\n", 
+ 				psuCasher->szJijum_Cd, psuCasher->szDeal_Date, psuCasher->szDeal_No,
+ 				psuCasher->szDeal_Type, psuCasher->szMac_No, psuCasher->szTenant_Cd,
+ 				psuCasher->szPos_No , psuCasher->szClose_Date, psuCasher->szCasher_Id,
+ 				psuCasher->szDeal_Time, psuCasher->szDevicever_Id, psuCasher->szAcudiv,
+ 				psuCasher->szInmon_Flag );
+
+	return 0;
+}
+
+int	InsertCheckDetailData(struct CHECK_DETAIL_LIST * psuCheck )
+{
+	EXEC SQL	INSERT INTO T_FN_CHALSI_DEAl_CHECK
+							( 
+								org_cd		, 
+								Jijum_Cd	,
+								Deal_Date   ,
+								Deal_No     ,
+								Deal_Type   ,
+								Mac_No      ,
+								Tenant_Cd   ,
+								Pos_No      ,
+								Close_Date  ,
+								Casher_Id   ,
+								Deal_Time   ,
+								Devicever_Id,
+								Acudiv      ,
+								Inmon_Flag  ,
+								Check_Type  ,
+								Check_No    ,
+								insert_date	, 
+								insert_uid		)
+					VALUES (	'0CS'					  ,
+								LTRIM(RTRIM(:psuCheck->szJijumCd		)),
+								LTRIM(RTRIM(:psuCheck->szDealDate      )),
+								LTRIM(RTRIM(:psuCheck->szDealNo        )),
+								LTRIM(RTRIM(:psuCheck->szDealType      )),
+								LTRIM(RTRIM(:psuCheck->szMacNo         )),
+								LTRIM(RTRIM(:psuCheck->szTenantCd      )),
+								LTRIM(RTRIM(:psuCheck->szPosNo         )),
+								LTRIM(RTRIM(:psuCheck->szCloseDate     )),
+								LTRIM(RTRIM(:psuCheck->szCasherId      )),
+								LTRIM(RTRIM(:psuCheck->szDealTime      )),
+								LTRIM(RTRIM(:psuCheck->szDeviceverId   )),
+								LTRIM(RTRIM(:psuCheck->szAcudiv        )),
+								LTRIM(RTRIM(:psuCheck->szInmonFlag     )),
+								LTRIM(RTRIM(:psuCheck->szCheckType     )),
+								LTRIM(RTRIM(:psuCheck->szCheckNo       )),
+								sysdate										,
+								'online'					  				);
+
+
+
+	if ( sqlca.sqlcode == DB_DUP_DATA )
+	{
+
+		logger( "[T_FN_CHALSI_DEAl_CHECK] 데이터 중복!! Jijum_Cd[%s], Deal_Date[%s], Deal_No[%s],\
+ Deal_Type[%s], Mac_No[%s], Tenant_Cd[%s], Pos_No[%s] , Close_Date[%s], Casher_Id[%s],\
+ Deal_Time[%s], Devicever_Id[%s], Acudiv[%s], Inmon_Flag[%s]\n", 
+ 				psuCheck->szJijumCd, psuCheck->szDealDate, psuCheck->szDealNo,
+ 				psuCheck->szDealType, psuCheck->szMacNo, psuCheck->szTenantCd,
+ 				psuCheck->szPosNo , psuCheck->szCloseDate, psuCheck->szCasherId,
+ 				psuCheck->szDealTime, psuCheck->szDeviceverId, psuCheck->szAcudiv,
+ 				psuCheck->szInmonFlag );
+ 
+		return 0;
+	}
+	else if ( sqlca.sqlcode )
+	{
+		logger( "[T_FN_CHALSI_DEAl_CHECK] Insert Error!! [%.200s] Jijum_Cd[%s], Deal_Date[%s], Deal_No[%s],\
+ Deal_Type[%s], Mac_No[%s], Tenant_Cd[%s], Pos_No[%s] , Close_Date[%s], Casher_Id[%s],\
+ Deal_Time[%s], Devicever_Id[%s], Acudiv[%s], Inmon_Flag[%s]\n", SqlErrMsg,
+ 				psuCheck->szJijumCd, psuCheck->szDealDate, psuCheck->szDealNo,
+ 				psuCheck->szDealType, psuCheck->szMacNo, psuCheck->szTenantCd,
+ 				psuCheck->szPosNo , psuCheck->szCloseDate, psuCheck->szCasherId,
+ 				psuCheck->szDealTime, psuCheck->szDeviceverId, psuCheck->szAcudiv,
+ 				psuCheck->szInmonFlag );
+		EXEC SQL ROLLBACK;
+		return -1;
+	}
+	EXEC SQL COMMIT WORK;
+	logger( "[T_FN_CHALSI_DEAl_CHECK] OK!! Jijum_Cd[%s], Deal_Date[%s], Deal_No[%s],\
+ Deal_Type[%s], Mac_No[%s], Tenant_Cd[%s], Pos_No[%s] , Close_Date[%s], Casher_Id[%s],\
+ Deal_Time[%s], Devicever_Id[%s], Acudiv[%s], Inmon_Flag[%s]\n", 
+ 				psuCheck->szJijumCd, psuCheck->szDealDate, psuCheck->szDealNo,
+ 				psuCheck->szDealType, psuCheck->szMacNo, psuCheck->szTenantCd,
+ 				psuCheck->szPosNo , psuCheck->szCloseDate, psuCheck->szCasherId,
+ 				psuCheck->szDealTime, psuCheck->szDeviceverId, psuCheck->szAcudiv,
+ 				psuCheck->szInmonFlag );
+
+	return 0;
+}
+
+
+int	InsertTicketDetailData(struct TICKET_DETAIL_LIST * psuTicket )
+{
+	EXEC SQL	INSERT INTO T_FN_CHALSI_DEAl_TICKET
+							( 
+								org_cd		, 
+								Jijum_Cd	,
+								Deal_Date   ,
+								Deal_No     ,
+								Deal_Type   ,
+								Mac_No      ,
+								Tenant_Cd   ,
+								Pos_No      ,
+								Close_Date  ,
+								Casher_Id   ,
+								Deal_Time   ,
+								Devicever_Id,
+								Acudiv      ,
+								Inmon_Flag  ,
+								PUBLISH_CD	, 
+								TICKET_TYPE	, 
+								TICKET_NO 	,
+								insert_date	, 
+								insert_uid		)
+					VALUES (	'0CS'					  ,
+								LTRIM(RTRIM(:psuTicket->szJijumCd		)),
+								LTRIM(RTRIM(:psuTicket->szDealDate      )),
+								LTRIM(RTRIM(:psuTicket->szDealNo        )),
+								LTRIM(RTRIM(:psuTicket->szDealType      )),
+								LTRIM(RTRIM(:psuTicket->szMacNo         )),
+								LTRIM(RTRIM(:psuTicket->szTenantCd      )),
+								LTRIM(RTRIM(:psuTicket->szPosNo         )),
+								LTRIM(RTRIM(:psuTicket->szCloseDate     )),
+								LTRIM(RTRIM(:psuTicket->szCasherId      )),
+								LTRIM(RTRIM(:psuTicket->szDealTime      )),
+								LTRIM(RTRIM(:psuTicket->szDeviceverId   )),
+								LTRIM(RTRIM(:psuTicket->szAcudiv        )),
+								LTRIM(RTRIM(:psuTicket->szInmonFlag     )),
+								LTRIM(RTRIM(:psuTicket->szPublishCd     )),
+								LTRIM(RTRIM(:psuTicket->szTicketType    )),
+								LTRIM(RTRIM(:psuTicket->szTicketNo      )),
+								sysdate										,
+								'online'					  				);
+
+
+
+	if ( sqlca.sqlcode == DB_DUP_DATA )
+	{
+
+		logger( "[T_FN_CHALSI_DEAl_TICKET] 데이터 중복!! Jijum_Cd[%s], Deal_Date[%s], Deal_No[%s],\
+ Deal_Type[%s], Mac_No[%s], Tenant_Cd[%s], Pos_No[%s] , Close_Date[%s], Casher_Id[%s],\
+ Deal_Time[%s], Devicever_Id[%s], Acudiv[%s], Inmon_Flag[%s]\n", 
+ 				psuTicket->szJijumCd, psuTicket->szDealDate, psuTicket->szDealNo,
+ 				psuTicket->szDealType, psuTicket->szMacNo, psuTicket->szTenantCd,
+ 				psuTicket->szPosNo , psuTicket->szCloseDate, psuTicket->szCasherId,
+ 				psuTicket->szDealTime, psuTicket->szDeviceverId, psuTicket->szAcudiv,
+ 				psuTicket->szInmonFlag );
+ 
+		return 0;
+	}
+	else if ( sqlca.sqlcode )
+	{
+		logger( "[T_FN_CHALSI_DEAl_TICKET] Insert Error!! [%.200s] Jijum_Cd[%s], Deal_Date[%s], Deal_No[%s],\
+ Deal_Type[%s], Mac_No[%s], Tenant_Cd[%s], Pos_No[%s] , Close_Date[%s], Casher_Id[%s],\
+ Deal_Time[%s], Devicever_Id[%s], Acudiv[%s], Inmon_Flag[%s]\n", SqlErrMsg,
+ 				psuTicket->szJijumCd, psuTicket->szDealDate, psuTicket->szDealNo,
+ 				psuTicket->szDealType, psuTicket->szMacNo, psuTicket->szTenantCd,
+ 				psuTicket->szPosNo , psuTicket->szCloseDate, psuTicket->szCasherId,
+ 				psuTicket->szDealTime, psuTicket->szDeviceverId, psuTicket->szAcudiv,
+ 				psuTicket->szInmonFlag );
+		EXEC SQL ROLLBACK;
+		return -1;
+	}
+	EXEC SQL COMMIT WORK;
+	logger( "[T_FN_CHALSI_DEAl_TICKET] OK!! Jijum_Cd[%s], Deal_Date[%s], Deal_No[%s],\
+ Deal_Type[%s], Mac_No[%s], Tenant_Cd[%s], Pos_No[%s] , Close_Date[%s], Casher_Id[%s],\
+ Deal_Time[%s], Devicever_Id[%s], Acudiv[%s], Inmon_Flag[%s]\n", 
+ 				psuTicket->szJijumCd, psuTicket->szDealDate, psuTicket->szDealNo,
+ 				psuTicket->szDealType, psuTicket->szMacNo, psuTicket->szTenantCd,
+ 				psuTicket->szPosNo , psuTicket->szCloseDate, psuTicket->szCasherId,
+ 				psuTicket->szDealTime, psuTicket->szDeviceverId, psuTicket->szAcudiv,
+ 				psuTicket->szInmonFlag );
+
+	return 0;
+}
+
+
+/****************************************************************************/
+/* 01. FUNCTION	ID      : {CleanUp}                                       */
+/* 02. 작  성  자       	: {방혜진}                                          	*/
+/* 03. 작 성 일 자      	: {2006/07/13}                                      */
+/* 04. 프로그램기능     	: {해당 Sock Close, Log File Close, Program End}		*/
+/* 05. 입력FILE         	: 													*/
+/* 06. 출력FILE         	:													*/
+/* 07. Return	값      	: {}												*/
+/* 08. REMARKS 사항     	: {}                                               	*/
+/****************************************************************************/
+void    CleanUp(int Sig)
+{
+    logger("Clena Up Sig = %d\n\n", Sig);
+    LogClose();
+	sleep(1);
+    exit(0);
+}

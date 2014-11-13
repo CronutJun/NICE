@@ -19,6 +19,6 @@ package com.nicetcm.nibsplus.filemng.service;
  */
 public interface FileSendService {
 
-	public void execute(int argc, String... argv) throws Exception;
+	public void execute(String... argv) throws Exception;
 	
 }

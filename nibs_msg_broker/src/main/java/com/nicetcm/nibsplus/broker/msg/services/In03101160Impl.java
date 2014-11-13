@@ -45,7 +45,7 @@ public class In03101160Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        comPack.checkBranchMacLength( parsed );
+        try{ comPack.checkBranchMacLength( parsed ); } catch( Exception e ) {}
 
         /* 실시간전송일때는 skip, 배치일경우만 update */
         if(parsed.getString("addcash_type").equals("B")) {

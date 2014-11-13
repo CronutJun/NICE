@@ -5,14 +5,14 @@
 	<delete id="mainWhileDelete1">
 		<![CDATA[
 		DELETE
-		    T_CT_NICE_TRAN_ERROR
+		    OP.T_CT_NICE_TRAN_ERROR
 		 ]]>
 	</delete>
 
 	<delete id="mainWhileDelete2">
 		<![CDATA[
 		DELETE
-		    T_CT_NICE_INQREMAMT_ERROR
+		    OP.T_CT_NICE_INQREMAMT_ERROR
 		 ]]>
 	</delete>
 	
@@ -41,7 +41,7 @@
 		            SUM(TIME_DEAL_CNT+OT_DEAL_CNT)                      AS TOT_DEAL_CNT,
 		            SUM(NVL(TIME_IC_DEAL_CNT,0)+NVL(OT_IC_DEAL_CNT, 0)) AS TOT_IC_DEAL_CNT
 		        FROM
-		            t_fn_nice_mac_dsum
+		            OP.T_fn_nice_mac_dsum
 		        WHERE
 		            deal_date >= TO_CHAR(sysdate - 7, 'YYYYMMDD')
 		        AND deal_date < TO_CHAR(sysdate, 'YYYYMMDD')
@@ -64,7 +64,7 @@
 		    ER.CREATE_DATE,
 		    ER.ERROR_NO
 		FROM
-		    T_FN_MAC FM,
+		    OP.T_FN_MAC FM,
 		    OP.T_CM_MAC MAC,
 		    (
 		        SELECT
@@ -74,7 +74,7 @@
 		            ERROR_NO,
 		            ERROR_CD
 		        FROM
-		            t_ct_error_mng
+		            OP.T_ct_error_mng
 		        WHERE
 		            CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE - 10, 'YYYYMMDD' ))
 		        AND ORG_CD = '096'
@@ -152,7 +152,7 @@
 		FROM
 		    OP.T_CM_MAC MAC,
 		    OP.T_CM_SITE SITE,
-		    t_cm_site_01 SITE1,
+		    OP.T_cm_site_01 SITE1,
 		    OP.T_FN_CALENDAR CAL
 		WHERE
 		    MAC.ORG_CD = #{orgCd}
@@ -234,7 +234,7 @@
 		    branch_cd,
 		    mac_no
 		FROM
-		    t_ct_n
+		    OP.T_ct_n
 		WHERE
 		    org_cd = #{orgCd}
 		AND n_date = TO_CHAR( SYSDATE, 'YYYYMMDD')
@@ -250,7 +250,7 @@
 		    branch_cd,
 		    mac_no
 		FROM
-		    t_ct_as
+		    OP.T_ct_as
 		WHERE
 		    org_cd = #{orgCd}
 		AND accept_date >= TO_CHAR( SYSDATE-5, 'YYYYMMDD')
@@ -264,7 +264,7 @@
 		    MNG.CREATE_DATE,
 		    MNG.ERROR_NO
 		FROM
-		    T_CT_UNFINISH MNG,
+		    OP.T_CT_UNFINISH MNG,
 		    (
 		        SELECT
 		            M.ORG_CD,
@@ -286,7 +286,7 @@
 		        FROM
 		            OP.t_cm_mac M,
 		            OP.T_CM_SITE S,
-		            T_FN_MAC NM
+		            OP.T_FN_MAC NM
 		        WHERE
 		            M.ORG_CD = '096'
 		        AND M.CLOSE_DATE IS NULL
@@ -356,11 +356,11 @@
 		<![CDATA[
 		SELECT
 		    ORG_CD,
-		    f_get_org_branch_cd( org_cd, branch_cd, '', mac_no ) AS BRANCH_CD,
+		    op.f_get_org_branch_cd( org_cd, branch_cd, '', mac_no ) AS BRANCH_CD,
 		    MAC_NO,
 		    REMAIN_AMT
 		FROM
-		    t_cm_cash_org
+		    OP.T_cm_cash_org
 		WHERE
 		    send_yn = '0'
 		AND remain_amt < 6000000
@@ -371,13 +371,13 @@
 		<![CDATA[
 		SELECT
 		    C.ORG_CD,
-		    f_get_org_branch_cd( C.org_cd, C.branch_cd, '', C.mac_no ) AS BRANCH_CD,
+		    op.f_get_org_branch_cd( C.org_cd, C.branch_cd, '', C.mac_no ) AS BRANCH_CD,
 		    C.MAC_NO,
 		    C.REMAIN_AMT,
 		    MNG.ORG_MSG
 		FROM
-		    t_cm_cash_org C,
-		    t_ct_error_mng MNG
+		    OP.T_cm_cash_org C,
+		    OP.T_ct_error_mng MNG
 		WHERE
 		    C.send_yn = '0'
 		AND C.remain_amt >= 6000000
@@ -399,7 +399,7 @@
 		    c.DEAL_NO
 		FROM
 		    OP.T_CM_MAC a,
-		    T_CT_NICE_INQREMAMT_ERROR b,
+		    OP.T_CT_NICE_INQREMAMT_ERROR b,
 		    (
 		        SELECT
 		            deal_status,
@@ -459,7 +459,7 @@
 				FM.IN_MAC_AMT
 		FROM	OP.T_CM_MAC	MAC,
 				OP.T_CM_SITE		S,
-				T_FN_MAC 	FM
+				OP.T_FN_MAC 	FM
 		WHERE	MAC.ORG_CD = '096'
 		AND		MAC.branch_CD = '9600'
 		AND		MAC.OPEN_DATE <= TO_CHAR(SYSDATE, 'YYYYMMDD')
@@ -486,8 +486,8 @@
 		    c.DEAL_TYPE,
 		    c.ATM_DEAL_NO
 		FROM
-		    t_ct_error_mng a,
-		    T_CT_NICE_TRAN_ERROR b,
+		    OP.T_ct_error_mng a,
+		    OP.T_CT_NICE_TRAN_ERROR b,
 		    (
 		        SELECT
 		            deal_status,
@@ -523,7 +523,7 @@
 		            MAC_NO,
 		            SUM(DECODE(GGJD, '1', 1, 0)) GGJD
 		        FROM
-		            T_CT_NICE_MNG
+		            OP.T_CT_NICE_MNG
 		        WHERE
 		            J_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
 		        AND J_TIME BETWEEN TO_CHAR(SYSDATE-1/24/60*3, 'HH24MISS') AND TO_CHAR(SYSDATE, 'HH24MISS')
@@ -549,10 +549,10 @@
 		    NVL(TRIM(MAC.NO_TRADE_FRI), 0) AS NO_TRADE_FRI,
 		    NVL(TRIM(MAC.NO_TRADE_SAT), 0) AS NO_TRADE_SAT,
 		    TO_NUMBER(NVL(MAC.NO_TRADE_TERM,0))*60 AS NO_TRADE_BASE,
-		    f_get_outtime( SITE.oper_start_time, SITE.oper_end_time, SITE.oper_type, TO_CHAR(
+		    op.f_get_outtime( SITE.oper_start_time, SITE.oper_end_time, SITE.oper_type, TO_CHAR(
 		    FMAC.last_deal_time, 'YYYYMMDD'), TO_CHAR(FMAC.last_deal_time, 'HH24MI'), TO_CHAR(SYSDATE,
 		    'YYYYMMDD'), TO_CHAR(SYSDATE, 'HH24MI')) AS TOT_NO_TRADE,
-		    f_get_outtime( SITE.oper_start_time, SITE.oper_end_time, SITE.oper_type, TO_CHAR(SYSDATE,
+		    op.f_get_outtime( SITE.oper_start_time, SITE.oper_end_time, SITE.oper_type, TO_CHAR(SYSDATE,
 		    'YYYYMMDD'), '0000', TO_CHAR(SYSDATE, 'YYYYMMDD'), '2400') AS ONE_OPER_TIME
 		FROM
 		    (
@@ -582,7 +582,7 @@
 		                FROM
 		                    OP.T_CM_MAC MAC,
 		                    OP.T_CM_SITE SITE,
-		                    T_FN_MAC FMAC
+		                    OP.T_FN_MAC FMAC
 		                WHERE
 		                    -- 무거래 요일 설정 
 		                    DECODE(TO_CHAR(SYSDATE,'D') ,'1', NVL(MAC.NO_TRADE_SUN,'0'), '2', NVL(
@@ -590,7 +590,7 @@
 		                    MAC.NO_TRADE_WED,'0'), '5', NVL(MAC.NO_TRADE_THU,'0'), '6', NVL(
 		                    MAC.NO_TRADE_FRI,'0'), '7', NVL(MAC.NO_TRADE_SAT,'0'), '') = '1'
 		                    -- 무거래 간격 설정 
-		                AND f_get_outtime( SITE.oper_start_time, SITE.oper_end_time, SITE.oper_type,
+		                AND op.f_get_outtime( SITE.oper_start_time, SITE.oper_end_time, SITE.oper_type,
 		                    TO_CHAR(FMAC.last_deal_time, 'YYYYMMDD'), TO_CHAR(FMAC.last_deal_time, 'HH24MI'
 		                    ), TO_CHAR(SYSDATE, 'YYYYMMDD'), TO_CHAR(SYSDATE, 'HH24MI')) > (TO_NUMBER(NVL(
 		                    MAC.NO_TRADE_TERM,0))*60)
@@ -622,7 +622,7 @@
 		        SELECT DISTINCT
 		            c.mac_no
 		        FROM
-		            T_CT_UNFINISH c
+		            OP.T_CT_UNFINISH c
 		        WHERE
 		            c.ORG_CD = '096'
 		        AND c.BRANCH_CD = '9600'
@@ -632,7 +632,7 @@
 		    AA,
 		    OP.T_CM_MAC MAC,
 		    OP.T_CM_SITE SITE,
-		    T_FN_MAC FMAC
+		    OP.T_FN_MAC FMAC
 		WHERE
 		    MAC.ORG_CD = '096'
 		AND MAC.BRANCH_CD = '9600'
@@ -654,7 +654,7 @@
 		    c.ATM_DEAL_NO
 		FROM
 		    OP.T_CM_MAC a,
-		    T_CT_NICE_TRAN_ERROR b,
+		    OP.T_CT_NICE_TRAN_ERROR b,
 		    (
 		        SELECT
 		            deal_status,
@@ -687,12 +687,12 @@
 	<update id="updateATMESErrorSendProc" parameterType="map">
 		<![CDATA[
 		UPDATE
-		    T_CM_CASH_ORG
+		    OP.T_CM_CASH_ORG
 		SET
 		    SEND_YN = DECODE( #{szCreateYN}, '1', '1', '2' )
 		WHERE
 		    ORG_CD = #{orgCd}
-		AND BRANCH_CD = F_GET_NICE_BRANCH_CD( #{orgCd}, #{branchCd}, '', #{macNo} )
+		AND BRANCH_CD = op.F_GET_NICE_BRANCH_CD( #{orgCd}, #{branchCd}, '', #{macNo} )
 		AND MAC_NO = #{macNo}
 		 ]]>
 	</update>
@@ -700,7 +700,7 @@
 	<update id="updateNiceInqRemAmtErrorUpdateProc" parameterType="map">
 		<![CDATA[
 		UPDATE
-		    T_CT_NICE_INQREMAMT_ERROR
+		    OP.T_CT_NICE_INQREMAMT_ERROR
 		SET
 		    ATM_DEAL_NO = #{atmDealNo}
 		WHERE
@@ -712,7 +712,7 @@
 		<![CDATA[
 		INSERT
 		INTO
-		    T_CT_NICE_INQREMAMT_ERROR
+		    OP.T_CT_NICE_INQREMAMT_ERROR
 		    (
 		        MAC_NO,
 		        ATM_DEAL_NO
@@ -728,7 +728,7 @@
 	<update id="updateNiceTranRepairErrorUpdateProc" parameterType="map">
 		<![CDATA[
 		UPDATE
-		    T_CT_NICE_TRAN_ERROR
+		    OP.T_CT_NICE_TRAN_ERROR
 		SET
 		    REPAIR_ATM_DEAL_NO = RTRIM(#{atmDealNo})
 		WHERE
@@ -740,7 +740,7 @@
 		<![CDATA[
 		INSERT
 		INTO
-		    T_CT_NICE_TRAN_ERROR
+		    OP.T_CT_NICE_TRAN_ERROR
 		    (
 		        MAC_NO,
 		        REPAIR_ATM_DEAL_NO
@@ -756,7 +756,7 @@
 	<update id="updateNiceTranErrorUpdateProc" parameterType="map">
 		<![CDATA[
 		UPDATE
-		    T_CT_NICE_TRAN_ERROR
+		    OP.T_CT_NICE_TRAN_ERROR
 		SET
 		    ATM_DEAL_NO = RTRIM(#{atmDealNo})
 		WHERE
@@ -768,7 +768,7 @@
 		<![CDATA[
 		INSERT
 		INTO
-		    T_CT_NICE_TRAN_ERROR
+		    OP.T_CT_NICE_TRAN_ERROR
 		    (
 		        MAC_NO,
 		        ATM_DEAL_NO

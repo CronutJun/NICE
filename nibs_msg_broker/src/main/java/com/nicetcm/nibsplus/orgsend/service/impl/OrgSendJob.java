@@ -1,5 +1,7 @@
 package com.nicetcm.nibsplus.orgsend.service.impl;
 
+import java.util.Properties;
+
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -11,6 +13,7 @@ import com.nicetcm.nibsplus.orgsend.common.OrgSendException;
 import com.nicetcm.nibsplus.orgsend.constant.NibsDataSource;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
 import com.nicetcm.nibsplus.orgsend.model.OrgSendExternalVO;
+import com.nicetcm.nibsplus.orgsend.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.orgsend.service.NOrgSendService;
 import com.nicetcm.nibsplus.scheduler.model.SchedulerVO;
 import com.nicetcm.nibsplus.scheduler.service.JobExecuter;
@@ -52,6 +55,10 @@ public class OrgSendJob implements Job, JobExecuter
         ApplicationContext applicationContext = (ApplicationContext)jobDataMap.get("applicationContext");
         NOrgSendService nOrgSendService = applicationContext.getBean("NOrgSendImpl", NOrgSendService.class);
 
+        if (MsgBrokerCallAgent.msgBrokerConfig == null) {
+        	MsgBrokerCallAgent.msgBrokerConfig = (Properties)applicationContext.getBean("msgBrokerConfig");
+        }
+
         String orgCd = String.valueOf(jobDataMap.get("T_ARG2"));
         String queryName = String.valueOf(jobDataMap.get("T_ARG3"));
         TransferType transferType = TransferType.valueOf(String.valueOf(jobDataMap.get("T_ARG1") + "_SEND"));
@@ -84,6 +91,10 @@ public class OrgSendJob implements Job, JobExecuter
     @Override
     public void executeJob(ApplicationContext applicationContext, SchedulerVO schedulerVO) throws Exception
     {
+        if (MsgBrokerCallAgent.msgBrokerConfig == null) {
+        	MsgBrokerCallAgent.msgBrokerConfig = (Properties)applicationContext.getBean("msgBrokerConfig");
+        }
+        
         NOrgSendService nOrgSendService = applicationContext.getBean("NOrgSendImpl", NOrgSendService.class);
 
         String orgCd = schedulerVO.gettArg2();

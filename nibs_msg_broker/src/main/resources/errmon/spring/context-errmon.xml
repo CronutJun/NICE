@@ -13,9 +13,21 @@
     <!-- 환경설정파일 로딩 -->
 
     <!-- 개발자 Local-PC 환경 -->
-    <beans profile="">
-        <util:properties id="jdbc" location="classpath:/errmon/properties/context-errmon.local.properties" />
-        <util:properties id="config" location="classpath:/errmon/properties/context-errmon.local.properties" />
+    <beans profile="local">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/errmon/properties/context-errmon.local.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+    	<bean id="msgBrokerConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/uat/msg.properties</value>
+    			</list>
+    		</property>
+   		</bean>
 
         <!-- Log4j 설정 -->
         <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -31,11 +43,63 @@
 
     <!-- DEV 환경 -->
     <beans profile="dev">
-        <util:properties id="config" location="classpath:/errmon/properties/context-errmon.dev.properties" />
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/errmon/properties/context-errmon.dev.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+    	<bean id="msgBrokerConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/dev/msg.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+   		
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:errmon/properties/context-errmon-log4j.dev.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- DEV 환경 -->
+    <beans profile="stage">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/errmon/properties/context-errmon.stage.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+    	<bean id="msgBrokerConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/stage1/msg.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+   		
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:errmon/properties/context-errmon-log4j.stage.xml</value>
+                </list>
+            </property>
+        </bean>
     </beans>
 
     <beans>
-
         <!-- Spring Service Bean 로딩 -->
         <context:component-scan base-package="com.nicetcm.nibsplus.errmon">
             <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
@@ -43,10 +107,10 @@
 
         <!-- OP DB Connection Pool 설정 -->
         <bean id="dataSource_operdb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-            <property name="driverClassName"><value>#{jdbc['jdbc.op.class']}</value></property>
-            <property name="url"><value>#{jdbc['jdbc.op.url']}</value></property>
-            <property name="username"><value>#{jdbc['jdbc.op.username']}</value></property>
-            <property name="password"><value>#{jdbc['jdbc.op.password']}</value></property>
+            <property name="driverClassName"><value>#{config['jdbc.op.class']}</value></property>
+            <property name="url"><value>#{config['jdbc.op.url']}</value></property>
+            <property name="username"><value>#{config['jdbc.op.username']}</value></property>
+            <property name="password"><value>#{config['jdbc.op.password']}</value></property>
             <property name="initialSize" value="4"/>
             <property name="maxActive" value="4"/>
             <property name="maxIdle" value="4"/>
@@ -60,10 +124,10 @@
 
         <!-- IN DB Connection Pool 설정 -->
         <bean id="dataSource_infodb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-            <property name="driverClassName"><value>#{jdbc['jdbc.in.class']}</value></property>
-            <property name="url"><value>#{jdbc['jdbc.in.url']}</value></property>
-            <property name="username"><value>#{jdbc['jdbc.in.username']}</value></property>
-            <property name="password"><value>#{jdbc['jdbc.in.password']}</value></property>
+            <property name="driverClassName"><value>#{config['jdbc.in.class']}</value></property>
+            <property name="url"><value>#{config['jdbc.in.url']}</value></property>
+            <property name="username"><value>#{config['jdbc.in.username']}</value></property>
+            <property name="password"><value>#{config['jdbc.in.password']}</value></property>
             <property name="initialSize" value="4"/>
             <property name="maxActive" value="4"/>
             <property name="maxIdle" value="4"/>

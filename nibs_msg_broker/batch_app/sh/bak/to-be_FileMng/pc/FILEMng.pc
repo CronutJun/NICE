@@ -1,0 +1,1469 @@
+/****************************************************************************/
+/* 01. 프로그램명 		: {FILEMng.pc}		                           	*/
+/* 02. 작  성  자       	: {방혜진}                                          	*/
+/* 03. 작 성 일 자      	: {2006/08/14}                                      */
+/* 04. 프로그램기능     	: {}												*/
+/* 05. 입력FILE         	: 													*/
+/* 06. 출력FILE         	:													*/ 
+/* 07. 입력DATA HEADER  	: {}                                                */
+/* 08. 출력DATA HEADER  	: {}                                                */
+/* 09. 프로그램TYPE     	: {LIBRARY}                                         */
+/* 10. LINK LIBRARY     : {}                                                */
+/* 11. 작업주기         	: {0건/0일}                                         	*/
+/* 12. TR-CODE          : {}                                                */
+/* 13. 사용부서         	: {전산부}                                          	*/
+/* 14. POWER SERVICE    : {0}                                               */
+/* 15. REMARKS 사항     	: {}                                                */
+/****************************************************************************/
+
+/****************************************************************************/
+/* SYSTEM HEADER 정의                                                       	*/
+/****************************************************************************/
+#include	<stdio.h>
+#include	<string.h>
+#include	<stdlib.h>
+#include	<errno.h>
+#include	<signal.h>
+#include	<fcntl.h>
+#include	<netdb.h>
+#include	<math.h>
+#include	<ftw.h>
+#include	<sys/ioctl.h>
+#include	<sys/types.h>
+#include	<netinet/in.h>
+#include	<arpa/inet.h>
+
+/****************************************************************************/
+/* 사용자 HEADER 정의                                                       */
+/****************************************************************************/
+#include    "../include/dberrno.h"
+#include    "../include/commdef.h"
+#include    "../include/struct.h"
+
+#define APP_NAME	"FILEMng"
+#define	LOG_NAME	"FILEMng"
+
+EXEC SQL INCLUDE SQLCA;
+
+/****************************************************************************/
+/* FUNCTION PROTO TYPE 정의                                                 */
+/****************************************************************************/
+int 	list( char * pName, struct stat * psuStatus, int nType );
+int 	ReadFileProc( char * pFile, char cSep );
+int		UpdateVPNData( char *pMacNo, char *pIPAddr );
+int		UpdateTICKETData( char (*pTicket)[100] );
+int		InsertSAPMasterData( char *pData );
+int		InsertSAPDetailData( char *pData );
+int		InsertCouponData( char *pData );
+int		InsertTranDealNoData( char *pData );
+void    CleanUp(int Sig);
+int		fnCheckFileMngState();
+int 	SaveNotExistDealNo(char * pDealDate, char * pSavePath, char * pSendFileNm);
+int 	PutFTPData(char * pSrcPath, char * pSendFile);
+int 	GetFTPData(char * pFileType, char * pSrcPath, char * pGetFile);
+
+/****************************************************************************/
+/* 사용자 외부변수 및 공용변수 정의                                         */
+/****************************************************************************/
+varchar huid[20];
+varchar hpid[20];
+
+short   logflg;							/* log function(logger) on/off flag */
+int     logdev;							/* log function(logger) file desc.  */
+
+pid_t	process_id = 0;
+
+int		g_class_idx = -1;
+
+char	g_deal_date[10+1];
+char	g_jijum_cd[8+1];
+
+/* 테스트용 변수 */
+int	officeOnCnt = 0;
+int officeOffCnt = 0;
+
+
+enum	filemng_key_idx	{
+	IDX_FILEMNG_VPN,
+	IDX_FILEMNG_TICKET,
+	IDX_FILEMNG_SAPMA,
+	IDX_FILEMNG_SAPDE,
+	IDX_FILEMNG_DEALNO,
+	IDX_FILEMNG_COUPON,
+	IDX_FILEMNG_MAX
+};
+
+#define	MAX_TOTAL_FILEMSG_CNT		IDX_FILEMNG_MAX
+
+char    *FILEMNG_MTYPE_NM[MAX_TOTAL_FILEMSG_CNT] = {
+	"VPN",
+	"TICKET",
+	"SAPMA",
+	"SAPDE",
+	"DEALNO",
+	"COUPON"		/* 상품권 마감정보 */
+};
+
+
+void main(int argc, char *argv[])
+{
+	long	lPrevDate;
+	char	szPath[1024];
+/*------------------------------------------------------------------*/
+	char	temp[500];
+	char	szDisp[500];
+	char	szFILEType[100];
+	char	logfilename[100];
+	char	szGetFileNm[200];
+	
+	
+    int		i = 0;
+	int		len	= 0;
+		
+	memset(g_deal_date , 0x00 ,sizeof(g_deal_date));
+	
+	memset(g_jijum_cd , 0x00 ,sizeof(g_jijum_cd));
+	
+	memset(logfilename , 0x00 ,sizeof(logfilename));
+	if ( argc < 2 )
+	{
+		printf( "Usage : FILEMng [file_type]\n" );
+		printf( "Usage : file_type=");
+		
+		memset( szDisp, 0x00, sizeof( szDisp ));
+		
+		for( i = 0; i < MAX_TOTAL_FILEMSG_CNT; i++ )
+		{
+			memset( temp, 0x00, sizeof( temp ));
+			sprintf( temp, "[%s] ", (char* )FILEMNG_MTYPE_NM[i] );
+			
+			strcat( szDisp, temp );
+			
+			if( i % 7 == 6 )
+			{
+				strcat( szDisp, "\n\t\t" );				
+			}
+		}
+		
+		printf( szDisp );
+		printf( "\n");
+		
+		exit(0);
+	}
+	else /*if ( argc == 2 || argc == 3 || argc == 4 )*/
+	{
+		char	szDBUser[50];
+		char	szDBPwd[50];
+		char	szDBSID[50];
+		char 	hDBConn[100];
+	
+		memset((char *)szDBUser	, 	(int)0x00, sizeof(szDBUser	));
+		memset((char *)szDBPwd	, 	(int)0x00, sizeof(szDBPwd	));
+		memset((char *)szDBSID	, 	(int)0x00, sizeof(szDBSID	));
+	
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)"DB_USER=", szDBUser ) < 0 )
+		{
+			printf( "main : rd_cnfg_pram DB USER Get Error \n" );
+	   		exit(0);
+		}
+	
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)"DB_PWD=", szDBPwd ) < 0 )
+		{
+			printf( "main : rd_cnfg_pram DB PWD Get Error \n" );
+	   		exit(0);
+		}
+	
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)"DB_SID=", szDBSID ) < 0 )
+		{
+			printf( "main : rd_cnfg_pram DB SID Get Error \n" );
+	   		exit(0);
+		}
+		
+		memset( hDBConn, 0x00, sizeof( hDBConn ) );
+	
+		sprintf( hDBConn, "%s/%s@%s", szDBUser, szDBPwd, szDBSID );
+	
+		EXEC SQL CONNECT :hDBConn;
+		
+		if ( sqlca.sqlcode != DB_SUCCESS )
+		{
+			logger( "Connect Err: %.100s\n", SqlErrMsg );
+			CleanUp(0);
+		}	
+	 
+		memset( szFILEType, 0x00, sizeof(szFILEType) );
+		sprintf( szFILEType, "%s", argv[1] );
+		
+		for( i = 0; i < MAX_TOTAL_FILEMSG_CNT; i++ )
+		{
+			if( strcmp( szFILEType, FILEMNG_MTYPE_NM[i] ) == 0 )
+			{
+				g_class_idx = i;
+				break;
+			}
+		}
+	
+
+		if( g_class_idx < 0 )
+		{
+			printf( "Usage : fnCheckFileMngState [file_type]\n" );
+			printf( "Usage : file_type must choose one of the " );
+			
+			for( i = 0; i < MAX_TOTAL_FILEMSG_CNT; i++ )
+			{
+				memset( temp, 0x00, sizeof( temp ));
+				sprintf( temp, "[%s] ", (char* )FILEMNG_MTYPE_NM[i] );
+				
+				strcat( szDisp, temp );
+				
+				if( i % 7 == 6 )
+				{
+					strcat( szDisp, "\n\t\t" );				
+				}
+			}		
+			
+			printf( szDisp );
+			printf( "\n");
+			exit(0);
+		}
+		
+		if( g_class_idx == IDX_FILEMNG_TICKET || g_class_idx == IDX_FILEMNG_SAPMA 
+			|| g_class_idx == IDX_FILEMNG_SAPDE || g_class_idx == IDX_FILEMNG_DEALNO || g_class_idx == IDX_FILEMNG_COUPON )
+		{
+			if( argc >= 3 )
+			{
+				sprintf( g_deal_date, "%s", argv[2] );
+				
+				if( argc == 4 )
+				{
+					sprintf( g_jijum_cd, "%s", argv[3] );
+					logger( "g_deal_date[%s]-g_jijum_cd[%s]\n" ,g_deal_date, g_jijum_cd);
+				}
+			}
+			else
+			{
+				
+				EXEC SQL SELECT TO_CHAR( sysdate - 1, 'YYYYMMDD')
+						 INTO	:g_deal_date
+						 FROM 	DUAL;
+
+printf("g_deal_date[%s]\n", g_deal_date );			
+				if(sqlca.sqlcode == DB_NO_DATA)
+				{
+					logger(">>> [GetCityTranData] 전일 없음. [%.200s]\n", SqlErrMsg);
+					exit(0);
+				}
+				else if( sqlca.sqlcode )
+				{
+					logger(">>> [GetCityTranData] 전일 파악 실패 [%.200s]\n", SqlErrMsg);
+					exit(0);
+				}
+			}
+		}
+	}
+/*-----------------------------------------------------------*/
+	sprintf( logfilename,"%s_%s", APP_NAME, FILEMNG_MTYPE_NM[g_class_idx]);
+	
+	if ( fnCheckLogFile( logfilename ) < 0 )
+	{
+		printf( "main : fnCheckLogFile Function Return Error\n" );
+		exit(0);
+	}
+	
+	if ( fnCheckFileMngState() < 0 )
+	{
+		printf( "[fnCheckFileMngState_%s]Appl is already started ... Exit\n\n", FILEMNG_MTYPE_NM[g_class_idx] );
+		logger( "[fnCheckFileMngState_%s]Appl is already started ... Exit\n\n", FILEMNG_MTYPE_NM[g_class_idx] );
+		exit(0);
+	}
+
+	lPrevDate = GetCurDate();
+	
+	memset((char *)szPath, 	(int)0x00, sizeof(szPath));
+	
+	if( g_class_idx == IDX_FILEMNG_VPN )
+	{
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)VPN_FILE_PATH, szPath ) < 0 )
+		{
+			logger( "main : rd_cnfg_pram VPN_FILE_PATH Get Error = [%s]\n", szPath );
+	   		CleanUp(0);
+		}
+	}
+	else if( g_class_idx == IDX_FILEMNG_TICKET )
+	{
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)TICKET_FILE_PATH, szPath ) < 0 )
+		{
+			logger( "main : rd_cnfg_pram TICKET_FILE_PATH Get Error = [%s]\n", szPath );
+	   		CleanUp(0);
+		}
+	}
+	else if( g_class_idx == IDX_FILEMNG_SAPMA )
+	{
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)SAP_FILE_PATH, szPath ) < 0 )
+		{
+			logger( "main : rd_cnfg_pram TICKET_FILE_PATH Get Error = [%s]\n", szPath );
+	   		CleanUp(0);
+		}
+		
+		memset( szGetFileNm, 0x00, sizeof(szGetFileNm) );
+		if( argc < 4 ) 
+		{
+			sprintf( szGetFileNm, "NICE_%s_MASTER.dat", g_deal_date );
+			GetFTPData(szFILEType, szPath, szGetFileNm );    
+		} 
+		else if( argc == 4 )
+		{
+			sprintf( szGetFileNm, "NICE_%s_%s_MASTER.dat", g_deal_date, g_jijum_cd );
+			GetFTPData(szFILEType, szPath, szGetFileNm );
+			
+			EXEC SQL	delete FROM T_FN_SAP_MASTER WHERE deal_date = :g_deal_date
+													AND	  JIJUM_CD = :g_jijum_cd;
+			if( sqlca.sqlcode && sqlca.sqlcode != DB_NO_DATA )
+			{
+				logger( "[T_FN_SAP_MASTER] Delete Err!! \n" );
+			}
+			
+			EXEC SQL COMMIT WORK;
+			
+			logger( "[T_FN_SAP_MASTER] Delete OK!! DEAL_DATE[%s] JIJUM_CD[%s]\n", g_deal_date, g_jijum_cd );
+	
+		}
+	}
+	else if( g_class_idx == IDX_FILEMNG_SAPDE )
+	{
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)SAP_FILE_PATH, szPath ) < 0 )
+		{
+			logger( "main : rd_cnfg_pram TICKET_FILE_PATH Get Error = [%s]\n", szPath );
+	   		CleanUp(0);
+		}
+		
+		memset( szGetFileNm, 0x00, sizeof(szGetFileNm) );	
+		
+		if ( argc < 4 )
+		{
+			sprintf( szGetFileNm, "NICE_%s_DETAIL.dat", g_deal_date );
+			GetFTPData(szFILEType,  szPath, szGetFileNm );
+		}
+		else if( argc == 4 )
+		{	
+			sprintf ( szGetFileNm, "NICE_%s_%s_DETAIL.dat", g_deal_date, g_jijum_cd );
+			GetFTPData(szFILEType,  szPath, szGetFileNm );
+			
+			EXEC SQL	delete FROM T_FN_SAP_DETAIL WHERE deal_date = :g_deal_date
+													AND	  JIJUM_CD = :g_jijum_cd;
+			if( sqlca.sqlcode && sqlca.sqlcode != DB_NO_DATA )
+			{
+				logger( "[T_FN_SAP_DETAIL] Delete Err!! \n" );
+			}
+			
+			EXEC SQL COMMIT WORK;
+			
+			logger( "[T_FN_SAP_DETAIL] Delete OK!! DEAL_DATE[%s] JIJUM_CD[%s]\n", g_deal_date, g_jijum_cd );
+	
+		}
+	}
+	else if( g_class_idx == IDX_FILEMNG_DEALNO )
+	{
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)DEALNO_FILE_PATH, szPath ) < 0 )
+		{
+			logger( "main : rd_cnfg_pram DEALNO_FILE_PATH Get Error = [%s]\n", szPath );
+	   		CleanUp(0);
+		}
+				
+		EXEC SQL 	delete FROM T_FN_HOST_DEAL_NO WHERE DEAL_DATE = :g_deal_date;
+		EXEC SQL COMMIT WORK;
+		logger("[T_FN_HOST_DEAL_NO] Delete OK!! DEAL_DATE[%s]\n", g_deal_date );
+	} else if ( g_class_idx == IDX_FILEMNG_COUPON ) {
+		
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)SAP_FILE_PATH, szPath ) < 0 ) {
+			logger("main : rd_cnfg_pram SAP_FILE_PATH Get Error = [%s]\n", szPath );
+			CleanUp(0);
+		}
+		memset( szGetFileNm, 0x00, sizeof(szGetFileNm) );
+		
+		if (argc < 4 ) {
+			sprintf( szGetFileNm, "NICE_%s_COUPON.dat", g_deal_date );
+			GetFTPData(szFILEType,  szPath, szGetFileNm );	
+		} else if ( argc == 4 ) {
+			sprintf( szGetFileNm, "NICE_%s_%s_COUPON.dat", g_jijum_cd, g_deal_date );
+			GetFTPData(szFILEType,  szPath, szGetFileNm );
+			
+			EXEC SQL DELETE FROM T_FN_ELAND_COUPON WHERE DEAL_DATE = :g_deal_date AND JIJUM_CD = :g_jijum_cd;
+			if ( sqlca.sqlcode && sqlca.sqlcode != DB_NO_DATA ) {
+				logger("[T_FN_ELAND_COUPON] Delete Err!! \n");
+			}
+			EXEC SQL COMMIT WORK;
+			
+			logger("[T_FN_ELAND_COUPON] Delete OK!! DEAL_DATE[%s] JIJUM_CD[%s]\n", g_deal_date, g_jijum_cd );
+		}
+	}
+		
+	ftw(szPath, list, 1);
+	
+	printf("확정 건수   : %d \n",officeOnCnt);
+	printf("미확정 건수 : %d \n",officeOffCnt);
+	exit(0);
+}
+
+int list( char * pName, struct stat * psuStatus, int nType )
+{
+	char	szExt[50];
+	char	szSendPath[200];
+	char	szSendFileNm[50];
+	char	cSep;
+	int		nRtn = 0;
+	char	command[512];
+	
+	
+	memset((char *)szExt, 	(int)0x00, sizeof(szExt));
+	if( g_class_idx == IDX_FILEMNG_VPN )
+	{	
+		strcpy( szExt, ".tb" );
+		cSep = '\t';
+	}
+	else if( g_class_idx == IDX_FILEMNG_TICKET )
+	{
+		sprintf( szExt, "FMS_EVENT_%s.dat", g_deal_date );
+		cSep = '|';
+	}
+	else if( g_class_idx == IDX_FILEMNG_SAPMA )
+	{
+		if ( strlen(g_jijum_cd) != 4 ) {
+			sprintf( szExt, "%s_MASTER.dat", g_deal_date );
+		} else {
+			sprintf( szExt, "%s_%s_MASTER.dat", g_deal_date, g_jijum_cd );
+		}
+	}
+	else if( g_class_idx == IDX_FILEMNG_SAPDE )
+	{
+		if ( strlen(g_jijum_cd) != 4 ) {
+			sprintf( szExt, "%s_DETAIL.dat", g_deal_date );
+		} else {
+			sprintf( szExt, "%s_%s_DETAIL.dat", g_deal_date, g_jijum_cd );
+		}
+	}
+	else if( g_class_idx == IDX_FILEMNG_DEALNO )
+	{
+		sprintf( szExt, "%s.dat", g_deal_date );	
+	} 
+	else if( g_class_idx == IDX_FILEMNG_COUPON ) {
+		if ( strlen(g_jijum_cd) != 4 ) {
+			sprintf( szExt, "%s_COUPON.dat", g_deal_date );
+		} else {
+			sprintf( szExt, "%s_%s_COUPON.dat", g_jijum_cd, g_deal_date );
+		}	
+	}
+		
+	
+	/* if the stat call failed, just return */
+	if( nType == FTW_NS )
+	{
+		return (0);		
+	}
+	
+	/*
+	 *	otherwise print object name,
+	 *	permissions and "*" postfix
+	 *	if object is a directory
+	 */
+	if( nType == FTW_F )
+	{		
+		/* printf( "%-30s\t0%3o\n", pName, psuStatus->st_mode&0777);*/
+		if( !memcmp(&pName[strlen(pName) - strlen(szExt)], szExt, strlen(szExt) ) )		
+		{
+logger("pName[%s]\n", pName );			
+			nRtn = ReadFileProc( pName, cSep );
+			
+			if( (g_class_idx == IDX_FILEMNG_SAPMA || g_class_idx == IDX_FILEMNG_SAPDE || g_class_idx == IDX_FILEMNG_COUPON ) 
+				&& strlen(g_jijum_cd) == 0 )
+			{
+				char szBackName[512];
+				
+				memset( szBackName, 0x00, sizeof(szBackName) );
+				
+				memcpy( szBackName, pName, strlen(pName) - 4 );
+				strcat( szBackName, ".bak" );
+				
+				rename(pName, szBackName);
+			}
+			else if( g_class_idx == IDX_FILEMNG_DEALNO )
+			{
+				memset( szSendPath, 0x00, sizeof( szSendPath ) );
+				
+				memcpy( szSendPath, pName, strlen(pName) - (strlen(szExt)+1) );
+				
+				if( nRtn  == 0 )
+				{
+					memset( szSendFileNm, 0x00, sizeof( szSendFileNm ) );
+					
+					sprintf( szSendFileNm, "NOT_%s.lst", g_deal_date );
+					nRtn = SaveNotExistDealNo(g_deal_date, szSendPath, szSendFileNm);
+					
+					if( nRtn == 0 )
+					{
+						nRtn = PutFTPData( szSendPath, szSendFileNm );
+					}
+				}
+				
+				if( nRtn == 0  )
+				{
+					EXEC SQL COMMIT WORK;
+					
+					memset( command, 0x00, sizeof( command ) );
+					sprintf( command, "[나이스거래누락] 누락 고유번호 HOST 전송처리 완료[%08ld-%06ld]", GetCurDate(), GetCurTime() );
+					logger("%s\n", command );			
+					EXEC SQL CALL sp_if_SendSMSTranCntMismatch( :command, 0 );
+				}
+				else
+				{
+					EXEC SQL ROLLBACK;
+					
+					memset( command, 0x00, sizeof( command ) );
+					sprintf( command, "[나이스거래누락] 거래고유번호 DB UPLOAD 혹은 FTP전송 실패" );
+					logger("%s\n", command );			
+					EXEC SQL CALL sp_if_SendSMSTranCntMismatch( :command, 0 );
+				}
+				
+			} 
+		}
+		
+	}
+	/*
+	else
+	{
+		printf( "%-30s*\t0%3o\n", pName, psuStatus->st_mode&0777);		
+	}
+	*/
+	
+	return (0);
+}
+
+int PutFTPData(char * pSrcPath, char * pSendFile)
+{
+	char	szFtpScript[500];
+	char	szDestPath[1024];
+	char	szHost[200];
+	char	szID[20];
+	char	szPwd[20];
+	
+	FILE *	ftp;
+	
+	int		ftpsuccess = 0;
+	
+	memset((char *)szDestPath, 	(int)0x00, sizeof(szDestPath));
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)FTP_DEST_DEAL_NO_PATH, szDestPath ) < 0 )
+	{
+		logger( "main : rd_cnfg_pram FTP_DEST_DEAL_NO_PATH Get Error = [%s]\n", szDestPath );
+   		return -1;
+	}
+	
+	
+	memset((char *)szHost, 	(int)0x00, sizeof(szHost));
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)FTP_HOST_IP, szHost ) < 0 )
+	{
+		logger( "main : rd_cnfg_pram FTP_FILE_IP Get Error = [%s]\n", szHost );
+   		return -1;
+	}
+
+	memset((char *)szID, 	(int)0x00, sizeof(szID));
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)FTP_HOST_UNAME, szID ) < 0 )
+	{
+		logger( "main : rd_cnfg_pram FTP_HOST_UNAME Get Error = [%s]\n", szID );
+   		return -1;
+	}
+
+	memset((char *)szPwd, 	(int)0x00, sizeof(szPwd));
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)FTP_HOST_PWD, szPwd ) < 0 )
+	{
+		logger( "main : rd_cnfg_pram FTP_HOST_PWD Get Error = [%s]\n", szPwd );
+   		return -1;
+	}
+	
+	memset( szFtpScript, 0x00, sizeof(szFtpScript) );
+	sprintf( szFtpScript, "%s/%s", pSrcPath, pSendFile );
+	
+	if(chmod (szFtpScript, 0755) < 0)
+    {
+    	logger("call to chmod failed\n");
+    	return -1;
+    }
+	
+	memset( szFtpScript, 0x00, sizeof(szFtpScript) );
+	sprintf( szFtpScript, "%s/ftpscript", pSrcPath );
+
+	if(( ftp = fopen( szFtpScript, "w" )) != NULL )
+
+	{
+	    fprintf( ftp, "(\n" );
+	    fprintf( ftp, "for host in %s\n", szHost );
+	    fprintf( ftp, "do\n" );
+	    fprintf( ftp, "echo \"\n" );
+	    fprintf( ftp, "open %s\n", szHost );
+	    fprintf( ftp, "user %s %s\n", szID, szPwd );
+	    fprintf( ftp, "ascii\n" );
+	    fprintf( ftp, "prompt\n" );
+	    fprintf( ftp, "cd %s\n", szDestPath );
+	    fprintf( ftp, "delete %s\n", pSendFile );
+	    fprintf( ftp, "lcd %s\n", pSrcPath );
+	    fprintf( ftp, "put %s\n", pSendFile );
+	    fprintf( ftp, "close\n" );
+	    fprintf( ftp, "bye\n" );
+	    fprintf( ftp, "\"\n" );
+	    fprintf( ftp, "done\n" );
+	    fprintf( ftp, ")|ftp -i -n -v > ./ftp_down.log\n");
+	    fclose( ftp );
+
+	    if(chmod (szFtpScript, 0755) < 0)
+	    {
+	    	logger("call to chmod failed\n");
+	    	ftpsuccess = -1;
+	    }
+
+	    if( system( szFtpScript ) < 0 )
+	    {
+	    	logger( "ftp 전송 실패 HOST[%s] ID[%s] DestPath[%s] SrcPath[%s] FileName[%s]\n",
+	    				szHost, szID, szDestPath, pSrcPath, pSendFile);
+	    	ftpsuccess = -1;
+	    }
+	    else
+	    {
+	    	logger( "ftp 전송 완료 HOST[%s] ID[%s] DestPath[%s] SrcPath[%s] FileName[%s]\n",
+	    				szHost, szID, szDestPath, pSrcPath, pSendFile);
+	    	ftpsuccess = 0;
+	    }
+	}
+	else
+	{
+		logger("[PutFTPData] ftpscript open 실패 [%s]\n", szFtpScript );
+		return -1;
+	}
+	
+	return ftpsuccess;
+}
+
+int SaveNotExistDealNo(char * pDealDate, char * pSavePath, char * pSendFileNm)
+{
+	char	hDEAL_NO[12 + 1];
+	char	szFileName[500];
+	
+	FILE	*pfTran;
+	
+	EXEC SQL	UPDATE 	T_FN_HOST_DEAL_NO 
+				SET 	NOT_EXIST_YN = '1'
+				WHERE  	DEAL_DATE = :pDealDate
+				AND     DEAL_NO IN 
+						(
+							SELECT DEAL_NO
+							FROM    T_FN_HOST_DEAL_NO
+							WHERE   DEAL_DATE = :pDealDate
+							MINUS
+							SELECT  DEAL_NO 
+							FROM    T_FN_NICE_TRAN
+							WHERE   DEAL_DATE = :pDealDate
+						);
+	if ( sqlca.sqlcode )
+	{
+		logger( "[T_FN_HOST_DEAL_NO] Update Err!! deal_date[%s] [%.200s]\n", pDealDate, SqlErrMsg );
+		EXEC SQL ROLLBACK;
+		return -1;
+	}
+	EXEC SQL COMMIT WORK;
+	logger( "[T_FN_HOST_DEAL_NO] Update OK!! deal_date[%s] \n", pDealDate );
+	
+	memset( szFileName, 0x00, sizeof( szFileName ) );
+	sprintf( szFileName, "%s/%s", pSavePath, pSendFileNm );	
+	
+	if(( pfTran = fopen( szFileName, "w" )) == NULL )
+	{
+		logger( ">>> [SaveNotExistDealNo] FileOpenError [%s]\n", szFileName);
+		return -1;
+	}
+	
+	memset( hDEAL_NO, 0x00, sizeof( hDEAL_NO ) );
+	
+	EXEC SQL DECLARE CURDDD CURSOR FOR
+				SELECT	DEAL_NO
+				FROM	T_FN_HOST_DEAL_NO
+				WHERE	DEAL_DATE = :pDealDate
+				AND		NOT_EXIST_YN = '1';
+	EXEC SQL OPEN CURDDD;
+
+	if( sqlca.sqlcode )
+	{
+		logger( ">>> [T_FN_HOST_DEAL_NO] Cursor Open Error [%.200s]\n", SqlErrMsg);
+		fclose(pfTran);
+		return	-1;
+	}
+
+	while (1)
+	{
+		EXEC SQL	FETCH	CURDDD	INTO :hDEAL_NO ;
+
+		if(sqlca.sqlcode == DB_NO_DATA)
+		{
+			logger("[SaveNotExistDealNo] 불일지 검색 끝!!... \n");
+			break;
+		}
+		else if(sqlca.sqlcode)
+		{
+			logger( ">>> [T_FN_HOST_DEAL_NO] Fetch Error [%.200s]\n", SqlErrMsg);
+			EXEC SQL CLOSE CURDDD;
+			fclose(pfTran);
+			return -1;
+		}
+		else
+		{
+
+			fprintf( pfTran, "%s\n", hDEAL_NO );
+
+			memset( hDEAL_NO, 0x00, sizeof( hDEAL_NO ) );
+		}
+    }
+	EXEC SQL CLOSE CURDDD;
+	
+	fclose(pfTran);
+	logger("[T_FN_HOST_DEAL_NO] 전송 FILE 생성 OK [%s]\n", szFileName );
+	return 0;
+}
+
+int ReadFileProc( char * pFile, char cSep )
+{
+	FILE 	*fp;
+	
+	char 	szRead[1024];
+	int		i;
+	int		nCnt;
+	int		nIndex;
+	int		nColStart;	
+	int		nRtn = 0;
+	
+	memset( szRead, 0x00, sizeof(szRead) );
+
+	if( (fp = fopen(pFile, "r")) == NULL ) return -1;
+	
+	char szTemp[512];
+	char szKey[100][100];
+	
+	while( fgets(szRead, sizeof(szRead), fp) != NULL )
+	{
+		nCnt = 0;
+		nIndex = 0;
+		nColStart = 1;
+		
+		for( i = 0; i < 100; i++ )
+		{
+			memset( szKey[i], 0x00, sizeof( szKey[i] ));
+		}
+
+
+		
+		/* 줄바꿈이 0x0a인것과 0x0d0x0a 인것이 있을 수 있으므로 모두 변환 */
+		if( szRead[strlen(szRead)-1] == 0x0A )
+		{
+			szRead[strlen(szRead)-1] = 0x00;
+		}
+		
+		if( szRead[strlen(szRead)-1] == 0x0D )
+		{
+			szRead[strlen(szRead)-1] = 0x00;
+		}
+
+		if( g_class_idx == IDX_FILEMNG_SAPMA )
+		{
+			InsertSAPMasterData( szRead );
+		}
+		else if( g_class_idx == IDX_FILEMNG_SAPDE )
+		{
+			InsertSAPDetailData( szRead );
+		}
+		else if( g_class_idx == IDX_FILEMNG_DEALNO )
+		{
+			nRtn = InsertTranDealNoData( szRead );
+			if( nRtn < 0 )
+			{
+				fclose(fp);
+				return -2;
+			}
+			
+		}
+		else if ( g_class_idx == IDX_FILEMNG_COUPON ) {
+			InsertCouponData( szRead );	
+		}
+		else
+		{
+			for( i = 0; i < strlen(szRead)+1; i++ )
+			{
+				if( nColStart == 1 )
+				{
+					nIndex = i;
+					nColStart = 0;
+				}
+				
+				if(szRead[i] == cSep || i == (strlen(szRead) ))
+				{	
+	/*				if( nCnt == 1 )
+					{
+						memset( szMacNo, 0x00, sizeof(szMacNo) );
+						memcpy( szMacNo, &szRead[i - 4], 4 );
+					}
+					else if( nCnt == 7 )
+					{
+						memset( szIP, 0x00, sizeof(szIP) );
+						memcpy( szIP, &szRead[nIndex], (i - nIndex) );					
+						break;
+					}
+	*/				
+	
+					
+	/*printf("%d-%d-%d-%s-%s\n", i, nIndex, nCnt, szKey[nCnt], &szRead[nIndex]);*/
+					memcpy( szKey[nCnt], &szRead[nIndex], (i - nIndex) );	
+	printf("szKey[%d] = %s\n",nCnt, &szKey[nCnt][0] );
+					
+					nCnt ++;
+					nColStart = 1;
+				}
+			}
+		
+			if( g_class_idx == IDX_FILEMNG_VPN )
+			{	
+				printf("MacNo = <%s>	,IPAddr = <%s> \n", &szKey[1][strlen(szKey[1])-4], szKey[7]);
+				UpdateVPNData( &szKey[1][strlen(szKey[1])-4], szKey[7] );
+			}
+			else if( g_class_idx == IDX_FILEMNG_TICKET )
+			{
+				UpdateTICKETData( szKey );
+			}
+		}
+		
+
+		memset(szRead, 0x00, sizeof(szRead));
+	}
+	logger(" Work Complete!!!\n");
+	
+	fclose(fp);
+	
+	return 0;
+}
+
+
+int	UpdateVPNData( char *pMacNo, char *pIPAddr )
+{
+EXEC SQL BEGIN DECLARE SECTION;
+	char	hMAC_NO[12+1];
+	char	hIP_ADDR[15+1];
+	char 	hCompIP[15+1];	
+EXEC SQL END DECLARE SECTION;
+
+	int		nCnt = 0;
+	int		i;
+
+	memset( hMAC_NO,	0x00,	sizeof(hMAC_NO) );
+	memset( hIP_ADDR,	0x00,	sizeof(hIP_ADDR) );
+	
+	strcpy( hMAC_NO, pMacNo );
+	strcpy( hIP_ADDR, pIPAddr );
+
+	EXEC SQL	UPDATE T_CT_NICE_MAC
+				SET	   VPN_IP = :hIP_ADDR
+				WHERE  ORG_CD = '096'
+				AND	   JIJUM_CD = '9600'
+				AND    MAC_NO = :hMAC_NO ;
+
+	if ( sqlca.sqlcode )
+	{
+		logger( "[T_CT_NICE_MAC] Update Err!! MacNo[%s] VPN_IP[%s] [%.200s]\n", pMacNo, pIPAddr, SqlErrMsg );
+		EXEC SQL ROLLBACK;
+		return -1;
+	}
+	EXEC SQL COMMIT WORK;
+	logger( "[T_CT_NICE_MAC] VPN Ip Update OK!! MacNo[%s] VPN_IP[%s] \n", pMacNo, pIPAddr );
+	
+	/* 20090904 금진선대리 요청 네트워크대역대별 VPN G/W IP 저장 추가 */
+	memset( hCompIP,	0x00,	sizeof(hCompIP) );
+	
+	i = 0;
+	nCnt = 0;
+	for( i = 0; i < strlen(hIP_ADDR); i++ )
+	{
+		if( hIP_ADDR[i] == '.' && nCnt == 1 )
+		{
+			break;
+		}
+		else
+		{
+			hCompIP[i] = hIP_ADDR[i];
+			if( hIP_ADDR[i] == '.' )
+			{
+				nCnt++;
+			}
+		}
+	}
+	
+	
+	EXEC SQL UPDATE T_CM_ADSL_INFO SET VPN_GW = (SELECT CD_NM2 FROM T_CM_COMMON WHERE LARGE_CD = '4600' AND CD_NM1 = :hCompIP)
+			 WHERE ORG_CD = '096' AND JIJUM_CD = '9600' AND MAC_NO = :hMAC_NO;
+	
+
+		if(sqlca.sqlcode == DB_NO_DATA)
+		{
+			logger("[UpdateVPNData] 해당데이터가 없습니다(정상처리). MAC_NO[%s], IP_ADDR[%s]\n",
+							hMAC_NO, hIP_ADDR);
+			return 0;
+		}
+		else if(sqlca.sqlcode)
+		{
+			logger(">>> [UpdateVPNData]Update Error(정상처리). MAC_NO[%s], IP_ADDR[%s]\n", hMAC_NO, hIP_ADDR);
+			return 0;
+		}
+		EXEC SQL COMMIT WORK;
+		logger( "[T_CM_ADSL_INFO] VPN G/W Update OK!! MacNo[%s] VPN_IP[%s] \n", pMacNo, pIPAddr );
+
+	return 0;
+}
+
+
+int	UpdateTICKETData( char (*pTicket)[100] )
+{
+	printf( "pTicket[0],[%s] \n", pTicket[0]);
+	printf( "pTicket[1], [%s] \n", pTicket[1] );  
+	printf( "pTicket[2], [%s] \n", pTicket[2] );  
+	printf( "pTicket[3], [%s] \n", pTicket[3] );  
+	printf( "pTicket[4], [%s] \n", pTicket[4] );  
+	printf( "pTicket[5], [%s] \n", pTicket[5] );  
+	printf( "pTicket[6], [%s] \n", pTicket[6] );  
+	printf( "pTicket[7], [%s] \n", pTicket[7] );  
+	printf( "pTicket[8], [%s] \n", pTicket[8] );  
+	printf( "pTicket[9], [%s] \n", pTicket[9] );  
+	printf( "pTicket[10],[%s] \n", pTicket[10]);
+	printf( "pTicket[11],[%s] \n", pTicket[11]);
+	printf( "pTicket[12],[%s] \n", pTicket[12]);
+	printf( "pTicket[13],[%s] \n", pTicket[13]);
+	printf( "pTicket[14],[%s] \n", pTicket[14]);
+	printf( "pTicket[15],[%s] \n", pTicket[15]);
+	printf( "pTicket[16],[%s] \n", pTicket[16]);
+	printf( "pTicket[17],[%s] \n", pTicket[17]);
+	        
+	EXEC SQL	INSERT INTO T_FN_TICKET ( 	DEAL_DATE		,
+											ORG_CD			,
+											EVENT_ID		,
+											TITLE           ,
+											SUBTITLE        ,
+											CONTRACTOR_ID   ,
+											CONTRACTOR_NAME ,
+											ON_DATE         ,
+											ON_TIME         ,
+											OFF_DATE        ,
+											OFF_TIME        ,
+											DOUBLE_HEADER   ,
+											VENUE_NAME      ,
+											SUB_CATEGORY    ,
+											SUB_NAME        ,
+											BIGO            ,
+											TIME_ON_SALE    ,
+											TIME_OFF_SALE   ,
+											TIME_ON_REFUND  ,
+											TIME_OFF_REFUND ,
+											REG_DATE		,
+											UPDATE_DATE		
+
+										)
+								VALUES 	(
+											:g_deal_date,
+											'0TS',
+											:pTicket[0],
+											:pTicket[1],
+											:pTicket[2],
+											:pTicket[3],
+											:pTicket[4],
+											:pTicket[5],
+											:pTicket[6],
+											:pTicket[7],
+											:pTicket[8],
+											:pTicket[9],
+											:pTicket[10],
+											:pTicket[11],
+											:pTicket[12],
+											:pTicket[13],
+											:pTicket[14],
+											:pTicket[15],
+											:pTicket[16],
+											:pTicket[17],
+											SYSDATE,
+											SYSDATE
+										);
+	if( sqlca.sqlcode == DB_DUP_DATA )
+	{
+		EXEC SQL	UPDATE T_FN_TICKET SET 	TITLE           = :pTicket[1], 
+											SUBTITLE        = :pTicket[2], 
+											CONTRACTOR_ID   = :pTicket[3], 
+											CONTRACTOR_NAME = :pTicket[4], 
+											ON_DATE         = :pTicket[5], 
+											ON_TIME         = :pTicket[6], 
+											OFF_DATE        = :pTicket[7], 
+											OFF_TIME        = :pTicket[8], 
+											DOUBLE_HEADER   = :pTicket[9], 
+											VENUE_NAME      = :pTicket[10],
+											SUB_CATEGORY    = :pTicket[11],
+											SUB_NAME        = :pTicket[12],
+											BIGO            = :pTicket[13],
+											TIME_ON_SALE    = :pTicket[14],
+											TIME_OFF_SALE   = :pTicket[15],
+											TIME_ON_REFUND  = :pTicket[16],
+											TIME_OFF_REFUND = :pTicket[17],
+											UPDATE_DATE = SYSDATE
+									WHERE	DEAL_DATE = :g_deal_date
+									AND		ORG_CD 	= '0TS'
+									AND		EVENT_ID = :pTicket[0];
+										
+		if ( sqlca.sqlcode )
+		{
+			logger( "[T_FN_TICKET] Update Err!! DEAL_DATE[%s] ORG_CD[0TS] EVENT_ID[%s] [%.200s]\n", g_deal_date, pTicket[0], SqlErrMsg );
+			EXEC SQL ROLLBACK;
+			return -1;
+		}
+	}
+	else if ( sqlca.sqlcode )
+	{
+		logger( "[T_FN_TICKET] Insert Err!! DEAL_DATE[%s] ORG_CD[0TS] EVENT_ID[%s] [%.200s]\n", g_deal_date, pTicket[0], SqlErrMsg );
+		EXEC SQL ROLLBACK;
+		return -1;
+	}
+	EXEC SQL COMMIT WORK;
+	logger( "[T_FN_TICKET] Save OK!! DEAL_DATE[%s] ORG_CD[0TS] EVENT_ID[%s]\n", g_deal_date, pTicket[0] );
+	
+	
+
+	return 0;
+}
+
+
+int	InsertSAPMasterData( char *pData )
+{
+	char confirmChk[2]="0" ;
+	
+	struct 	FTP_SAP_MASTER		suBody;
+	
+	memset( &suBody, 0x00, sizeof( suBody ) );
+
+	fnParseRcvData( FTP_SAP_MASTER_CNT, g_naryFTP_SAP_MASTER,
+						(char *)&suBody, pData );
+
+	if( strlen(g_jijum_cd) == 4  )
+	{
+		/* 해당 지점 데이터가 아니라면 skip */
+		if( memcmp( &g_jijum_cd[0], suBody.jijum_cd, 4 ) != 0 )
+		{
+			return 0;
+		}
+	}	
+	
+	/* 마감완료 처리 된 데이터는, 다시 받지 않습니다.  by  최락경20120322  */
+	/* 마감완료 데이터 여부 체크 */
+	EXEC SQL SELECT OFFICE_CONFIRM
+		INTO	:confirmChk
+		FROM 	T_FN_SAP_MASTER
+		WHERE DEAL_DATE = :suBody.deal_date
+		AND		JIJUM_CD	= :suBody.jijum_cd
+		AND MEMBER_ID = :suBody.member_id;
+	/* confirmChk = 0 (마감 확인전) */
+	/* confirmChk = 1 (마감 완료  ) */
+	if( strcmp(confirmChk, "1") != 0 ) {					/* 마감완료일 경우, Skip */
+		/* 마감이 되지 않았을 경우, insert 수행 */
+		
+		if( memcmp( suBody.data_type, "DT", 2 ) == 0 )		
+		{		
+			EXEC SQL	INSERT INTO T_FN_SAP_MASTER ( 	
+													DEAL_DATE, 
+													JIJUM_CD, 
+													MEMBER_ID, 
+													MEMBER_NM, 
+													MEMBER_TYPE, 
+													CHECK_AMT, 
+													CASH_AMT, 
+													SELF_CUPON, 
+													ETC_CUPON,
+													UPDATE_DATE
+												)
+										VALUES 	(										 	
+													:suBody.deal_date, 
+													:suBody.jijum_cd, 
+													:suBody.member_id, 
+													:suBody.member_nm, 
+													:suBody.member_type, 
+													:suBody.check_amt, 
+													:suBody.cash_amt, 
+													:suBody.self_cupon, 
+													:suBody.etc_cupon,
+													SYSDATE
+												);
+			if( sqlca.sqlcode == DB_DUP_DATA )
+			{
+				/* 이미 존재하는 데이터는 UPDATE 하지 않는다 */
+				logger( "[T_FN_SAP_MASTER] Update Err!! \n" );
+			}
+			else if ( sqlca.sqlcode )
+			{
+				logger( "[T_FN_SAP_MASTER] Insert Err!! \n" );
+				EXEC SQL ROLLBACK;
+				
+				return -1;
+			}
+			EXEC SQL COMMIT WORK;
+			
+			logger( "[T_FN_SAP_MASTER] Save OK!! DEAL_DATE[%s] JIJUM_CD[%s] member_id[%s]\n", suBody.deal_date, suBody.jijum_cd, suBody.member_id );
+	
+		} 
+		
+		officeOffCnt++;	
+	}
+	else {	officeOnCnt++;}		/* 테스트용 */
+	return 0;
+}
+
+
+
+int	InsertSAPDetailData( char *pData )
+{
+	char confirmChk[2] ="0" ;
+	struct 	FTP_SAP_DETAIL		suBody;
+	
+	memset( &suBody, 0x00, sizeof( suBody ) );
+
+	fnParseRcvData( FTP_SAP_DETAIL_CNT, g_naryFTP_SAP_DETAIL,
+						(char *)&suBody, pData );
+
+	if( strlen(g_jijum_cd) == 4  )
+	{
+		/* 해당 지점 데이터가 아니라면 skip */
+		if( memcmp( &g_jijum_cd[0], suBody.jijum_cd, 4 ) != 0 )
+		{
+			return 0;
+		}
+	}
+	
+	/* 마감완료 처리 된 데이터는, 다시 받지 않습니다.  by  최락경20120322  */
+	/* T_FN_SAP_MASTER 테이블에서 OFFICE_CONFIRM값을 참조하여, 삽입여부를 결정합니다. */
+	EXEC SQL SELECT OFFICE_CONFIRM
+		INTO	:confirmChk
+		FROM	T_FN_SAP_MASTER
+		WHERE	DEAL_DATE = :suBody.deal_date
+			AND	JIJUM_CD	= :suBody.jijum_cd
+			AND MEMBER_ID = :suBody.member_id;
+	
+	/* confirmChk = 0 (마감 확인전) */
+	/* confirmChk = 1 (마감 완료  ) */
+	if( strcmp(confirmChk, "1") != 0 ) {					/* 마감완료일 경우, Skip */
+		/* 마감이 되지 않았을 경우, insert 수행 */	
+		
+		if( memcmp( suBody.data_type, "DT", 2 ) == 0 )
+		{       
+			EXEC SQL	INSERT INTO T_FN_SAP_DETAIL ( 	
+													DEAL_DATE, 
+													JIJUM_CD, 
+													MEMBER_ID, 
+													CUPON_CD,
+													CUPON_NM,
+													CUPON_TYPE,
+													CUPON_AMT,
+													UPDATE_DATE
+												)
+										VALUES 	(										 	
+													:suBody.deal_date, 
+													:suBody.jijum_cd, 
+													:suBody.member_id, 
+													:suBody.cupon_cd, 
+													:suBody.cupon_nm, 
+													:suBody.cupon_type, 
+													:suBody.cupon_amt,  
+													SYSDATE
+												);
+			if( sqlca.sqlcode == DB_DUP_DATA )
+			{
+				/* 이미 존재하는 데이터는 UPDATE 하지 않는다 */
+				logger( "[T_FN_SAP_DETAIL] Update Err!! \n" );
+			}
+			else if ( sqlca.sqlcode )
+			{
+				logger( "[T_FN_SAP_DETAIL] Insert Err!! \n" );
+				EXEC SQL ROLLBACK;
+				return -1;
+			}
+			EXEC SQL COMMIT WORK;
+			
+			logger( "[T_FN_SAP_DETAIL] Save OK!! DEAL_DATE[%s] JIJUM_CD[%s] member_id[%s]\n", suBody.deal_date, suBody.jijum_cd, suBody.member_id );
+		}
+		officeOffCnt++;
+	}
+	else {	officeOnCnt++;}		/* 테스트용 */
+	return 0;
+}
+
+int	InsertTranDealNoData( char *pData )
+{
+	EXEC SQL	INSERT INTO T_FN_HOST_DEAL_NO ( 	
+											DEAL_DATE, 
+											DEAL_NO
+										)
+								VALUES 	(										 	
+											RTRIM(:g_deal_date), 
+											RTRIM(:pData)
+										);
+										
+	if ( sqlca.sqlcode == DB_DUP_DATA ) {
+		logger( "[T_FN_HOST_DEAL_NO] Dup_data occur!! deal_date[%s] deal_no[%s] \n", g_deal_date, pData);
+		return 0;
+	}
+	else if ( sqlca.sqlcode )
+	{
+		logger( "[T_FN_HOST_DEAL_NO] Insert Err!! deal_date[%s] deal_no[%s] \n", g_deal_date, pData );
+		/*EXEC SQL ROLLBACK;*/
+		return -1;
+	}
+	/*EXEC SQL COMMIT WORK;*/
+	/*logger( "[T_FN_HOST_DEAL_NO] Save OK!!\n");*/
+	
+	
+	return 0;
+}
+
+/* 	이랜드 상품권 마감정보 		 */
+int InsertCouponData ( char * pData ) {
+	char confirmChk[2] ="N" ;
+	struct 	FTP_CLOSE_COUPON	suBody;
+	
+	memset( &suBody, 0x00, sizeof( suBody ) );
+
+	fnParseRcvData( FTP_CLOSE_COUPON_CNT, g_naryFTP_CLOSE_COUPON,
+						(char *)&suBody, pData );
+
+	if( strlen(g_jijum_cd) == 4  )
+	{
+		/* 해당 지점 데이터가 아니라면 skip */
+		if( memcmp( &g_jijum_cd[0], suBody.jijum_cd, 4 ) != 0 )
+		{
+			return 0;
+		}
+	}
+	
+	/* 마감완료 처리 된 데이터는, 다시 받지 않습니다.  by  최락경20120322  */
+	/* T_FN_SAP_MASTER 테이블에서 OFFICE_CONFIRM값을 참조하여, 삽입여부를 결정합니다. */
+	EXEC SQL SELECT CONFIRM
+		INTO	:confirmChk
+		FROM	T_FN_ELAND_COUPON
+		WHERE	DEAL_DATE = :suBody.deal_date
+			AND	JIJUM_CD	= :suBody.jijum_cd;
+			
+	
+	/* confirmChk = N (마감 확인전) */
+	/* confirmChk = Y (마감 완료  ) */
+	if( strcmp(confirmChk, "Y") != 0 ) {					/* 마감완료일 경우, Skip */
+		/* 마감이 되지 않았을 경우, insert 수행 */	
+		
+		if( memcmp( suBody.data_type, "DT", 2 ) == 0 )
+		{       
+			EXEC SQL	INSERT INTO T_FN_ELAND_COUPON ( 	
+													DEAL_DATE, 
+													JIJUM_CD, 
+													COUPON_CD, 
+													VOLUME_CD,
+													QUANTITY,
+													CONFIRM,
+													INSERT_DATE,
+													INSERT_UID
+											)
+										VALUES 	(										 	
+													:suBody.deal_date, 
+													:suBody.jijum_cd, 
+													:suBody.coupon_cd, 
+													:suBody.volume_cd, 
+													:suBody.quantity, 
+													:suBody.confirm, 
+													SYSDATE,
+													'SYSTEM'
+											);
+			if( sqlca.sqlcode == DB_DUP_DATA )
+			{
+				/* 이미 존재하는 데이터는 UPDATE 하지 않는다 */
+				logger( "[T_FN_ELAND_COUPON] Update Err!! \n" );
+			}
+			else if ( sqlca.sqlcode )
+			{
+				logger( "[T_FN_ELAND_COUPON] Insert Err!! \n" );
+				EXEC SQL ROLLBACK;
+				return -1;
+			}
+			EXEC SQL COMMIT WORK;
+			
+			logger( "[T_FN_ELAND_COUPON] Save OK!! DEAL_DATE[%s] JIJUM_CD[%s] \n", suBody.deal_date, suBody.jijum_cd);
+		}
+		officeOffCnt++;
+	}
+	else {	officeOnCnt++;}		/* 테스트용 */
+
+
+	return 0;	
+}
+
+
+/****************************************************************************/
+/* 01. FUNCTION	ID      : {CleanUp}                                       */
+/* 02. 작  성  자       	: {방혜진}                                          	*/
+/* 03. 작 성 일 자      	: {2006/07/13}                                      */
+/* 04. 프로그램기능     	: {해당 Sock Close, Log File Close, Program End}		*/
+/* 05. 입력FILE         	: 													*/
+/* 06. 출력FILE         	:													*/
+/* 07. Return	값      	: {}												*/
+/* 08. REMARKS 사항     	: {}                                               	*/
+/****************************************************************************/
+void    CleanUp(int Sig)
+{
+    logger("Clena Up Sig = %d\n\n", Sig);
+    LogClose();
+	sleep(1);
+    exit(0);
+}
+
+
+int	fnCheckFileMngState()
+{
+	int		i;
+	char	PipeLine[200+1];
+	char	*cp;
+	FILE	*pfp;
+	pid_t	pid = getpid();
+
+	if ( (pfp=popen("/bin/ps -eo pid,args |/bin/grep FileMng", "r")) == (FILE *)NULL )
+	{
+		pclose(pfp);
+		return (-1);
+	}
+
+	while ( fgets(PipeLine, sizeof(PipeLine), pfp) != (char *)NULL )
+	{
+		for ( i=0,cp=strtok(PipeLine," "); cp; cp=strtok((char*)NULL, " "),i++ )
+		{
+			if ( ( i == 0 ) && ( atol(cp) == pid ) )
+				break;
+			if ( ( i == 1 ) && ( strstr( cp, "FileMng" ) == NULL ) )
+				break;
+			if ( ( i == 2 ) && ( !strcmp( cp, FILEMNG_MTYPE_NM[g_class_idx] ) ) )
+			{
+				pclose(pfp);
+				return -1;
+			}
+		}
+	}
+	pclose(pfp);
+
+	return 0;
+}
+
+
+int GetFTPData(char * pFileType, char * pSrcPath, char * pGetFile)
+{
+	char	szFtpScript[1024];
+	char	szDestPath[1024];
+	char	szIP[200];
+	char	szPort[10];
+	char	szID[20];
+	char	szPwd[20];
+	
+	FILE *	ftp;
+	
+	int		ftpsuccess = 0;
+	
+	
+	memset((char *)szDestPath, 	(int)0x00, sizeof(szDestPath));
+	if ( strcmp(pFileType, "SAPMA") == 0 
+		|| strcmp(pFileType, "SAPDE") == 0 
+		|| strcmp(pFileType, "COUPON") == 0 )  {
+		if ( rd_cnfg_parm((char *)SAM_FILE, (char *)FTP_ELAND_DEST_PATH, szDestPath ) < 0 )		{
+			logger( "main : rd_cnfg_pram FTP_ELAND_DEST_PATH Get Error = [%s]\n", szDestPath );
+	   		return -1;
+		}
+	} 
+	
+	memset((char *)szIP, 	(int)0x00, sizeof(szIP));
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)FTP_ELAND_IP, szIP ) < 0 )
+	{
+		logger( "main : rd_cnfg_pram FTP_ELAND_IP Get Error = [%s]\n", szIP );
+   		return -1;
+	}
+
+	
+	memset((char *)szPort, 	(int)0x00, sizeof(szPort));
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)FTP_ELAND_PORT, szPort ) < 0 )
+	{
+		logger( "main : rd_cnfg_pram FTP_ELAND_PORT Get Error = [%s]\n", szPort );
+   		return -1;
+	}
+	
+	memset((char *)szID, 	(int)0x00, sizeof(szID));
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)FTP_ELAND_UNAME, szID ) < 0 )
+	{
+		logger( "main : rd_cnfg_pram FTP_ELAND_UNAME Get Error = [%s]\n", szID );
+   		return -1;
+	}
+
+	memset((char *)szPwd, 	(int)0x00, sizeof(szPwd));
+	if ( rd_cnfg_parm((char *)SAM_FILE, (char *)FTP_ELAND_PWD, szPwd ) < 0 )
+	{
+		logger( "main : rd_cnfg_pram FTP_ELAND_PWD Get Error = [%s]\n", szPwd );
+   		return -1;
+	}
+	
+logger( "FTP script Start!!\n");
+
+	memset( szFtpScript, 0x00, sizeof(szFtpScript) );
+	sprintf( szFtpScript, "%s/ftpscript", pSrcPath );
+
+	if(( ftp = fopen( szFtpScript, "w" )) != NULL )
+
+	{
+	    fprintf( ftp, "(\n" );
+	    fprintf( ftp, "for host in %s\n", szIP );
+	    fprintf( ftp, "do\n" );
+	    fprintf( ftp, "echo \"\n" );
+	    fprintf( ftp, "open %s %s\n", szIP, szPort );
+	    fprintf( ftp, "user %s %s\n", szID, szPwd );
+	    fprintf( ftp, "ascii\n" );
+	    fprintf( ftp, "prompt\n" );
+	    fprintf( ftp, "cd %s\n", szDestPath );
+	    fprintf( ftp, "lcd %s\n", pSrcPath );
+	    /*fprintf( ftp, "delete %s\n", pSendFile );*/
+	    fprintf( ftp, "get %s\n", pGetFile );
+	    fprintf( ftp, "close\n" );
+	    fprintf( ftp, "bye\n" );
+	    fprintf( ftp, "\"\n" );
+	    fprintf( ftp, "done\n" );
+	    fprintf( ftp, ")|ftp -i -n -v > ./ftp_down.log\n");
+	    fclose( ftp );
+
+	    if(chmod (szFtpScript, 0755) < 0)
+	    {
+	    	logger("call to chmod failed\n");
+	    	ftpsuccess = -1;
+	    }
+		
+	    if( system( szFtpScript ) < 0 )
+	    {
+	    	logger( "ftp 전송 실패 HOST[%s] ID[%s] DestPath[%s] SrcPath[%s] FileName[%s]\n",
+	    				szIP, szID, szDestPath, pSrcPath, pGetFile);
+	    	ftpsuccess = -1;
+	    }
+	    else
+	    {
+	    	logger( "ftp 전송 완료 HOST[%s] ID[%s] DestPath[%s] SrcPath[%s] FileName[%s]\n",
+	    				szIP, szID, szDestPath, pSrcPath, pGetFile);
+	    	ftpsuccess = 0;
+	    }
+	    
+	}
+	else
+	{
+		logger("[GetFTPData] ftpscript open 실패 [%s]\n", szFtpScript );
+		return -1;
+	}
+	
+	return ftpsuccess;
+}

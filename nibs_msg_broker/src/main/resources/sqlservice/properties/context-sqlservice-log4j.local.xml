@@ -9,7 +9,7 @@
     </appender>
 
     <appender name="root" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sqlService_root.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sqlService_root.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
@@ -19,7 +19,7 @@
     </appender>
 
     <appender name="sp_cm_fax.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_cm_fax.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_cm_fax.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -28,7 +28,7 @@
     </appender>
 
     <appender name="sp_cm_mac_rank.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_cm_mac_rank.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_cm_mac_rank.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -37,7 +37,7 @@
     </appender>
     
     <appender name="sp_cm_personnel.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_cm_personnel.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_cm_personnel.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -46,7 +46,7 @@
     </appender>
     
     <appender name="sp_cm_update_plan_focus.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_cm_update_plan_focus.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_cm_update_plan_focus.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -55,7 +55,7 @@
     </appender>
     
     <appender name="sp_ct_check_0EL_alert.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_ct_check_0EL_alert.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_ct_check_0EL_alert.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -64,7 +64,7 @@
     </appender>
 
     <appender name="sp_ct_check_alert_039.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_ct_check_alert_039.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_ct_check_alert_039.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -73,7 +73,7 @@
     </appender>
     
     <appender name="sp_ct_check_alert_nh_file.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_ct_check_alert_nh_file.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_ct_check_alert_nh_file.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -82,7 +82,7 @@
     </appender>
     
     <appender name="sp_ct_check_alert.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_ct_check_alert.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_ct_check_alert.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -91,7 +91,7 @@
     </appender>
     
     <appender name="sp_ct_delete_day.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_ct_delete_day.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_ct_delete_day.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -99,8 +99,8 @@
         </layout>
     </appender>
     
-    <appender name="sp_ct_report_day_2007.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_ct_report_day_2007.log"/>
+    <appender name="sp_ct_report_day_2012.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_ct_report_day_2012.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -109,7 +109,7 @@
     </appender>
 
     <appender name="sp_fn_bscenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_bscenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_bscenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -118,7 +118,7 @@
     </appender>
 
     <appender name="sp_fn_cashflow_endamt.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_cashflow_endamt.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_cashflow_endamt.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -127,7 +127,7 @@
     </appender>
     
     <appender name="sp_fn_center.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_center.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_center.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -136,7 +136,7 @@
     </appender>
     
     <appender name="sp_fn_close_send_wc.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_close_send_wc.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_close_send_wc.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -145,7 +145,7 @@
     </appender>
     
     <appender name="sp_fn_ctcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_ctcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_ctcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -154,7 +154,7 @@
     </appender>
     
     <appender name="sp_fn_day_close_ktis.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_day_close_ktis.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_day_close_ktis.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -163,7 +163,7 @@
     </appender>
     
     <appender name="sp_fn_deal_forecast.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_deal_forecast.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_deal_forecast.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -172,7 +172,7 @@
     </appender>
     
     <appender name="sp_fn_dealcount.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_dealcount.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_dealcount.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -181,7 +181,7 @@
     </appender>
     
     <appender name="sp_fn_dgbcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_dgbcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_dgbcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -190,7 +190,7 @@
     </appender>
     
     <appender name="sp_fn_eland_amt.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_eland_amt.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_eland_amt.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -199,7 +199,7 @@
     </appender>
 
     <appender name="sp_fn_err_trade.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_err_trade.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_err_trade.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -208,7 +208,7 @@
     </appender>
 
     <appender name="sp_fn_etc_msum.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_etc_msum.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_etc_msum.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -217,7 +217,7 @@
     </appender>
     
     <appender name="sp_fn_forcast_addsend_center.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_forcast_addsend_center.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_forcast_addsend_center.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -226,7 +226,7 @@
     </appender>
     
     <appender name="sp_fn_forcast_data_dsum_atm.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_forcast_data_dsum_atm.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_forcast_data_dsum_atm.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -235,7 +235,7 @@
     </appender>
     
     <appender name="sp_fn_forcast_data_dsum.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_forcast_data_dsum.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_forcast_data_dsum.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -244,7 +244,7 @@
     </appender>
     
     <appender name="sp_fn_hncenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_hncenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_hncenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -253,7 +253,7 @@
     </appender>
     
     <appender name="sp_fn_imsi_jan.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_imsi_jan.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_imsi_jan.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -262,7 +262,7 @@
     </appender>
     
     <appender name="sp_fn_jjcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_jjcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_jjcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -271,7 +271,7 @@
     </appender>
     
     <appender name="sp_fn_kbcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_kbcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_kbcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -280,7 +280,7 @@
     </appender>
     
     <appender name="sp_fn_kebcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_kebcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_kebcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -289,7 +289,7 @@
     </appender>
 
     <appender name="sp_fn_kncenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_kncenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_kncenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -298,7 +298,7 @@
     </appender>
 
     <appender name="sp_fn_ktiscenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_ktiscenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_ktiscenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -307,7 +307,7 @@
     </appender>
     
     <appender name="sp_fn_kucenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_kucenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_kucenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -316,7 +316,7 @@
     </appender>
     
     <appender name="sp_fn_largemonth.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_largemonth.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_largemonth.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -325,7 +325,7 @@
     </appender>
     
     <appender name="sp_fn_mac_stock_amt.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_mac_stock_amt.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_mac_stock_amt.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -334,7 +334,7 @@
     </appender>
     
     <appender name="sp_fn_maccount.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_maccount.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_maccount.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -343,7 +343,7 @@
     </appender>
     
     <appender name="sp_fn_man.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_man.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_man.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -352,7 +352,7 @@
     </appender>
     
     <appender name="sp_fn_nhcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nhcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nhcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -361,7 +361,7 @@
     </appender>
     
     <appender name="sp_fn_nice_deal_byday.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_deal_byday.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_deal_byday.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -370,7 +370,7 @@
     </appender>
     
     <appender name="sp_fn_nice_deal_byhour.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_deal_byhour.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_deal_byhour.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -379,7 +379,7 @@
     </appender>
 
     <appender name="sp_fn_nice_dsum_bc.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_dsum_bc.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_dsum_bc.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -388,7 +388,7 @@
     </appender>
 
     <appender name="sp_fn_nice_dsum.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_dsum.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_dsum.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -397,7 +397,7 @@
     </appender>
     
     <appender name="sp_fn_nice_endamt.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_endamt.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_endamt.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -406,7 +406,7 @@
     </appender>
     
     <appender name="sp_fn_nice_every_insert.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_every_insert.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_every_insert.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -415,7 +415,7 @@
     </appender>
     
     <appender name="sp_fn_nice_ticket_cnt.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_ticket_cnt.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_ticket_cnt.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -424,7 +424,7 @@
     </appender>
     
     <appender name="sp_fn_nice_tran_gift_dsum.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_tran_gift_dsum.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_tran_gift_dsum.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -433,7 +433,7 @@
     </appender>
     
     <appender name="sp_fn_nice_tran_total.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_tran_total.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_tran_total.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -442,7 +442,7 @@
     </appender>
     
     <appender name="sp_fn_nice_ts_insert.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_nice_ts_insert.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_nice_ts_insert.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -451,7 +451,7 @@
     </appender>
     
     <appender name="sp_fn_notclose_cancel.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_notclose_cancel.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_notclose_cancel.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -460,7 +460,7 @@
     </appender>
     
     <appender name="sp_fn_notend_nice.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_notend_nice.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_notend_nice.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -469,7 +469,7 @@
     </appender>
 
     <appender name="sp_fn_officeclose.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_officeclose.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_officeclose.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -478,7 +478,7 @@
     </appender>
 
     <appender name="sp_fn_onlycashdatamacclose.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_onlycashdatamacclose.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_onlycashdatamacclose.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -487,7 +487,7 @@
     </appender>
     
     <appender name="sp_fn_operfundssh.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_operfundssh.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_operfundssh.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -496,7 +496,7 @@
     </appender>
     
     <appender name="sp_fn_recv_amt_bs.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_recv_amt_bs.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_recv_amt_bs.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -505,7 +505,7 @@
     </appender>
     
     <appender name="sp_fn_sendplan_confirm_bs.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_sendplan_confirm_bs.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_sendplan_confirm_bs.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -514,7 +514,7 @@
     </appender>
     
     <appender name="sp_fn_sendplan_confirm_sh.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_sendplan_confirm_sh.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_sendplan_confirm_sh.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -523,7 +523,7 @@
     </appender>
     
     <appender name="sp_fn_sendplan_confirm.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_sendplan_confirm.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_sendplan_confirm.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -532,7 +532,7 @@
     </appender>
     
     <appender name="sp_fn_sendplan_reform.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_sendplan_reform.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_sendplan_reform.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -541,7 +541,7 @@
     </appender>
     
     <appender name="sp_fn_sendplan_upload_sh.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_sendplan_upload_sh.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_sendplan_upload_sh.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -550,7 +550,7 @@
     </appender>
     
     <appender name="sp_fn_servicesend.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_servicesend.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_servicesend.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -559,7 +559,7 @@
     </appender>
 
     <appender name="sp_fn_sh_opcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_sh_opcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_sh_opcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -568,7 +568,7 @@
     </appender>
 
     <appender name="sp_fn_shcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_shcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_shcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -577,7 +577,7 @@
     </appender>
     
     <appender name="sp_fn_sitecount.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_sitecount.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_sitecount.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -586,7 +586,7 @@
     </appender>
     
     <appender name="sp_fn_smcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_smcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_smcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -595,7 +595,7 @@
     </appender>
     
     <appender name="sp_fn_wccenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_wccenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_wccenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -604,7 +604,7 @@
     </appender>
     
     <appender name="sp_fn_wr_van_demand.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_wr_van_demand.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_wr_van_demand.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -613,7 +613,7 @@
     </appender>
     
     <appender name="sp_fn_wrcenter.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_fn_wrcenter.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_fn_wrcenter.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -622,7 +622,7 @@
     </appender>
     
     <appender name="sp_if_SendSMSCashLack.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_if_SendSMSCashLack.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_if_SendSMSCashLack.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -631,7 +631,7 @@
     </appender>
     
     <appender name="sp_job_nice_short_cash_config.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_job_nice_short_cash_config.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_job_nice_short_cash_config.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -640,7 +640,7 @@
     </appender>
     
     <appender name="sp_phs_push_messages.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_phs_push_messages.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_phs_push_messages.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -649,7 +649,7 @@
     </appender>
 
     <appender name="sp_su_multireport_all.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_su_multireport_all.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_su_multireport_all.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -658,7 +658,7 @@
     </appender>
     
     <appender name="sp_update_site.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/Project_NIBS/logs_batch/sp_update_site.log"/>
+        <param name="file" value="/infoap/nibsLog/logs_batch/sp_update_site.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -666,362 +666,362 @@
         </layout>
     </appender>
 
-    <logger name="sp_cm_fax" additivity="false">
+    <logger name="SP_CM_FAX" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_cm_fax.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_cm_mac_rank" additivity="false">
+	<logger name="SP_CM_MAC_RANK" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_cm_mac_rank.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_cm_personnel" additivity="false">
+	<logger name="SP_CM_PERSONNEL" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_cm_personnel.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_cm_update_plan_focus" additivity="false">
+	<logger name="SP_CM_UPDATE_PLAN_FOCUS" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_cm_update_plan_focus.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_ct_check_0EL_alert" additivity="false">
+	<logger name="SP_CT_CHECK_0EL_ALERT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_ct_check_0EL_alert.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_ct_check_alert_039" additivity="false">
+	<logger name="SP_CT_CHECK_ALERT_039" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_ct_check_alert_039.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_ct_check_alert_nh_file" additivity="false">
+	<logger name="SP_CT_CHECK_ALERT_NH_FILE" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_ct_check_alert_nh_file.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_ct_check_alert" additivity="false">
+	<logger name="SP_CT_CHECK_ALERT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_ct_check_alert.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_ct_delete_day" additivity="false">
+	<logger name="SP_CT_DELETE_DAY" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_ct_delete_day.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_ct_report_day_2007" additivity="false">
+	<logger name="SP_CT_REPORT_DAY_2012" additivity="false">
 		<level value="info"/>
-		<appender-ref ref="sp_ct_report_day_2007.sh"/>
+		<appender-ref ref="sp_ct_report_day_2012.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_bscenter" additivity="false">
+	<logger name="SP_FN_BSCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_bscenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_cashflow_endamt" additivity="false">
+	<logger name="SP_FN_CASHFLOW_ENDAMT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_cashflow_endamt.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_center" additivity="false">
+	<logger name="SP_FN_CENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_center.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_close_send_wc" additivity="false">
+	<logger name="SP_FN_CLOSE_SEND_WC" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_close_send_wc.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_ctcenter" additivity="false">
+	<logger name="SP_FN_CTCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_ctcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_day_close_ktis" additivity="false">
+	<logger name="SP_FN_DAY_CLOSE_KTIS" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_day_close_ktis.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_deal_forecast" additivity="false">
+	<logger name="SP_FN_DEAL_FORECAST" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_deal_forecast.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_dealcount" additivity="false">
+	<logger name="SP_FN_DEALCOUNT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_dealcount.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_dgbcenter" additivity="false">
+	<logger name="SP_FN_DGBCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_dgbcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_eland_amt" additivity="false">
+	<logger name="SP_FN_ELAND_AMT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_eland_amt.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_err_trade" additivity="false">
+	<logger name="SP_FN_ERR_TRADE" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_err_trade.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_etc_msum" additivity="false">
+	<logger name="SP_FN_ETC_MSUM" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_etc_msum.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_forcast_addsend_center" additivity="false">
+	<logger name="SP_FN_FORCAST_ADDSEND_CENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_forcast_addsend_center.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_forcast_data_dsum_atm" additivity="false">
+	<logger name="SP_FN_FORCAST_DATA_DSUM_ATM" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_forcast_data_dsum_atm.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_forcast_data_dsum" additivity="false">
+	<logger name="SP_FN_FORCAST_DATA_DSUM" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_forcast_data_dsum.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_hncenter" additivity="false">
+	<logger name="SP_FN_HNCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_hncenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_imsi_jan" additivity="false">
+	<logger name="SP_FN_IMSI_JAN" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_imsi_jan.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_jjcenter" additivity="false">
+	<logger name="SP_FN_JJCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_jjcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_kbcenter" additivity="false">
+	<logger name="SP_FN_KBCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_kbcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_kebcenter" additivity="false">
+	<logger name="SP_FN_KEBCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_kebcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_kncenter" additivity="false">
+	<logger name="SP_FN_KNCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_kncenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_ktiscenter" additivity="false">
+	<logger name="SP_FN_KTISCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_ktiscenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_kucenter" additivity="false">
+	<logger name="SP_FN_KUCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_kucenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_largemonth" additivity="false">
+	<logger name="SP_FN_LARGEMONTH" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_largemonth.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_mac_stock_amt" additivity="false">
+	<logger name="SP_FN_MAC_STOCK_AMT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_mac_stock_amt.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_maccount" additivity="false">
+	<logger name="SP_FN_MACCOUNT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_maccount.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_man" additivity="false">
+	<logger name="SP_FN_MAN" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_man.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nhcenter" additivity="false">
+	<logger name="SP_FN_NHCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nhcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_deal_byday" additivity="false">
+	<logger name="SP_FN_NICE_DEAL_BYDAY" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_deal_byday.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_deal_byhour" additivity="false">
+	<logger name="SP_FN_NICE_DEAL_BYHOUR" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_deal_byhour.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_dsum_bc" additivity="false">
+	<logger name="SP_FN_NICE_DSUM_BC" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_dsum_bc.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_dsum" additivity="false">
+	<logger name="SP_FN_NICE_DSUM" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_dsum.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_endamt" additivity="false">
+	<logger name="SP_FN_NICE_ENDAMT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_endamt.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_every_insert" additivity="false">
+	<logger name="SP_FN_NICE_EVERY_INSERT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_every_insert.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_ticket_cnt" additivity="false">
+	<logger name="SP_FN_NICE_TICKET_CNT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_ticket_cnt.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_tran_gift_dsum" additivity="false">
+	<logger name="SP_FN_NICE_TRAN_GIFT_DSUM" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_tran_gift_dsum.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_tran_total" additivity="false">
+	<logger name="SP_FN_NICE_TRAN_TOTAL" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_tran_total.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_nice_ts_insert" additivity="false">
+	<logger name="SP_FN_NICE_TS_INSERT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_nice_ts_insert.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_notclose_cancel" additivity="false">
+	<logger name="SP_FN_NOTCLOSE_CANCEL" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_notclose_cancel.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_notend_nice" additivity="false">
+	<logger name="SP_FN_NOTEND_NICE" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_notend_nice.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_officeclose" additivity="false">
+	<logger name="SP_FN_OFFICECLOSE" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_officeclose.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_onlycashdatamacclose" additivity="false">
+	<logger name="SP_FN_ONLYCASHDATAMACCLOSE" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_onlycashdatamacclose.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_operfundssh" additivity="false">
+	<logger name="SP_FN_OPERFUNDSSH" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_operfundssh.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_recv_amt_bs" additivity="false">
+	<logger name="SP_FN_RECV_AMT_BS" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_recv_amt_bs.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_sendplan_confirm_bs" additivity="false">
+	<logger name="SP_FN_SENDPLAN_CONFIRM_BS" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_sendplan_confirm_bs.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_sendplan_confirm_sh" additivity="false">
+	<logger name="SP_FN_SENDPLAN_CONFIRM_SH" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_sendplan_confirm_sh.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_sendplan_confirm" additivity="false">
+	<logger name="SP_FN_SENDPLAN_CONFIRM" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_sendplan_confirm.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_sendplan_reform" additivity="false">
+	<logger name="SP_FN_SENDPLAN_REFORM" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_sendplan_reform.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_sendplan_upload_sh" additivity="false">
+	<logger name="SP_FN_SENDPLAN_UPLOAD_SH" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_sendplan_upload_sh.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_servicesend" additivity="false">
+	<logger name="SP_FN_SERVICESEND" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_servicesend.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_sh_opcenter" additivity="false">
+	<logger name="SP_FN_SH_OPCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_sh_opcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_shcenter" additivity="false">
+	<logger name="SP_FN_SHCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_shcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_sitecount" additivity="false">
+	<logger name="SP_FN_SITECOUNT" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_sitecount.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_smcenter" additivity="false">
+	<logger name="SP_FN_SMCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_smcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_wccenter" additivity="false">
+	<logger name="SP_FN_WCCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_wccenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_wr_van_demand" additivity="false">
+	<logger name="SP_FN_WR_VAN_DEMAND" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_wr_van_demand.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_fn_wrcenter" additivity="false">
+	<logger name="SP_FN_WRCENTER" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_fn_wrcenter.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_if_SendSMSCashLack" additivity="false">
+	<logger name="SP_IF_SENDSMSCASHLACK" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_if_SendSMSCashLack.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_job_nice_short_cash_config" additivity="false">
+	<logger name="SP_JOB_NICE_SHORT_CASH_CONFIG" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_job_nice_short_cash_config.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_phs_push_messages" additivity="false">
+	<logger name="SP_PHS_PUSH_MESSAGES" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_phs_push_messages.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_su_multireport_all" additivity="false">
+	<logger name="SP_SU_MULTIREPORT_ALL" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_su_multireport_all.sh"/>
 		<appender-ref ref="consoleAppender"/>
 	</logger>
-	<logger name="sp_update_site" additivity="false">
+	<logger name="SP_UPDATE_SITE" additivity="false">
 		<level value="info"/>
 		<appender-ref ref="sp_update_site.sh"/>
 		<appender-ref ref="consoleAppender"/>

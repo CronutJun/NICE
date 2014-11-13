@@ -436,7 +436,7 @@ public class CommonPackImpl implements CommonPack {
         /*
          *  점주관리 기기라면 매핑테이블의 정보로 수정
          */
-        if( substr(macInfo.getDeptCd(),0,1).equals("8") )  {
+        if( macInfo != null && macInfo.getDeptCd() != null && substr(macInfo.getDeptCd(),0,1).equals("8") )  {
             TFnStorekeeperMacInfoKey skmiKey = new TFnStorekeeperMacInfoKey();
             skmiKey.setOrgCd( macInfo.getOrgCd() );
             skmiKey.setBranchCd( macInfo.getBranchCd() );

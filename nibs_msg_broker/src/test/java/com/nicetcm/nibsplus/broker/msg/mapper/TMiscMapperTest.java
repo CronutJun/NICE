@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.nicetcm.nibsplus.broker.msg.model.CloseAmt;
+import com.nicetcm.nibsplus.broker.msg.model.CmCash;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacNo;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacNoSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMng;
 import com.nicetcm.nibsplus.broker.msg.model.TCtInputCheckList;
 import com.nicetcm.nibsplus.broker.msg.model.TCtInputCheckListSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
-import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.CloseAmt;
-import com.nicetcm.nibsplus.broker.msg.services.In03101130Impl.CmCash;
 
 @Service
 @RunWith(SpringJUnit4ClassRunner.class)

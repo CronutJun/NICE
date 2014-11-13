@@ -9,6 +9,8 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.type.JdbcType;
 
+import com.nicetcm.nibsplus.broker.msg.model.CloseAmt;
+import com.nicetcm.nibsplus.broker.msg.model.CmCash;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCheckMaster;
 import com.nicetcm.nibsplus.broker.msg.model.TCmGoodsApply;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
@@ -21,8 +23,6 @@ import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 import com.nicetcm.nibsplus.broker.msg.model.TPhMessages;
 import com.nicetcm.nibsplus.broker.msg.model.TbPhsPushMessages;
-import com.nicetcm.nibsplus.broker.msg.services.In03101110Impl.CloseAmt;
-import com.nicetcm.nibsplus.broker.msg.services.In03101130Impl.CmCash;
 
 public interface TMiscMapper {
 
@@ -97,8 +97,8 @@ public interface TMiscMapper {
         "       AND CASH.MAC_NO = BB.MAC_NO                               "
     })
     @Results({
-        @Result(column="CLOSE_IN_AMT", property="closeInAmt", jdbcType=JdbcType.VARCHAR),
-        @Result(column="CLOSE_OUT_AMT", property="closeOutAmt", jdbcType=JdbcType.VARCHAR)
+        @Result(column="CLOSE_IN_AMT", property="closeInAmt", jdbcType=JdbcType.DECIMAL),
+        @Result(column="CLOSE_OUT_AMT", property="closeOutAmt", jdbcType=JdbcType.DECIMAL)
     })
     CloseAmt selectCloseAmt(TMacInfo tMacInfo);
 

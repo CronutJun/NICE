@@ -93,23 +93,6 @@
             <property name="timeBetweenEvictionRunsMillis" value="60000"/>
         </bean>
 
-        <!-- IN DB Connection Pool 설정 -->
-        <bean id="dataSource_infodb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-            <property name="driverClassName"><value>#{config['jdbc.in.class']}</value></property>
-            <property name="url"><value>#{config['jdbc.in.url']}</value></property>
-            <property name="username"><value>#{config['jdbc.in.username']}</value></property>
-            <property name="password"><value>#{config['jdbc.in.password']}</value></property>
-            <property name="initialSize" value="4"/>
-            <property name="maxActive" value="20"/>
-            <property name="maxIdle" value="20"/>
-            <property name="maxWait" value="30000"/>
-            <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
-            <property name="testOnBorrow" value="true"/>
-            <property name="testOnReturn" value="false"/>
-            <property name="testWhileIdle" value="true"/>
-            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-        </bean>
-
         <!-- OP DB Logging -->
         <bean id="dataSource_OP" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
             <constructor-arg ref="dataSource_operdb" />
@@ -120,26 +103,9 @@
             </property>
         </bean>
 
-        <!-- IN DB Logging -->
-        <bean id="dataSource_IN" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
-            <constructor-arg ref="dataSource_infodb" />
-            <property name="logFormatter">
-                <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
-                    <property name="loggingType" value="MULTI_LINE" />
-                </bean>
-            </property>
-        </bean>
-
         <!-- OP Mybatis SQL Mapper -->
         <bean id="sqlSessionFactory_OP" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
             <property name="dataSource" ref="dataSource_OP"></property>
-            <property name="configLocation" value="classpath:/org_send/mybatis/mybatis-config.xml"></property>
-            <property name="mapperLocations" value="classpath:/org_send/sqlmap/**/*.xml"></property>
-        </bean>
-
-        <!-- IN Mybatis SQL Mapper -->
-        <bean id="sqlSessionFactory_IN" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
-            <property name="dataSource" ref="dataSource_IN"></property>
             <property name="configLocation" value="classpath:/org_send/mybatis/mybatis-config.xml"></property>
             <property name="mapperLocations" value="classpath:/org_send/sqlmap/**/*.xml"></property>
         </bean>

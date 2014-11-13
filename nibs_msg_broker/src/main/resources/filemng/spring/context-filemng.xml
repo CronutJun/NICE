@@ -14,8 +14,14 @@
     <!-- 환경설정파일 로딩 -->
 
     <!-- 개발자 Local-PC 환경 -->
-    <beans profile="">
-        <util:properties id="config" location="classpath:/filemng/properties/context-filemng.local.properties" />
+    <beans profile="local">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/filemng/properties/context-filemng.local.properties</value>
+    			</list>
+    		</property>
+   		</bean>
 
         <!-- Log4j 설정 -->
         <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
@@ -31,11 +37,41 @@
 
     <!-- DEV 환경 -->
     <beans profile="dev">
-        <util:properties id="config" location="classpath:/filemng/properties/context-filemng.dev.properties" />
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/filemng/properties/context-filemng.dev.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:filemng/properties/context-filemng-log4j.dev.xml</value>
+                </list>
+            </property>
+        </bean>
     </beans>
 
     <beans>
-
+		<bean id="scheduledJobExpression" class="org.springframework.beans.factory.config.MapFactoryBean">
+			<property name="targetMapClass" value="java.util.LinkedHashMap"/>
+			<property name="sourceMap">
+				<map>
+					<entry key="eland_ftp_read.sh" value="0 50 7 * * ?"/>
+					<entry key="send_org_trandata.sh" value="0 30 1 * * ?"/>
+					<entry key="vpn_ip_read.sh" value="0 0 3 * * ?"/>
+					<entry key="nh_file_read.sh" value="0 20,40,50 2 * * ?"/>
+					<entry key="casher_file_read.sh" value="0 2,22,42 * * * ?"/>
+					<entry key="file_send_0GV.sh" value="0 0 23 * * ?"/>
+				</map>
+			</property>
+		</bean>
+	    
         <!-- Spring Service Bean 로딩 -->
         <context:component-scan base-package="com.nicetcm.nibsplus.filemng">
             <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
@@ -50,24 +86,7 @@
             <property name="initialSize" value="4"/>
             <property name="maxActive" value="4"/>
             <property name="maxIdle" value="4"/>
-            <property name="maxWait" value="30000"/>
-            <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
-            <property name="testOnBorrow" value="true"/>
-            <property name="testOnReturn" value="false"/>
-            <property name="testWhileIdle" value="true"/>
-            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-        </bean>
-
-        <!-- IN DB Connection Pool 설정 -->
-        <bean id="dataSource_infodb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-            <property name="driverClassName"><value>#{config['jdbc.in.class']}</value></property>
-            <property name="url"><value>#{config['jdbc.in.url']}</value></property>
-            <property name="username"><value>#{config['jdbc.in.username']}</value></property>
-            <property name="password"><value>#{config['jdbc.in.password']}</value></property>
-            <property name="initialSize" value="4"/>
-            <property name="maxActive" value="4"/>
-            <property name="maxIdle" value="4"/>
-            <property name="maxWait" value="30000"/>
+            <property name="maxWait" value="60000"/>
             <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
             <property name="testOnBorrow" value="true"/>
             <property name="testOnReturn" value="false"/>
@@ -100,18 +119,6 @@
             <aop:advisor advice-ref="txAdvice_OP" pointcut-ref="txMethod_OP" />
         </aop:config>
 
-        <!-- IN DB Logging -->
-        <bean id="dataSource_IN" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
-            <constructor-arg ref="dataSource_infodb" />
-            <property name="logFormatter">
-                <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
-                    <property name="loggingType" value="MULTI_LINE" />
-                </bean>
-            </property>
-        </bean>
-
-        <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
-
         <!-- OP Mybatis SQL Mapper -->
         <bean id="sqlSessionFactory_OP" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
             <property name="dataSource" ref="dataSource_OP"></property>
@@ -125,22 +132,8 @@
             <property name="sqlSessionFactory" ref="sqlSessionFactory_OP" />
         </bean>
 
-        <!-- IN Mybatis SQL Mapper -->
-<!--
-        <bean id="sqlSessionFactory_IN" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
-            <property name="dataSource" ref="dataSource_IN"></property>
-            <property name="configLocation" value="classpath:filemng/mybatis/mybatis-config.xml"></property>
-            <property name="mapperLocations" value="classpath*:filemng/sqlmap/**/*.xml"></property>
-        </bean>
- -->
-        <!-- stored job-metadata in database -->
-<!--
-        <bean id="jobRepository" class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
-            <property name="dataSource" ref="dataSource_OP" />
-            <property name="transactionManager" ref="transactionManager" />
-            <property name="databaseType" value="mysql" />
-        </bean>
- -->
+        <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+
         <!-- stored job-metadata in memory -->
         <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
             <property name="transactionManager" ref="transactionManager"/>

@@ -45,7 +45,7 @@ public class In03101190Impl extends InMsgHandlerImpl {
         if(MsgBrokerConst.WC_CODE.equals(parsed.getString("CM.org_cd"))) {
             logger.warn("우체국 지점코드체크 Pass");
         } else {
-            comPack.checkBranchMacLength( parsed );
+            try{ comPack.checkBranchMacLength( parsed ); } catch ( Exception e ) {}
         }
 
         TMacInfo tMacInfo = new TMacInfo();

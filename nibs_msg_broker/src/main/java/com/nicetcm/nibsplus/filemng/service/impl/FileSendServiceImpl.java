@@ -51,7 +51,7 @@ public class FileSendServiceImpl implements FileSendService {
 	@Autowired
 	private Properties config;
 
-	public void execute(int argc, String... argv) throws Exception {
+	public void execute(String... argv) throws Exception {
 		String szTransDate = null;
 		String szOrgCd = null;
 		String[] szaryOrg= {
@@ -87,7 +87,7 @@ public class FileSendServiceImpl implements FileSendService {
 		};
 		int MAX_ORG_CNT = szaryOrg.length;
 
-		if ( argc != 1 ) {
+		if ( argv.length != 1 ) {
 			szTransDate = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
 		} else {
 			if(argv[0].length() < 8) {
@@ -2737,7 +2737,7 @@ public class FileSendServiceImpl implements FileSendService {
 
 		File fileWriter;
 
-		szPath = (String)config.get("SMART_File_PATH");
+		szPath = (String)config.get("casher.local.path");
 
 		szFileName = String.format("%s/S%sDKS", szPath, pTransDate);
 
@@ -2862,7 +2862,7 @@ public class FileSendServiceImpl implements FileSendService {
 
 		File fileWriter;
 
-		szPath = (String)config.get("SMART_File_PATH");
+		szPath = (String)config.get("casher.local.path");
 
 		// 임시.. 전송일 13일 거래일 11,12일 데이터 요청 
 		hPreActDate = "20061111";

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.lpad;
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
@@ -57,7 +58,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
         /**
          * 지점코드, 기번 길이 검증
          */
-        comPack.checkBranchMacLength( macInfo );
+        try {comPack.checkBranchMacLength( macInfo );} catch( Exception e ) {}
 
         /*
          * 출동알림은 코너정보만 들어오므로 대표기번을 따야 한다.
@@ -203,10 +204,10 @@ public class In05000110Impl extends InMsgHandlerImpl {
                   || e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CASHBOX_50000
                   || e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_CASHBOX_100000
                   || e == MsgBrokerConst.EnumOrgErrorState.IDX_ST_INPUTSTOP)
-                &&  (macInfo.getMacModel().equals("1100")
-                  || macInfo.getMacModel().equals("1200")
-                  || macInfo.getMacModel().equals("1500")
-                  || macInfo.getMacModel().equals("1600")) ) {
+                &&  (nstr(macInfo.getMacModel()).equals("1100")
+                  || nstr(macInfo.getMacModel()).equals("1200")
+                  || nstr(macInfo.getMacModel()).equals("1500")
+                  || nstr(macInfo.getMacModel()).equals("1600")) ) {
                     logger.warn(">>> [SaveErrState] CD기 입금함 상태 수신 ... 무시...");
                     continue;
                 }

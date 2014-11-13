@@ -109,7 +109,7 @@ public class In05000150Impl extends InMsgHandlerImpl {
         /**
          * 지점코드, 기번 길이 검증
          */
-        comPack.checkBranchMacLength( macInfo );
+        try { comPack.checkBranchMacLength( macInfo ); } catch( Exception e ) {}
 
         try {
             /**

@@ -35,7 +35,7 @@ public class In03101140Impl extends InMsgHandlerImpl {
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
 
-        comPack.checkBranchMacLength( parsed );
+        try{ comPack.checkBranchMacLength( parsed ); } catch( Exception e) {}
 
         TMacInfo tMacInfo = new TMacInfo();
         tMacInfo.setOrgCd( parsed.getString("CM.org_cd") );

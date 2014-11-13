@@ -58,7 +58,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
         /**
          * 지점코드, 기번 길이 검증
          */
-        comPack.checkBranchMacLength( macInfo );
+        try { comPack.checkBranchMacLength( macInfo ); } catch( Exception e ) {}
         logger.debug("BrchCd = {}, MacNo = {}", macInfo.getBranchCd(), macInfo.getMacNo());
 
         if( macInfo.getMacNo().equals("0000")

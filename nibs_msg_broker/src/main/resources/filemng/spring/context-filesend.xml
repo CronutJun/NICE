@@ -59,23 +59,6 @@
             <property name="timeBetweenEvictionRunsMillis" value="60000"/>
         </bean>
 
-        <!-- IN DB Connection Pool 설정 -->
-        <bean id="dataSource_infodb" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
-            <property name="driverClassName"><value>#{jdbc['jdbc.in.class']}</value></property>
-            <property name="url"><value>#{jdbc['jdbc.in.url']}</value></property>
-            <property name="username"><value>#{jdbc['jdbc.in.username']}</value></property>
-            <property name="password"><value>#{jdbc['jdbc.in.password']}</value></property>
-            <property name="initialSize" value="4"/>
-            <property name="maxActive" value="4"/>
-            <property name="maxIdle" value="4"/>
-            <property name="maxWait" value="30000"/>
-            <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
-            <property name="testOnBorrow" value="true"/>
-            <property name="testOnReturn" value="false"/>
-            <property name="testWhileIdle" value="true"/>
-            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-        </bean>
-
         <!-- OP DB Logging -->
         <bean id="dataSource_OP" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
             <constructor-arg ref="dataSource_operdb" />
@@ -101,18 +84,6 @@
             <aop:advisor advice-ref="txAdvice_OP" pointcut-ref="txMethod_OP" />
         </aop:config>
 
-        <!-- IN DB Logging -->
-        <bean id="dataSource_IN" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
-            <constructor-arg ref="dataSource_infodb" />
-            <property name="logFormatter">
-                <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
-                    <property name="loggingType" value="MULTI_LINE" />
-                </bean>
-            </property>
-        </bean>
-
-        <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
-
         <!-- OP Mybatis SQL Mapper -->
         <bean id="sqlSessionFactory_OP" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
             <property name="dataSource" ref="dataSource_OP"></property>
@@ -126,22 +97,8 @@
             <property name="sqlSessionFactory" ref="sqlSessionFactory_OP" />
         </bean>
 
-        <!-- IN Mybatis SQL Mapper -->
-<!--
-        <bean id="sqlSessionFactory_IN" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
-            <property name="dataSource" ref="dataSource_IN"></property>
-            <property name="configLocation" value="classpath:filemng/mybatis/mybatis-config.xml"></property>
-            <property name="mapperLocations" value="classpath*:filemng/sqlmap/**/*.xml"></property>
-        </bean>
- -->
-        <!-- stored job-metadata in database -->
-<!--
-        <bean id="jobRepository" class="org.springframework.batch.core.repository.support.JobRepositoryFactoryBean">
-            <property name="dataSource" ref="dataSource_OP" />
-            <property name="transactionManager" ref="transactionManager" />
-            <property name="databaseType" value="mysql" />
-        </bean>
- -->
+        <bean id="transactionManager" class="org.springframework.batch.support.transaction.ResourcelessTransactionManager" />
+
         <!-- stored job-metadata in memory -->
         <bean id="jobRepository" class="org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean">
             <property name="transactionManager" ref="transactionManager"/>

@@ -78,7 +78,7 @@ public class In01101170Impl extends InMsgHandlerImpl {
 
         }
 
-        comPack.checkBranchMacLength(parsed);
+        try { comPack.checkBranchMacLength(parsed); } catch( Exception e ) {}
 
         if(MsgBrokerConst.SHATMS_CODE.equals(parsed.getString("CM.org_cd"))) {
             /***********************************************************************************************

@@ -20,11 +20,11 @@ public class MsgBrokerCallAgent <PT> {
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerCallAgent.class);
     private final MsgBrokerConf conf;
     private final String msgId;
-    private String msgId2 = "AUTOSND";
+    private final String msgId2 = "AUTOSND";
     private PT params;
     private MsgBrokerCallBack<PT> callBack;
 
-    public static Properties msgBrokerConfig; // NibsScheduleExecuter, NibsQuartzSchedulerMain 에서 주입
+    public static Properties msgBrokerConfig = null; // NibsScheduleExecuter, NibsQuartzSchedulerMain 에서 주입
 
     public MsgBrokerCallAgent( MsgBrokerConf conf, PT params, MsgBrokerCallBack<PT> callBack ) {
         this.conf = conf;

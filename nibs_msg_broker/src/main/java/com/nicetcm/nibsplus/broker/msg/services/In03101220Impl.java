@@ -43,7 +43,7 @@ public class In03101220Impl extends InMsgHandlerImpl {
         if( MsgBrokerConst.WRATMS_CODE.equals(parsed.getString("CM.org_cd")) && (parsed.getString("close_time").equals("") || parsed.getString("close_time").equals("000000")) ) {
             throw new Exception("우리은행 마감시간 없음");
         } else if(parsed.getString("close_time").equals("")) {
-            parsed.setString("close_time", "000000");
+            try { parsed.setString("close_time", "000000"); } catch ( Exception e ) {}
         }
 
         /* 총지급액이 있으면 총지급액 그대로, 총지급액이 없으면 현금 지급 + 수표 지급 */

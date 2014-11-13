@@ -95,7 +95,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
                     macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
             throw e;
         }
-        comPack.checkBranchMacLength( macInfo );
+        try { comPack.checkBranchMacLength( macInfo ); } catch( Exception e ) {}
 
         errBasic.setOrgCd( macInfo.getOrgCd() );
         errBasic.setCreateDate( parsed.getInt("create_date") );

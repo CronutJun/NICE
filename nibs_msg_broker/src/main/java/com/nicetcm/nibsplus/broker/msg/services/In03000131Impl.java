@@ -72,7 +72,7 @@ public class In03000131Impl extends InMsgHandlerImpl {
 
         /* 광주은행은 기관으에서 들어올때는 4-4 자리, NIBS 3-3 자리이므로 */
         if( MsgBrokerConst.KJB_CODE.equals(parsed.getString("CM.org_cd")) ){
-            comPack.checkBranchMacLength( parsed );
+            try{ comPack.checkBranchMacLength( parsed ); } catch( Exception e ) {}
         }
 
         TMisc tMisc = new TMisc();

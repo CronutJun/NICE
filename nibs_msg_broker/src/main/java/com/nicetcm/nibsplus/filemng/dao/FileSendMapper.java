@@ -110,25 +110,6 @@ public interface FileSendMapper {
 	public List<LinkedHashMap<String, Object>> selectGetSuHMacData(String pTransDate);
 	public List<LinkedHashMap<String, Object>> selectGetKFTCTranData(String pTransDate);
 	public List<LinkedHashMap<String, Object>> selectGetGiftCardInfoData();
-	/**
-	 * 여기에 메소드(한글)명.
-	 * <pre>
-	 * 여기에 메소드의 설명 및 변경 이력을 기술하십시오.
-	 * </pre>
-	 * 
-	 * @param szFileName
-	 * @param ftpsuccess
-	 * @return
-	 */
-	public int updatePutOrgTranFile(String szFileName, int ftpsuccess);
-	/**
-	 * 여기에 메소드(한글)명.
-	 * <pre>
-	 * 여기에 메소드의 설명 및 변경 이력을 기술하십시오.
-	 * </pre>
-	 * 
-	 * @param szFileName
-	 * @param ftpsuccess
-	 */
-	public void insertPutOrgTranFile(String szFileName, int ftpsuccess);
+	public int updatePutOrgTranFile(@Param("szFileName") String szFileName, @Param("ftpsuccess") int ftpsuccess);
+	public void insertPutOrgTranFile(@Param("szFileName") String szFileName, @Param("ftpsuccess") int ftpsuccess);
 }

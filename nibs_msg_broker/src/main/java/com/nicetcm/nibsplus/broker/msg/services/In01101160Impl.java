@@ -82,7 +82,7 @@ public class In01101160Impl extends InMsgHandlerImpl {
         if(parsed.getString("CM.service_gb").equals("1")) {
 
         } else {
-            comPack.checkBranchMacLength(parsed);
+            try { comPack.checkBranchMacLength(parsed); } catch( Exception e ) {}
         }
 
 

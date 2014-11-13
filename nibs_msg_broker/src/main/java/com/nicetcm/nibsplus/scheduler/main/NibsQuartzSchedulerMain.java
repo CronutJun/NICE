@@ -1,13 +1,10 @@
 package com.nicetcm.nibsplus.scheduler.main;
 
-import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.nicetcm.nibsplus.orgsend.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.scheduler.common.SchduleException;
 import com.nicetcm.nibsplus.scheduler.service.ScheduleExecuter;
 
@@ -44,7 +41,6 @@ public class NibsQuartzSchedulerMain {
                 };
             
             ApplicationContext applicationContext = new ClassPathXmlApplicationContext(springConfig);
-            MsgBrokerCallAgent.msgBrokerConfig = (Properties)applicationContext.getBean("msgBrokerConfig");
 
             ScheduleExecuter scheduleExecuter = applicationContext.getBean("NibsQuartzScheduler", ScheduleExecuter.class);
             scheduleExecuter.startSchedule();

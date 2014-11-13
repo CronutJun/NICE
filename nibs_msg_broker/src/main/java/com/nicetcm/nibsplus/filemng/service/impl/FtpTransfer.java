@@ -71,6 +71,7 @@ public class FtpTransfer implements FileTransferService
             }
 
             f = new File(transferVO.getLocalPath(), transferVO.getFileName());
+            f.getParentFile().mkdirs();
 
             fos = new FileOutputStream(f);
 

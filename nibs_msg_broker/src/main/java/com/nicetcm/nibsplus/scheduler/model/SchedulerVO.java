@@ -51,6 +51,7 @@ public class SchedulerVO
         .append("NODE_NAME: ").append(quartzNodeName).append(" / ")
         .append("JOB_GROUP: ").append(jobGroup).append(" / ")
         .append("JOB_NAME : ").append(jobName).append(" / ")
+        .append("EXPRESSION : ").append(cronExpression).append(" / ")
         .append("]")
         .toString();
     }

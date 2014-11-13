@@ -24,7 +24,7 @@ public class MsgBrokerCallAgent <PT> {
     private PT params;
     private MsgBrokerCallBack<PT> callBack;
 
-    public static Properties msgBrokerConfig; // NibsScheduleExecuter, NibsQuartzSchedulerMain 에서 주입
+    public static Properties msgBrokerConfig = null; // NibsScheduleExecuter, NibsQuartzSchedulerMain 에서 주입
 
     public MsgBrokerCallAgent( MsgBrokerConf conf, PT params, MsgBrokerCallBack<PT> callBack ) {
         this.conf = conf;
