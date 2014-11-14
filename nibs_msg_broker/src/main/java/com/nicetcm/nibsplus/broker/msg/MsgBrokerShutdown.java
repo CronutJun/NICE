@@ -18,6 +18,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.nicetcm.nibsplus.broker.msg.util.ActiveMQ;
+
 public class MsgBrokerShutdown extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerShutdown.class);
@@ -51,6 +53,16 @@ public class MsgBrokerShutdown extends Thread {
                 MsgBrokerConsumer.consumers.remove(e.getKey());
             }
             logger.debug("Producer is stopped.");
+
+            logger.debug("Releasing other resources..");
+            Iterator<Map.Entry<String, ActiveMQ>>  itrCR = MsgBrokerConsumer.req.entrySet().iterator();
+            while ( itrCR.hasNext() ){
+                Map.Entry<String, ActiveMQ> e = (Map.Entry<String, ActiveMQ>)itrCR.next();
+                e.getValue().close();
+                logger.debug("Request ActiveMQ \"{}\" is closed.", e.getKey());
+                MsgBrokerConsumer.req.remove(e.getKey());
+            }
+            logger.debug("Other resources are released.");
 
             MsgBrokerMain.stopJMX();
             logger.debug("JMXAgent is stopped.");

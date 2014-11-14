@@ -33,6 +33,7 @@ import org.springframework.stereotype.Component;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerConsumer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
@@ -2849,13 +2850,14 @@ public class CommonPackImpl implements CommonPack {
      * AS-IS msg_snd와 동일
      * </pre>
      *
+     * @param safeData
      * @param commMsgHeader suHead VO
      * @param columnMap suBody Map
-     * @param safeData
+     * @param type 'P' - producer, 'C' - consumer
      * @throws Exception
      */
     @Override
-    public void msgSnd(CommMsgHeader commMsgHeader, Map<String, String> columnMap, MsgBrokerData safeData) throws Exception {
+    public void msgSnd( MsgBrokerData safeData, CommMsgHeader commMsgHeader, Map<String, byte[]> columnMap, String type ) throws Exception {
 
         String msgId = null;
 
@@ -2889,14 +2891,17 @@ public class CommonPackImpl implements CommonPack {
 
             //Body 셋팅
             if(columnMap != null) {
-                for(Map.Entry<String, String> columnEntry : columnMap.entrySet()) {
-                    msgPsr.setString(columnEntry.getKey(), columnEntry.getValue());
+                for(Map.Entry<String, byte[]> columnEntry : columnMap.entrySet()) {
+                    msgPsr.setBytes(columnEntry.getKey(), columnEntry.getValue());
                 }
             }
 
             msgPsr.syncMessage();
 
-            MsgBrokerProducer.putDataToPrd(msgPsr);
+            if( type.equals("P") )
+                MsgBrokerProducer.putDataToPrd(msgPsr);
+            else
+                MsgBrokerConsumer.putDataToCon(msgPsr);
 
         }
         catch ( Exception e ) {

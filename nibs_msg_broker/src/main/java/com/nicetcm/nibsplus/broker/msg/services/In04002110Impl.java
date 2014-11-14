@@ -96,7 +96,7 @@ public class In04002110Impl extends InMsgHandlerImpl {
             suSendHead.setWorkType("1193");
             suSendHead.setServiceGb("1");
 
-            comPack.msgSnd(suSendHead, null, safeData);
+            comPack.msgSnd(safeData, suSendHead, null, "P");
 
             /**************************************************************************
                 2. 요청일자 운영자금청구상세 전문 생성, 전송
@@ -141,7 +141,7 @@ public class In04002110Impl extends InMsgHandlerImpl {
             suSendHead2.setWorkType("1194");
             suSendHead2.setServiceGb("1");
 
-            comPack.msgSnd(suSendHead2, null, safeData);
+            comPack.msgSnd(safeData, suSendHead2, null, "P");
 
         //end of 기업은행
         } else if(parsed.getString("req_seq").length() == 0) {

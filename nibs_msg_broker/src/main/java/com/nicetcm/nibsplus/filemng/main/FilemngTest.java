@@ -16,15 +16,28 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class FilemngTest {
 	public static void main(String[] args) throws SchedulerException {
         Scheduler scheduler = new StdSchedulerFactory().getScheduler();
 
         {
+        	String jobKey = "ERRMonJob";
+        	JobDataMap jobData = new JobDataMap();
+        	jobData.put("applicationContext", new ClassPathXmlApplicationContext("classpath:/filemng/spring/context-errmon.xml"));
+            JobDetail job = JobBuilder.newJob(ERRMonJob.class).withIdentity(jobKey, "FilemngService").usingJobData(jobData).build();
+            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobKey, "FilemngService").withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?")).build();
+            scheduler.scheduleJob(job, trigger);
+        }
+        
+        /*
+        {
         	String jobKey = "ElandFtpReadJob";
-            JobDetail job = JobBuilder.newJob(ElandFtpReadJob.class).withIdentity(jobKey, "SqlService").build();
-            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobKey, "SqlService").withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?")).build();
+        	JobDataMap jobData = new JobDataMap();
+        	jobData.put("applicationContext", new ClassPathXmlApplicationContext("classpath:/filemng/spring/context-filemng.xml", "classpath:/filemng/spring/context-filemng-elandFtpReadJob.xml"));
+            JobDetail job = JobBuilder.newJob(ElandFtpReadJob.class).withIdentity(jobKey, "FilemngService").usingJobData(jobData).build();
+            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobKey, "FilemngService").withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?")).build();
             scheduler.scheduleJob(job, trigger);
         }
 
@@ -64,6 +77,7 @@ public class FilemngTest {
             Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobKey, "SqlService").withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?")).build();
             scheduler.scheduleJob(job, trigger);
         }
+        */
         
         scheduler.start();
 	}

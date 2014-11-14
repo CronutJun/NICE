@@ -1,0 +1,8 @@
+{
+   "name" : "04000900",                    "kname" : " 전문중계용 전체전문수신",
+   "response" : { "code" : "04000900",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "full_msg",               "kname" : "전체전문",               "type" : "AN",  "length"  : 512 }
+   ]
+}

@@ -1,4 +1,4 @@
-package com.nicetcm.nibsplus.errmon.rmi;
+package com.nicetcm.nibsplus.filemng.rmi;
 
 import java.nio.ByteBuffer;
 import java.rmi.registry.LocateRegistry;

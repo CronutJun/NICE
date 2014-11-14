@@ -550,10 +550,16 @@ public class MsgParser {
            return getField(msgData.get(fname).adata.get(idx), name.substring(didx+1));
         }
         else {
-           if( aoidx > -1)
-               return msgData.get(fname).adata.get(idx).get(fname);
-           else
-               return msgData.get(name);
+           if( aoidx > -1) {
+               MsgData ret = msgData.get(fname).adata.get(idx).get(fname);
+               if( ret == null ) throw new Exception( String.format("Not found field.[%s]", fname) );
+               return ret;
+           }
+           else {
+               MsgData ret = msgData.get(name);
+               if( ret == null ) throw new Exception( String.format("Not found field.[%s]", name) );
+               return ret;
+           }
         }
     }
 

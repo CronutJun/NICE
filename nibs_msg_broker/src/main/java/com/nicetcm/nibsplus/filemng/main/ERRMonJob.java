@@ -5,7 +5,7 @@
  * 
  * Copyright ©2014 NICE TCM All rights reserved.
  */
-package com.nicetcm.nibsplus.errmon.service.impl;
+package com.nicetcm.nibsplus.filemng.main;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.springframework.context.ApplicationContext;
@@ -21,8 +22,8 @@ import org.springframework.context.ApplicationContext;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerCallBack;
-import com.nicetcm.nibsplus.errmon.dao.ERRMonMapper;
-import com.nicetcm.nibsplus.errmon.rmi.MsgBrokerCallAgent;
+import com.nicetcm.nibsplus.filemng.dao.ERRMonMapper;
+import com.nicetcm.nibsplus.filemng.rmi.MsgBrokerCallAgent;
 
 /**
  * 여기에 클래스(한글)명.
@@ -34,6 +35,7 @@ import com.nicetcm.nibsplus.errmon.rmi.MsgBrokerCallAgent;
  * @version 1.0
  * @see
  */
+@DisallowConcurrentExecution
 public class ERRMonJob implements Job {
 	
 	private static int checkCnt = 0;
@@ -44,7 +46,7 @@ public class ERRMonJob implements Job {
 
 	@Override
 	public void execute(JobExecutionContext context) {
-		ApplicationContext applicationContext = (ApplicationContext)context.get("applicationContext");
+		ApplicationContext applicationContext = (ApplicationContext)context.getMergedJobDataMap().get("applicationContext");
 
         if (MsgBrokerCallAgent.msgBrokerConfig == null) {
         	MsgBrokerCallAgent.msgBrokerConfig = (Properties)applicationContext.getBean("msgBrokerConfig");

@@ -4,9 +4,9 @@ import java.io.File;
 
 import javax.annotation.Resource;
 
-import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -15,13 +15,13 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.nicetcm.nibsplus.filemng.common.FileMngException;
 import com.nicetcm.nibsplus.filemng.dao.SapmaMapper;
 import com.nicetcm.nibsplus.filemng.model.FileMngParameterVO;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
 import com.nicetcm.nibsplus.filemng.service.FileTransferService;
+import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
 /**
  * Sap Master Ftp Task (STEP1)
@@ -127,8 +127,6 @@ import com.nicetcm.nibsplus.filemng.service.FileTransferService;
  * @version 1.0
  * @see
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/filemng/spring/context-filemng.xml"})
 public class SapMaFtpTasklet implements Tasklet {
 
     private static final Logger logger = LoggerFactory.getLogger(SapMaFtpTasklet.class);
@@ -191,30 +189,41 @@ public class SapMaFtpTasklet implements Tasklet {
         transferVO.setLocalPath(localPath);
         transferVO.setFileName(fileName);
 
-        File file = fileTransferService.getFile(transferVO);
-        logger.info("file.getAbsolutePath(): {}", file.getAbsolutePath());
-        if(branchCd != null) {
-
-            FileMngParameterVO fileMngParameterVO = new FileMngParameterVO();
-            fileMngParameterVO.setDealDate(yyyymmdd);
-            fileMngParameterVO.setBranchCd(branchCd);
-
-            int affectRows = sapmaMapper.deleteTFnSapMaster(fileMngParameterVO);
-
-            logger.info("DELETE T_FN_SAP_MASTER Affect Rows: {}", affectRows);
+        try {
+	        File file = getFile(transferVO);
+	        
+	        logger.info("file.getAbsolutePath(): {}", file.getAbsolutePath());
+	        
+	        if(branchCd != null) {
+	
+	            FileMngParameterVO fileMngParameterVO = new FileMngParameterVO();
+	            fileMngParameterVO.setDealDate(yyyymmdd);
+	            fileMngParameterVO.setBranchCd(branchCd);
+	
+	            int affectRows = sapmaMapper.deleteTFnSapMaster(fileMngParameterVO);
+	
+	            logger.info("DELETE T_FN_SAP_MASTER Affect Rows: {}", affectRows);
+	        }
+	
+	        jobContext.put("file.getAbsolutePath", file.getAbsolutePath());
+	        jobParameters.getParameters().put("sapMaFtpComplete", new JobParameter("true"));
+        } catch(Exception e) {
+        	logger.error(e.getMessage());
+	        jobParameters.getParameters().put("sapMaFtpComplete", new JobParameter("false"));
         }
-
-        jobContext.put("file.getAbsolutePath", file.getAbsolutePath());
 
         return RepeatStatus.FINISHED;
     }
+    
+    private File getFile(TransferVO transferVO) throws FileMngException {
+    	if (findBackupFile(transferVO.getLocalPath(), transferVO.getFileName()).isFile()) {
+            throw new FileMngException(ExceptionType.VM_STOP, "이미 처리된 파일입니다.");
+    	}
 
-    //@Test
-    public void testTasklet() {
+		return fileTransferService.getFile(transferVO);
     }
-
-    public static void main(String[] args) {
-
-
+    
+    private File findBackupFile(String path, String name) {
+    	return new File(path, name.substring(0, name.length() - 4) + ".bak");
     }
 }

@@ -40,7 +40,7 @@ public interface CommonPack {
     String fGetNiceBranchCd(String orgCd, String branchCd, String orgSiteCd, String macNo);
     int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMng tCtErrorMng) throws IllegalAccessException, InvocationTargetException;
     String fcGetMapSiteCd(String cType, String orgCd, String branchCd, String siteCd);
-    void msgSnd(CommMsgHeader commMsgHeader, Map<String, String> columnMap, MsgBrokerData safeData) throws Exception;
+    void msgSnd(MsgBrokerData safeData, CommMsgHeader commMsgHeader, Map<String, byte[]> columnMap, String type) throws Exception;
     void msgSnd(byte[] msg) throws Exception;
     void msgSnd(MsgParser msgPsr) throws Exception;
     String fGetOrgBranchCd(String orgCd, String branchCd, String siteCd, String macNo);

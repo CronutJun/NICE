@@ -1,0 +1,8 @@
+{
+   "name" : "04000800",                    "kname" : " 기기정보 - 기기사 전문중계처리",
+   "response" : { "code" : "04000800",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "full_msg",               "kname" : "전체전문",               "type" : "AN",  "length"  : 399 }
+   ]
+}

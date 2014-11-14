@@ -1,4 +1,4 @@
-package com.nicetcm.nibsplus.errmon.dao;
+package com.nicetcm.nibsplus.filemng.dao;
 
 import java.util.HashMap;
 import java.util.List;

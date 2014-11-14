@@ -1,0 +1,9 @@
+{
+  "name" : "shatms_msg_header",      "kname" : "신한은행 통전문헤더",
+  "columns" : [
+     { "name" : "brch_cd",           "kname" : "영업점코드",        "type" : "AN",       "length" : 4  },
+     { "name" : "mac_no",            "kname" : "단말번호",          "type" : "AN",       "length" : 4  },
+     { "name" : "data_type",         "kname" : "구분",              "type" : "AN",       "length" : 1  },
+     { "name" : "msg",               "kname" : "기기정보",          "type" : "AN",       "length" : 300}
+  ]
+}

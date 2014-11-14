@@ -17,8 +17,8 @@ import com.nicetcm.nibsplus.filemng.model.TransferVO;
 import com.nicetcm.nibsplus.filemng.service.FileTransferService;
 import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
-@Service("ftpTransfer")
-public class FtpTransfer implements FileTransferService
+@Service("sftpTransfer")
+public class SFtpTransfer implements FileTransferService
 {
     /**
      * 원하는 파일을 로컬 폴더에 다운로드 한다

@@ -213,7 +213,7 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
         try {
             String names[] = ((BeanDefinitionRegistry)MsgBrokerSpringMain.sprCtx.getBeanFactory()).getBeanDefinitionNames();
             for( String nm: names ) {
-                logger.info("Name = {}", nm);
+                logger.warn("Name = {}", nm);
             }
         }
         catch( Exception e ) {
