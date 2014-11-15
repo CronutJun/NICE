@@ -153,7 +153,7 @@ public class In03000200Impl extends InMsgHandlerImpl {
                 tFnInoutStat.setIn11      (parsed.getLong("in_11" ));
                 tFnInoutStat.setOut11     (parsed.getLong("out_11"));
                 tFnInoutStat.setIn12      (parsed.getLong("in_12" ));
-                tFnInoutStat.setOut12     (parsed.getLong("ou_t12"));
+                tFnInoutStat.setOut12     (parsed.getLong("out_12"));
                 tFnInoutStat.setIn13      (parsed.getLong("in_13" ));
                 tFnInoutStat.setOut13     (parsed.getLong("out_13"));
                 tFnInoutStat.setIn14      (parsed.getLong("in_14" ));
