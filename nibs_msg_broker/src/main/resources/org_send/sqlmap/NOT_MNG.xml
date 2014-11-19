@@ -91,7 +91,7 @@
              '',
              '',
              '',
-             '',
+             serial_no,
              unattended_amt,
              '',
              trade_date,

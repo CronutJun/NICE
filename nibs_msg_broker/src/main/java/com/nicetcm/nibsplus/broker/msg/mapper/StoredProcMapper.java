@@ -149,7 +149,7 @@ public interface StoredProcMapper {
             "#{pPreAddAmt       ,   mode=IN        , jdbcType=DECIMAL},",
             "#{pHolyAddAmt      ,   mode=IN        , jdbcType=DECIMAL},",
             "#{pTodayAddAmt     ,   mode=IN        , jdbcType=DECIMAL},",
-            "#{pSafeNo          ,   mode=IN        , jdbcType=VARCHAR},",
+            "#{pSafeNo          ,   mode=IN        , jdbcType=DECIMAL},",
             "#{vFirstInqYN      ,   mode=OUT       , jdbcType=VARCHAR},",
             "#{vResult          ,   mode=OUT       , jdbcType=VARCHAR},",
             "#{vResultMsg       ,   mode=OUT       , jdbcType=VARCHAR} ",
@@ -208,11 +208,11 @@ public interface StoredProcMapper {
     TMisc fcFnSecurity(TMisc cond);
 
     @Select({
-        "SELECT OP.FC_GET_ORNZ_CD_BY_MACNO(#{argType,  jdbcType=VARCHAR},                  ",
-        "                                  #{orgCd,    jdbcType=VARCHAR},                  ",
-        "                                  #{branchCd, jdbcType=VARCHAR},                  ",
-        "                                  #{macNo,    jdbcType=VARCHAR}) AS ORNZ_CD       ",
-        "FROM   DUAL                                                                       "
+        "SELECT OP.FC_GET_JOJIC_CD_BY_MACNO(#{argType,  jdbcType=VARCHAR},                  ",
+        "                                   #{orgCd,    jdbcType=VARCHAR},                  ",
+        "                                   #{branchCd, jdbcType=VARCHAR},                  ",
+        "                                   #{macNo,    jdbcType=VARCHAR}) AS ORNZ_CD       ",
+        "FROM   DUAL                                                                        "
     })
     @Results({
         @Result(column="ORNZ_CD", property="ornzCd", jdbcType=JdbcType.VARCHAR)

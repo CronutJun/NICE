@@ -18,12 +18,13 @@ package com.nicetcm.nibsplus.broker.msg.services;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import javax.jms.BytesMessage;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
@@ -245,12 +246,12 @@ public class InN2000120Impl extends InMsgHandlerImpl {
               *  점주모드 suBody.atm_monitor[IDX_MON_TERM_MODE] == '5' 인경우도 상판열림 장애 발생시킴
               */
              if( !parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_LINE_ERR)
-             &&  !parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_TERM_MODE.ordinal(), EnumNM.IDX_MON_TERM_MODE.ordinal()+1).equals("1") ) {
+             &&  !substr(parsed.getString("atm_monitor"), EnumNM.IDX_MON_TERM_MODE.ordinal(), EnumNM.IDX_MON_TERM_MODE.ordinal()+1).equals("1") ) {
 
                  errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_OPENDOOR_ERROR );
 
-                 if( parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_OPEN_DOOR.ordinal(), EnumNM.IDX_MON_OPEN_DOOR.ordinal()+1).equals(MsgBrokerConst.NICE_NORMAL)
-                 ||  parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_OPEN_DOOR.ordinal(), EnumNM.IDX_MON_OPEN_DOOR.ordinal()+1).equals(MsgBrokerConst.NICE_NO_SET) ) {
+                 if( substr(parsed.getString("atm_monitor"), EnumNM.IDX_MON_OPEN_DOOR.ordinal(), EnumNM.IDX_MON_OPEN_DOOR.ordinal()+1).equals(MsgBrokerConst.NICE_NORMAL)
+                 ||  substr(parsed.getString("atm_monitor"), EnumNM.IDX_MON_OPEN_DOOR.ordinal(), EnumNM.IDX_MON_OPEN_DOOR.ordinal()+1).equals(MsgBrokerConst.NICE_NO_SET) ) {
                      comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                              errNoti, errCall, errTxn, macInfo, retErrState );
                  }
@@ -322,7 +323,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              * 유저 정의 에러 일때는 이것만 처리 하고 리턴 한다
              * --> 나머지 장애 관련 데이타는 임의로 만든 데이타 이기 때문에 처리하면 안된다
              */
-            if( !parsed.getString("user_made_err").substring(0, 1).equals("0") ) {
+            if( !substr(parsed.getString("user_made_err"), 0, 1).equals("0") ) {
                 switch( parsed.getString("user_made_err").getBytes()[0] ) {
                     case '2' :
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N02 );
@@ -415,7 +416,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              * 유저 정의 에러 일때는 이것만 처리 하고 리턴 한다
              * --> 나머지 장애 관련 데이타는 임의로 만든 데이타 이기 때문에 처리하면 안된다
              */
-            if( !parsed.getString("user_made_err").substring(0, 1).equals("0") ) {
+            if( !substr(parsed.getString("user_made_err"), 0, 1).equals("0") ) {
                 switch( parsed.getString("user_made_err").getBytes()[0] ) {
                     case '2' :
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N02 );
@@ -454,13 +455,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N14 );
                         break;
                     case 'f' : /*  금고침투 장애 15 => 금고진동은 user define 장애로 변경 */
-                        if( parsed.getString("create_time").substring(0, 2).compareTo("08") >= 0
-                        &&  parsed.getString("create_time").substring(0, 2).compareTo("21") <= 0 ) {
+                        if( substr(parsed.getString("create_time"), 0, 2).compareTo("08") >= 0
+                        &&  substr(parsed.getString("create_time"), 0, 2).compareTo("21") <= 0 ) {
                             /*
                              * 주간 ATM 감시 전문 처리
                              */
                             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
-                            if( parsed.getString("atm_monitor").substring(0,1).equals(MsgBrokerConst.NICE_ERROR) ) {
+                            if( substr(parsed.getString("atm_monitor"), 0, 1).equals(MsgBrokerConst.NICE_ERROR) ) {
                                 comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                                 /*
                                  * Terminal Mode 가 '1' 일 경우 작업 상태 이므로 슈퍼바이저 에러만 발생 시키고
@@ -532,7 +533,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             if( iCashBox > 0 ) {   /* 지폐함 갯수가 한개 이상이라면 */
                 iCash = 0; /*부족 설정 */
                 for( int i = 0 ; i < CNT_CASH_BOX ; i++) {/* 모든 지폐함을 체크하도록 수정 20080531 */
-                    if( parsed.getString("atm_cash").substring(i, i+1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
+                    if( substr(parsed.getString("atm_cash"), i, i+1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                         /*
                          * 지폐함중 하나라도 '0'(정상) 이라면 정상상태이다
                          */
@@ -565,7 +566,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                         *  지폐함이 EMPTY일 경우에만 장애발생시킴. NEAREND도 패스한다. 20130226 신남철과장
                         */
                        for ( int i = 0 ; i < CNT_CASH_BOX ; i ++ ) {
-                           if( parsed.getString("atm_cash").substring(i, i+1).equals(MsgBrokerConst.NICE_BOX_EMPTY) ) {
+                           if( substr(parsed.getString("atm_cash"), i, i+1).equals(MsgBrokerConst.NICE_BOX_EMPTY) ) {
                                break;
                            }
                            /*
@@ -587,13 +588,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  *  지폐함 갯수를 알수 없는 경우
                  */
-                if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_CASH_BOX1.ordinal(),
+                if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_CASH_BOX1.ordinal(),
                         EnumNCBS.IDX_STATE_CASH_BOX1.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD)
-                ||  parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_CASH_BOX2.ordinal(),
+                ||  substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_CASH_BOX2.ordinal(),
                         EnumNCBS.IDX_STATE_CASH_BOX2.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD)
-                ||  parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_CASH_BOX3.ordinal(),
+                ||  substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_CASH_BOX3.ordinal(),
                         EnumNCBS.IDX_STATE_CASH_BOX3.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD)
-                ||  parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_CASH_BOX4.ordinal(),
+                ||  substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_CASH_BOX4.ordinal(),
                         EnumNCBS.IDX_STATE_CASH_BOX4.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                     /*
                      *  지폐함 현금 충분
@@ -622,14 +623,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              * 회수함 상태 검사
              */
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_COLLECTBOX_EMPTY );
-            if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal(),
+            if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal(),
                     EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_EMPTY) ) {
                 /*
                  *  회수함 부족
                  */
                 comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
-            else if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal(),
+            else if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal(),
                          EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                 /*
                  *  회수함 충분
@@ -642,14 +643,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              * 명세표 상태 검사
              */
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SPECSBOX_EMPTY );
-            if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_SPECS.ordinal(),
+            if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_SPECS.ordinal(),
                     EnumNCBS.IDX_STATE_SPECS.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_EMPTY) ) {
                 /*
                  *  명세표 부족
                  */
                 comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
-            else if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_SPECS.ordinal(),
+            else if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_SPECS.ordinal(),
                     EnumNCBS.IDX_STATE_SPECS.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                 /*
                  *  명세표 충분
@@ -666,14 +667,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             /*
              *  임금함과 회수함은 FULL의 뜻으로 쓰임
              */
-            if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_INPUT_BOX.ordinal(),
+            if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_INPUT_BOX.ordinal(),
                     EnumNCBS.IDX_STATE_INPUT_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_EMPTY) ) {
                 /*
                  *  입금함 참
                  */
                 comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
-            else if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_INPUT_BOX.ordinal(),
+            else if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_INPUT_BOX.ordinal(),
                     EnumNCBS.IDX_STATE_INPUT_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                 /*
                  *  입금함 빔
@@ -688,14 +689,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              */
 
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_CHECKBOX_EMPTY );
-            if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_CHECK_BOX.ordinal(),
+            if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_CHECK_BOX.ordinal(),
                     EnumNCBS.IDX_STATE_CHECK_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_EMPTY) ) {
                 /*
                  *  수표함 빔
                  */
                 comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
-            else if( parsed.getString("atm_cash").substring(EnumNCBS.IDX_STATE_CHECK_BOX.ordinal(),
+            else if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_CHECK_BOX.ordinal(),
                     EnumNCBS.IDX_STATE_CHECK_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                 /*
                  *  수표함 충분
@@ -726,18 +727,18 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 ||  enumNHME.name().equals("IDX_HW_RPC"             )    /* 19- RPC                */
                 ||  enumNHME.name().equals("IDX_HW_REMAIN_MONEY"    ) ) {/* 20- 지폐잔류           */
                     errBasic.setErrorCd( saNiceErrState[enumNHME.ordinal()] );
-                    if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                        .substring(0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR)
-                    ||  parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                        .substring(0,1).equals(MsgBrokerConst.NICE_HW_ERROR) ) {
+                    if( substr(parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())),
+                                        0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR)
+                    ||  substr(parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())),
+                                        0,1).equals(MsgBrokerConst.NICE_HW_ERROR) ) {
                         /*
                          * 2007.02.12 지폐방출기, 카드 판독기의 경우 '3'인 경우는 무시,
                          * '4'인경우만 장애 발생하도록 수정
                          * 2007.02.23. FKM 기기가 지폐방출장애를 3->4로 먼저 변경 후 적용하기위해 임시 주석처리
                          */
                         if( (enumNHME.name().equals("IDX_HW_CASH_OUT") || enumNHME.name().equals("IDX_HW_CARD_READ"))
-                         && parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                                            .substring(0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR) ) {
+                         && substr(parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())),
+                                            0,1).equals(MsgBrokerConst.NICE_HW_NEARERROR) ) {
                             continue;
                         }
 
@@ -754,8 +755,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                                     errNoti, errCall, errTxn, macInfo, retErrState );
                         }
                     }
-                    else if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal()))
-                            .substring(0,1).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
+                    else if( substr(parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())),
+                            0,1).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
                         comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                                 errNoti, errCall, errTxn, macInfo, retErrState );
                     }
@@ -780,8 +781,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     nNormal = nNormal + 1;
                 }
                 else  {
-                    if( parsed.getString("atm_monitor").substring(enumNM.ordinal(), enumNM.ordinal()+1).equals(MsgBrokerConst.NICE_NORMAL)
-                    ||  parsed.getString("atm_monitor").substring(enumNM.ordinal(), enumNM.ordinal()+1).equals(MsgBrokerConst.NICE_NO_SET) ) {
+                    if( substr(parsed.getString("atm_monitor"), enumNM.ordinal(), enumNM.ordinal()+1).equals(MsgBrokerConst.NICE_NORMAL)
+                    ||  substr(parsed.getString("atm_monitor"), enumNM.ordinal(), enumNM.ordinal()+1).equals(MsgBrokerConst.NICE_NO_SET) ) {
                         nNormal = nNormal + 1;
                     }
                     else {
@@ -1103,22 +1104,22 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             if( rsltNiceMng.getNetS().equals(MsgBrokerConst.NICE_STATE_LINE_ERR) )
                 return;
         }
-        niceMng.setPowerFail( parsed.getString("atm_off_day").substring(4) + parsed.getString("atm_off_time") );/* POWER_FAIL */
-        niceMng.setJp1 ( parsed.getString("atm_cash").substring(0, 1) );          /* 지폐함1  */
-        niceMng.setJp2 ( parsed.getString("atm_cash").substring(1, 2) );          /* 지폐함2  */
-        niceMng.setJp3 ( parsed.getString("atm_cash").substring(2, 3) );          /* 지폐함3  */
-        niceMng.setJp4 ( parsed.getString("atm_cash").substring(3, 4) );          /* 지폐함4  */
-        niceMng.setHsh ( parsed.getString("atm_cash").substring(4, 5) );          /* 회수함   */
-        niceMng.setMsp1( parsed.getString("atm_cash").substring(5, 6) );          /* 명세표   */
-        niceMng.setGsy1( parsed.getString("atm_cash").substring(6, 7) );          /* 감사용지 */
-        niceMng.setDummy1( parsed.getString("atm_cash").substring(7, 8) );        /* 입금함   */
-        niceMng.setDummy2( parsed.getString("atm_cash").substring(8) );           /* 수표함   */
-        niceMng.setDummy3( parsed.getString("atm_dummy").substring(0, 1) );       /* 더미3    */
-        niceMng.setDummy4( parsed.getString("atm_dummy").substring(1, 2) );       /* 더미4    */
-        niceMng.setDummy5( parsed.getString("atm_dummy").substring(2, 3) );       /* 더미5    */
-        niceMng.setDummy6( parsed.getString("atm_dummy").substring(3, 4) );       /* 더미6    */
-        niceMng.setDummy7( parsed.getString("atm_dummy").substring(4, 5) );       /* 더미7    */
-        niceMng.setDummy8( parsed.getString("user_made_err").substring(4, 5) );   /* 더미8    */
+        niceMng.setPowerFail( substr(parsed.getString("atm_off_day"), 4) + parsed.getString("atm_off_time") );/* POWER_FAIL */
+        niceMng.setJp1 ( substr(parsed.getString("atm_cash"), 0, 1) );            /* 지폐함1  */
+        niceMng.setJp2 ( substr(parsed.getString("atm_cash"), 1, 2) );            /* 지폐함2  */
+        niceMng.setJp3 ( substr(parsed.getString("atm_cash"), 2, 3) );            /* 지폐함3  */
+        niceMng.setJp4 ( substr(parsed.getString("atm_cash"), 3, 4) );            /* 지폐함4  */
+        niceMng.setHsh ( substr(parsed.getString("atm_cash"), 4, 5) );            /* 회수함   */
+        niceMng.setMsp1( substr(parsed.getString("atm_cash"), 5, 6) );            /* 명세표   */
+        niceMng.setGsy1( substr(parsed.getString("atm_cash"), 6, 7) );            /* 감사용지 */
+        niceMng.setDummy1( substr(parsed.getString("atm_cash"), 7, 8) );          /* 입금함   */
+        niceMng.setDummy2( substr(parsed.getString("atm_cash"), 8) );             /* 수표함   */
+        niceMng.setDummy3( substr(parsed.getString("atm_dummy"), 0, 1) );         /* 더미3    */
+        niceMng.setDummy4( substr(parsed.getString("atm_dummy"), 1, 2) );         /* 더미4    */
+        niceMng.setDummy5( substr(parsed.getString("atm_dummy"), 2, 3) );         /* 더미5    */
+        niceMng.setDummy6( substr(parsed.getString("atm_dummy"), 3, 4) );         /* 더미6    */
+        niceMng.setDummy7( substr(parsed.getString("atm_dummy"), 4, 5) );         /* 더미7    */
+        niceMng.setDummy8( substr(parsed.getString("user_made_err"), 4, 5) );     /* 더미8    */
 
         niceMng.setNetErr   ( parsed.getString("atm_hw_error[0]" ) );             /* 통신장애 */
         niceMng.setJpbc     ( parsed.getString("atm_hw_error[1]" ) );             /* 지폐방출 */
@@ -1142,21 +1143,21 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         niceMng.setRpc      ( parsed.getString("atm_hw_error[19]") );             /* RPC모듈상태 */
         niceMng.setRemMoney ( parsed.getString("atm_hw_error[20]") );             /* 지폐잔류 */
 
-        niceMng.setTermMode ( parsed.getString("atm_monitor").substring(0, 1) );  /* 터미널모드 */
-        niceMng.setGggp     ( parsed.getString("atm_monitor").substring(1, 2) );  /* 금고개폐 */
-        niceMng.setGgjg     ( parsed.getString("atm_monitor").substring(2, 3) );  /* 금고잠금 */
-        niceMng.setGgjd     ( parsed.getString("atm_monitor").substring(3, 4) );  /* 금고진동 */
-        niceMng.setGgygj    ( parsed.getString("atm_monitor").substring(4, 5) );  /* 금고열감지 */
-        niceMng.setGgjc     ( parsed.getString("atm_monitor").substring(5, 6) );  /* 문열림 */
-        niceMng.setHshtc    ( parsed.getString("atm_monitor").substring(6, 7) );  /* 회수함탈착 */
-        niceMng.setJp1tc    ( parsed.getString("atm_monitor").substring(7, 8) );  /* 지폐함1탈착 */
-        niceMng.setJp2tc    ( parsed.getString("atm_monitor").substring(8, 9) );  /* 지폐함2탈착 */
-        niceMng.setJp3tc    ( parsed.getString("atm_monitor").substring(9, 10) ); /* 지폐함3탈착 */
-        niceMng.setJp4tc    ( parsed.getString("atm_monitor").substring(10, 11) );/* 지폐함4탈착 */
-        niceMng.setCdpd     ( parsed.getString("atm_monitor").substring(11, 12) );/* 카드판독기 */
-        niceMng.setPass1    ( parsed.getString("atm_monitor").substring(12, 13) );/* 암호장비 */
-        niceMng.setDummy11  ( parsed.getString("atm_monitor").substring(13, 14) );/* 통장부 */
-        niceMng.setDummy12  ( parsed.getString("atm_monitor").substring(14) );    /* 더미12 */
+        niceMng.setTermMode ( substr(parsed.getString("atm_monitor"), 0, 1) );    /* 터미널모드 */
+        niceMng.setGggp     ( substr(parsed.getString("atm_monitor"), 1, 2) );    /* 금고개폐 */
+        niceMng.setGgjg     ( substr(parsed.getString("atm_monitor"), 2, 3) );    /* 금고잠금 */
+        niceMng.setGgjd     ( substr(parsed.getString("atm_monitor"), 3, 4) );    /* 금고진동 */
+        niceMng.setGgygj    ( substr(parsed.getString("atm_monitor"), 4, 5) );    /* 금고열감지 */
+        niceMng.setGgjc     ( substr(parsed.getString("atm_monitor"), 5, 6) );    /* 문열림 */
+        niceMng.setHshtc    ( substr(parsed.getString("atm_monitor"), 6, 7) );    /* 회수함탈착 */
+        niceMng.setJp1tc    ( substr(parsed.getString("atm_monitor"), 7, 8) );    /* 지폐함1탈착 */
+        niceMng.setJp2tc    ( substr(parsed.getString("atm_monitor"), 8, 9) );    /* 지폐함2탈착 */
+        niceMng.setJp3tc    ( substr(parsed.getString("atm_monitor"), 9, 10) );   /* 지폐함3탈착 */
+        niceMng.setJp4tc    ( substr(parsed.getString("atm_monitor"), 10, 11) );  /* 지폐함4탈착 */
+        niceMng.setCdpd     ( substr(parsed.getString("atm_monitor"), 11, 12) );  /* 카드판독기 */
+        niceMng.setPass1    ( substr(parsed.getString("atm_monitor"), 12, 13) );  /* 암호장비 */
+        niceMng.setDummy11  ( substr(parsed.getString("atm_monitor"), 13, 14) );  /* 통장부 */
+        niceMng.setDummy12  ( substr(parsed.getString("atm_monitor"), 14) );      /* 더미12 */
 
         niceMng.setPgmVer  ( parsed.getString("pgm_version") );                   /* 기기프로그램 버젼 */
         //niceMng.setSerialNo( parsed.getString("serial_no"  ) );                 /* 시리얼 번호 */

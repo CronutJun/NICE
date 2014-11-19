@@ -174,7 +174,7 @@ public class MsgBrokerLib {
 
         if( src == null ) return "";
         if( src.length()-1 < pos ) return "";
-        if( src.length() < ePos ) return src.substring(pos);
+        if( src.length()-1 < ePos ) return src.substring(pos);
         return src.substring( pos, ePos );
     }
 
@@ -272,7 +272,7 @@ public class MsgBrokerLib {
         else if( IO.equals("I") && bMsgType[2] == '1')
             bMsgType[2] = '1';
         if( isSetThreadID )
-            Thread.currentThread().setName(String.format("<T>%s-%s%s-%s", new String(bOrgCd).trim(), new String(bMsgType).trim(), new String(bWrkType).trim(), Thread.currentThread().getId()));
+            Thread.currentThread().setName(String.format("<T>%s-%s%s-%s:%s", new String(bOrgCd).trim(), new String(bMsgType).trim(), new String(bWrkType).trim(), Thread.currentThread().getId(), MsgBrokerMain.serverNo));
 
         /*
          * 응답 전문의 경우에 스키마 파일은 원본 요청 전문에 해당하는 스키마를 읽도록 한다.

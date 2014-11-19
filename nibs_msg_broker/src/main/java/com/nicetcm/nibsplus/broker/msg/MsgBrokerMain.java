@@ -26,6 +26,7 @@ public class MsgBrokerMain {
     private DatagramSocket isRun;
 
     public static final Logger logger = LoggerFactory.getLogger(MsgBrokerMain.class);
+    public static String serverNo = "";
 
     public static MsgBrokerRMIServer getRMI() {
         return rmi;
@@ -33,6 +34,10 @@ public class MsgBrokerMain {
 
     public MsgBrokerMain() {
         try {
+            /**
+             * 서버번호 Setting
+             */
+            MsgBrokerMain.serverNo = MsgCommon.msgProps.getProperty("server.number", "0");
             /**
              * 중복 검증
              */

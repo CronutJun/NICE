@@ -18,6 +18,7 @@ import org.quartz.TriggerListener;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.scheduler.common.SchduleException;
@@ -56,6 +57,19 @@ public class NibsQuartzScheduler implements ScheduleExecuter
     private JobDataMap createJobDataMap(SchedulerVO schedulerVO) {
         JobDataMap newJobDataMap = new JobDataMap();
         if (!"EMPTY".equals(schedulerVO.getSpringContextXml().toUpperCase())) newJobDataMap.put("applicationContext", scheduleInfoProvider.getApplicationContext(schedulerVO.getSpringContextXml()));
+        newJobDataMap.put("SchedulerVO", schedulerVO);
+        newJobDataMap.put("REAL_TIME_COMMAND", schedulerVO.getRealTimeCommand());
+        newJobDataMap.put("T_ARG1", schedulerVO.gettArg1());
+        newJobDataMap.put("T_ARG2", schedulerVO.gettArg2());
+        newJobDataMap.put("T_ARG3", schedulerVO.gettArg3());
+        newJobDataMap.put("T_ARG4", schedulerVO.gettArg4());
+
+        return newJobDataMap;
+    }
+
+    public static JobDataMap createJobDataMap2(SchedulerVO schedulerVO) {
+        JobDataMap newJobDataMap = new JobDataMap();
+        if (!"EMPTY".equals(schedulerVO.getSpringContextXml().toUpperCase())) newJobDataMap.put("applicationContext", new ClassPathXmlApplicationContext(schedulerVO.getSpringContextXml().split(",")));
         newJobDataMap.put("SchedulerVO", schedulerVO);
         newJobDataMap.put("REAL_TIME_COMMAND", schedulerVO.getRealTimeCommand());
         newJobDataMap.put("T_ARG1", schedulerVO.gettArg1());
@@ -110,8 +124,8 @@ public class NibsQuartzScheduler implements ScheduleExecuter
                 Trigger trigger = TriggerBuilder
                                 .newTrigger()
                                 .withIdentity(schedulerVO.getJobName(), schedulerVO.getJobGroup())
-                                //.withSchedule(CronScheduleBuilder.cronSchedule(schedulerVO.getCronExpression()))
-                                .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ?"))
+                                .withSchedule(CronScheduleBuilder.cronSchedule(schedulerVO.getCronExpression()))
+                                // .withSchedule(CronScheduleBuilder.cronSchedule("0/10 * * * * ?"))
                                 .build();
 
                 scheduler.scheduleJob(jobA, trigger);
@@ -128,8 +142,6 @@ public class NibsQuartzScheduler implements ScheduleExecuter
                 logger.info(schedulerVO.toPrettyString() + " ==> MisFired !!!!!!!!!!!!!!!!!!!!!!!!");
                 throw new SchduleException(ExceptionType.VM_STOP, "MisFired Schedule");
             }
-            
-            break;
         }//end for
 
         try

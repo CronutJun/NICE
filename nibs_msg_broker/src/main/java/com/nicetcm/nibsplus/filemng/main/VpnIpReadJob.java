@@ -14,21 +14,16 @@ import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 @DisallowConcurrentExecution
 public class VpnIpReadJob implements org.quartz.Job {
 	
 	@Override
-	public void execute(JobExecutionContext arg0) throws JobExecutionException {
-		String[] springConfig = {
-			"classpath:/filemng/spring/context-filemng.xml",
-			"classpath:/filemng/spring/context-filemng-vpnJob.xml" };
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		ApplicationContext applicationContext = (ApplicationContext)context.getMergedJobDataMap().get("applicationContext");
+		Properties config = applicationContext.getBean("config", Properties.class);
 
-		ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
-		Properties config = context.getBean("config", Properties.class);
-
-		JobLauncher jobLauncher = (JobLauncher) context.getBean("jobLauncher");
+		JobLauncher jobLauncher = (JobLauncher) applicationContext.getBean("jobLauncher");
 		// ex) "/Project_NIBS/FTP_RECEIVE/vpn/vpn81.tb"
 		File[] files = new File(config.getProperty("vpnip.local.path")).listFiles();
 
@@ -40,7 +35,7 @@ public class VpnIpReadJob implements org.quartz.Job {
 					parameters.put("vpn.file.name", new JobParameter(file.getAbsolutePath()));
 		
 					JobParameters jobParameters = new JobParameters(parameters);
-					JobExecution execution = jobLauncher.run((Job)context.getBean("vpnJob"), jobParameters);
+					JobExecution execution = jobLauncher.run((Job)applicationContext.getBean("vpnJob"), jobParameters);
 					
 					System.out.println("Exit Status : " + execution.getStatus());
 				} catch (Exception e) {

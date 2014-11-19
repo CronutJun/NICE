@@ -30,51 +30,48 @@ public class MsgBrokerShutdown extends Thread {
 
     public void run()  {
         try {
-            logger.debug("Start RMI shutdown..");
+            logger.warn("Start RMI shutdown..");
             MsgBrokerMain.getRMI().unbind();
-            logger.debug("RMI stopped.");
+            logger.warn("RMI stopped.");
 
-            logger.debug("Stopping consumer..");
+            logger.warn("Stopping consumer..");
             Iterator<Map.Entry<String, MsgBrokerConsumer>>  itrC = MsgBrokerConsumer.consumers.entrySet().iterator();
             while ( itrC.hasNext() ){
                 Map.Entry<String, MsgBrokerConsumer> e = (Map.Entry<String, MsgBrokerConsumer>)itrC.next();
                 e.getValue().close();
-                logger.debug("Consumer \"{}\" is closed.", e.getKey());
+                logger.warn("Consumer \"{}\" is closed.", e.getKey());
                 MsgBrokerConsumer.consumers.remove(e.getKey());
             }
-            logger.debug("Consumer is stopped.");
+            logger.warn("Consumer is stopped.");
 
-            logger.debug("Stopping producer..");
+            logger.warn("Stopping producer..");
             Iterator<Map.Entry<String, MsgBrokerProducer>>  itrP = MsgBrokerProducer.producers.entrySet().iterator();
             while ( itrP.hasNext() ){
                 Map.Entry<String, MsgBrokerProducer> e = (Map.Entry<String, MsgBrokerProducer>)itrP.next();
                 e.getValue().close();
-                logger.debug("Producer \"{}\" is closed.", e.getKey());
+                logger.warn("Producer \"{}\" is closed.", e.getKey());
                 MsgBrokerConsumer.consumers.remove(e.getKey());
             }
-            logger.debug("Producer is stopped.");
+            logger.warn("Producer is stopped.");
 
-            logger.debug("Releasing other resources..");
+            logger.warn("Releasing other resources..");
             Iterator<Map.Entry<String, ActiveMQ>>  itrCR = MsgBrokerConsumer.req.entrySet().iterator();
             while ( itrCR.hasNext() ){
                 Map.Entry<String, ActiveMQ> e = (Map.Entry<String, ActiveMQ>)itrCR.next();
                 e.getValue().close();
-                logger.debug("Request ActiveMQ \"{}\" is closed.", e.getKey());
+                logger.warn("Request ActiveMQ \"{}\" is closed.", e.getKey());
                 MsgBrokerConsumer.req.remove(e.getKey());
             }
-            logger.debug("Other resources are released.");
+            logger.warn("Other resources are released.");
 
             MsgBrokerMain.stopJMX();
-            logger.debug("JMXAgent is stopped.");
+            logger.warn("JMXAgent is stopped.");
 
-            logger.debug("Thread's count = {}", Thread.activeCount() );
-            //for (Thread t : Thread.getAllStackTraces().keySet()) {
-            //    if (t.getState()==Thread.State.RUNNABLE) {
-            //        logger.debug("Thread id = {},{}", t.getId(), t.getName());
-            //        t.interrupt();
-            //    }
-            //}
-            //System.exit(0);
+            logger.warn("Thread's count = {}", Thread.activeCount() );
+
+            MsgBrokerWorkGroup.getInstance().shutdown();
+
+            logger.warn("Shutdown complete.");
         }
         catch( Exception e ) {
             e.printStackTrace();

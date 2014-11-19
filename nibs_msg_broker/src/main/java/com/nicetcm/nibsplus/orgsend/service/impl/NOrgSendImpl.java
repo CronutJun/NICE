@@ -22,7 +22,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
 import com.nicetcm.nibsplus.orgsend.common.OrgSend;
 import com.nicetcm.nibsplus.orgsend.common.OrgSendException;
-import com.nicetcm.nibsplus.orgsend.constant.NibsDataSource;
 import com.nicetcm.nibsplus.orgsend.model.OrgSendExternalVO;
 import com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO;
 import com.nicetcm.nibsplus.orgsend.service.MsgTransferService;
@@ -49,10 +48,7 @@ public class NOrgSendImpl implements NOrgSendService
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Resource(name= "sqlSessionFactory_OP")
-    private SqlSessionFactory sqlSessionFactoryOP;
-
-    @Resource(name= "sqlSessionFactory_IN")
-    private SqlSessionFactory sqlSessionFactoryIN;
+    private SqlSessionFactory sqlSessionFactory;
 
     @Resource(name= "orgSend")
     private OrgSend orgSend;
@@ -91,7 +87,7 @@ public class NOrgSendImpl implements NOrgSendService
     @Override
     public void execute(OrgSendExternalVO orgSendExternalVO) throws Exception
     {
-
+    	/*
         SqlSessionFactory sqlSessionFactory = null;
 
         if(orgSendExternalVO.getNibsDataSource().equals(NibsDataSource.OP)) {
@@ -99,6 +95,7 @@ public class NOrgSendImpl implements NOrgSendService
         } else {
             sqlSessionFactory = sqlSessionFactoryIN;
         }
+        */
 
         Configuration configuration = sqlSessionFactory.getConfiguration();
 

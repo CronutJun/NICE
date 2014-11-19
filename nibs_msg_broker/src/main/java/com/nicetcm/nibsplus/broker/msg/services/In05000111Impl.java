@@ -129,7 +129,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
             /*
              *  복구일 경우는 NE0**, 예보일 경우는 NE1**, 장애일 경우는 NE2**
              */
-            errBasicL.setErrorCd( String.format("NE%c%02s", parsed.getBytes("atm_state")[e.ordinal()], e.getErrorCd()) );
+            errBasicL.setErrorCd( String.format("NE%c%s", parsed.getBytes("atm_state")[e.ordinal()], lpad(e.getErrorCd(), 2, "0")) );
 
             /*
              *  예보 및 장애
@@ -156,11 +156,11 @@ public class In05000111Impl extends InMsgHandlerImpl {
                 /*
                  *  복구 일때는 예보와 장애 모두를 복구 시킨다.
                  */
-                errBasicL.setErrorCd( String.format("NE1%02s", e.getErrorCd()) );
+                errBasicL.setErrorCd( String.format("NE1%s", lpad(e.getErrorCd(), 2, "0")) );
                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
                         errNotiL, errCallL, errTxnL, macInfo, retErrStates );
 
-                errBasicL.setErrorCd( String.format("NE2%02s", e.getErrorCd()) );
+                errBasicL.setErrorCd( String.format("NE2%s", lpad(e.getErrorCd(), 2, "0")) );
                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
                         errNotiL, errCallL, errTxnL, macInfo, retErrStates );
 
@@ -218,7 +218,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
                 nNormal = nNormal + 1;
         }
         if( parsed.getBytes("atm_monitor")[0] == MsgBrokerConst.CALC_MAC_SUPERVISOR ) {  // 슈퍼바이저 모드일 경우
-            errBasic.setErrorCd( String.format("NE%d%02s", 2, MsgBrokerConst.CD_CALC_MAC_SUPERVISOR) );
+            errBasic.setErrorCd( String.format("NE%d%s", 2, lpad(MsgBrokerConst.CD_CALC_MAC_SUPERVISOR, 2, "0")) );
 
             logger.warn(">>> [SaveCalcMacErrState] [정산기 슈퍼바이져 상태] {}", errBasic.getErrorCd() );
 
@@ -229,17 +229,17 @@ public class In05000111Impl extends InMsgHandlerImpl {
              */
         }
         else if( parsed.getBytes("atm_monitor")[0] == MsgBrokerConst.CALC_MAC_NORMAL ) {
-            errBasic.setErrorCd( String.format("NE%c%2s", MsgBrokerConst.CALC_MAC_ERROR, lpad(MsgBrokerConst.CD_CALC_MAC_SUPERVISOR, 2, "0")) );
+            errBasic.setErrorCd( String.format("NE%c%s", MsgBrokerConst.CALC_MAC_ERROR, lpad(MsgBrokerConst.CD_CALC_MAC_SUPERVISOR, 2, "0")) );
 
             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, errBasic, errRcpt,
                     errNoti, errCall, errTxn, macInfo, retErrStates );
 
             if( nNormal != CNT_CALC_MAC_ATMWATCH_STATE ) {
-                errBasic.setErrorCd( String.format("NE2%2s", lpad(MsgBrokerConst.CD_CALC_MAC_WATCH_ERR, 2, "0")) );
+                errBasic.setErrorCd( String.format("NE2%s", lpad(MsgBrokerConst.CD_CALC_MAC_WATCH_ERR, 2, "0")) );
                 comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
             }
             else {
-                errBasic.setErrorCd( String.format("NE2%2s", lpad(MsgBrokerConst.CD_CALC_MAC_WATCH_ERR, 2, "0")) );
+                errBasic.setErrorCd( String.format("NE2%s", lpad(MsgBrokerConst.CD_CALC_MAC_WATCH_ERR, 2, "0")) );
                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_ONLY_HW_CLEAR, errBasic, errRcpt,
                         errNoti, errCall, errTxn, macInfo, retErrStates );
             }

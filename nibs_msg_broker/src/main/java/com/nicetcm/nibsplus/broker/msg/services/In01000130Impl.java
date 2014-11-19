@@ -80,7 +80,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
              */
             splMap.SendSMSMacInfo( macInfo );
             throw new MsgBrokerException( String.format("[01003100] 기기정보 검색 실패 기관[%s] 지점[%s] 기번[%s]",
-                                            macInfo.getOrgCd(), macInfo.getMacNo()), -7 );
+                                            macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo()), -7 );
         }
         logger.warn("기관[{}] 지점[{}] 기번[{}] 기기명[{}] 부서[{}] 사무소[{}] 지소[{}]",
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(),

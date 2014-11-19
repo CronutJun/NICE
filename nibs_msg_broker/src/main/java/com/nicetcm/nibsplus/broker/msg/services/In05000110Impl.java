@@ -357,6 +357,12 @@ public class In05000110Impl extends InMsgHandlerImpl {
              * 장애
              */
             else if( parsed.getString("error_hw_yn").equals(MsgBrokerConst.HWERR_ERROR) ) {
+                /**
+                 * 2014/11/18 방혜진 차장 요청으로 추가함 (K.D.J)
+                 */
+                if( parsed.getString("error_cd").length() == 0 )
+                    throw new Exception("장애이나 전문에 에러코드가 없습니다.");
+
                 errBasic.setErrorCd( parsed.getString("error_cd") );
                 errBasic.setMadeErrCd( parsed.getString("error_mtc_cd") );
                 /*

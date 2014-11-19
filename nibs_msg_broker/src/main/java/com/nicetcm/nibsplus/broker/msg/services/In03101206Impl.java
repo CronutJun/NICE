@@ -44,7 +44,7 @@ public class In03101206Impl extends InMsgHandlerImpl {
         .andMacNoEqualTo(parsed.getString("mac_no"))
         .andDealDateEqualTo(parsed.getString("deal_date"))
         .andDealTimeEqualTo(parsed.getString("deal_time"))
-        .andMemberIdEqualTo(parsed.getString("member_id"));
+        .andMemberIdEqualTo(parsed.getString("casher_id"));
 
         try
         {

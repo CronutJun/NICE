@@ -40,7 +40,7 @@ public class MsgBrokerQInitializer {
             for (JsonObject elem : arr.getValuesAs(JsonObject.class)) {
                 MsgBrokerConsumer.consumers
                 .put(elem.getString("name"),
-                    new MsgBrokerConsumer(MsgCommon.msgProps.getProperty("consumer.host"), elem.getString("name"),  new MsgBrokerListener(elem.getString("type", "multi"))));
+                    new MsgBrokerConsumer(MsgCommon.msgProps.getProperty("consumer.host"), elem.getString("name"),  new MsgBrokerListener(elem.getString("type", "multi"), elem.getBoolean("force_resp", false))));
             }
         }
         return this;

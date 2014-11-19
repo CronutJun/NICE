@@ -601,10 +601,10 @@ public interface TCmMacMapper {
         "AND     M.BRANCH_CD = '9600'                      ",
         "AND     M.ORG_CD    = '096'                       ",
         "AND     M.ORG_CD    = S.ORG_CD                    ",
-        "AND     M.JIJUM_CD  = S.JIJUM_CD                  ",
+        "AND     M.BRANCH_CD = S.BRANCH_CD                 ",
         "AND     M.SITE_CD   = S.SITE_CD                   ",
         "AND     M.ORG_CD    = NM.ORG_CD                   ",
-        "AND     M.JIJUM_CD  = NM.JIJUM_CD                 ",
+        "AND     M.BRANCH_CD = NM.BRANCH_CD                ",
         "AND     M.MAC_NO    = NM.MAC_NO                   "
     })
     @Results({

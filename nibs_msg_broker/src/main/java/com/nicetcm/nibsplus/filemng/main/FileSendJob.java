@@ -12,7 +12,6 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.nicetcm.nibsplus.filemng.service.FileSendService;
 
@@ -20,14 +19,11 @@ import com.nicetcm.nibsplus.filemng.service.FileSendService;
 public class FileSendJob implements Job {
 	
 	@Override
-	public void execute(JobExecutionContext ctx) throws JobExecutionException {
-        String args = (String)ctx.getMergedJobDataMap().get("REAL_TIME_COMMAND");
-        
-	    String springConfig  = "classpath:/filemng/spring/context-filesend.xml";
+	public void execute(JobExecutionContext context) throws JobExecutionException {
+		ApplicationContext applicationContext = (ApplicationContext)context.getMergedJobDataMap().get("applicationContext");
+        String args = (String)context.getMergedJobDataMap().get("REAL_TIME_COMMAND");
 
-	    ApplicationContext context = new ClassPathXmlApplicationContext(springConfig);
-
-	    FileSendService fileSendService = (FileSendService) context.getBean("fileSendService");
+	    FileSendService fileSendService = (FileSendService) applicationContext.getBean("fileSendService");
 
 	    try {
 	    	fileSendService.execute(args == null ? new String[]{} : new String[]{args});

@@ -13,9 +13,11 @@ public class MsgBrokerListener implements MessageListener {
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerListener.class);
 
     private String type = "";
+    private boolean forceResp;
 
-    public MsgBrokerListener(String type) {
+    public MsgBrokerListener(String type, boolean forceResp) {
         this.type = type;
+        this.forceResp = forceResp;
     }
 
     public void onMessage(Message message) {
@@ -25,7 +27,7 @@ public class MsgBrokerListener implements MessageListener {
              int len = (int)bInst.getBodyLength();
              byte[] rcv = new byte[len];
              bInst.readBytes(rcv);
-             MsgBrokerWorkGroup.getInstance().execute(new MsgBrokerWorker(rcv));
+             MsgBrokerWorkGroup.getInstance().execute(new MsgBrokerWorker(rcv, this.forceResp));
          }
          catch( JMSException e ) {
              logger.error(e.getMessage());

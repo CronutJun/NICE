@@ -19,9 +19,11 @@ public class MsgBrokerWorker implements Runnable {
     private byte[] keepMsg;
     private MsgParser msgPsr;
     private MsgBrokerData msgThrdSafeData;
+    private boolean forceResp;
 
-    public MsgBrokerWorker( byte[] msg ) {
+    public MsgBrokerWorker( byte[] msg, boolean forceResp ) {
         this.msg = msg;
+        this.forceResp = forceResp;
         this.keepMsg = new byte[msg.length - MsgBrokerConst.HEADER_LEN];
         System.arraycopy(msg, MsgBrokerConst.HEADER_LEN, keepMsg, 0, msg.length - MsgBrokerConst.HEADER_LEN);
     }
@@ -32,6 +34,7 @@ public class MsgBrokerWorker implements Runnable {
         try {
             MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "I", true);
             logger.debug("inQNm = {}", ret.QNm);
+            logger.warn("forceResp = {}", this.forceResp);
             logger.error("I-MSG : [{}],[{}]", msg.length, new String(msg));
 
             msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
@@ -40,6 +43,16 @@ public class MsgBrokerWorker implements Runnable {
             msgThrdSafeData.setKeepResData(true);
             msgThrdSafeData.setSkipAnswer(false);
             try {
+                if( this.forceResp ) {
+                    /*
+                     * Respond Ack Normal
+                     */
+                    RespAckNakHandler resp = (RespAckNakHandler)MsgBrokerSpringMain
+                            .sprCtx.getBean("respAckNak");
+                    resp.procAckNak( msgThrdSafeData, msgPsr, 0 );
+                    MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
+                    msgPsr.setString( "CM.msg_type",   msgPsr.getString("CM.msg_type").substring(0, 2) + MsgBrokerConst.REQ_CODE );
+                }
                 try {
                     /*
                      * 응답전문 수신 일 경우에는 오류코드 체크
@@ -104,7 +117,8 @@ public class MsgBrokerWorker implements Runnable {
                             keepBuf.position(MsgBrokerConst.HEADER_LEN);
                             keepBuf.put(keepMsg);
                         }
-                        MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
+                        if( !this.forceResp )
+                            MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                     }
                     /*
                      * nibsplus 또는 기타 AP요청의 응답인지
@@ -138,8 +152,9 @@ public class MsgBrokerWorker implements Runnable {
                                 ByteBuffer keepBuf = msgPsr.getMessage();
                                 keepBuf.position(MsgBrokerConst.HEADER_LEN);
                                 keepBuf.put(keepMsg);
-                           }
-                            MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
+                            }
+                            if( !this.forceResp )
+                                MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                         }
                     }
                     /*
@@ -174,7 +189,8 @@ public class MsgBrokerWorker implements Runnable {
                             keepBuf.position(MsgBrokerConst.HEADER_LEN);
                             keepBuf.put(keepMsg);
                         }
-                        MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
+                        if( !this.forceResp )
+                            MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                     }
                     /*
                      * nibsplus 또는 기타 AP요청의 응답인지

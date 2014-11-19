@@ -9,14 +9,11 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
-import com.nicetcm.nibsplus.orgsend.common.OrgSendException;
 import com.nicetcm.nibsplus.orgsend.constant.NibsDataSource;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
 import com.nicetcm.nibsplus.orgsend.model.OrgSendExternalVO;
 import com.nicetcm.nibsplus.orgsend.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.orgsend.service.NOrgSendService;
-import com.nicetcm.nibsplus.scheduler.model.SchedulerVO;
-import com.nicetcm.nibsplus.scheduler.service.JobExecuter;
 
 /**
  *
@@ -35,8 +32,7 @@ import com.nicetcm.nibsplus.scheduler.service.JobExecuter;
  * @see
  */
 @DisallowConcurrentExecution
-public class OrgSendJob implements Job, JobExecuter
-{
+public class OrgSendJob implements Job {
 
     /**
      * Quartz에서 실행시킴
@@ -75,37 +71,5 @@ public class OrgSendJob implements Job, JobExecuter
             e.printStackTrace();
         }
     }
-
-
-
-    /**
-     * 외부(화면WAS)에서 실행시킴
-     * <pre>
-     *
-     * </pre>
-     *
-     * @param applicationContext
-     * @param schedulerVO
-     * @throws OrgSendException
-     */
-    @Override
-    public void executeJob(ApplicationContext applicationContext, SchedulerVO schedulerVO) throws Exception
-    {
-        if (MsgBrokerCallAgent.msgBrokerConfig == null) {
-        	MsgBrokerCallAgent.msgBrokerConfig = (Properties)applicationContext.getBean("msgBrokerConfig");
-        }
-        
-        NOrgSendService nOrgSendService = applicationContext.getBean("NOrgSendImpl", NOrgSendService.class);
-
-        String orgCd = schedulerVO.gettArg2();
-        String queryName = schedulerVO.gettArg3();
-        TransferType transferType = TransferType.valueOf(schedulerVO.gettArg1() + "_SEND");
-        NibsDataSource nibsDataSource = NibsDataSource.valueOf(schedulerVO.gettArg4());
-
-        OrgSendExternalVO orgSendExternalVO = new OrgSendExternalVO(applicationContext, queryName, orgCd, transferType, nibsDataSource);
-
-        nOrgSendService.execute(orgSendExternalVO);
-    }
-
-
+    
 }

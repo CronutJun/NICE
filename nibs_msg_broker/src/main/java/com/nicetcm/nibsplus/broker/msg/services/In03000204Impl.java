@@ -85,7 +85,7 @@ public class In03000204Impl extends InMsgHandlerImpl {
                 tFnBoxOrg.setDealDate  (parsed.getString("own_trade_date"));
                 tFnBoxOrg.setSeq       (parsed.getString("own_seq_no"));
                 //tFnBoxOrg.setBoxSeq    (parsed.getString(""));생성시 시퀀스에서 가져옴
-                tFnBoxOrg.setBoxGubun1 (parsed.getString("0008"));
+                tFnBoxOrg.setBoxGubun1 ("0008");
                 tFnBoxOrg.setBoxGubun2 (parsed.getString("good_cd"));
                 tFnBoxOrg.setKjCnt     (parsed.getInt("tot_ticket_cnt"));
                 tFnBoxOrg.setKjAmt     (parsed.getLong("tot_ticket_amt"));
@@ -176,7 +176,7 @@ public class In03000204Impl extends InMsgHandlerImpl {
                         tFnBoxOrg.setDealDate  (parsed.getString("own_trade_date"));
                         tFnBoxOrg.setSeq       (parsed.getString("own_seq_no"));
                         //tFnBoxOrg.setBoxSeq    (parsed.getString(""));TFnBoxOrg 생성시 시퀀스에서 가져옴
-                        tFnBoxOrg.setBoxGubun1 (parsed.getString("0004"));
+                        tFnBoxOrg.setBoxGubun1 ("0004");
                         tFnBoxOrg.setBoxGubun2 (StringUtils.leftPad(parsed.getString("ticket_comp"), 4, "0"));
                         tFnBoxOrg.setKjGubun   (szAryKjGb[i]);
                         tFnBoxOrg.setKjCnt     (szCnt);

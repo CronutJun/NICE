@@ -89,7 +89,7 @@ public class MsgBrokerConsumer {
 
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-        destination = session.createQueue(queue);
+        destination = session.createQueue(queue + "?consumer.exclusive=true");
 
         consumer = session.createConsumer(destination);
         consumer.setMessageListener(listener);

@@ -1386,11 +1386,12 @@ public class CommonPackImpl implements CommonPack {
         TCtOpen open = new TCtOpen();
         open.setOrgCd( ErrBasic.getOrgCd() );                          // 기관코드
         open.setBranchCd( ErrBasic.getBranchCd() );                    // 지점코드
-        open.setMacNo( ErrBasic.getErrorNo() );                        // 기번
+        open.setMacNo( ErrBasic.getMacNo() );                          // 기번
         open.setOpenDate( ErrBasic.getCreateDate().toString() );       // 개시일
         open.setOpenTime( ErrBasic.getCreateTime() );                  // 개시시간
         open.setSerialNo( MacInfo.getSerialNo() );                     // 일련번호
         open.setMacAddress( MacInfo.getMacAddress() );                 // 맥어드레스
+        open.setRegDt( safeData.getDSysDate() );
         open.setUpdateDate( safeData.getDSysDate() );
         try {
             openMap.insertSelective(open);
@@ -1630,7 +1631,7 @@ public class CommonPackImpl implements CommonPack {
 
             try {
                 niceMac = niceMacMap.selectByCond1( niceMacKey );
-                if( niceMacMap == null ) {
+                if( niceMac == null ) {
                     niceMac = new TCtNiceMac();
                 }
             }

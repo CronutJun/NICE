@@ -145,7 +145,7 @@ public class In04000900Impl extends InMsgHandlerImpl {
                         suCompBody.put("site_cd"      , msgSHBody.getBytes("site_cd"      ));
                         suCompBody.put("site_nm"      , new String(msgSHBody.getBytes("site_nm"), "MS949").getBytes() );
                         suCompBody.put("mac_no"       , msgSHBody.getBytes("mac_no"       ));
-                        suCompBody.put("place_gb"     , msgSHBody.getBytes("place_gb"     ));
+                        suCompBody.put("place_cl"     , msgSHBody.getBytes("place_gb"     ));
                         suCompBody.put("oper_type"    , msgSHBody.getBytes("oper_type"    ));
                         suCompBody.put("oper_time"    , msgSHBody.getBytes("oper_time"    ));
                         suCompBody.put("serial_no"    , msgSHBody.getBytes("serial_no"    ));
@@ -200,8 +200,8 @@ public class In04000900Impl extends InMsgHandlerImpl {
                         suCompBody.put("auto_calc_error" , msgSHBody.getBytes("auto_calc_error"  ));
                         suCompBody.put("auto_calc_rslt"  , msgSHBody.getBytes("auto_calc_rslt"   ));
 
-                        suHeadSend.setOrgCd(tMisc.getOrgCd());
-                        suHeadSend.setWorkType("1130");
+                        suHeadSend.setOrgCd(tMisc.getMadeOrgCd());
+                        suHeadSend.setWorkType("1140");
 
                         comPack.msgSnd(safeData, suHeadSend, suCompBody, "P");
                     }
@@ -237,7 +237,7 @@ public class In04000900Impl extends InMsgHandlerImpl {
 
                         suHeadSend.setOrgCd(tMisc.getMadeOrgCd());
                         Map<String, byte[]> columnMap = new HashMap<String, byte[]>();
-                        columnMap.put("full_msg",     msgSHBody.getBytes("full_msg"));
+                        columnMap.put("full_msg",     msgSHBody.getBytes("msg"));
 
 
                         comPack.msgSnd(safeData, suHeadSend, columnMap, "P");

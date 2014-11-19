@@ -93,14 +93,14 @@ public class MsgParser {
         synchronized (instPool) {
             if( instPool.containsKey(incFile) ) {
                 MsgParser mp = instPool.get(incFile);
-                logger.debug("Schema Length = {}", mp.getSchemaLength());
+                logger.warn("S-LEN : [{}]", mp.getSchemaLength());
                 return mp;
             }
             else {
                 logger.debug("Creating Instance..[incFile:{}]", incFile);
                 MsgParser mp = new MsgParser(incFile);
                 instPool.put( incFile, mp );
-                logger.debug("Schema Length = {}", mp.getSchemaLength());
+                logger.warn("S-LEN : [{}]", mp.getSchemaLength());
                 return mp;
             }
         }

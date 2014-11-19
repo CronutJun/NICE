@@ -88,4 +88,33 @@
         ORDER BY A.GW_DATE||A.TRANS_SEQ_NO
     ]]>
     </select>
+    <select id="select0TR" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT  A.DEAL_DATE,
+        A.trans_seq,
+        '',
+        '',
+        '',
+        '1',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        '','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+from   (      
+            SELECT  TO_CHAR(SYSDATE-1, 'YYYYMMDD') as deal_date,
+                     trans_seq_no  as trans_seq
+            FROM T_IF_MISSNO_CHK 
+            WHERE trans_seq_no <= (select MAX(TRANS_SEQ)+1 from t_fn_realtime_TRADE where org_cd = '0TR' AND DEAL_DATE = TO_CHAR(SYSDATE-1, 'YYYYMMDD'))
+            MINUS 
+            SELECT  deal_date,
+                    trans_seq   as trans_seq
+            from t_fn_realtime_TRADE
+            where org_cd = '0TR' 
+            AND DEAL_DATE = TO_CHAR(SYSDATE-1, 'YYYYMMDD') 
+        ) A
+    ]]>
+    </select>
 </mapper>

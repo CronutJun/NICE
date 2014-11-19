@@ -1,6 +1,5 @@
 package com.nicetcm.nibsplus.broker.msg.mapper;
 
-import com.nicetcm.nibsplus.broker.msg.model.TFnNiceCloseTmp;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketMacCloseTmp;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketMacCloseTmpKey;
 import com.nicetcm.nibsplus.broker.msg.model.TFnTicketMacCloseTmpSpec;

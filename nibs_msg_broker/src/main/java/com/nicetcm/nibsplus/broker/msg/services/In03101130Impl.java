@@ -112,6 +112,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
             if(tMisc.gethRtnVal() != 0) {
                 throw new Exception( String.format("[MngCM_AP_SaveCloseAmt] 프로시져 오류 1: [%s]", tMisc.gethRtnMsg()));
             }
+            hpreAmt = tMisc.gethPreAmt();
 
             /* 현금 잔액이 없는 경우는 장전금액에서 계산해 준다. */
             if(parsed.getLong("cash_remain_amt") == 0) {
@@ -242,7 +243,7 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 ifCashInsert2.setpPreAddAmt        (0);
                 ifCashInsert2.setpHolyAddAmt       (0);
                 ifCashInsert2.setpTodayAddAmt      (0);
-                ifCashInsert2.setpSafeNo           ("");
+                ifCashInsert2.setpSafeNo           (null);
                 ifCashInsert2.setvFirstInqYN       (0);
                 ifCashInsert2.setvResult           (-1);
 

@@ -61,7 +61,6 @@
 
             </bean>
         </property>
-
     </bean>
 
     <bean id="dealnoDb2ItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">

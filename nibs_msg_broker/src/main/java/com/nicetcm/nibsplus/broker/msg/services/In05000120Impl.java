@@ -78,7 +78,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
         byte[] bModState = parsed.getBytes("modul_state");
         String sModState = "";
         for( byte ms: bModState )
-            sModState += String.format("%2X ", ms );
+            sModState += String.format("%02X ", ms );
         logger.warn( "module_state = {}", sModState );
 
         try {
@@ -333,7 +333,7 @@ public class In05000120Impl extends InMsgHandlerImpl {
         /*
          *  AS 기 접수 장애는 장애 정상 발생 처리 후 중복 응답 처리 20101220 농협 회의결과
          */
-        if( macInfo.getAsAcptYn().length() == 8) {
+        if( nstr(macInfo.getAsAcptYn()).length() == 8) {
             logger.warn( "AS기 접수 장애 중복장애처리 응답");
             throw new MsgBrokerException("AS기 접수 장애 중복장애처리 응답]", -12);
         }
