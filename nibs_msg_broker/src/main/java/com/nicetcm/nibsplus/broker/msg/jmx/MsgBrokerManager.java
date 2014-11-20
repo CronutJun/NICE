@@ -30,6 +30,7 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerClassLoader;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerConsumer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerShutdown;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerSpringMain;
 
@@ -260,5 +261,19 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
         String description = "An attribute of this MBean has changed";
         MBeanNotificationInfo info = new MBeanNotificationInfo(types, name, description);
         return new MBeanNotificationInfo[] { info };
+    }
+
+    @Override
+    public String reattachConsumer(String consumerName) {
+        try {
+            MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName);
+            if( con == null )
+                return String.format("No Consumer: %s", consumerName);
+            con.init();
+            return "reattachment is succeed";
+        }
+        catch( Exception e ) {
+            return e.getMessage();
+        }
     }
 }

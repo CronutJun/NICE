@@ -23,6 +23,16 @@ public class FilemngTest {
         Scheduler scheduler = new StdSchedulerFactory().getScheduler();
 
         {
+        	String jobKey = "ElandReadJob";
+        	JobDataMap jobData = new JobDataMap();
+        	jobData.put("applicationContext", new ClassPathXmlApplicationContext("classpath:/filemng/spring/context-filemng.xml", "classpath:/filemng/spring/context-filemng-elandReadJob.xml"));
+            JobDetail job = JobBuilder.newJob(ElandReadJob.class).withIdentity(jobKey, "FilemngService").usingJobData(jobData).build();
+            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobKey, "FilemngService").withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?")).build();
+            scheduler.scheduleJob(job, trigger);
+        }
+
+        /*
+        {
         	String jobKey = "ERRMonJob";
         	JobDataMap jobData = new JobDataMap();
         	jobData.put("applicationContext", new ClassPathXmlApplicationContext("classpath:/filemng/spring/context-errmon.xml"));
@@ -31,16 +41,6 @@ public class FilemngTest {
             scheduler.scheduleJob(job, trigger);
         }
         
-        /*
-        {
-        	String jobKey = "ElandFtpReadJob";
-        	JobDataMap jobData = new JobDataMap();
-        	jobData.put("applicationContext", new ClassPathXmlApplicationContext("classpath:/filemng/spring/context-filemng.xml", "classpath:/filemng/spring/context-filemng-elandFtpReadJob.xml"));
-            JobDetail job = JobBuilder.newJob(ElandFtpReadJob.class).withIdentity(jobKey, "FilemngService").usingJobData(jobData).build();
-            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobKey, "FilemngService").withSchedule(CronScheduleBuilder.cronSchedule("0/5 * * * * ?")).build();
-            scheduler.scheduleJob(job, trigger);
-        }
-
         {
         	String jobKey = "FileSendJob";
             JobDetail job = JobBuilder.newJob(FileSendJob.class).withIdentity(jobKey, "SqlService").build();

@@ -13,7 +13,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TCmEmartMemberSpec;
 
 /**
  *
- * 1220 지점별 기기마감 일괄조회
+ * 1210 정산기 캐셔 정보
  * <pre>
  * MngIQ_AP_SaveCalcCashierInfo( pRecvData, nLen );
  * </pre>
@@ -22,8 +22,8 @@ import com.nicetcm.nibsplus.broker.msg.model.TCmEmartMemberSpec;
  * @version 1.0
  * @see
  */
-@Service("in04101220")
-public class In04101220Impl extends InMsgHandlerImpl {
+@Service("in04101210")
+public class In04101210Impl extends InMsgHandlerImpl {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -31,19 +31,6 @@ public class In04101220Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-/*
-        EXEC SQL update T_CM_EMART_MEMBER
-        set
-                 MEMBER_NM   = :suBody.casher_nm
-                ,USE_YN      = :suBody.use_yn
-                ,CASHIER_TYPE= :suBody.casher_type
-                ,MEMO        = :suBody.meg
-                ,UPDATE_DATE = SYSDATE
-                ,UPDATE_UID  = 'DataMg'
-        where   MEMBER_ID   = :suBody.casher_id
-        and     JIJUM_CD    = :suBody.jijum_cd;
-*/
-
 
         int resultCnt;
 
@@ -53,7 +40,7 @@ public class In04101220Impl extends InMsgHandlerImpl {
             tCmEmartMember.setMemberNm(parsed.getString("casher_nm"));
             tCmEmartMember.setUseYn(parsed.getString("use_yn"));
             tCmEmartMember.setCashierType(parsed.getString("casher_type"));
-            tCmEmartMember.setMemo(parsed.getString("meg"));
+            tCmEmartMember.setMemo(parsed.getString("message"));
             tCmEmartMember.setUpdateDate(safeData.getDSysDate());
             tCmEmartMember.setUpdateUid("DataMg");
 
@@ -76,7 +63,7 @@ public class In04101220Impl extends InMsgHandlerImpl {
             tCmEmartMember.setBranchCd(parsed.getString("brch_cd"));
             tCmEmartMember.setUseYn(parsed.getString("use_yn"));
             tCmEmartMember.setCashierType(parsed.getString("casher_type"));
-            tCmEmartMember.setMemo(parsed.getString("meg"));
+            tCmEmartMember.setMemo(parsed.getString("message"));
             tCmEmartMember.setUpdateDate(safeData.getDSysDate());
             tCmEmartMember.setUpdateUid("online");
 

@@ -61,9 +61,13 @@ public class NibsScheduleExecuter {
             	System.out.println(StringUtils.leftPad("", 65, "-"));
             } else {
 	            JobVO jobVO = new JobVO();
-	            jobVO.setQuartzNodeName(args[0]); // "OrgSendService");
-	            jobVO.setJobGroup(args[1]); // "ADD_CASH");
-	            jobVO.setJobName(args[2]); // "003");
+	            jobVO.setQuartzNodeName(args[0]); // "OrgSendService"
+	            jobVO.setJobGroup(args[1]); // "ADD_CASH"
+	            jobVO.setJobName(args[2]); // "003"
+	            
+	            if (args.length == 4) {
+	            	jobVO.setType(args[3]); // "AUTO", "ONLY"
+	            }
 	
 	            NibsScheduleExecuter.executeJob(scheduleInfoProvider.selectScheduleByPk(jobVO));
 	

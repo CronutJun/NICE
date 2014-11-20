@@ -8,9 +8,9 @@ import org.springframework.stereotype.Service;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TFnNotendEmartFrgnMapper;
-import com.nicetcm.nibsplus.broker.msg.model.TFnNotendEmartFrgn;
-import com.nicetcm.nibsplus.broker.msg.model.TFnNotendEmartFrgnSpec;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnNotendEmartMapper;
+import com.nicetcm.nibsplus.broker.msg.model.TFnNotendEmart;
+import com.nicetcm.nibsplus.broker.msg.model.TFnNotendEmartSpec;
 
 /**
  *
@@ -30,25 +30,25 @@ public class In03101207Impl extends InMsgHandlerImpl {
 
     @Autowired private StoredProcMapper splMap;
 
-    @Autowired private TFnNotendEmartFrgnMapper tFnNotendEmartFrgnMapper;
+    @Autowired private TFnNotendEmartMapper tFnNotendEmartMapper;
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        TFnNotendEmartFrgn tFnNotendEmartFrgn = new TFnNotendEmartFrgn();
-        tFnNotendEmartFrgn.setOrgSendYn("1");
+        TFnNotendEmart tFnNotendEmart = new TFnNotendEmart();
+        tFnNotendEmart.setOrgSendYn("1");
 
-        TFnNotendEmartFrgnSpec tFnNotendEmartFrgnSpec = new TFnNotendEmartFrgnSpec();
-        tFnNotendEmartFrgnSpec.createCriteria()
+        TFnNotendEmartSpec tFnNotendEmartSpec = new TFnNotendEmartSpec();
+        tFnNotendEmartSpec.createCriteria()
         .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
         .andBranchCdEqualTo(parsed.getString("brch_cd"))
         .andMacNoEqualTo(parsed.getString("mac_no"))
         .andDealDateEqualTo(parsed.getString("deal_date"))
         .andDealTimeEqualTo(parsed.getString("deal_time"))
-        .andMemberIdEqualTo(parsed.getString("member_id"));
+        .andMemberIdEqualTo(parsed.getString("casher_id"));
 
         try
         {
-            tFnNotendEmartFrgnMapper.updateBySpecSelective(tFnNotendEmartFrgn, tFnNotendEmartFrgnSpec);
+            tFnNotendEmartMapper.updateBySpecSelective(tFnNotendEmart, tFnNotendEmartSpec);
 
         } catch (Exception e)
         {

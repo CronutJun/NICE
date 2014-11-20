@@ -5,10 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.commons.net.PrintCommandListener;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.stereotype.Service;
 
 import ch.ethz.ssh2.Connection;
@@ -76,7 +72,7 @@ public class SFtpTransfer implements FileTransferService {
 	            	int readCnt=0;
 	                fos = new FileOutputStream(lfile);
 	            	
-	                while ((readCnt = sftp.read(rfile, fileOffset, readBuf, 0, readBuf.length)) != -1) {
+	                while ((readCnt = sftp.read(rfile, fileOffset, readBuf, 0, readCnt)) != -1) {
 	                	fileOffset += readCnt;
 	                	fos.write(readBuf, 0, readCnt);
 	                }
@@ -114,73 +110,58 @@ public class SFtpTransfer implements FileTransferService {
      * @throws FileMngException
      */
     @Override
-    public File putFile(TransferVO transferVO) throws FileMngException
-    {
+    public File putFile(TransferVO transferVO) throws FileMngException {
         FileInputStream fis = null;
-        FTPClient ftp = null;
-        File f = null;
-        try
-        {
-            ftp = new FTPClient();
-            ftp.connect(transferVO.getHost(), transferVO.getAvailableServerPort());
+        Connection connection;
+        SFTPv3Client sftp = null;
+        SFTPv3FileHandle rfile = null;
+        File lfile = null;
 
-            int reply = ftp.getReplyCode();
-            if (!FTPReply.isPositiveCompletion(reply))
-            {
-                ftp.disconnect();
-                throw new FileMngException(ExceptionType.NETWORK, "FTP server refused connection.");
-            }
+        try {
+        	connection = new Connection(transferVO.getHost(), transferVO.getAvailableServerPort());
+            connection.connect();
 
-            if (!ftp.login(transferVO.getUserId(), transferVO.getPassword()))
-            {
-                ftp.logout();
+            if (!connection.authenticateWithPassword(transferVO.getUserId(), transferVO.getPassword())) {
                 throw new FileMngException(ExceptionType.NETWORK, "ftp 서버에 로그인하지 못했습니다.");
             }
 
-            ftp.setFileType(FTP.BINARY_FILE_TYPE);
-            ftp.enterLocalPassiveMode();
-
-            ftp.setKeepAlive(true);
-            ftp.setControlKeepAliveTimeout(30);
-            ftp.addProtocolCommandListener(new PrintCommandListener(System.out, true));
-            ftp.setBufferSize(1024000);
-
-            ftp.changeWorkingDirectory(transferVO.getRemotePath());
-
-            // FTPFile[] ftpFileList = ftp.listFiles();
-
-            f = new File(transferVO.getLocalPath() + "/" + transferVO.getFileName());
-
-            fis = new FileInputStream(f);
-
-
-            ftp.storeFile(transferVO.getFileName(), fis);
-            ftp.logout();
-
-        } catch (Exception e)
-        {
-            throw new FileMngException(ExceptionType.VM_STOP, e.getMessage());
-        } finally
-        {
-            if (fis != null)
-                try
-                {
-                    fis.close();
-                } catch (IOException ex)
-                {
-                }
-            if (ftp != null && ftp.isConnected())
-            {
-                try
-                {
-                    ftp.disconnect();
-                } catch (IOException e)
-                {
-
+            try {
+	            sftp = new SFTPv3Client(connection);
+	            rfile = sftp.openFileWAppend(transferVO.getRemotePath() + "/" + transferVO.getFileName());
+	
+	            lfile = new File(transferVO.getLocalPath(), transferVO.getFileName());
+	            lfile.getParentFile().mkdirs();
+	
+	            {
+	            	long fileOffset = 0;
+	            	byte[] readBuf = new byte[32768];
+	            	int readCnt=0;
+	            	fis = new FileInputStream(lfile);
+	            	
+	                while ((readCnt = fis.read(readBuf)) != -1) {
+	                	sftp.write(rfile, fileOffset, readBuf, 0, readCnt);
+	                	
+	                	fileOffset += readCnt;
+	                }
+	            }
+            } finally {
+                if (fis != null)
+                    try {
+                        fis.close();
+                    } catch (IOException ex) {}
+                if (sftp != null && sftp.isConnected()) {
+                    try {
+                    	if (rfile != null) sftp.closeFile(rfile);
+                    	
+                    	sftp.close();
+                    	connection.close();
+                    } catch (IOException e) {}
                 }
             }
+        } catch (Exception e) {
+            throw new FileMngException(ExceptionType.VM_STOP, e.getMessage());
         }
 
-        return f;
+        return lfile;
     }
 }

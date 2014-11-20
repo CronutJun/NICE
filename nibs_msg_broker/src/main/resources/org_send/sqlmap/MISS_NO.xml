@@ -90,12 +90,12 @@
     </select>
     <select id="select0TR" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  A.DEAL_DATE,
-        A.trans_seq,
+        SELECT  A.DEAL_DATE req_date,
+        A.trans_seq req_seq,
         '',
         '',
         '',
-        '1',
+        '1' req_code,
         '',
         '',
         '',

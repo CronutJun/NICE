@@ -189,8 +189,6 @@ public class FileSendServiceImpl implements FileSendService {
 			} else if( pOrgCd.equals("000") ) { /* 금융결제원(KFTC) */
 				nRtn = GetKFTCTranData(pDate, szFilePath);
 			} else if( pOrgCd.equals("0GV") ) { /* 전자상품권  */
-				szDestPath = (String)config.get("gift.remote.path");
-	
 				nRtn = GetGiftCardInfoData(pDate, szSrcPath, szFileName);
 			} else {
 				System.out.print(String.format("해당 기관없음 [%s]\n", pOrgCd));

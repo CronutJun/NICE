@@ -30,6 +30,7 @@ public class MsgBrokerClassLoader extends ClassLoader {
         Class c = findLoadedClass(name);
         if( c == null ) {
             if( name.equals(classNm) ) {
+                logger.warn("Same class name");
                 c = findClass(name);
             }
             else {

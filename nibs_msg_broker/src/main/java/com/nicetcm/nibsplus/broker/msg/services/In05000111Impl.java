@@ -76,6 +76,18 @@ public class In05000111Impl extends InMsgHandlerImpl {
         }
         try { comPack.checkBranchMacLength( macInfo ); } catch ( Exception e ) {}
 
+        /*
+         *  기기 버전 UPDATE
+         */
+        /*
+         *  나이스 기기 UPDATE 함수를 함께 쓴다.
+         */
+        TCmMac cmMac = new TCmMac();
+        TCtNiceMac niceMac = new TCtNiceMac();
+        cmMac.setMacVer( parsed.getString("mac_ver") );
+        comPack.updateMacInfo( safeData, macInfo, cmMac, niceMac ); // 기기 프로그램 버전, 시리얼 번호 업데이트
+
+
         errBasic.setOrgCd( macInfo.getOrgCd() );
         errBasic.setCreateDate( parsed.getInt("create_date") );
         errBasic.setCreateTime( parsed.getString("create_time") );
@@ -94,7 +106,8 @@ public class In05000111Impl extends InMsgHandlerImpl {
         //memcpy( suDBErr.mac_grade   , suMacInfo.mac_grade   , strlen(suMacInfo.mac_grade)   );
         errBasic.setFormatType( "11" );                                                         // 업무구분 '11'-장애관리전문
 
-        MsgBrokerConst.EnumCalcMacStateSkipYN enumChosen = null;;
+        MsgBrokerConst.EnumCalcMacStateSkipYN enumChosen = null;
+        //logger.warn("KDJ#0 {}", parsed.getString("CM.org_cd"));
         for( MsgBrokerConst.EnumCalcMacStateSkipYN enumSkipYN: MsgBrokerConst.EnumCalcMacStateSkipYN.values() ) {
             enumChosen = enumSkipYN;
             if( enumSkipYN.name().equals("ORG_" + parsed.getString("CM.org_cd")) )
@@ -122,6 +135,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
             /*
              *  해당 상태관련 장애 무시
              */
+            //logger.warn("KDJ#1 {}, {}", enumChosen.getErrStates(), enumChosen.name());
             if( enumChosen.getErrStates().substring(e.ordinal(), e.ordinal()+1).equals("0") ) {
                 /*logger(">>> [SaveCalcMacErrState] 기관[%.3s]-[%s] 상태 ... 무시...\n", suHead.org_cd, szaStateNm[i]); */
                 continue;
@@ -134,6 +148,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
             /*
              *  예보 및 장애
              */
+            //logger.warn("KDJ#2 {}", parsed.getBytes("atm_state")[e.ordinal()]);
             if( parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_NEAR
             ||  parsed.getBytes("atm_state")[e.ordinal()] == MsgBrokerConst.STATE_END ) {
                 comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
@@ -244,17 +259,6 @@ public class In05000111Impl extends InMsgHandlerImpl {
                         errNoti, errCall, errTxn, macInfo, retErrStates );
             }
         }
-        /*
-         *  기기 버전 UPDATE
-         */
-        /*
-         *  나이스 기기 UPDATE 함수를 함께 쓴다.
-         */
-        TCmMac cmMac = new TCmMac();
-        TCtNiceMac niceMac = new TCtNiceMac();
-        cmMac.setMacVer( parsed.getString("mac_ver") );
-        comPack.updateMacInfo( safeData, macInfo, cmMac, niceMac ); // 기기 프로그램 버전, 시리얼 번호 업데이트
-
         /*
          *  정산기 ftp_Cnt가 설정되어 있다면 해당 file의 수신 개수를 확인 처리하여 응답
          *  개수가 맞지 않다면 오류코드 001' 세팅

@@ -96,7 +96,7 @@ public class MsgBrokerConsumer {
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         if( prefetchSize > 0 )
-            destination = session.createQueue(String.format("%s?consumer.exclusive=true;consumer.prefetchSize=%d", queue, prefetchSize));
+            destination = session.createQueue(String.format("%s?consumer.exclusive=true&consumer.prefetchSize=%d", queue, prefetchSize));
         else
             destination = session.createQueue(queue + "?consumer.exclusive=true");
 

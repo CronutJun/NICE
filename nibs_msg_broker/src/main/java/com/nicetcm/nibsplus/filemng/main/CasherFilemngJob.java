@@ -31,7 +31,7 @@ public class CasherFilemngJob implements org.quartz.Job {
 		if (files != null) {
 			for (File file : files) {
 				filePath = file.getAbsolutePath();
-				fileName = file.getName();
+				fileName = file.getName().toUpperCase();
 	
 				try {
 					// JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();

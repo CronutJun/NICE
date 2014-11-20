@@ -72,6 +72,12 @@ public class MsgBrokerShutdown extends Thread {
             logger.warn("JMXAgent is stopped.");
 
             logger.warn("Shutdown complete.");
+            for( Thread t: Thread.getAllStackTraces().keySet() ) {
+                if( t.isAlive() && this.getId() != t.getId() ) {
+                    t.getThreadGroup().interrupt();
+                }
+            }
+
         }
         catch( Exception e ) {
             e.printStackTrace();

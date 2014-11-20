@@ -3,16 +3,65 @@
 <mapper namespace="com.nicetcm.nibsplus.scheduler.dao.SchedulerMapper">
 
     <select id="selectEnableSchedule" resultType="com.nicetcm.nibsplus.scheduler.model.SchedulerVO" parameterType="string">
-        select * from op.T_CM_SCHEDULE
-        where quartz_node_name = #{quartzNodeName}
-        and use_yn = 'Y'
+		SELECT
+		    QUARTZ_NODE_NAME ,
+		    JOB_GROUP ,
+		    JOB_NAME ,
+		    JOB_EXPLAIN ,
+		    CRON_EXPRESSION ,
+		    STATUS ,
+		    REAL_TIME_COMMAND ,
+		    T_ARG1 ,
+		    T_ARG2 ,
+		    T_ARG3 ,
+		    T_ARG4 ,
+		    JOB_PRIORITY ,
+		    JOB_CLASS ,
+		    SPRING_CONTEXT_XML ,
+		    JOB_LISTENER_CLASS ,
+		    USE_YN ,
+		    REGMN_ID ,
+		    REG_YMD
+		FROM
+		    op.T_CM_SCHEDULE
+		WHERE
+		    quartz_node_name = #{quartzNodeName}
+		AND use_yn = 'Y'
     </select>
 
     <select id="selectScheduleByPk" resultType="com.nicetcm.nibsplus.scheduler.model.SchedulerVO" parameterType="com.nicetcm.nibsplus.scheduler.model.JobVO">
-        select * from op.T_CM_SCHEDULE
-        where quartz_node_name = #{quartzNodeName}
-        and job_group = #{jobGroup}
-        and job_name = #{jobName}
+		SELECT
+		    QUARTZ_NODE_NAME ,
+		    JOB_GROUP ,
+		    JOB_NAME ,
+		    JOB_EXPLAIN ,
+		    CRON_EXPRESSION ,
+		    STATUS ,
+		    REAL_TIME_COMMAND ,
+		    <choose>
+		    	<when test='type != null and type neq ""'>
+		    		UPPER(#{type}) AS T_ARG1,
+		    	</when>
+		    	<otherwise>
+		    		T_ARG1 ,
+		    	</otherwise>
+		    </choose>
+		    T_ARG2 ,
+		    T_ARG3 ,
+		    T_ARG4 ,
+		    JOB_PRIORITY ,
+		    JOB_CLASS ,
+		    SPRING_CONTEXT_XML ,
+		    JOB_LISTENER_CLASS ,
+		    USE_YN ,
+		    REGMN_ID ,
+		    REG_YMD
+		FROM
+		    op.T_CM_SCHEDULE
+		WHERE
+		    quartz_node_name = #{quartzNodeName}
+		AND job_group = #{jobGroup}
+		AND job_name = #{jobName}
     </select>
     
     <select id="selectScheduleJobGroup" resultType="com.nicetcm.nibsplus.scheduler.model.SchedulerVO">

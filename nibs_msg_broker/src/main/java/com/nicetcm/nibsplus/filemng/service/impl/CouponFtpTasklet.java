@@ -6,11 +6,11 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.core.JobParameter;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,8 +64,7 @@ public class CouponFtpTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception
     {
         JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
-        ExecutionContext jobContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
-
+        // ExecutionContext jobContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
 
         final String prefix = "NICE_";
         final String suffix = "_COUPON.dat";
@@ -108,8 +107,8 @@ public class CouponFtpTasklet implements Tasklet {
 	
 	            logger.info("DELETE T_FN_SAP_DETAIL Affect Rows: {}", affectRows);
 	        }
-	
-	        jobContext.put("file.getAbsolutePath", file.getAbsolutePath());
+
+	        jobParameters.getParameters().put("eland.file.name", new JobParameter(file.getAbsolutePath()));
 	    } catch(Exception e) {
 	    	logger.error(e.getMessage());
 	    }

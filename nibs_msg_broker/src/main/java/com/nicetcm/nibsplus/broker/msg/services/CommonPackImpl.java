@@ -1065,8 +1065,6 @@ public class CommonPackImpl implements CommonPack {
                     List<TCtErrorBasicJoin> rslt = errBasicMap.selectByJoin1( ErrBasic, ErrTxn );
                     if( rslt.size() == 0 ) {
                         logger.warn("[DBInsertUpdate] 장애복구건 없음");
-                        msgTX.rollback(safeData.getTXS());
-                        safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
                         return;
                     }
                     for( TCtErrorBasicJoin errBasicJoin: rslt ) {
@@ -1211,8 +1209,6 @@ public class CommonPackImpl implements CommonPack {
                 List<TCtErrorBasicJoin> rslt = errBasicMap.selectByJoin2( ErrBasic, ErrTxn );
                 if( rslt.size() == 0 ) {
                     logger.warn("[DBInsertUpdate] 장애복구건 없음");
-                    msgTX.rollback(safeData.getTXS());
-                    safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
                     return;
                 }
                 for( TCtErrorBasicJoin errBasicJoin: rslt ) {

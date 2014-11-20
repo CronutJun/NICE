@@ -8,16 +8,10 @@
     http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
+    <bean id="fileRenameTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.CasherFileRenameTasklet" />
+    
     <bean id="casherTRVO" class="com.nicetcm.nibsplus.filemng.model.CasherTRVO" scope="prototype" />
-    <bean id="casherCKVO" class="com.nicetcm.nibsplus.filemng.model.CasherCKVO" scope="prototype" />
-    <bean id="casherTKVO" class="com.nicetcm.nibsplus.filemng.model.CasherTKVO" scope="prototype" />
-
-    <bean id="casherFileRenameTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.CasherFileRenameTasklet" />
-    
     <bean id="casherTRItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.CasherTRItemWriter"></bean>
-    <bean id="casherCKItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.CasherCKItemWriter"></bean>
-    <bean id="casherTKItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.CasherTKItemWriter"></bean>
-    
     <batch:job id="casherTRJob">
         <batch:step id="dbLoadTR" next="fileRenameTR">
             <batch:tasklet>
@@ -25,10 +19,9 @@
             </batch:tasklet>
         </batch:step>
         <batch:step id="fileRenameTR">
-            <tasklet ref="casherFileRenameTasklet" />
+            <tasklet ref="fileRenameTasklet" />
         </batch:step>
     </batch:job>
-
     <bean id="casherTRCvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
         <!-- Read a csv file -->
         <property name="resource"  value="file:#{jobParameters['casher.file.name']}" />
@@ -55,6 +48,8 @@
         </property>
     </bean>
 
+    <bean id="casherCKVO" class="com.nicetcm.nibsplus.filemng.model.CasherCKVO" scope="prototype" />
+    <bean id="casherCKItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.CasherCKItemWriter"></bean>
     <batch:job id="casherCKJob">
         <batch:step id="dbLoadCK" next="fileRenameCK">
             <batch:tasklet>
@@ -62,10 +57,9 @@
             </batch:tasklet>
         </batch:step>
         <batch:step id="fileRenameCK">
-            <tasklet ref="casherFileRenameTasklet" />
+            <tasklet ref="fileRenameTasklet" />
         </batch:step>
     </batch:job>
-
     <bean id="casherCKCvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
         <!-- Read a csv file -->
         <property name="resource"  value="file:#{jobParameters['casher.file.name']}" />
@@ -92,6 +86,8 @@
         </property>
     </bean>
 
+    <bean id="casherTKVO" class="com.nicetcm.nibsplus.filemng.model.CasherTKVO" scope="prototype" />
+    <bean id="casherTKItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.CasherTKItemWriter"></bean>
     <batch:job id="casherTKJob">
         <batch:step id="dbLoadTK" next="fileRenameTK">
             <batch:tasklet>
@@ -99,10 +95,9 @@
             </batch:tasklet>
         </batch:step>
         <batch:step id="fileRenameTK">
-            <tasklet ref="casherFileRenameTasklet" />
+            <tasklet ref="fileRenameTasklet" />
         </batch:step>
     </batch:job>
-
     <bean id="casherTKCvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
         <!-- Read a csv file -->
         <property name="resource"  value="file:#{jobParameters['casher.file.name']}" />
