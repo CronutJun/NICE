@@ -36,14 +36,20 @@ public class MsgBrokerConsumer {
 
     private String broker;
     private String queue;
+    private int prefetchSize;
 
     private MessageListener listener;
 
-    public static void putDataToCon(MsgParser msgPsr) throws Exception {
+    public static void putDataToCon(MsgParser msgPsr, String queueName) throws Exception {
 
         ActiveMQ mq = null;
 
-        String qName = String.format("%s.%s", msgPsr.getString("CM.msg_type"), msgPsr.getString("CM.work_type"));
+        String qName = "";
+        if( queueName != null && queueName.length() > 0 )
+            qName = queueName;
+        else
+            qName = String.format("%s.%s", msgPsr.getString("CM.msg_type"), msgPsr.getString("CM.work_type"));
+
         mq = req.get( qName );
         if( mq == null ) {
             mq = new ActiveMQ(MsgCommon.msgProps.getProperty("consumer.host"), qName, null);
@@ -71,12 +77,12 @@ public class MsgBrokerConsumer {
         this.listener = listener;
     }
 
-    public MsgBrokerConsumer(String broker, String queue, MessageListener listener) throws JMSException {
+    public MsgBrokerConsumer(String broker, String queue, int prefetchSize, MessageListener listener) throws JMSException {
 
         this.broker = broker;
         this.queue = queue;
         this.listener = listener;
-
+        this.prefetchSize = prefetchSize;
         init();
     }
 
@@ -89,7 +95,10 @@ public class MsgBrokerConsumer {
 
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
-        destination = session.createQueue(queue + "?consumer.exclusive=true");
+        if( prefetchSize > 0 )
+            destination = session.createQueue(String.format("%s?consumer.exclusive=true;consumer.prefetchSize=%d", queue, prefetchSize));
+        else
+            destination = session.createQueue(queue + "?consumer.exclusive=true");
 
         consumer = session.createConsumer(destination);
         consumer.setMessageListener(listener);

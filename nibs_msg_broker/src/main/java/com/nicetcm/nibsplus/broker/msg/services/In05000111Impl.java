@@ -284,7 +284,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
 
         int iCnt = 0;
 
-        File dir = new File(MsgCommon.msgProps.getProperty("file.path.casher"));
+        File dir = new File(MsgCommon.msgProps.getProperty("file.dir.casher"));
 
         if( dir.isDirectory() ) {
             File[] fList = dir.listFiles();

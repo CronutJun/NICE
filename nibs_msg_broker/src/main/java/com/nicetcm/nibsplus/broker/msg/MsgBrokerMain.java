@@ -35,10 +35,6 @@ public class MsgBrokerMain {
     public MsgBrokerMain() {
         try {
             /**
-             * 서버번호 Setting
-             */
-            MsgBrokerMain.serverNo = MsgCommon.msgProps.getProperty("server.number", "0");
-            /**
              * 중복 검증
              */
             try {
@@ -105,11 +101,17 @@ public class MsgBrokerMain {
     public static void main(String[] args) {
 
         try {
-            org.apache.log4j.xml.DOMConfigurator.configure(MsgBrokerMain.class.getResource(
-                    String.format("/%s/log4j.xml", MsgBrokerConst.SVR_TYPE)));
             InputStream is = MsgBrokerMain.class.getResourceAsStream(
                     String.format("/%s/msg.properties", MsgBrokerConst.SVR_TYPE));
             MsgCommon.msgProps.load(is);
+            /**
+             * 서버번호 Setting
+             */
+            MsgBrokerMain.serverNo = MsgCommon.msgProps.getProperty("server.number", "0");
+
+
+            org.apache.log4j.xml.DOMConfigurator.configure(MsgBrokerMain.class.getResource(
+                    String.format("/%s/log4j.xml", MsgBrokerConst.SVR_TYPE)));
 
             //RMISocketFactory.setSocketFactory(new MsgBrokerRMISocketFactory());
             startJMXConnectorServer();

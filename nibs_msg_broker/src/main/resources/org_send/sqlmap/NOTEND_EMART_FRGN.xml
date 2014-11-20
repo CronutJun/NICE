@@ -9,7 +9,7 @@
     <![CDATA[
         SELECT  DEAL_DATE        ,
               DEAL_TIME          ,
-              BRANCH_CD           ,
+              BRANCH_CD brch_cd  ,
               MAC_NO             ,
               MEMBER_ID casher_id         ,
               CLOSE_DATE         ,
@@ -28,11 +28,17 @@
               '',
               '',
               '','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
-        FROM OP.T_FN_NOTEND_EMART_FRGN
-        WHERE org_cd = '0EM'
-        /* AND jijum_cd = '4700'*/
+        /*FROM T_FN_NOTEND_EMART_FRGN ==> 2014.05.12 웹 확인 테이블 변경 */
+		FROM OP.T_FN_NOTEND_EMART
+         WHERE ORG_CD = '0EM'
+         /* AND jijum_cd = '4700'*/
          AND DEAL_DATE >= TO_CHAR(SYSDATE-3, 'YYYYMMDD')
          AND ORG_SEND_YN = '0'
+         AND (    DOLLAR_AMT > 0 
+              OR  EURO_AMT > 0
+              OR  YEN_AMT > 0
+              OR  YUAN_AMT > 0
+             )
     ]]>
     </select>
 </mapper>

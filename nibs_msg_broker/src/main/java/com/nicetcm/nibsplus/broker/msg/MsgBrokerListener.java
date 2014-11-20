@@ -12,22 +12,31 @@ public class MsgBrokerListener implements MessageListener {
 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerListener.class);
 
-    private String type = "";
+    private int prefetchSize;
     private boolean forceResp;
+    private String redirectTo;
+    private boolean noResp;
 
-    public MsgBrokerListener(String type, boolean forceResp) {
-        this.type = type;
+    public MsgBrokerListener(int prefetchSize, boolean forceResp, String redirectTo, boolean noResp) {
+        this.prefetchSize = prefetchSize;
         this.forceResp = forceResp;
+        this.redirectTo = redirectTo;
+        this.noResp = noResp;
     }
 
     public void onMessage(Message message) {
-         logger.info("Thread = {}, type = {}, Got message '{}'", Thread.currentThread().getId(), type, message.toString() + "'");
          BytesMessage bInst = (BytesMessage)message;
          try {
              int len = (int)bInst.getBodyLength();
              byte[] rcv = new byte[len];
              bInst.readBytes(rcv);
-             MsgBrokerWorkGroup.getInstance().execute(new MsgBrokerWorker(rcv, this.forceResp));
+             if( prefetchSize == 0 )
+                 MsgBrokerWorkGroup.getInstance().execute(new MsgBrokerWorker(rcv, this.forceResp, this.redirectTo, this.noResp));
+             else {
+                 MsgBrokerWork work = new MsgBrokerWork(rcv, this.forceResp, this.redirectTo, this.noResp);
+                 work.doWork();
+             }
+
          }
          catch( JMSException e ) {
              logger.error(e.getMessage());

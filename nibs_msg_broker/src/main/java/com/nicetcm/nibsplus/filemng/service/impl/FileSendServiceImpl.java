@@ -121,11 +121,11 @@ public class FileSendServiceImpl implements FileSendService {
 	}
 	
 	private int PutOrgTranFile(String pDate, String pOrgCd) throws Exception {
-		String szSrcPath = (String)config.get("FTP_SRC_PATH");
-		String szDestPath = (String)config.get("FTP_DEST_PATH");
-		String szHost = (String)config.get("FTP_HOST_IP");;
-		String szID = (String)config.get("FTP_HOST_UNAME");;
-		String szPwd = (String)config.get("FTP_HOST_PWD");
+		String szSrcPath = (String)config.get("host.local.path");
+		String szDestPath = (String)config.get("host.remote.path");
+		String szHost = (String)config.get("host.host");;
+		String szID = (String)config.get("host.userid");;
+		String szPwd = (String)config.get("host.password");
 		String szFileName = String.format("S%s%3s", pDate, pOrgCd);
 		String szFilePath = String.format("%s/%s", szSrcPath, szFileName);
 		int		ftpsuccess = 0;
@@ -189,7 +189,7 @@ public class FileSendServiceImpl implements FileSendService {
 			} else if( pOrgCd.equals("000") ) { /* 금융결제원(KFTC) */
 				nRtn = GetKFTCTranData(pDate, szFilePath);
 			} else if( pOrgCd.equals("0GV") ) { /* 전자상품권  */
-				szDestPath = (String)config.get("FTP_DEST_GIFT_PATH");
+				szDestPath = (String)config.get("gift.remote.path");
 	
 				nRtn = GetGiftCardInfoData(pDate, szSrcPath, szFileName);
 			} else {
@@ -2737,7 +2737,7 @@ public class FileSendServiceImpl implements FileSendService {
 
 		File fileWriter;
 
-		szPath = (String)config.get("casher.local.path");
+		szPath = (String)config.get("smart.local.path");
 
 		szFileName = String.format("%s/S%sDKS", szPath, pTransDate);
 

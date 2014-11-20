@@ -57,6 +57,8 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
         //AutowireCapableBeanFactory beanFactory;
 
         try {
+            logger.warn("Bean Class Name : {}", beanClassName);
+
             MsgBrokerClassLoader classLoader = new MsgBrokerClassLoader();
             Class<?> changeClass = classLoader.loadClass(beanClassName);
 

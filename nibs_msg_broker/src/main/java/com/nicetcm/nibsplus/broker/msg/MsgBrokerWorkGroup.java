@@ -30,7 +30,7 @@ public class MsgBrokerWorkGroup {
     public void shutdown() throws Exception {
         svc.shutdown();
         while (!svc.awaitTermination(2, TimeUnit.SECONDS)) {
-            logger.warn("Awaiting completion of threads. Thread count = {}", Thread.activeCount() );
+            logger.warn("Awaiting completion of threads. Thread count = {}", Thread.getAllStackTraces().keySet().size() );
         }
     }
 

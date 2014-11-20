@@ -24,7 +24,7 @@ public class MsgBrokerClassLoader extends ClassLoader {
 
     protected synchronized Class loadClass(String name, boolean resolve) throws ClassNotFoundException {
 
-        logger.debug(name +"  "+resolve);
+        logger.warn("Name: {}, classNm: {}, resolve: {}", name, classNm, resolve);
         if( classNm == null) classNm = name;
         // First, check if the class has already been loaded
         Class c = findLoadedClass(name);
@@ -47,7 +47,7 @@ public class MsgBrokerClassLoader extends ClassLoader {
         byte[] buffer = null;
         String path = name.replace('.', '/').concat(".class");
         String filePath = url.getPath() + File.separatorChar + path;
-        logger.debug(filePath);
+        logger.warn(filePath);
         buffer = readFile(filePath);
 
         return defineClass(name, buffer, 0, buffer.length);

@@ -17,6 +17,7 @@ public class MsgBrokerQInitializer {
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerQInitializer.class);
 
     private static MsgBrokerQInitializer qinit = null;
+    private int defPrefetchSize = 0;
     private JsonReader rdr;
     private JsonObject obj;
 
@@ -35,14 +36,25 @@ public class MsgBrokerQInitializer {
 
     public MsgBrokerQInitializer initConsumers() throws Exception {
 
+        defPrefetchSize = Integer.parseInt(MsgCommon.msgProps.getProperty("consumer.prefetch.size", "10"));
+
         if( obj.containsKey("consumers")) {
             JsonArray arr = obj.getJsonArray("consumers");
             for (JsonObject elem : arr.getValuesAs(JsonObject.class)) {
                 MsgBrokerConsumer.consumers
                 .put(elem.getString("name"),
-                    new MsgBrokerConsumer(MsgCommon.msgProps.getProperty("consumer.host"), elem.getString("name"),  new MsgBrokerListener(elem.getString("type", "multi"), elem.getBoolean("force_resp", false))));
+                    new MsgBrokerConsumer(MsgCommon.msgProps.getProperty("consumer.host"), elem.getString("name"), elem.getInt("prefetch_size", defPrefetchSize),
+                                              new MsgBrokerListener(
+                                                      elem.getInt("prefetch_size", defPrefetchSize),
+                                                      elem.getBoolean("force_resp", false),
+                                                      elem.getString("redirect_to", ""),
+                                                      elem.getBoolean("no_resp", false)
+                                              )
+                                          )
+                    );
             }
         }
+
         return this;
     }
 

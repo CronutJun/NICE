@@ -2902,7 +2902,7 @@ public class CommonPackImpl implements CommonPack {
             if( type.equals("P") )
                 MsgBrokerProducer.putDataToPrd(msgPsr);
             else
-                MsgBrokerConsumer.putDataToCon(msgPsr);
+                MsgBrokerConsumer.putDataToCon(msgPsr, "");
 
         }
         catch ( Exception e ) {

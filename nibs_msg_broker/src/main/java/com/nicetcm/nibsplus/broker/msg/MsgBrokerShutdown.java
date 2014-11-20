@@ -64,12 +64,12 @@ public class MsgBrokerShutdown extends Thread {
             }
             logger.warn("Other resources are released.");
 
-            MsgBrokerMain.stopJMX();
-            logger.warn("JMXAgent is stopped.");
-
-            logger.warn("Thread's count = {}", Thread.activeCount() );
+            logger.warn("Thread's count = {}", Thread.getAllStackTraces().keySet().size() );
 
             MsgBrokerWorkGroup.getInstance().shutdown();
+
+            MsgBrokerMain.stopJMX();
+            logger.warn("JMXAgent is stopped.");
 
             logger.warn("Shutdown complete.");
         }

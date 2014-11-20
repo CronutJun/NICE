@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
@@ -74,10 +77,13 @@ public class In01000140Impl extends InMsgHandlerImpl {
                     macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo(),
                     macInfo.getMacNm(), macInfo.getDeptCd(), macInfo.getOfficeCd(), macInfo.getTeamCd() );
 
+        String sOrgCallCnt  = substr(parsed.getString("mac_model"), 0, 2);
+        String sCallType    = substr(parsed.getString("mac_model"), 2, 3);
+        String sCallCntType = substr(parsed.getString("mac_model"), 3, 4);
 
         if( macInfo.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE)
-        &&  parsed.getString("call_cnt_type").equals("2")
-        &&  !parsed.getString("call_type").equals("3") ) {
+        &&  sCallCntType.equals("2")
+        &&  !sCallType.equals("3") ) {
 
             TCtErrorMngMadeCom tCtErrorMngMadeCom = new TCtErrorMngMadeCom();
             tCtErrorMngMadeCom.setCancelDate    (parsed.getString("cancel_date"));

@@ -213,7 +213,7 @@ public class In03101110Impl extends InMsgHandlerImpl {
             ifCashInsert.setpInCnt            (0);
             ifCashInsert.setpOutCnt           (0);
             ifCashInsert.setpChkInCnt         (parsed.getLong("check_in_cnt"));
-            ifCashInsert.setpChkOutCnt        (parsed.getLong("check_out_amt"));
+            ifCashInsert.setpChkOutCnt        (parsed.getLong("check_out_cnt"));
             ifCashInsert.setpAddAmt           (0);
             ifCashInsert.setpCollectAmt       (0);
             ifCashInsert.setpRemainCheckAmt   (parsed.getLong("check_amt"));

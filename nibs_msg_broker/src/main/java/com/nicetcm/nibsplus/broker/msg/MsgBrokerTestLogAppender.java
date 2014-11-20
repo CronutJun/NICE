@@ -23,6 +23,8 @@ import org.apache.log4j.helpers.CountingQuietWriter;
 import org.apache.log4j.helpers.LogLog;
 import org.apache.log4j.spi.LoggingEvent;
 
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
+
 public class MsgBrokerTestLogAppender extends FileAppender {
 
     public MsgBrokerTestLogAppender() {
@@ -48,9 +50,9 @@ public class MsgBrokerTestLogAppender extends FileAppender {
             ThrName = String.format("%s-%s", tkn[0].substring(3), tkn[1]);
         }
         else {
-            ThrName = "main";
+            ThrName = String.format("main-%s", MsgBrokerMain.serverNo);
         }
-        String fileName = String.format("%s/logs/%s/%s.log", System.getProperty("user.dir"), MsgBrokerLib.SysDate(), ThrName);
+        String fileName = String.format("%s/%s/%s.log", MsgCommon.msgProps.getProperty("file.dir.log", System.getProperty("user.dir") + "/logs"), MsgBrokerLib.SysDate(), ThrName);
         return fileName;
     }
 

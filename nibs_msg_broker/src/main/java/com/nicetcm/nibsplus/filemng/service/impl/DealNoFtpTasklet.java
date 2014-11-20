@@ -25,16 +25,16 @@ public class DealNoFtpTasklet implements Tasklet {
     @Resource(name="ftpTransfer")
     private FileTransferService fileTransferService;
 
-    @Value("#{config['dealno.host']}")
+    @Value("#{config['host.host']}")
     private String host;
 
-    @Value("#{config['dealno.availableServerPort']}")
+    @Value("#{config['host.availableServerPort']}")
     private int availableServerPort;
 
-    @Value("#{config['dealno.userid']}")
+    @Value("#{config['host.userid']}")
     private String userId;
 
-    @Value("#{config['dealno.password']}")
+    @Value("#{config['host.password']}")
     private String password;
 
     @Value("#{config['dealno.remote.path']}")

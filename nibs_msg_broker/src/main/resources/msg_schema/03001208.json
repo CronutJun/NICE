@@ -1,0 +1,19 @@
+{
+   "name" : "03001208",                    "kname" : "정산기 회수금내역 외화",
+   "response" : { "code" : "03001208",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "depo_date",              "kname" : "입금일",                 "type" : "N",   "length"  : 8   },
+      { "name" : "depo_sdate",             "kname" : "회수금합산시작일",       "type" : "AN",  "length"  : 8   },
+      { "name" : "depo_stime",             "kname" : "회수금합산시작시간",     "type" : "AN",  "length"  : 6   },
+      { "name" : "depo_edate",             "kname" : "회수금합산종료일",       "type" : "AN",  "length"  : 8   },
+      { "name" : "depo_etime",             "kname" : "회수금합산종료시간",     "type" : "AN",  "length"  : 6   },      
+      { "name" : "dollar_amt",             "kname" : "달러화 화수금액",        "type" : "AN",  "length"  : 9   },      
+      { "name" : "euro_amt",               "kname" : "유로화 회수금액",        "type" : "AN",  "length"  : 9   },      
+      { "name" : "yen_amt",                "kname" : "엔화 회수금액",          "type" : "AN",  "length"  : 9   },      
+      { "name" : "yuan_amt",               "kname" : "위안화 회수금액",        "type" : "AN",  "length"  : 9   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 330 }
+   ]
+}

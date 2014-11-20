@@ -4,12 +4,12 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * Copyright 2014 The NIBS+ Project
  *
  * MSG Broker NICE 점주관리 일마감
- * 
+ *
  * <pre>
  * MngNC_NiceJumjuDayClose
  * </pre>
- * 
- *           2014. 07. 31    K.D.J. 
+ *
+ *           2014. 07. 31    K.D.J.
  */
 
 import org.slf4j.Logger;
@@ -27,16 +27,16 @@ import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperDayClose;
 public class InN3000300Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(InN3000300Impl.class);
-    
+
     @Autowired private StoredProcMapper splMap;
     @Autowired private TFnStorekeeperDayCloseMapper fnStorekeeperDayCloseMap;
-    
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        
+
         TFnStorekeeperDayClose fnStkprDayClose = new TFnStorekeeperDayClose();
-        
-        fnStkprDayClose.setOrgCd      ( parsed.getString("org_cd"       ) );
+
+        fnStkprDayClose.setOrgCd      ( parsed.getString("CM.org_cd"    ) );
         fnStkprDayClose.setBranchCd   ( "9600"                            );
         fnStkprDayClose.setMacNo      ( parsed.getString("mac_no"       ) );
         fnStkprDayClose.setCloseDate  ( parsed.getString("close_date"   ) );
@@ -51,7 +51,7 @@ public class InN3000300Impl extends InMsgHandlerImpl {
         fnStkprDayClose.setInsertUid  ( "DataMng"                         );
         fnStkprDayClose.setUpdateDate ( safeData.getDSysDate()            );
         fnStkprDayClose.setUpdateUid  ( "DataMng"                         );
-        
+
         try {
             fnStorekeeperDayCloseMap.insert( fnStkprDayClose );
         }

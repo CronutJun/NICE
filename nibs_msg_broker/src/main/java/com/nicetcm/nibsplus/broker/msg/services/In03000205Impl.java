@@ -139,7 +139,7 @@ public class In03000205Impl extends InMsgHandlerImpl {
 
         /** 쿠폰 Insert */
         if(parsed.getInt("cupon_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0004", null, null, parsed.getInt("cupon_cnt"), parsed.getLong("cupon_amt"));
+            insertTFnBoxOrg(parsed, safeData, "0005", null, null, parsed.getInt("cupon_cnt"), parsed.getLong("cupon_amt"));
         }
 
         /** 현금쿠폰 Insert */
