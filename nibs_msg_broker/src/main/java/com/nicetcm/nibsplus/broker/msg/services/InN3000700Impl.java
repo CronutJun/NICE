@@ -4,12 +4,12 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * Copyright 2014 The NIBS+ Project
  *
  * MSG Broker CD-VAN 환경점검
- * 
+ *
  * <pre>
  * MngNC_AP_SaveEnvChk
  * </pre>
- * 
- *           2014. 07. 31    K.D.J. 
+ *
+ *           2014. 07. 31    K.D.J.
  */
 
 import org.slf4j.Logger;
@@ -23,19 +23,19 @@ import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmNiceEnvCheckMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCmNiceEnvCheck;
 
-@Service("inN3100700")
-public class InN3100700Impl extends InMsgHandlerImpl {
+@Service("inN3000700")
+public class InN3000700Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(InN3100700Impl.class);
-    
+    private static final Logger logger = LoggerFactory.getLogger(InN3000700Impl.class);
+
     @Autowired private StoredProcMapper splMap;
     @Autowired private TCmNiceEnvCheckMapper cmNiceEnvCheckMap;
-    
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        
+
         TCmNiceEnvCheck cmNiceEnvCheck = new TCmNiceEnvCheck();
-        
+
         cmNiceEnvCheck.setOrgCd           ( "096"                                  );
         cmNiceEnvCheck.setBranchCd        ( "9600"                                 );
         cmNiceEnvCheck.setMacNo           ( parsed.getString("mac_no"            ) );
@@ -58,7 +58,7 @@ public class InN3100700Impl extends InMsgHandlerImpl {
         cmNiceEnvCheck.setExecComp        ( parsed.getString("exec_comp"         ) );
         cmNiceEnvCheck.setExecutant       ( parsed.getString("executant"         ) );
         cmNiceEnvCheck.setOrgSendYn       ( "0"                                    );
-        cmNiceEnvCheck.setUpdateDate      ( safeData.getDSysDate()                 ); 
+        cmNiceEnvCheck.setUpdateDate      ( safeData.getDSysDate()                 );
         cmNiceEnvCheck.setUpdateUid       ( "online"                               );
 
         try {

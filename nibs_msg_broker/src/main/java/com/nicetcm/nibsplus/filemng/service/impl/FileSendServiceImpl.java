@@ -20,12 +20,12 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.net.PrintCommandListener;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import ch.ethz.ssh2.Connection;
+import ch.ethz.ssh2.SFTPv3Client;
+import ch.ethz.ssh2.SFTPv3FileHandle;
 
 import com.nicetcm.nibsplus.filemng.common.FileMngException;
 import com.nicetcm.nibsplus.filemng.dao.FileSendMapper;
@@ -51,6 +51,9 @@ public class FileSendServiceImpl implements FileSendService {
 	@Autowired
 	private Properties config;
 
+    private Connection connection;
+    private SFTPv3Client sftp = null;
+    
 	public void execute(String... argv) throws Exception {
 		String szTransDate = null;
 		String szOrgCd = null;
@@ -101,151 +104,166 @@ public class FileSendServiceImpl implements FileSendService {
 			}
 		}
 
-		if (szOrgCd == null) {
-			for(int i = 0 ; i < MAX_ORG_CNT; i++ ) {
-				szOrgCd = szaryOrg[i];
-
-				/* 전체실행 예외기관 부분 														 */
-				/* 금융결제원(KFTC)의 경우, 전체실행 시간인 01:30에 데이터가 없으므로, 제외한다. */
-				if ("000".equals(szOrgCd)) {
-					continue;
+		try {
+			connectFtp();
+			
+			if (szOrgCd == null) {
+				for(int i = 0 ; i < MAX_ORG_CNT; i++ ) {
+					szOrgCd = szaryOrg[i];
+	
+					/* 전체실행 예외기관 부분 														 */
+					/* 금융결제원(KFTC)의 경우, 전체실행 시간인 01:30에 데이터가 없으므로, 제외한다. */
+					if ("000".equals(szOrgCd)) {
+						continue;
+					}
+	
+					try {
+						putFtp(PutOrgTranFile(szTransDate, szOrgCd));
+					} catch(Exception e) {
+						System.out.println(e.getMessage());
+					}
 				}
-
-				PutOrgTranFile(szTransDate, szOrgCd);
+			} else {
+				try {
+					putFtp(PutOrgTranFile(szTransDate, szOrgCd));
+				} catch(Exception e) {
+					System.out.println(e.getMessage());
+				}
 			}
-		} else {
-			PutOrgTranFile(szTransDate, szOrgCd);
+		} finally {
+			closeFtp();
 		}
 		
 		System.out.print(">>> [main] 작업완료\n");
 	}
 	
-	private int PutOrgTranFile(String pDate, String pOrgCd) throws Exception {
-		String szSrcPath = (String)config.get("host.local.path");
-		String szDestPath = (String)config.get("host.remote.path");
+	private void connectFtp() throws FileMngException, IOException {
 		String szHost = (String)config.get("host.host");;
 		String szID = (String)config.get("host.userid");;
 		String szPwd = (String)config.get("host.password");
+		
+    	connection = new Connection(szHost);
+        connection.connect();
+
+        if (!connection.authenticateWithPassword(szID, szPwd)) {
+            throw new FileMngException(ExceptionType.NETWORK, "ftp 서버에 로그인하지 못했습니다.");
+        }
+	}
+
+	private void putFtp(File file) throws FileMngException, IOException {
+		String szDestPath = (String)config.get("host.remote.path");
+		SFTPv3FileHandle rfile = null;
+		FileInputStream fis = null;
+    	long fileOffset = 0;
+    	byte[] readBuf = new byte[32768];
+    	int readCnt=0;
+    	
+        try {
+        	rfile = sftp.openFileWAppend(szDestPath + "/" + file.getName());
+        	fis = new FileInputStream(file);
+        	
+            while ((readCnt = fis.read(readBuf)) != -1) {
+            	sftp.write(rfile, fileOffset, readBuf, 0, readCnt);
+            	
+            	fileOffset += readCnt;
+            }
+        } finally {
+            if (fis != null)
+                try {
+                    fis.close();
+                } catch (IOException ex) {}
+            if (sftp != null && rfile != null) {
+                try {
+                	if (rfile != null) sftp.closeFile(rfile);
+                } catch (IOException e) {}
+            }
+        }
+	}
+	
+	private void closeFtp() {
+        if (sftp != null && sftp.isConnected()) {
+        	sftp.close();
+        	connection.close();
+        }
+	}
+	
+	private File PutOrgTranFile(String pDate, String pOrgCd) throws Exception {
+		String szSrcPath = (String)config.get("host.local.path");
 		String szFileName = String.format("S%s%3s", pDate, pOrgCd);
 		String szFilePath = String.format("%s/%s", szSrcPath, szFileName);
-		int		ftpsuccess = 0;
 		int		nRtn = -1;
 
 		new File(szSrcPath).mkdirs();
 
 		System.out.print(String.format("File 생성 Start [%s]-TransDate[%s], OrgCd[%s]\n", szFileName, pDate, pOrgCd));
 
-		try {
-			if( pOrgCd.equals("0BC") ) {
-				nRtn = GetBCTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("1BC") ) {
-				nRtn = GetBCMacData(pDate, szFilePath);
-			} else if( pOrgCd.equals("0CN") ) {
-				nRtn = GetCNTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("1CN") ) {
-				nRtn = GetCNMacData(pDate, szFilePath);
-			} else if( pOrgCd.equals("0CU") ) {
-				nRtn = GetCUTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("0HM") ) {
-				nRtn = GetCityTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("0LG") ) {
-				nRtn = GetLGTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("0LC") ) {
-				nRtn = GetLCTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("B11") ) {
-				nRtn = GetNongHTranData_NEW(pDate, szFilePath);
-			} else if( pOrgCd.equals("A11") ) {
-				nRtn = GetNongHMacData(pDate, szFilePath);
-			} else if( pOrgCd.equals("Z11") ) {
-				nRtn = GetNongHBrandMacData(pDate, szFilePath);
-			} else if( pOrgCd.equals("181") ) {
-				nRtn = GetHNetNewTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("044") ) {
-				nRtn = GetKETranData(pDate, pOrgCd, szFilePath);
-			} else if( pOrgCd.equals("004") ) {
-				nRtn = GetKBSTTranData(pDate, pOrgCd, szFilePath);
-			} else if( pOrgCd.equals("003") ) {
-				nRtn = GetKiupTranData(pDate, pOrgCd, szFilePath);
-			} else if( pOrgCd.equals("031") ||
-					 pOrgCd.equals("020") ||
-					 pOrgCd.equals("023") ||
-					 pOrgCd.equals("011") ||
-					 pOrgCd.equals("012") ) {
-				nRtn = GetCommonTranData(pDate, pOrgCd, szFilePath);
-			} else if( pOrgCd.equals("0HI") ) {
-				nRtn = GetHITranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("0CH") ) { /* 농협카드 */
-				nRtn = GetCHTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("088") ) { /* 신한은행 출금File*/
-				nRtn = GetSHTranData(pDate, szFilePath, "0");	/* 출금File 생성 */
-			} else if( pOrgCd.equals("488") ) { /* 신한은행 이체File*/
-				nRtn = GetSHTranData(pDate, szFilePath, "4");	/* 이체File 생성 */
-			} else if( pOrgCd.equals("0SC") ) { /* 삼성카드 */
-				nRtn = GetSCTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("007") ) { /* 수협 거래실적 */
-				nRtn = GetSuHTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("A07") ) { /* 수협 기기정보 */
-				nRtn = GetSuHMacData(pDate, szFilePath);
-			} else if( pOrgCd.equals("000") ) { /* 금융결제원(KFTC) */
-				nRtn = GetKFTCTranData(pDate, szFilePath);
-			} else if( pOrgCd.equals("0GV") ) { /* 전자상품권  */
-				nRtn = GetGiftCardInfoData(pDate, szSrcPath, szFileName);
-			} else {
-				System.out.print(String.format("해당 기관없음 [%s]\n", pOrgCd));
-				return -1;
-			}
-		} catch(IOException e) {
-			return -1;
+		if( pOrgCd.equals("0BC") ) {
+			nRtn = GetBCTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("1BC") ) {
+			nRtn = GetBCMacData(pDate, szFilePath);
+		} else if( pOrgCd.equals("0CN") ) {
+			nRtn = GetCNTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("1CN") ) {
+			nRtn = GetCNMacData(pDate, szFilePath);
+		} else if( pOrgCd.equals("0CU") ) {
+			nRtn = GetCUTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("0HM") ) {
+			nRtn = GetCityTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("0LG") ) {
+			nRtn = GetLGTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("0LC") ) {
+			nRtn = GetLCTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("B11") ) {
+			nRtn = GetNongHTranData_NEW(pDate, szFilePath);
+		} else if( pOrgCd.equals("A11") ) {
+			nRtn = GetNongHMacData(pDate, szFilePath);
+		} else if( pOrgCd.equals("Z11") ) {
+			nRtn = GetNongHBrandMacData(pDate, szFilePath);
+		} else if( pOrgCd.equals("181") ) {
+			nRtn = GetHNetNewTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("044") ) {
+			nRtn = GetKETranData(pDate, pOrgCd, szFilePath);
+		} else if( pOrgCd.equals("004") ) {
+			nRtn = GetKBSTTranData(pDate, pOrgCd, szFilePath);
+		} else if( pOrgCd.equals("003") ) {
+			nRtn = GetKiupTranData(pDate, pOrgCd, szFilePath);
+		} else if( pOrgCd.equals("031") ||
+				 pOrgCd.equals("020") ||
+				 pOrgCd.equals("023") ||
+				 pOrgCd.equals("011") ||
+				 pOrgCd.equals("012") ) {
+			nRtn = GetCommonTranData(pDate, pOrgCd, szFilePath);
+		} else if( pOrgCd.equals("0HI") ) {
+			nRtn = GetHITranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("0CH") ) { /* 농협카드 */
+			nRtn = GetCHTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("088") ) { /* 신한은행 출금File*/
+			nRtn = GetSHTranData(pDate, szFilePath, "0");	/* 출금File 생성 */
+		} else if( pOrgCd.equals("488") ) { /* 신한은행 이체File*/
+			nRtn = GetSHTranData(pDate, szFilePath, "4");	/* 이체File 생성 */
+		} else if( pOrgCd.equals("0SC") ) { /* 삼성카드 */
+			nRtn = GetSCTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("007") ) { /* 수협 거래실적 */
+			nRtn = GetSuHTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("A07") ) { /* 수협 기기정보 */
+			nRtn = GetSuHMacData(pDate, szFilePath);
+		} else if( pOrgCd.equals("000") ) { /* 금융결제원(KFTC) */
+			nRtn = GetKFTCTranData(pDate, szFilePath);
+		} else if( pOrgCd.equals("0GV") ) { /* 전자상품권  */
+			szFilePath = String.format("%s/%s", szSrcPath, String.format("gvinfo_%s.txt", fileSendMapper.pickupGetGiftCardInfoData()));
+			
+			nRtn = GetGiftCardInfoData(pDate, szFilePath);
+		} else {
+			throw new Exception(String.format("해당 기관없음 [%s]\n", pOrgCd));
 		}
 
 		if( nRtn < 0 ) {
-			System.out.print(String.format("file 생성 실패 [%s]\n", szFileName));
-			return -1;
+			throw new Exception(String.format("file 생성 실패 [%s]\n", szFileName));
 		} else {
 			System.out.print(String.format("file 생성 OK !!! [%s]\n", szFileName));
 		}
 		
-		FTPClient ftp = new FTPClient();
-        FileInputStream fis = null;
-        
-        try {
-            ftp.connect(szHost);
-
-            if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
-                ftp.disconnect();
-                throw new FileMngException(ExceptionType.NETWORK, "FTP server refused connection.");
-            }
-
-            if (!ftp.login(szID, szPwd)) {
-                ftp.logout();
-                throw new FileMngException(ExceptionType.NETWORK, "ftp 서버에 로그인하지 못했습니다.");
-            }
-
-            ftp.setFileType(FTP.BINARY_FILE_TYPE);
-            ftp.enterLocalPassiveMode();
-
-            ftp.setKeepAlive(true);
-            ftp.setControlKeepAliveTimeout(30);
-            ftp.addProtocolCommandListener(new PrintCommandListener(System.out, true));
-            ftp.setBufferSize(1024000);
-
-            ftp.changeWorkingDirectory(szDestPath);
-            // FTPFile[] ftpFileList = ftp.listFiles();
-
-            fis = new FileInputStream(szFilePath);
-
-	    	// 완료 시, T_CM_BATCH_RESULT 에 파일생성 결과를 입력한다.
-	    	if (ftp.storeFile(szFileName, fis) && 0 == fileSendMapper.updatePutOrgTranFile(szFileName, ftpsuccess)) {
-		    	fileSendMapper.insertPutOrgTranFile(szFileName, ftpsuccess);
-		    }
-
-            ftp.logout();
-        } finally {
-            if (fis != null) fis.close();
-            if (ftp != null && ftp.isConnected()) ftp.disconnect();
-        }
-        
-		return ftpsuccess;
+		return new File(szFilePath);
 	}
 	
 	private int GetCNTranData(String pTransDate, String pFileName) throws IOException {
@@ -3407,7 +3425,7 @@ public class FileSendServiceImpl implements FileSendService {
 	int MAX_SUB_INDEX = 8;
 	/* 전자상품권 코드정보 */
 	
-	private int GetGiftCardInfoData(String pTransDate, String pPathName, String pRtnFileName) throws IOException {
+	private int GetGiftCardInfoData(String pTransDate, String pFileName) throws IOException {
 		String hInfoType;
 		String hCol_2;
 		String hCol_3;
@@ -3418,16 +3436,9 @@ public class FileSendServiceImpl implements FileSendService {
 		String hCol_8;
 		String hCol_9;
 		String hCol_10;
-		String hNextDate;
 
-		String szFileName;
-
-		hNextDate = fileSendMapper.pickupGetGiftCardInfoData();
-		pRtnFileName = String.format("gvinfo_%s.txt", hNextDate);
-		szFileName = String.format("%s/%s", pPathName, pRtnFileName);
-
-		new File(szFileName).createNewFile();
-		OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(szFileName));
+		new File(pFileName).createNewFile();
+		OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(pFileName));
 
 		List<LinkedHashMap<String, Object>> list = fileSendMapper.selectGetGiftCardInfoData();
 		String[] rowValues;

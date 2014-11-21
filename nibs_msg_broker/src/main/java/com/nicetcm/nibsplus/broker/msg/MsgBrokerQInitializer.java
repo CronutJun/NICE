@@ -43,9 +43,12 @@ public class MsgBrokerQInitializer {
             for (JsonObject elem : arr.getValuesAs(JsonObject.class)) {
                 MsgBrokerConsumer.consumers
                 .put(elem.getString("name"),
-                    new MsgBrokerConsumer(MsgCommon.msgProps.getProperty("consumer.host"), elem.getString("name"), elem.getInt("prefetch_size", defPrefetchSize),
+                    new MsgBrokerConsumer(MsgCommon.msgProps.getProperty("consumer.host"), elem.getString("name"), elem.getBoolean("exclusive", true), elem.getInt("prefetch_size", defPrefetchSize),
                                               new MsgBrokerListener(
                                                       elem.getInt("prefetch_size", defPrefetchSize),
+                                                      elem.getInt("parallels", 0),
+                                                      elem.getInt("msg_para_pos", 0),
+                                                      elem.getInt("msg_para_len", 0),
                                                       elem.getBoolean("force_resp", false),
                                                       elem.getString("redirect_to", ""),
                                                       elem.getBoolean("no_resp", false)

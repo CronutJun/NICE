@@ -9,7 +9,6 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
-import javax.jms.MessageListener;
 import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -36,9 +35,10 @@ public class MsgBrokerConsumer {
 
     private String broker;
     private String queue;
+    private boolean exclusive;
     private int prefetchSize;
 
-    private MessageListener listener;
+    private MsgBrokerListener listener;
 
     public static void putDataToCon(MsgParser msgPsr, String queueName) throws Exception {
 
@@ -73,15 +73,16 @@ public class MsgBrokerConsumer {
         this.queue = queue;
     }
 
-    public void setListener(MessageListener listener) {
+    public void setListener(MsgBrokerListener listener) {
         this.listener = listener;
     }
 
-    public MsgBrokerConsumer(String broker, String queue, int prefetchSize, MessageListener listener) throws JMSException {
+    public MsgBrokerConsumer(String broker, String queue, boolean exclusive, int prefetchSize, MsgBrokerListener listener) throws JMSException {
 
         this.broker = broker;
         this.queue = queue;
         this.listener = listener;
+        this.exclusive = exclusive;
         this.prefetchSize = prefetchSize;
         init();
     }
@@ -96,9 +97,9 @@ public class MsgBrokerConsumer {
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 
         if( prefetchSize > 0 )
-            destination = session.createQueue(String.format("%s?consumer.exclusive=true&consumer.prefetchSize=%d", queue, prefetchSize));
+            destination = session.createQueue(String.format("%s?consumer.exclusive=%s&consumer.prefetchSize=%d", queue, exclusive, prefetchSize));
         else
-            destination = session.createQueue(queue + "?consumer.exclusive=true");
+            destination = session.createQueue(String.format("%s?consumer.exclusive=%s", queue, exclusive));
 
         consumer = session.createConsumer(destination);
         consumer.setMessageListener(listener);
@@ -120,6 +121,10 @@ public class MsgBrokerConsumer {
 
     public MessageConsumer getConsumer() {
         return consumer;
+    }
+
+    public MsgBrokerListener getListener() {
+        return listener;
     }
 
 }

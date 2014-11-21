@@ -239,6 +239,10 @@ public class In01000130Impl extends InMsgHandlerImpl {
                         errBasic.getBranchCd(), errBasic.getMacNo(), errBasic.getErrorCd(), e.getMessage() );
             }
 
+            /**
+             * 업무구분 '21'-자동,수동출동요청전문
+             */
+            errBasic.setFormatType("21");
         }
         else {
             /**

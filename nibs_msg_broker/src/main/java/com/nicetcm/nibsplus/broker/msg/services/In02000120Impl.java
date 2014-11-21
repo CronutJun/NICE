@@ -41,8 +41,8 @@ public class In02000120Impl extends InMsgHandlerImpl {
         macSetMng.setSiteCd      ( parsed.getString("org_site_cd"    ) );
         macSetMng.setMacNo       ( parsed.getString("mac_no"         ) );
         macSetMng.setSetType     ( "2"                                 );
-        macSetMng.setSetDate     ( parsed.getString("set_date"       ) );
-        macSetMng.setSetTime     ( parsed.getString("set_time"       ) );
+        macSetMng.setSetDate     ( parsed.getString("move_date"      ) );
+        macSetMng.setSetTime     ( parsed.getString("move_time"      ) );
         macSetMng.setOperDate    ( parsed.getString("oper_date"      ) );
         macSetMng.setSiteNm      ( parsed.getString("org_site_nm"    ) );
         macSetMng.setMadeComCd   ( parsed.getString("made_com_cd"    ) );
@@ -51,6 +51,7 @@ public class In02000120Impl extends InMsgHandlerImpl {
         macSetMng.setMacSubModel ( parsed.getString("mac_sub_model"  ) );
         macSetMng.setOperType    ( parsed.getString("oper_type"      ) );
         macSetMng.setOperTime    ( parsed.getString("oper_time"      ) );
+        //macSetMng.setSiteType    ( parsed.getString("site_type"      ) );
         macSetMng.setSetAddr     ( parsed.getString("set_addr"       ) );
         macSetMng.setSetPlace    ( parsed.getString("set_place"      ) );
         macSetMng.setServiceCd   ( parsed.getString("service_cd"     ) );
@@ -64,8 +65,8 @@ public class In02000120Impl extends InMsgHandlerImpl {
         macSetMng.setOldBranchCd ( parsed.getString("old_brch_cd"    ) );
         macSetMng.setOldMacNo    ( parsed.getString("old_mac_no"     ) );
         macSetMng.setOldOperType ( parsed.getString("old_oper_type"  ) );
-        macSetMng.setOldSetPlace ( parsed.getString("old_set_place"  ) );
-        macSetMng.setOldSetAddr  ( parsed.getString("old_set_addr"   ) );
+        macSetMng.setOldSetPlace ( parsed.getString("old_site_nm"    ) );
+        macSetMng.setOldSetAddr  ( parsed.getString("old_site_addr"  ) );
         macSetMng.setSetSerial   ( parsed.getString("set_seriald"    ) );
         macSetMng.setOldServiceCd( parsed.getString("old_service_cd" ) );
         macSetMng.setMacLoca     ( parsed.getString("mac_location"   ) );

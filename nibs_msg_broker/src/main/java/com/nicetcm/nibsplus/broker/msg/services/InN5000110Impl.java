@@ -40,7 +40,7 @@ public class InN5000110Impl extends InMsgHandlerImpl {
 
         TFnWrVanDemand rslt = null;
 
-        cond.setDemandDate( parsed.getString("deman_date") );
+        cond.setDemandDate( parsed.getString("demand_date") );
         cond.setOrgCd( parsed.getString("org_cd") );
         try {
             rslt = fnWrVanDemandMap.selectByPrimaryKey( cond );

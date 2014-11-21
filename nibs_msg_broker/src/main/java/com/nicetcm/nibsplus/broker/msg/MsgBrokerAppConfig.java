@@ -45,6 +45,7 @@ public class MsgBrokerAppConfig {
     @Value("${db_pass}") private String db_pass;
     @Value("${db_init_conn}") private String db_init_conn;
     @Value("${db_max_conn}") private String db_max_conn;
+    @Value("${db_lock_timeout}") private String db_lock_timeout;
 
     @Autowired private DataSource ds;
     @Autowired private SqlSessionFactory factory;
@@ -81,6 +82,10 @@ public class MsgBrokerAppConfig {
     public DataSource dataSource() {
 
         logger.debug("db_usr = {}", db_url);
+
+        if( db_lock_timeout != null && db_lock_timeout.length() > 0 ) {
+            db_url = String.format("%scurrentLockTimeout=%s;", db_url, db_lock_timeout);
+        }
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("com.ibm.db2.jcc.DB2Driver");
         ds.setUrl(db_url);

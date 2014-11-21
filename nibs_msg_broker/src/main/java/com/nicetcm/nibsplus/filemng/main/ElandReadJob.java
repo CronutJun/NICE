@@ -25,8 +25,6 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.context.ApplicationContext;
 
-import com.nicetcm.nibsplus.util.NibsBatchUtil;
-
 @DisallowConcurrentExecution
 public class ElandReadJob implements org.quartz.Job {
 	
@@ -37,8 +35,8 @@ public class ElandReadJob implements org.quartz.Job {
 		
 		JobLauncher jobLauncher = (JobLauncher) applicationContext.getBean("jobLauncher");
 		File[] files = new File[0];
-		files = (File[])ArrayUtils.addAll(files, new File(config.getProperty("sapma.local.path")).listFiles(new ElandFilenameFilter(null)));
-		files = (File[])ArrayUtils.addAll(files, new File(config.getProperty("coupon.local.path")).listFiles(new ElandFilenameFilter(null)));
+		files = (File[])ArrayUtils.addAll(files, new File(config.getProperty("sapma.local.path")).listFiles(new ElandFilenameFilter()));
+		files = (File[])ArrayUtils.addAll(files, new File(config.getProperty("coupon.local.path")).listFiles(new ElandFilenameFilter()));
 		String filePath, fileName;
 
 		if (files != null) {
@@ -79,14 +77,15 @@ public class ElandReadJob implements org.quartz.Job {
 	}
 	
 	class ElandFilenameFilter implements FilenameFilter {
-		private String date = null;
+		/*private String date = null;
 		
 		public ElandFilenameFilter(String date) {
 			this.date = date;
-		}
+		}*/
+		
 		@Override
 		public boolean accept(File dir, String name) {
-			return name.toUpperCase().startsWith("NICE_" + (date != null ? date : NibsBatchUtil.SysDate())) && name.toUpperCase().endsWith(".DAT");
+			return name.toUpperCase().startsWith("NICE_") && name.toUpperCase().endsWith(".DAT");
 		}
 	}
 }

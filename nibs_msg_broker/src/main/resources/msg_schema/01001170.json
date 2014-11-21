@@ -36,6 +36,7 @@
       { "name" : "office_nm",              "kname" : "관리지사명",             "type" : "AN",  "length"  : 40  },
       { "name" : "org_cd",                 "kname" : "경비사송신-기관코드",    "type" : "AN",  "length"  : 3   },
       { "name" : "create_time",            "kname" : "출동요청시간",           "type" : "N",   "length"  : 6   },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 59  }
+      { "name" : "mid_error_cd",           "kname" : "장애중분류",             "type" : "AN",  "length"  : 2   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 57  }
    ]
 }

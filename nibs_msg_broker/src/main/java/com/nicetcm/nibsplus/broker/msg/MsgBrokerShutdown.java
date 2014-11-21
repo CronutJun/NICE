@@ -40,6 +40,11 @@ public class MsgBrokerShutdown extends Thread {
                 Map.Entry<String, MsgBrokerConsumer> e = (Map.Entry<String, MsgBrokerConsumer>)itrC.next();
                 e.getValue().close();
                 logger.warn("Consumer \"{}\" is closed.", e.getKey());
+                for(MsgBrokerBlockingWorker th: e.getValue().getListener().getBlockingWorkGroup().getBlockingThreads()) {
+                    logger.warn("parallel threads {} is going to stop", th.getName() );
+                    th.stopWork();
+                    logger.warn("parallel threads {} is stopped", th.getName() );
+                }
                 MsgBrokerConsumer.consumers.remove(e.getKey());
             }
             logger.warn("Consumer is stopped.");

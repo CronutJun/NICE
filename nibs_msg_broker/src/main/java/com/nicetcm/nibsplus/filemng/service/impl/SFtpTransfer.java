@@ -130,7 +130,6 @@ public class SFtpTransfer implements FileTransferService {
 	            rfile = sftp.openFileWAppend(transferVO.getRemotePath() + "/" + transferVO.getFileName());
 	
 	            lfile = new File(transferVO.getLocalPath(), transferVO.getFileName());
-	            lfile.getParentFile().mkdirs();
 	
 	            {
 	            	long fileOffset = 0;

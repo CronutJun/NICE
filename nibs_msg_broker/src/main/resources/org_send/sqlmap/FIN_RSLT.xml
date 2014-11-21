@@ -499,7 +499,7 @@
     <![CDATA[
         SELECT  /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/  MNG.create_date trans1_date,
                  MNG.org_msg_no trans1_seq,                                                                /*  출동요청 일련번호   */
-                 MNG.BRANCH_CD,
+                 MNG.BRANCH_CD brch_cd,
                  MNG.mac_no,
                  MNG.site_cd org_site_cd,
                  '',

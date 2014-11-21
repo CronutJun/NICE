@@ -603,7 +603,7 @@ public class TFnNiceTranMiscProvider {
          */
         else if( cond.getOrgCd().equals(MsgBrokerConst.SG_CODE) ) {
             if ( cond.getMacNo().substring(0, 4).equals("TOTA") ) { //  삼성증권 전체 집계
-                sql = "SELECT T.DEAL_DATE,                                                                                         \n"  
+                sql = "SELECT T.DEAL_DATE,                                                                                         \n"
                     + "       SUM(DECODE(T.DEAL_TYPE, '0', DECODE(T.DEAL_STATUS, '0', 1, 0), 0))              AS CASH_CNT,         \n"
                     + "       SUM(DECODE(T.DEAL_TYPE, '0', DECODE(T.DEAL_STATUS, '0', T.DEAL_AMT, 0), 0))     AS CASH_AMT,         \n"
                     + "       SUM(DECODE(T.DEAL_TYPE, '0', DECODE(T.DEAL_STATUS, '1', 1, 0), 0))              AS CASH_CANCEL_CNT,  \n"
@@ -651,8 +651,8 @@ public class TFnNiceTranMiscProvider {
                     + "AND    (T.DEAL_TYPE = '0' OR T.DEAL_TYPE = '1' )                                                            \n"
                     + "GROUP BY T.DEAL_DATE                                                                                        \n";
             }
-            else if ( cond.getMacNo().substring(0, 4).equals("BRAN") ) { 
-                sql = "SELECT /*+ INDEX_DESC ( T IX_T_FN_NICE_TRAN_02 ) */                                                                                         \n" 
+            else if ( cond.getMacNo().substring(0, 4).equals("BRAN") ) {
+                sql = "SELECT /*+ INDEX_DESC ( T IX_T_FN_NICE_TRAN_02 ) */                                                                                         \n"
                     + "       T.DEAL_DATE,                                                                                                                         \n"
                     + "       SUM(DECODE(T.DEAL_TYPE, '0', DECODE(T.DEAL_STATUS, '0', 1, 0), 0) )                                            AS CASH_CNT,          \n"
                     + "       SUM(DECODE(T.DEAL_TYPE, '0', DECODE(T.DEAL_STATUS, '0', T.DEAL_AMT, 0), 0) )                                   AS CASH_AMT,          \n"
@@ -730,7 +730,7 @@ public class TFnNiceTranMiscProvider {
                 /*
                  * 신한금융증권 개별망은 출금거래만 있다.
                  */
-                sql = "SELECT /*+ INDEX_DESC ( T IX_T_FN_NICE_TRAN_02 ) */                                                         \n" 
+                sql = "SELECT /*+ INDEX_DESC ( T IX_T_FN_NICE_TRAN_02 ) */                                                         \n"
                     + "       T.DEAL_DATE,                                                                                         \n"
                     + "       SUM(DECODE(T.DEAL_TYPE, '0', DECODE(T.DEAL_STATUS, '0', 1, 0 ), 0 ) )          AS CASH_CNT,          \n"
                     + "       SUM(DECODE(T.DEAL_TYPE, '0', DECODE(T.DEAL_STATUS, '0', T.DEAL_AMT, 0 ), 0 ) ) AS CASH_AMT,          \n"
@@ -755,7 +755,7 @@ public class TFnNiceTranMiscProvider {
                     + "AND    (T.DEAL_TYPE = '0' OR T.DEAL_TYPE = '1' )                                                            \n"
                     + "GROUP BY T.DEAL_DATE                                                                                        \n";
             }
-            else if ( cond.getMacNo().substring(0, 4).equals("BRAN") ) { 
+            else if ( cond.getMacNo().substring(0, 4).equals("BRAN") ) {
                 logger.info( ">>>  집계데이터 파악 실패[err-조회조건오류-{}-브랜드 제휴조회]", cond.getMacNo());
                 sql = "SELECT 'ERROR' AS DEAL_DATE,          \n"
                     + "       -2      AS CASH_CNT,           \n"
@@ -965,7 +965,7 @@ public class TFnNiceTranMiscProvider {
                     + "       0       AS REAL_TRADE_AMT      \n"
                     + "FROM   DUAL                           \n";
             }
-            else { 
+            else {
                 logger.info( ">>>  집계데이터 파악 실패[err-조회조건오류-{}-기기별]", cond.getMacNo());
                 sql = "SELECT 'ERROR' AS DEAL_DATE,          \n"
                     + "       -2      AS CASH_CNT,           \n"
@@ -1003,7 +1003,7 @@ public class TFnNiceTranMiscProvider {
                     + "AND    T.NET_ORG_CD = '0HF'                                                                        \n"
                     + "AND    T.DEAL_STATUS = '0'                                                                         \n"
                     + "AND    T.DEAL_TYPE = '4'                                                                           \n"
-                    + "/*AND    T.DEAL_TIME_TYPE = #{dealTimeType, jdbcType=VARCHAR}  시간내:1, 시간외:2 */               \n"
+                    + "/*AND    T.DEAL_TIME_TYPE = dealTimeType, jdbcType=VARCHAR  시간내:1, 시간외:2 */                  \n"
                     + "GROUP BY T.DEAL_DATE                                                                               \n";
             }
             else if ( cond.getMacNo().substring(0, 4).equals("NICE") ) { // 브랜드 제휴기기가 아닌 기기
@@ -1072,7 +1072,7 @@ public class TFnNiceTranMiscProvider {
          */
         else if( cond.getOrgCd().equals(MsgBrokerConst.DS_CODE) ) {
             if ( cond.getMacNo().substring(0, 4).equals("TOTA") ) { //  전체 집계
-                sql = "SELECT T.DEAL_DATE,                                                                                                                                   \n" 
+                sql = "SELECT T.DEAL_DATE,                                                                                                                                   \n"
                     + "       SUM(DECODE(T.DEAL_STATUS, '0', DECODE( T.DEAL_TYPE, '0', 1, 0), 0))                                         AS CASH_CNT,                       \n"
                     + "       SUM(DECODE(T.DEAL_STATUS, '0', DECODE( T.DEAL_TYPE, '0', T.DEAL_AMT, 0), 0))                                AS CASH_AMT,                       \n"
                     + "       SUM(DECODE(T.DEAL_STATUS, '1', DECODE( T.DEAL_TYPE, '0', 1, 0), 0))                                         AS CASH_CANCEL_CNT,                \n"
@@ -1156,7 +1156,7 @@ public class TFnNiceTranMiscProvider {
                     + "GROUP BY DSUM.DEAL_DATE                               \n";
             }
             else if ( cond.getMacNo().substring(0, 4).equals("NICE") ) { // 브랜드 제휴기기가 아닌 기기
-                sql = "SELECT DSUM.DEAL_DATE              AS DEAL_DATE,                         \n" 
+                sql = "SELECT DSUM.DEAL_DATE              AS DEAL_DATE,                         \n"
                     + "       SUM(DSUM.DEAL_CNT)          AS CASH_CNT,                          \n"
                     + "       SUM(DSUM.DEAL_AMT)          AS CASH_AMT,                          \n"
                     + "       SUM(DSUM.CANCEL_DEAL_CNT)   AS CASH_CANCEL_CNT,                   \n"
@@ -1197,7 +1197,7 @@ public class TFnNiceTranMiscProvider {
                     + "GROUP BY DSUM.DEAL_DATE                               \n";
             }
             else { // 기기별
-                sql = "SELECT DSUM.DEAL_DATE              AS DEAL_DATE,      \n"     
+                sql = "SELECT DSUM.DEAL_DATE              AS DEAL_DATE,      \n"
                     + "       SUM(DSUM.DEAL_CNT)          AS CASH_CNT,       \n"
                     + "       SUM(DSUM.DEAL_AMT)          AS CASH_AMT,       \n"
                     + "       SUM(DSUM.CANCEL_DEAL_CNT)   AS CASH_CANCEL_CNT,\n"

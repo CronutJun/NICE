@@ -51,7 +51,7 @@ public class In02000300Impl extends InMsgHandlerImpl {
         cmSetSchedule.setBranchNm   ( parsed.getString("brch_nm"      ) );
         cmSetSchedule.setSiteNm     ( parsed.getString("site_nm"      ) );
         cmSetSchedule.setBranchManNm( parsed.getString("brch_man_nm"  ) );
-        cmSetSchedule.setTeleNo     ( parsed.getString("tele_no"      ) );
+        cmSetSchedule.setTeleNo     ( parsed.getString("tel_no"       ) );
         cmSetSchedule.setWorkMsg    ( parsed.getString("work_msg"     ) );
 
         try {
