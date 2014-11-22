@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
@@ -42,7 +44,7 @@ public class In02000120Impl extends InMsgHandlerImpl {
         macSetMng.setMacNo       ( parsed.getString("mac_no"         ) );
         macSetMng.setSetType     ( "2"                                 );
         macSetMng.setSetDate     ( parsed.getString("move_date"      ) );
-        macSetMng.setSetTime     ( parsed.getString("move_time"      ) );
+        macSetMng.setSetTime     ( substr(parsed.getString("move_time"), 0, 4) );
         macSetMng.setOperDate    ( parsed.getString("oper_date"      ) );
         macSetMng.setSiteNm      ( parsed.getString("org_site_nm"    ) );
         macSetMng.setMadeComCd   ( parsed.getString("made_com_cd"    ) );

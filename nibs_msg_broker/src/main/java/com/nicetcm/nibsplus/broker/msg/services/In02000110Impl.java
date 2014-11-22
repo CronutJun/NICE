@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
@@ -41,7 +43,7 @@ public class In02000110Impl extends InMsgHandlerImpl {
         macSetMng.setMacNo      ( parsed.getString("mac_no"         ) ); // 기기 번호
         macSetMng.setSetType    ( "1"                                 ); // 설치구분(2010-신규(1)/이전(2)/폐기(3)/교체(4))
         macSetMng.setSetDate    ( parsed.getString("set_date"       ) ); // 요청일 (신규/이전/폐기/교체)
-        macSetMng.setSetTime    ( parsed.getString("set_time"       ) ); // 요청시간
+        macSetMng.setSetTime    ( substr(parsed.getString("set_time"), 0, 4) ); // 요청시간
         macSetMng.setOperDate   ( parsed.getString("oper_date"      ) ); // 운영개시예정일
         macSetMng.setSiteNm     ( parsed.getString("org_site_nm"    ) ); // 사이트 명
         macSetMng.setMadeComCd  ( parsed.getString("made_com_cd"    ) ); // 제조사    (2013)

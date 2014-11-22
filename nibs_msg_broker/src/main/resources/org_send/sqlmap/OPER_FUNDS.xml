@@ -316,7 +316,7 @@
         <choose>
             <when test='orgCd == "020" or orgCd == "031"'>
                 OP.pkg_fn_common.sf_getPreActDate(REQ_DATE) close_date,
-                pre_send_amt,
+                pre_send_amt pre_cash_amt,
                 before_cash_amt,
                 out_rate,
                 collect_rate,

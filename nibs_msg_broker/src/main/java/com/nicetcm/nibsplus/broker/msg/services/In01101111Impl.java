@@ -24,8 +24,8 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtErrorMngSpec;
  * @version 1.0
  * @see
  */
-@Service("in01001111")
-public class In01001111Impl extends InMsgHandlerImpl {
+@Service("in01101111")
+public class In01101111Impl extends InMsgHandlerImpl {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
