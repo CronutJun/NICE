@@ -31,7 +31,7 @@
     <select id="select7LG" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
         select
-               grd.BRANCH_CD,
+               grd.BRANCH_CD AS brch_cd,
                grd.mac_no,
                grd.trans_date trans1_date,
                grd.create_time,
@@ -57,7 +57,7 @@
     <select id="select7CH" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
         select
-               grd.BRANCH_CD,
+               grd.BRANCH_CD AS brch_cd,
                grd.mac_no,
                grd.trans_date trans1_date,
                grd.create_time,
@@ -83,7 +83,7 @@
     <select id="select7HS" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
         select
-               grd.BRANCH_CD,
+               grd.BRANCH_CD AS brch_cd,
                grd.mac_no,
                grd.trans_date trans1_date,
                grd.create_time,
@@ -113,7 +113,7 @@
                CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN SUBSTR(grd.BRANCH_CD, 2, 3)
                     ELSE grd.BRANCH_CD
-                    END AS BRANCH_CD,
+                    END as brch_cd,
         /*     grd.BRANCH_CD,*/
                grd.mac_no,
                grd.create_date trans1_date,
@@ -168,7 +168,7 @@
                CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN SUBSTR(grd.BRANCH_CD, 2, 3)
                     ELSE grd.BRANCH_CD
-                    END AS BRANCH_CD,
+                    END as brch_cd,
         /*     grd.BRANCH_CD,*/
         /*
                CASE WHEN grd.org_cd = '003' AND LENGTH(grd.BRANCH_CD) = 4
@@ -226,8 +226,8 @@
         /*     CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN SUBSTR(grd.BRANCH_CD, 2, 3)
                     ELSE grd.BRANCH_CD
-                    END AS BRANCH_CD, */
-               grd.BRANCH_CD,
+                    END as brch_cd, */
+               grd.BRANCH_CD AS brch_cd,
                grd.mac_no,
                grd.create_date trans1_date,
                grd.create_time create_time,

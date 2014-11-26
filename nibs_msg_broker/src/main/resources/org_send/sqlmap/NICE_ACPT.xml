@@ -37,7 +37,7 @@
         SELECT
              MNG.CREATE_DATE,                                       /* 장애접수일자               */
              MNG.CREATE_TIME,                                       /* 장애접수시각               */
-             MNG.BRANCH_CD,                                          /* 영업점번호                */
+             MNG.BRANCH_CD AS brch_cd,                                          /* 영업점번호                */
              MNG.MAC_NO,                                            /* 기기번호                 */
              MNG.SITE_CD,                                           /* 코너번호                 */
              '',
@@ -90,7 +90,7 @@
         SELECT
              MNG.CREATE_DATE,
              MNG.CREATE_TIME,
-             MNG.BRANCH_CD,
+             MNG.BRANCH_CD AS brch_cd,
              MNG.MAC_NO,
              MNG.SITE_CD,
              MAC.MAC_NM site_nm,

@@ -1,10 +1,5 @@
 package com.nicetcm.nibsplus.filemng.service.impl;
 
-import javax.annotation.Resource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -15,15 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.nicetcm.nibsplus.filemng.dao.DealNoMapper;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
-import com.nicetcm.nibsplus.filemng.service.FileTransferService;
 import com.nicetcm.nibsplus.util.NibsBatchUtil;
 
 public class DealNoFtpTasklet implements Tasklet {
 
-    private static final Logger logger = LoggerFactory.getLogger(DealNoFtpTasklet.class);
-
-    @Resource(name="ftpTransfer")
-    private FileTransferService fileTransferService;
+    // private static final Logger logger = LoggerFactory.getLogger(DealNoFtpTasklet.class);
 
     @Value("#{config['host.host']}")
     private String host;
@@ -49,11 +40,11 @@ public class DealNoFtpTasklet implements Tasklet {
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception
     {
-        JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
+        // JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
         ExecutionContext jobContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
 
-        final String yyyymmdd = jobParameters.getString("yyyymmdd");
-        final String branchCd = jobParameters.getString("branchCd");
+        // final String yyyymmdd = jobParameters.getString("yyyymmdd");
+        // final String branchCd = jobParameters.getString("branchCd");
 
         String fileName = jobContext.getString("file.send.filename");
 
@@ -69,7 +60,7 @@ public class DealNoFtpTasklet implements Tasklet {
         String command = null;
         try
         {
-            fileTransferService.putFile(transferVO);
+        	SFtpTransfer.putFile(transferVO);
             command = "[나이스거래누락] 누락 고유번호 HOST 전송처리 완료[" + NibsBatchUtil.SysDate() + "-" + NibsBatchUtil.SysTime() + "]";
         } catch (Exception e)
         {
@@ -80,14 +71,5 @@ public class DealNoFtpTasklet implements Tasklet {
         }
 
         return RepeatStatus.FINISHED;
-    }
-
-    //@Test
-    public void testTasklet() {
-    }
-
-    public static void main(String[] args) {
-
-
     }
 }

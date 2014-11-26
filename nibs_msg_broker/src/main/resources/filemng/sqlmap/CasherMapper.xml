@@ -108,100 +108,100 @@
 		    VALUES
 		    (
 		        '0CS' ,
-		        #{szBranch_Cd}
-		        #{szDeal_Date}
-		        #{szDeal_No}
-		        #{szDeal_Type}
-		        #{szMac_No}
-		        #{szTenant_Cd}
-		        #{szPos_No}
-		        #{szClose_Date}
-		        #{szCasher_Id}
-		        #{szDeal_Time}
-		        #{szDevicever_Id}
-		        #{szAcudiv}
-		        #{szInmon_Flag}
-		        #{szCash_15_Cnt}
-		        #{szCash_100000_Amt}
-		        #{szCash_50000_Cnt}
-		        #{szCash_50000_Amt}
-		        #{szCash_10000_Cnt}
-		        #{szCash_10000_Amt}
-		        #{szCash_5000_Cnt}
-		        #{szCash_5000_Amt}
-		        #{szCash_1000_Cnt}
-		        #{szCash_1000_Amt}
-		        #{szCash_500_Cnt}
-		        #{szCash_500_Amt}
-		        #{szCash_100_Cnt}
-		        #{szCash_100_Amt}
-		        #{szCash_50_Cnt}
-		        #{szCash_50_Amt}
-		        #{szCash_10_Cnt}
-		        #{szCash_10_Amt}
-		        #{szCheck_100_Cnt}
-		        #{szCheck_100_Amt}
-		        #{szCheck_50_Cnt}
-		        #{szCheck_50_Amt}
-		        #{szCheck_30_Cnt}
-		        #{szCheck_30_Amt}
-		        #{szCheck_10_Cnt}
-		        #{szCheck_10_Amt}
-		        #{szCheck_Etc_Amt}
-		        #{szBox_Cash_Amt}
-		        #{szBox_Coin_Amt}
-		        #{szBox_Check_Amt}
-		        #{szBox_Incom_Amt}
-		        #{szBox_Outcom_Amt}
-		        #{szBox_Ppcard_Amt}
-		        #{szTick_Own_1000_cnt}
-		        #{szTick_Own_1000_cnt}
-		        #{szTick_Own_2000_cnt}
-		        #{szTick_Own_2000_cnt}
-		        #{szTick_Own_3000_cnt}
-		        #{szTick_Own_3000_cnt}
-		        #{szTick_Own_5000_cnt}
-		        #{szTick_Own_5000_cnt}
-		        #{szTick_Own_10000_cnt}
-		        #{szTick_Own_10000_cnt}
-		        #{szTick_Own_30000_cnt}
-		        #{szTick_Own_30000_cnt}
-		        #{szTick_Own_50000_cnt}
-		        #{szTick_Own_50000_cnt}
-		        #{szTick_Own_70000_cnt}
-		        #{szTick_Own_70000_cnt}
-		        #{szTick_Own_100000_cnt}
-		        #{szTick_Own_100000_cnt}
-		        #{szTick_Own_300000_cnt}
-		        #{szTick_Own_300000_cnt}
-		        #{szTick_Own_500000_cnt}
-		        #{szTick_Own_500000_cnt}
-		        #{szTick_Own_1000000_cnt}
-		        #{szTick_Etc_1000000_cnt}
-		        #{szTick_Etc_1000_cnt}
-		        #{szTick_Etc_1000_cnt}
-		        #{szTick_Etc_2000_cnt}
-		        #{szTick_Etc_2000_cnt}
-		        #{szTick_Etc_3000_cnt}
-		        #{szTick_Etc_3000_cnt}
-		        #{szTick_Etc_5000_cnt}
-		        #{szTick_Etc_5000_cnt}
-		        #{szTick_Etc_10000_cnt}
-		        #{szTick_Etc_10000_cnt}
-		        #{szTick_Etc_30000_cnt}
-		        #{szTick_Etc_30000_cnt}
-		        #{szTick_Etc_50000_cnt}
-		        #{szTick_Etc_50000_cnt}
-		        #{szTick_Etc_70000_cnt}
-		        #{szTick_Etc_70000_cnt}
-		        #{szTick_Etc_100000_cnt}
-		        #{szTick_Etc_100000_cnt}
-		        #{szTick_Etc_300000_cnt}
-		        #{szTick_Etc_300000_cnt}
-		        #{szTick_Etc_500000_cnt}
-		        #{szTick_Etc_500000_cnt}
-		        #{szTick_Etc_1000000_cnt}
-		        #{szTick_Etc_1000000_cnt}
+		        #{szBranch_Cd} ,
+		        #{szDeal_Date} ,
+		        #{szDeal_No} ,
+		        #{szDeal_Type} ,
+		        #{szMac_No} ,
+		        #{szTenant_Cd} ,
+		        #{szPos_No} ,
+		        #{szClose_Date} ,
+		        #{szCasher_Id} ,
+		        #{szDeal_Time} ,
+		        #{szDevicever_Id} ,
+		        #{szAcudiv} ,
+		        #{szInmon_Flag} ,
+		        #{szCash_15_Cnt} ,
+		        #{szCash_100000_Amt} ,
+		        #{szCash_50000_Cnt} ,
+		        #{szCash_50000_Amt} ,
+		        #{szCash_10000_Cnt} ,
+		        #{szCash_10000_Amt} ,
+		        #{szCash_5000_Cnt} ,
+		        #{szCash_5000_Amt} ,
+		        #{szCash_1000_Cnt} ,
+		        #{szCash_1000_Amt} ,
+		        #{szCash_500_Cnt} ,
+		        #{szCash_500_Amt} ,
+		        #{szCash_100_Cnt} ,
+		        #{szCash_100_Amt} ,
+		        #{szCash_50_Cnt} ,
+		        #{szCash_50_Amt} ,
+		        #{szCash_10_Cnt} ,
+		        #{szCash_10_Amt} ,
+		        #{szCheck_100_Cnt} ,
+		        #{szCheck_100_Amt} ,
+		        #{szCheck_50_Cnt} ,
+		        #{szCheck_50_Amt} ,
+		        #{szCheck_30_Cnt} ,
+		        #{szCheck_30_Amt} ,
+		        #{szCheck_10_Cnt} ,
+		        #{szCheck_10_Amt} ,
+		        #{szCheck_Etc_Amt} ,
+		        #{szBox_Cash_Amt} ,
+		        #{szBox_Coin_Amt} ,
+		        #{szBox_Check_Amt} ,
+		        #{szBox_Incom_Amt} ,
+		        #{szBox_Outcom_Amt} ,
+		        #{szBox_Ppcard_Amt} ,
+		        #{szTick_Own_1000_cnt} ,
+		        #{szTick_Own_1000_cnt} ,
+		        #{szTick_Own_2000_cnt} ,
+		        #{szTick_Own_2000_cnt} ,
+		        #{szTick_Own_3000_cnt} ,
+		        #{szTick_Own_3000_cnt} ,
+		        #{szTick_Own_5000_cnt} ,
+		        #{szTick_Own_5000_cnt} ,
+		        #{szTick_Own_10000_cnt} ,
+		        #{szTick_Own_10000_cnt} ,
+		        #{szTick_Own_30000_cnt} ,
+		        #{szTick_Own_30000_cnt} ,
+		        #{szTick_Own_50000_cnt} ,
+		        #{szTick_Own_50000_cnt} ,
+		        #{szTick_Own_70000_cnt} ,
+		        #{szTick_Own_70000_cnt} ,
+		        #{szTick_Own_100000_cnt} ,
+		        #{szTick_Own_100000_cnt} ,
+		        #{szTick_Own_300000_cnt} ,
+		        #{szTick_Own_300000_cnt} ,
+		        #{szTick_Own_500000_cnt} ,
+		        #{szTick_Own_500000_cnt} ,
+		        #{szTick_Own_1000000_cnt} ,
+		        #{szTick_Etc_1000000_cnt} ,
+		        #{szTick_Etc_1000_cnt} ,
+		        #{szTick_Etc_1000_cnt} ,
+		        #{szTick_Etc_2000_cnt} ,
+		        #{szTick_Etc_2000_cnt} ,
+		        #{szTick_Etc_3000_cnt} ,
+		        #{szTick_Etc_3000_cnt} ,
+		        #{szTick_Etc_5000_cnt} ,
+		        #{szTick_Etc_5000_cnt} ,
+		        #{szTick_Etc_10000_cnt} ,
+		        #{szTick_Etc_10000_cnt} ,
+		        #{szTick_Etc_30000_cnt} ,
+		        #{szTick_Etc_30000_cnt} ,
+		        #{szTick_Etc_50000_cnt} ,
+		        #{szTick_Etc_50000_cnt} ,
+		        #{szTick_Etc_70000_cnt} ,
+		        #{szTick_Etc_70000_cnt} ,
+		        #{szTick_Etc_100000_cnt} ,
+		        #{szTick_Etc_100000_cnt} ,
+		        #{szTick_Etc_300000_cnt} ,
+		        #{szTick_Etc_300000_cnt} ,
+		        #{szTick_Etc_500000_cnt} ,
+		        #{szTick_Etc_500000_cnt} ,
+		        #{szTick_Etc_1000000_cnt} ,
+		        #{szTick_Etc_1000000_cnt} ,
 		        sysdate ,
 		        'online'
 		    )
@@ -265,52 +265,52 @@
 		    VALUES
 		    (
 		        '0CS' ,
-		        #{szBranch_Cd}
-		        #{szDeal_Date}
-		        #{szDeal_No}
-		        #{szDeal_Type}
-		        #{szMac_No}
-		        #{szTenant_Cd}
-		        #{szPos_No}
-		        #{szClose_Date}
-		        #{szCasher_Id}
-		        #{szDeal_Time}
-		        #{szDevicever_Id}
-		        #{szAcudiv}
-		        #{szInmon_Flag}
-		        #{szCash_100000_Cnt}
-		        #{szCash_100000_Amt}
-		        #{szCash_50000_Cnt}
-		        #{szCash_50000_Amt}
-		        #{szCash_10000_Cnt}
-		        #{szCash_10000_Amt}
-		        #{szCash_5000_Cnt}
-		        #{szCash_5000_Amt}
-		        #{szCash_1000_Cnt}
-		        #{szCash_1000_Amt}
-		        #{szCash_500_Cnt}
-		        #{szCash_500_Amt}
-		        #{szCash_100_Cnt}
-		        #{szCash_100_Amt}
-		        #{szCash_50_Cnt}
-		        #{szCash_50_Amt}
-		        #{szCash_10_Cnt}
-		        #{szCash_10_Amt}
-		        #{szCheck_100_Cnt}
-		        #{szCheck_100_Amt}
-		        #{szCheck_50_Cnt}
-		        #{szCheck_50_Amt}
-		        #{szCheck_30_Cnt}
-		        #{szCheck_30_Amt}
-		        #{szCheck_10_Cnt}
-		        #{szCheck_10_Amt}
-		        #{szCheck_Etc_Amt}
-		        #{szBox_Cash_Amt}
-		        #{szBox_Coin_Amt}
-		        #{szBox_Check_Amt}
-		        #{szBox_Incom_Amt}
-		        #{szBox_Outcom_Amt}
-		        #{szBox_Ppcard_Amt}
+		        #{szBranch_Cd} ,
+		        #{szDeal_Date} ,
+		        #{szDeal_No} ,
+		        #{szDeal_Type} ,
+		        #{szMac_No} ,
+		        #{szTenant_Cd} ,
+		        #{szPos_No} ,
+		        #{szClose_Date} ,
+		        #{szCasher_Id} ,
+		        #{szDeal_Time} ,
+		        #{szDevicever_Id} ,
+		        #{szAcudiv} ,
+		        #{szInmon_Flag} ,
+		        #{szCash_100000_Cnt} ,
+		        #{szCash_100000_Amt} ,
+		        #{szCash_50000_Cnt} ,
+		        #{szCash_50000_Amt} ,
+		        #{szCash_10000_Cnt} ,
+		        #{szCash_10000_Amt} ,
+		        #{szCash_5000_Cnt} ,
+		        #{szCash_5000_Amt} ,
+		        #{szCash_1000_Cnt} ,
+		        #{szCash_1000_Amt} ,
+		        #{szCash_500_Cnt} ,
+		        #{szCash_500_Amt} ,
+		        #{szCash_100_Cnt} ,
+		        #{szCash_100_Amt} ,
+		        #{szCash_50_Cnt} ,
+		        #{szCash_50_Amt} ,
+		        #{szCash_10_Cnt} ,
+		        #{szCash_10_Amt} ,
+		        #{szCheck_100_Cnt} ,
+		        #{szCheck_100_Amt} ,
+		        #{szCheck_50_Cnt} ,
+		        #{szCheck_50_Amt} ,
+		        #{szCheck_30_Cnt} ,
+		        #{szCheck_30_Amt} ,
+		        #{szCheck_10_Cnt} ,
+		        #{szCheck_10_Amt} ,
+		        #{szCheck_Etc_Amt} ,
+		        #{szBox_Cash_Amt} ,
+		        #{szBox_Coin_Amt} ,
+		        #{szBox_Check_Amt} ,
+		        #{szBox_Incom_Amt} ,
+		        #{szBox_Outcom_Amt} ,
+		        #{szBox_Ppcard_Amt} ,
 		        sysdate ,
 		        'online'
 		    )
@@ -343,21 +343,21 @@
 		    VALUES
 		    (
 		        '0CS' ,
-		        #{szBranchCd}
-		        #{szDealDate}
-		        #{szDealNo}
-		        #{szDealType}
-		        #{szMacNo}
-		        #{szTenantCd}
-		        #{szPosNo}
-		        #{szCloseDate}
-		        #{szCasherId}
-		        #{szDealTime}
-		        #{szDeviceverId}
-		        #{szAcudiv}
-		        #{szInmonFlag}
-		        #{szCheckType}
-		        #{szCheckNo}
+		        #{szBranchCd} ,
+		        #{szDealDate} ,
+		        #{szDealNo} ,
+		        #{szDealType} ,
+		        #{szMacNo} ,
+		        #{szTenantCd} ,
+		        #{szPosNo} ,
+		        #{szCloseDate} ,
+		        #{szCasherId} ,
+		        #{szDealTime} ,
+		        #{szDeviceverId} ,
+		        #{szAcudiv} ,
+		        #{szInmonFlag} ,
+		        #{szCheckType} ,
+		        #{szCheckNo} ,
 		        sysdate ,
 		        'online'
 		    )
@@ -391,22 +391,22 @@
 		    VALUES
 		    (
 		        '0CS' ,
-		        #{szBranchCd}
-		        #{szDealDate}
-		        #{szDealNo}
-		        #{szDealType}
-		        #{szMacNo}
-		        #{szTenantCd}
-		        #{szPosNo}
-		        #{szCloseDate}
-		        #{szCasherId}
-		        #{szDealTime}
-		        #{szDeviceverId}
-		        #{szAcudiv}
-		        #{szInmonFlag}
-		        #{szPublishCd}
-		        #{szTicketType}
-		        #{szTicketNo}
+		        #{szBranchCd} ,
+		        #{szDealDate} ,
+		        #{szDealNo} ,
+		        #{szDealType} ,
+		        #{szMacNo} ,
+		        #{szTenantCd} ,
+		        #{szPosNo} ,
+		        #{szCloseDate} ,
+		        #{szCasherId} ,
+		        #{szDealTime} ,
+		        #{szDeviceverId} ,
+		        #{szAcudiv} ,
+		        #{szInmonFlag} ,
+		        #{szPublishCd} ,
+		        #{szTicketType} ,
+		        #{szTicketNo} ,
 		        sysdate ,
 		        'online'
 		    )

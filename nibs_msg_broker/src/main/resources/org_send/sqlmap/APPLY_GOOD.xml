@@ -20,7 +20,7 @@
  -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT    branch_cd
+        SELECT    branch_cd as brch_cd
                 , GOOD_CD
                 , APPLY_DATE
                 , GOOD_AMT good_cnt

@@ -12,17 +12,22 @@ package com.nicetcm.nibsplus.broker.msg;
  *           @author  K.D.J
  */
 
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 public class MsgBrokerLib {
+
+    public static boolean isLostLogging = false;
+    public static String lostLogFile;
 
     /**
      * 현재 날짜를 구한다
@@ -322,5 +327,35 @@ public class MsgBrokerLib {
         String replacement = "$1_$2";
 
         return str.replaceAll(regex, replacement);
+    }
+
+    /**
+     *
+     * INCOMMING 전문 처리 중 에러 발생하여 유실되는 전문의 로깅처리
+     *
+     * @param msg
+     * @return
+     */
+    public static void lostWrite( MsgBrokerData safeData, byte[] msg, Exception e ) {
+
+        try {
+            if( !isLostLogging ) return;
+            if( safeData == null ) return;
+
+            String fileDir = String.format("%s/%s", MsgCommon.msgProps.getProperty("file.dir.log", System.getProperty("user.dir") + "/logs"), safeData.getSysDate() );
+
+            File fd = new File(fileDir);
+            if( !fd.exists() )
+                FileUtils.forceMkdir(fd);
+
+            File fo = new File(fileDir + "/" + lostLogFile);
+            String strMsg = String.format("%s[MSGEND][%s]\n", new String(msg), e.getMessage() );
+            FileUtils.writeByteArrayToFile(fo, strMsg.getBytes(), true);
+        }
+        catch( Exception ie ) {
+            System.out.println("lostWrite exception is fired." + ie.getMessage() );
+            for( StackTraceElement se: ie.getStackTrace() )
+                System.out.println(se.toString());
+        }
     }
 }

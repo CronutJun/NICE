@@ -14,7 +14,7 @@
       { "name" : "org_site_cd",            "kname" : "기관코너번호",           "type" : "AN",  "length"  : 6   },
       { "name" : "site_type",              "kname" : "점포구분",               "type" : "AN",  "length"  : 4   },
       { "name" : "oper_type",              "kname" : "운영구분",               "type" : "AN",  "length"  : 4   },
-      { "name" : "org_site_nm",            "kname" : "장소명",                 "type" : "AN",  "length"  : 60  },
+      { "name" : "org_site_nm",            "kname" : "장소명",                 "type" : "AN",  "length"  : 120 },
       { "name" : "close_date",             "kname" : "마감년월일",             "type" : "N",   "length"  : 8   },
       { "name" : "before_amt",             "kname" : "전일현송액",             "type" : "N",   "length"  : 15  },
       { "name" : "input_amt",              "kname" : "입금금액",               "type" : "N",   "length"  : 15  },
@@ -27,15 +27,15 @@
       { "name" : "unattended_amt",         "kname" : "미처리금액",             "type" : "N",   "length"  : 15  },
       { "name" : "unattended_cnt",         "kname" : "미처리건수",             "type" : "N",   "length"  : 2   },
       { "name" : "report_yn",              "kname" : "미처리보고서 유무'Y/N'", "type" : "AN",  "length"  : 1   },
-      { "name" : "office_nm",              "kname" : "관리사무소",             "type" : "AN",  "length"  : 20  },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 169 }
+      { "name" : "office_nm",              "kname" : "관리사무소",             "type" : "AN",  "length"  : 40  },
+      { "name" : "send_yn",                "kname" : "현송여부",               "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 168 }
    ]
-}
- -->
+} -->
 
     <select id="select088" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT BRANCH_CD,
+        SELECT branch_cd ,
              mac_no,
              '',
              '',
@@ -94,7 +94,7 @@
 
     <select id="select020" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT BRANCH_CD,
+        SELECT branch_cd,
              MAC_NO,
              '',
              '',
@@ -113,7 +113,7 @@
              '',
              report_yn,
              office_nm,
-             nvl(send_yn, '1'),
+             nvl(send_yn, '1') send_yn,
              '','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_COLLECT
         WHERE CLOSE_DATE >= TO_CHAR( SYSDATE - 10, 'YYYYMMDD')
@@ -125,7 +125,7 @@
 
     <select id="select035" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              '',
              '',
@@ -153,7 +153,7 @@
 
     <select id="select011" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              '',
              '',
@@ -183,7 +183,7 @@
     <!-- 003, 004, 005, 081, 0WC -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              '',
              '',

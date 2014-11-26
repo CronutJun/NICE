@@ -44,6 +44,15 @@ public class MsgBrokerMain {
                 logger.error("Detect duplicate running..");
                 throw e;
             }
+
+            /**
+             * Lost msg logging
+             */
+            if( MsgCommon.msgProps.getProperty("file.name.lost", "").length() > 0 ) {
+                MsgBrokerLib.lostLogFile = MsgCommon.msgProps.getProperty("file.name.lost");
+                MsgBrokerLib.isLostLogging = true;
+            }
+
             /*
              * Spring Component 초기화
              */
@@ -113,6 +122,7 @@ public class MsgBrokerMain {
             org.apache.log4j.xml.DOMConfigurator.configure(MsgBrokerMain.class.getResource(
                     String.format("/%s/log4j.xml", MsgBrokerConst.SVR_TYPE)));
 
+            logger.warn("===================== START MSG BROKER =====================");
             //RMISocketFactory.setSocketFactory(new MsgBrokerRMISocketFactory());
             startJMXConnectorServer();
 

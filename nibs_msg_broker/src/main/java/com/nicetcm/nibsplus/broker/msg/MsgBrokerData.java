@@ -23,6 +23,10 @@ public class MsgBrokerData {
      * WEB(AP)요청의 응답을 WEB으로 전달할지, 아니면 SKIP할지 여부
      */
     private boolean skipAnswer = false;
+    /**
+     * WEB(Ap)요청을 바로 응답할 경우 응답전문
+     */
+    private byte[] respMsg = null;
 
     public TransactionStatus getTXS() {
         return txs;
@@ -86,5 +90,13 @@ public class MsgBrokerData {
 
     public void setSkipAnswer(boolean skipAnswer) {
         this.skipAnswer = skipAnswer;
+    }
+
+    public byte[] getRespMsg() {
+        return respMsg;
+    }
+
+    public void setRespMsg(byte[] respMsg) {
+        this.respMsg = respMsg;
     }
 }

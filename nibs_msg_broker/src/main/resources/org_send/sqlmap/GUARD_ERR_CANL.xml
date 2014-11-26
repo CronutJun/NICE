@@ -37,7 +37,7 @@
                cancel_time,
                grd.trans_date trans1_date,
                grd.org_msg_no trans1_seq,
-               grd.BRANCH_CD,
+               grd.BRANCH_CD AS brch_cd,
                grd.mac_no,
                grd.site_cd org_site_cd,
                LPAD(grd.org_call_cnt, 2, '0')||grd.call_class mac_model,
@@ -66,7 +66,7 @@
                cancel_time,
                grd.trans_date trans1_date,
                grd.org_msg_no trans1_seq,
-               grd.BRANCH_CD,
+               grd.BRANCH_CD AS brch_cd,
                grd.mac_no,
                grd.site_cd org_site_cd,
                LPAD(grd.org_call_cnt, 2, '0')||grd.call_class mac_model,
@@ -96,7 +96,7 @@
                cancel_time,
                grd.trans_date trans1_date,
                grd.org_msg_no trans1_seq,
-               grd.BRANCH_CD,
+               grd.BRANCH_CD AS brch_cd,
                grd.mac_no,
                grd.site_cd org_site_cd,
                LPAD(grd.org_call_cnt, 2, '0')||grd.call_class mac_model,
@@ -129,7 +129,7 @@
                CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN SUBSTR(grd.BRANCH_CD, 2, 3)
                     ELSE grd.BRANCH_CD
-                    END AS BRANCH_CD,
+                    END as brch_cd,
                grd.mac_no,
                CASE WHEN grd.org_cd = '031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN CASE WHEN OP.FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL
@@ -194,7 +194,7 @@
                to_char( sysdate, 'hh24miss' ) as cancel_time,
                grd.create_date trans1_date,
                grd.error_no trans1_seq,
-               grd.BRANCH_CD,
+               grd.BRANCH_CD AS brch_cd,
                grd. mac_no,
                grd.site_cd org_site_cd,
                '',

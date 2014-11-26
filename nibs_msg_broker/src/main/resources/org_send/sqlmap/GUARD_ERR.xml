@@ -55,7 +55,7 @@
                mng.as_acpt_date trans1_date,
                mng.org_msg_no trans1_seq,
                mng.create_time,
-               mng.BRANCH_CD,
+               mng.BRANCH_CD AS brch_cd,
                mng.mac_no,
                mng.site_cd org_site_cd,
                mng.mac_model,
@@ -100,7 +100,7 @@
                mng.as_acpt_date trans1_date,
                mng.org_msg_no trans1_seq,
                mng.create_time,
-               mng.BRANCH_CD,
+               mng.BRANCH_CD AS brch_cd,
                mng.mac_no,
                mng.site_cd org_site_cd,
                mng.mac_model,
@@ -145,7 +145,7 @@
                mng.as_acpt_date trans1_date,
                mng.org_msg_no trans1_seq,
                mng.create_time,
-               mng.BRANCH_CD,
+               mng.BRANCH_CD AS brch_cd,
                mng.mac_no,
                mng.site_cd org_site_cd,
                mng.mac_model,
@@ -194,7 +194,7 @@
                CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN SUBSTR(grd.BRANCH_CD, 2, 3)
                     ELSE grd.BRANCH_CD
-                    END AS BRANCH_CD,
+                    END as brch_cd,
         /*     grd.BRANCH_CD,*/
                grd.mac_no,
                CASE WHEN grd.org_cd = '031' AND LENGTH(grd.BRANCH_CD) = 4
@@ -275,8 +275,8 @@
         /*     CASE WHEN grd.org_cd='031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN SUBSTR(grd.BRANCH_CD, 2, 3)
                     ELSE grd.BRANCH_CD
-                    END AS BRANCH_CD, */
-               grd.BRANCH_CD,
+                    END as brch_cd, */
+               grd.BRANCH_CD AS brch_cd,
                grd. mac_no,
         /*     CASE WHEN grd.org_cd = '031' AND LENGTH(grd.BRANCH_CD) = 4
                     THEN CASE WHEN FC_GET_MAP_SITE_CD(1, 'N31', grd.BRANCH_CD, grd.site_cd ) IS NULL

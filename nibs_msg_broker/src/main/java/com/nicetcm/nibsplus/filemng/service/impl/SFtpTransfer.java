@@ -1,37 +1,49 @@
 package com.nicetcm.nibsplus.filemng.service.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import org.springframework.stereotype.Service;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.SFTPv3Client;
 import ch.ethz.ssh2.SFTPv3FileHandle;
+import ch.ethz.ssh2.Session;
+import ch.ethz.ssh2.StreamGobbler;
 
 import com.nicetcm.nibsplus.filemng.common.FileMngException;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
-import com.nicetcm.nibsplus.filemng.service.FileTransferService;
 import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
-@Service("sftpTransfer")
-public class SFtpTransfer implements FileTransferService {
+public class SFtpTransfer {
 	
 	public static void main(String[] args) throws FileMngException {
 		TransferVO vo = new TransferVO();
-		vo.setHost("127.0.0.1");
+		vo.setHost("10.63.3.101");
 		vo.setAvailableServerPort(22);
-		vo.setUserId("master");
-		vo.setPassword("test");
+		vo.setUserId("chapweb");
+		vo.setPassword("chapweb");
 		vo.setRemotePath("dir");
 		vo.setFileName("test.txt");
 		vo.setLocalPath("/nibs_dev_sftp_local");
 		vo.setFileName("test.txt");
 		
-		SFtpTransfer sftpTransfer = new SFtpTransfer();
-		sftpTransfer.getFile(vo);
+		SFtpTransfer.getFile(vo);
+	}
+	
+	private static Connection connect(TransferVO transferVO) throws IOException, FileMngException {
+		Connection connection = new Connection(transferVO.getHost(), transferVO.getAvailableServerPort());
+        connection.connect();
+
+        if (!connection.authenticateWithPassword(transferVO.getUserId(), transferVO.getPassword())) {
+            throw new FileMngException(ExceptionType.NETWORK, "ftp 서버에 로그인하지 못했습니다.");
+        }
+        
+        return connection;
 	}
 	
     /**
@@ -39,24 +51,16 @@ public class SFtpTransfer implements FileTransferService {
      * @param TransferVO 전송정보
      * @return File
      */
-    @Override
-    public File getFile(TransferVO transferVO) throws FileMngException {
+    public static File getFile(TransferVO transferVO) throws FileMngException {
         FileOutputStream fos = null;
-        Connection connection;
+        Connection connection = null;
         SFTPv3Client sftp = null;
         SFTPv3FileHandle rfile = null;
         File lfile = null;
         
         try {
-        	connection = new Connection(transferVO.getHost(), transferVO.getAvailableServerPort());
-            connection.connect();
-
-            if (!connection.authenticateWithPassword(transferVO.getUserId(), transferVO.getPassword())) {
-                throw new FileMngException(ExceptionType.NETWORK, "ftp 서버에 로그인하지 못했습니다.");
-            }
-
             try {
-	            sftp = new SFTPv3Client(connection);
+	            sftp = new SFTPv3Client(connection = connect(transferVO));
 	            rfile = sftp.openFileRO(transferVO.getRemotePath() + "/" + transferVO.getFileName());
 	
 	            if (rfile == null) {
@@ -109,24 +113,16 @@ public class SFtpTransfer implements FileTransferService {
      * @return
      * @throws FileMngException
      */
-    @Override
-    public File putFile(TransferVO transferVO) throws FileMngException {
+    public static File putFile(TransferVO transferVO) throws FileMngException {
         FileInputStream fis = null;
-        Connection connection;
+        Connection connection = null;
         SFTPv3Client sftp = null;
         SFTPv3FileHandle rfile = null;
         File lfile = null;
 
         try {
-        	connection = new Connection(transferVO.getHost(), transferVO.getAvailableServerPort());
-            connection.connect();
-
-            if (!connection.authenticateWithPassword(transferVO.getUserId(), transferVO.getPassword())) {
-                throw new FileMngException(ExceptionType.NETWORK, "ftp 서버에 로그인하지 못했습니다.");
-            }
-
             try {
-	            sftp = new SFTPv3Client(connection);
+	            sftp = new SFTPv3Client(connection = connect(transferVO));
 	            rfile = sftp.openFileWAppend(transferVO.getRemotePath() + "/" + transferVO.getFileName());
 	
 	            lfile = new File(transferVO.getLocalPath(), transferVO.getFileName());
@@ -162,5 +158,44 @@ public class SFtpTransfer implements FileTransferService {
         }
 
         return lfile;
+    }
+    
+    public static List<String> getFileNames(TransferVO transferVO, String... option) throws FileMngException, IOException {
+    	StringBuffer sb = new StringBuffer();
+    	
+    	for (String op : option) {
+    		sb.append(" " + transferVO.getRemotePath() + op);
+    	}
+    	
+    	return execCommand(transferVO, "ls" + sb.toString());
+    }
+    
+    private static List<String> execCommand(TransferVO transferVO, String cmd) throws IOException, FileMngException {
+        Connection connection = null;
+    	Session session = null;
+    	BufferedReader in = null;
+    	List<String> result = new ArrayList<String>();
+    	
+        try {
+            try {
+            	connection = connect(transferVO);
+            	session = connection.openSession();
+		    	session.execCommand(cmd);
+		    	in = new BufferedReader(new InputStreamReader(new StreamGobbler(session.getStdout())));
+		    	String line;
+		    	
+		    	while ((line = in.readLine()) != null) {
+		    		result.add(line);
+		    	}
+            } finally {
+            	in.close();
+		    	session.close();
+            	connection.close();
+            }
+        } catch (Exception e) {
+            throw new FileMngException(ExceptionType.VM_STOP, e.getMessage());
+        }
+    	
+    	return result;
     }
 }

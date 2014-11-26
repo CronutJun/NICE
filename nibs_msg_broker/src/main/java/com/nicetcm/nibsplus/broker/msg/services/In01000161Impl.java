@@ -662,7 +662,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
             try
             {
-                tCmCheckMasterList = tMiscMapper.selectCmCheckMaster(tCmCheckMasterParam);
+                tCmCheckMasterList = tMiscMapper.selectCmCheckMaster2(tCmCheckMasterParam);
 
                 //if(tCmCheckMasterList == null || tCmCheckMasterList.size() == 0) {
                 //    throw new Exception("tCmCheckMasterList No Data");
@@ -677,7 +677,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             if(tCmCheckMasterList != null || tCmCheckMasterList.size() > 0) {
                 for(TCmCheckMaster tCmCheckMaster : tCmCheckMasterList) {
                     TCmCheckMaster updateTCmCheckMaster = new TCmCheckMaster();
-                    updateTCmCheckMaster.setArrivalTime(parsed.getString("arrival_time").substring(0, 4));
+                    updateTCmCheckMaster.setCompleteTime(parsed.getString("arrival_time").substring(0, 4));
 
                     TCmCheckMasterSpec tCmCheckMasterSpec = new TCmCheckMasterSpec();
                     tCmCheckMasterSpec.createCriteria()

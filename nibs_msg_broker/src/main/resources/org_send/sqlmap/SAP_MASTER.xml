@@ -34,7 +34,7 @@
     <![CDATA[
         SELECT   '1' info_cl /* 1:upload */
                 ,DEAL_DATE
-                ,BRANCH_CD
+                ,BRANCH_CD as brch_cd
                 ,''
                 ,MEMBER_ID
                 ,MEMBER_NM

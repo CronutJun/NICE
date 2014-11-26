@@ -2,8 +2,6 @@ package com.nicetcm.nibsplus.filemng.service.impl;
 
 import java.io.File;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobParameter;
@@ -19,7 +17,6 @@ import com.nicetcm.nibsplus.filemng.common.FileMngException;
 import com.nicetcm.nibsplus.filemng.dao.CouponMapper;
 import com.nicetcm.nibsplus.filemng.model.FileMngParameterVO;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
-import com.nicetcm.nibsplus.filemng.service.FileTransferService;
 import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
 /**
@@ -36,19 +33,16 @@ public class CouponFtpTasklet implements Tasklet {
 
     private static final Logger logger = LoggerFactory.getLogger(CouponFtpTasklet.class);
 
-    @Resource(name="ftpTransfer")
-    private FileTransferService fileTransferService;
-
-    @Value("#{config['eland.host']}")
+    @Value("#{config['host.host']}")
     private String host;
 
-    @Value("#{config['eland.availableServerPort']}")
+    @Value("#{config['host.availableServerPort']}")
     private int availableServerPort;
 
-    @Value("#{config['eland.userid']}")
+    @Value("#{config['host.userid']}")
     private String userId;
 
-    @Value("#{config['eland.password']}")
+    @Value("#{config['host.password']}")
     private String password;
 
     @Value("#{config['coupon.remote.path']}")
@@ -121,7 +115,7 @@ public class CouponFtpTasklet implements Tasklet {
             throw new FileMngException(ExceptionType.VM_STOP, "이미 처리된 파일입니다.");
     	}
 
-		return fileTransferService.getFile(transferVO);
+		return SFtpTransfer.getFile(transferVO);
     }
     
     private File findBackupFile(String path, String name) {

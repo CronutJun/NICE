@@ -29,7 +29,7 @@
  -->
 
     <select id="select088" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              site_cd org_site_cd,
              org_msg_no trans1_seq,
@@ -56,7 +56,7 @@
     </select>
 
     <select id="select032" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
-        SELECT MNG.branch_cd,
+        SELECT MNG.branch_cd as brch_cd,
              MNG.mac_no,
              MNG.site_cd org_site_cd,
              MNG.org_msg_no trans1_seq, MNG.CREATE_DATE, MNG.ERROR_NO,
@@ -94,7 +94,7 @@
     </select>
 
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              site_cd org_site_cd,
              DECODE( ORG_SEND_YN, '0', DECODE( NVL(ARRIVAL_EST_TIME, '0'), '0', finish_date, arrival_est_date), finish_date) mng_date,

@@ -44,7 +44,7 @@
     <![CDATA[
         SELECT     DISTINCT
                   CHK.CHECK_DATE
-                , CHK.BRANCH_CD
+                , CHK.BRANCH_CD as brch_cd
                 , CHK.SITE_CD
                 , SITE.SITE_NM
                 , CHK.MAC_FRONT_GLASS_CHECK

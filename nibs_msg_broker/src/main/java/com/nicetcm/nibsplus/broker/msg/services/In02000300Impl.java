@@ -36,7 +36,7 @@ public class In02000300Impl extends InMsgHandlerImpl {
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
         TCmSetSchedule cmSetSchedule = new TCmSetSchedule();
-        
+
         cmSetSchedule.setOrgCd      ( parsed.getString("CM.org_cd"    ) );
         cmSetSchedule.setWorkSeq    ( parsed.getString("work_seq"     ) );
         cmSetSchedule.setChangeNo   ( parsed.getShort ("change_no"    ) );
@@ -55,7 +55,7 @@ public class In02000300Impl extends InMsgHandlerImpl {
         cmSetSchedule.setWorkMsg    ( parsed.getString("work_msg"     ) );
 
         try {
-            cmSetScheduleMap.insert( cmSetSchedule );
+            cmSetScheduleMap.insertSelective( cmSetSchedule );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

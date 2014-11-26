@@ -105,8 +105,6 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
                 retMsg = "Successfully Swaped";
             }
 
-            changedInstance = changeClass.newInstance();
-
             logger.warn("Going to registerBean: {}", beanClassName );
             GenericBeanDefinition beanDef = new GenericBeanDefinition();
             beanDef.setBeanClass(changeClass);

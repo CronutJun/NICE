@@ -155,9 +155,9 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         fnNCO.setTrack4BackCnt       (  parsed.getInt   ("track4_back_cnt"       ) );
         fnNCO.setTotEmitCnt          (  parsed.getInt   ("tot_emit_cnt"          ) );
         fnNCO.setTotEmitAmt          (  parsed.getLong  ("tot_emit_amt"          ) );
-        fnNCO.setEmitCnt10000        (  parsed.getInt   ("emit_cnt_10000"        ) );
-        fnNCO.setEmitCnt50000        (  parsed.getInt   ("emit_cnt_50000"        ) );
-        fnNCO.setEmitCnt100000       (  parsed.getInt   ("emit_cnt_100000"       ) );
+        fnNCO.setEmitCntCw14         (  parsed.getInt   ("emit_cnt_10000"        ) );
+        fnNCO.setEmitCntCw54         (  parsed.getInt   ("emit_cnt_50000"        ) );
+        fnNCO.setEmitCntCw15         (  parsed.getInt   ("emit_cnt_100000"       ) );
         fnNCO.setDepositCnt          (  parsed.getInt   ("deposit_cnt"           ) );
         fnNCO.setDepositAmt          (  parsed.getLong  ("deposit_amt"           ) );
         fnNCO.setServiceCnt          (  parsed.getInt   ("service_cnt"           ) );
@@ -178,9 +178,9 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         fnNCO.setInsertUid           (  parsed.getString("CM.msg_id"             ) );
         fnNCO.setTotInCnt            (  parsed.getInt   ("tot_in_cnt"            ) );
         fnNCO.setTotInAmt            (  parsed.getLong  ("tot_in_amt"            ) );
-        fnNCO.setInCnt10000          (  parsed.getInt   ("in_cnt_10000"          ) );
-        fnNCO.setInCnt50000          (  parsed.getInt   ("in_cnt_50000"          ) );
-        fnNCO.setInCnt100000         (  parsed.getInt   ("in_cnt_100000"         ) );
+        fnNCO.setInCntCw14           (  parsed.getInt   ("in_cnt_10000"          ) );
+        fnNCO.setInCntCw54           (  parsed.getInt   ("in_cnt_50000"          ) );
+        fnNCO.setInCntCw15           (  parsed.getInt   ("in_cnt_100000"         ) );
         fnNCO.setInAmtEtc            (  parsed.getLong  ("in_amt_etc"            ) );
         fnNCO.setCheckInCnt          (  parsed.getInt   ("check_in_cnt"          ) );
         fnNCO.setCheckInAmt          (  parsed.getLong  ("check_in_amt"          ) );

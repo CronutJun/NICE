@@ -48,7 +48,7 @@
 				CASE WHEN mng.org_cd = '031'
 					 THEN '0'||mng.branch_cd
 				     ELSE mng.branch_cd
-				END as branch_cd,
+				END as brch_cd,
 				mng.site_cd,		
 				MNG.mac_no,
 				mng.create_date,

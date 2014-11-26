@@ -22,6 +22,7 @@
       { "name" : "unattended_cnt",         "kname" : "미처리건수",             "type" : "N",   "length"  : 2   },
       { "name" : "report_yn",              "kname" : "미처리보고서 유무'Y/N'", "type" : "AN",  "length"  : 1   },
       { "name" : "office_nm",              "kname" : "관리사무소",             "type" : "AN",  "length"  : 40  },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 169 }
+      { "name" : "send_yn",                "kname" : "현송여부",               "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 168 }
    ]
 }

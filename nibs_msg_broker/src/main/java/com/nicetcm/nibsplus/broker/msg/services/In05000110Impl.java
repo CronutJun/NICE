@@ -360,30 +360,33 @@ public class In05000110Impl extends InMsgHandlerImpl {
                 /**
                  * 2014/11/18 방혜진 차장 요청으로 추가함 (K.D.J)
                  */
-                if( parsed.getString("error_cd").length() == 0 )
-                    throw new Exception("장애이나 전문에 에러코드가 없습니다.");
+                if( parsed.getString("error_cd").length() != 0 ) {
 
-                errBasic.setErrorCd( parsed.getString("error_cd") );
-                errBasic.setMadeErrCd( parsed.getString("error_mtc_cd") );
-                /*
-                 * 하나은행(구) 일 경우 정액수표부족(67) 일경우 수표 취급 여부를 체크하여 발생시킨다.
-                 */
-                if( macInfo.getOrgCd().equals(MsgBrokerConst.HANA_CODE)
-                &&  errBasic.getErrorCd().equals("67")
-                && (macInfo.getCheckYn() == null
-                 || macInfo.getCheckYn().equals("0")
-                 || macInfo.getCheckYn().length() == 0) ) {
-                    logger.warn(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
-                    return;
+                    errBasic.setErrorCd( parsed.getString("error_cd") );
+                    errBasic.setMadeErrCd( parsed.getString("error_mtc_cd") );
+                    /*
+                     * 하나은행(구) 일 경우 정액수표부족(67) 일경우 수표 취급 여부를 체크하여 발생시킨다.
+                     */
+                    if( macInfo.getOrgCd().equals(MsgBrokerConst.HANA_CODE)
+                    &&  errBasic.getErrorCd().equals("67")
+                    && (macInfo.getCheckYn() == null
+                     || macInfo.getCheckYn().equals("0")
+                     || macInfo.getCheckYn().length() == 0) ) {
+                        logger.warn(">>> [SaveErrState] 수표 미취급 기기 수표 관련 장애 수신 ... 무시...");
+                        return;
+                    }
+                    comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
+
+                    /*
+                     * ERRMon 에서 만든 user 정의 장애( 나이스 발생 장애 ) 라면 응답 송신하지 않는다.
+                     */
+                    if( errBasic.getErrorCd().equals("NE999")
+                    ||  errBasic.getErrorCd().equals("USR01") ) {
+                        throw new MsgBrokerException("", -99);
+                    }
                 }
-                comPack.insertErrBasic( safeData, errBasic,  errRcpt, errNoti, errCall, errTxn, macInfo, "");
-
-                /*
-                 * ERRMon 에서 만든 user 정의 장애( 나이스 발생 장애 ) 라면 응답 송신하지 않는다.
-                 */
-                if( errBasic.getErrorCd().equals("NE999")
-                ||  errBasic.getErrorCd().equals("USR01") ) {
-                    throw new MsgBrokerException("", -99);
+                else {
+                    logger.warn("장애이나 에러코드가 없습니다.");
                 }
             }
             /*

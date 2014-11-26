@@ -29,7 +29,7 @@
     <![CDATA[
         SELECT   '1' info_cl /* 1:upload */
                 ,D.DEAL_DATE
-                ,D.BRANCH_CD
+                ,D.BRANCH_CD as brch_cd
                 ,''
                 ,D.MEMBER_ID
                 ,D.CUPON_CD

@@ -3,7 +3,7 @@ package com.nicetcm.nibsplus.filemng.model;
 /**
  * 
  * <pre>
-	case  0 : strcpy(suTicket.szJijumCd    , (char *)token); break;
+	case  0 : strcpy(suTicket.szBranchCd    , (char *)token); break;
 	case  1 : strcpy(suTicket.szDealDate   , (char *)token); break;
 	case  2 : strcpy(suTicket.szDealNo     , (char *)token); break;
 	case  3 : strcpy(suTicket.szDealType   , (char *)token); break;
@@ -27,7 +27,7 @@ package com.nicetcm.nibsplus.filemng.model;
  */
 public class CasherTKVO
 {
-	private String szJijumCd;
+	private String szBranchCd;
 	private String szDealDate;
 	private String szDealNo;
 	private String szDealType;
@@ -44,16 +44,16 @@ public class CasherTKVO
 	private String szTicketType;
 	private String szTicketNo;
 	/**
-	 * @return the szJijumCd
+	 * @return the szBranchCd
 	 */
-	public String getSzJijumCd() {
-		return szJijumCd;
+	public String getSzBranchCd() {
+		return szBranchCd;
 	}
 	/**
-	 * @param szJijumCd the szJijumCd to set
+	 * @param szBranchCd the szBranchCd to set
 	 */
-	public void setSzJijumCd(String szJijumCd) {
-		this.szJijumCd = szJijumCd;
+	public void setSzBranchCd(String szBranchCd) {
+		this.szBranchCd = szBranchCd;
 	}
 	/**
 	 * @return the szDealDate

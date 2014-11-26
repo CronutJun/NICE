@@ -48,7 +48,7 @@
  -->
     <select id="select027" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  ML.BRANCH_CD,
+        SELECT  ML.brch_cd,
                 ML.mac_no,
                 TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
                 '2' AS CLOSE_TYPE,
@@ -65,7 +65,7 @@
                 '',
                 '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM (
-                SELECT  MAC.BRANCH_CD,
+                SELECT  MAC.BRANCH_CD AS brch_cd,
                         MAC.mac_no
                 FROM    OP.T_CM_MAC MAC
                 WHERE   MAC.org_cd = '027'
@@ -76,7 +76,7 @@
 
                 MINUS
 
-                SELECT  SEND.BRANCH_CD,
+                SELECT  SEND.BRANCH_CD AS brch_cd,
                         SEND.mac_no
                 FROM    OP.T_FN_SEND SEND
                 WHERE   SEND.SEND_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
@@ -86,7 +86,7 @@
                 MINUS
 
 
-                SELECT  CLS.BRANCH_CD,
+                SELECT  CLS.BRANCH_CD AS brch_cd,
                         CLS.mac_no
                 FROM    OP.T_CM_CASH CLS
                 WHERE   CLS.CASH_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
@@ -99,7 +99,7 @@
 
     <select id="select011" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  ML.BRANCH_CD,
+        SELECT  ML.brch_cd,
                 ML.mac_no,
                 TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
                 '3' AS CLOSE_TYPE,
@@ -116,7 +116,7 @@
                 '',
                 '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM (
-                SELECT  MAC.BRANCH_CD,
+                SELECT  MAC.BRANCH_CD AS brch_cd,
                         MAC.mac_no
                 FROM    OP.T_CM_MAC MAC
                 WHERE   MAC.org_cd = '011'
@@ -127,7 +127,7 @@
 
                 MINUS
 
-                SELECT  SEND.BRANCH_CD,
+                SELECT  SEND.BRANCH_CD AS brch_cd,
                         SEND.mac_no
                 FROM    OP.T_FN_SEND SEND
                 WHERE   SEND.SEND_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
@@ -137,7 +137,7 @@
                 MINUS
 
 
-                SELECT  CLS.BRANCH_CD,
+                SELECT  CLS.BRANCH_CD AS brch_cd,
                         CLS.mac_no
                 FROM    OP.T_CM_CASH CLS
                 WHERE   CLS.CASH_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
@@ -150,7 +150,7 @@
 
     <select id="select003" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  ML.BRANCH_CD,
+        SELECT  ML.brch_cd,
                 ML.mac_no,
                 TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
                 '2' AS CLOSE_TYPE,
@@ -167,7 +167,7 @@
                 '',
                 '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM (
-                SELECT  MAC.BRANCH_CD,
+                SELECT  MAC.BRANCH_CD AS brch_cd,
                         MAC.mac_no
                 FROM    OP.T_CM_MAC MAC
                 WHERE   MAC.org_cd = '003'
@@ -179,7 +179,7 @@
                 MINUS
 
 
-                SELECT  CLS.BRANCH_CD,
+                SELECT  CLS.BRANCH_CD AS brch_cd,
                         CLS.mac_no
                 FROM    OP.T_CM_CASH CLS
                 WHERE   CLS.CASH_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
@@ -192,7 +192,7 @@
 
     <select id="select039" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  ML.BRANCH_CD,
+        SELECT  ML.brch_cd,
                 ML.mac_no,
                 TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
                 '2' AS CLOSE_TYPE,
@@ -212,7 +212,7 @@
 
             /* 정규현송에서  */
 
-                SELECT  SEND.BRANCH_CD,
+                SELECT  SEND.BRANCH_CD AS brch_cd,
                         SEND.mac_no
                 FROM    OP.T_FN_SEND SEND
                 WHERE   SEND.SEND_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
@@ -224,7 +224,7 @@
             MINUS
 
             /* 기 마감기기 제외 */
-            SELECT  CLS.BRANCH_CD,
+            SELECT  CLS.BRANCH_CD AS brch_cd,
                     CLS.mac_no
             FROM    OP.T_CM_CASH CLS
             WHERE   CLS.CASH_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
@@ -240,7 +240,7 @@
     <!-- 023, 032, 0HD -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  MAC.BRANCH_CD,
+        SELECT  MAC.BRANCH_CD AS brch_cd,
                 MAC.mac_no,
                 TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
                 '2' close_type,
@@ -264,7 +264,7 @@
                 )
         AND OP.F_GET_HOLIDAY(TO_CHAR(SYSDATE, 'YYYYMMDD'))  = '0' /* 영업일 일경우만 */
         MINUS
-        SELECT  CLS.BRANCH_CD,
+        SELECT  CLS.BRANCH_CD AS brch_cd,
                 CLS.mac_no,
                 CLS.cash_date,
                 '2',

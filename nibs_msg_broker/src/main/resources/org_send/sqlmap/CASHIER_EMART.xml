@@ -25,7 +25,7 @@
     <![CDATA[
         SELECT  '',
                 '',
-                branch_cd,
+                branch_cd as brch_cd,
                 '',
                 '',
                 '',

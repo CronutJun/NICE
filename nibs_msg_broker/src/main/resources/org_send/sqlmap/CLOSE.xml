@@ -49,7 +49,7 @@
 
     <select id="select011" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  MAC.branch_cd,
+        SELECT  MAC.branch_cd as brch_cd,
                 MAC.mac_no,
                 TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
                 '2' close_type,
@@ -72,7 +72,7 @@
                 OR  MAC.close_date > TO_CHAR(SYSDATE, 'YYYYMMDD')
                 )
         MINUS
-        SELECT  CLS.branch_cd,
+        SELECT  CLS.branch_cd as brch_cd,
                 CLS.mac_no,
                 CLS.cash_date inq_date,
                 '2' close_type,
@@ -97,7 +97,7 @@
 
     <select id="select0WC" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  MAC.BRANCH_CD,
+        SELECT  MAC.BRANCH_CD AS brch_cd,
             MAC.MAC_NO,
             TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
             '',
@@ -120,7 +120,7 @@
                 OR  MAC.close_date > TO_CHAR(SYSDATE, 'YYYYMMDD')
                 )
         MINUS
-        SELECT  CLS.BRANCH_CD,
+        SELECT  CLS.BRANCH_CD AS brch_cd,
             CLS.MAC_NO,
             CLS.CASH_DATE inq_date,
             '',
@@ -149,10 +149,10 @@
         SELECT
             <choose>
                 <when test='orgCd == "032"'>
-                    <![CDATA[ OP.F_GET_ORG_BRANCH_CD( MAC.ORG_CD, MAC.BRANCH_CD, '', MAC.MAC_NO ) AS brch_cd, ]]>
+                    OP.F_GET_ORG_BRANCH_CD( MAC.ORG_CD, MAC.BRANCH_CD, '', MAC.MAC_NO ) AS brch_cd,
                 </when>
                 <otherwise>
-                    MAC.branch_cd,
+                    MAC.branch_cd as brch_cd,
                 </otherwise>
             </choose>
     <![CDATA[
@@ -184,7 +184,7 @@
             </when>
         </choose>
         MINUS
-        SELECT  CLS.branch_cd,
+        SELECT  CLS.branch_cd as brch_cd,
                 CLS.mac_no,
                 CLS.cash_date inq_date,
                 '1' close_type,

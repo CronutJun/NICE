@@ -72,7 +72,7 @@
     </beans>
 
     <!-- STAGE 환경 -->
-    <beans profile="stage">
+    <beans profile="stage1">
     	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
     		<property name="locations">
     			<list>

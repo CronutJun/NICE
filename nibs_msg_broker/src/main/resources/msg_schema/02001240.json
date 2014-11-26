@@ -9,10 +9,12 @@
       { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 120 },
       { "name" : "mac_model",              "kname" : "기기모델",               "type" : "AN",  "length"  : 4   },
       { "name" : "clean_near_yn",          "kname" : "주변청소",               "type" : "AN",  "length"  : 1   },
+      { "name" : "clean_mac",          	   "kname" : "기기내부청소",           "type" : "AN",  "length"  : 1   },
       { "name" : "clean_big_yn",           "kname" : "대청소",                 "type" : "AN",  "length"  : 1   },
       { "name" : "onboard",                "kname" : "벽면게시물",             "type" : "AN",  "length"  : 1   },
       { "name" : "memo",                   "kname" : "조치내용",               "type" : "AN",  "length"  : 300 },
-      { "name" : "mng_date",               "kname" : "관리일자",               "type" : "N",   "length"  : 8   },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 20  }
+      { "name" : "mng_date",               "kname" : "관리일자",               "type" : "AN",  "length"  : 8   },
+      { "name" : "check_date",             "kname" : "점검일자",               "type" : "AN",  "length"  : 8   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 12  }
    ]
 }

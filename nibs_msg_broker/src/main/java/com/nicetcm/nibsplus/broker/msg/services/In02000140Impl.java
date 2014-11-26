@@ -35,7 +35,7 @@ public class In02000140Impl extends InMsgHandlerImpl {
 
         TCtMacSetMng macSetMng = new TCtMacSetMng();
         
-        macSetMng.setOrgCd      ( parsed.getString("CM.org_cd"    ) );  
+        macSetMng.setOrgCd      ( parsed.getString("SM.org_cd"    ) );  
         macSetMng.setBranchCd   ( parsed.getString("branch_cd"    ) );
         macSetMng.setSiteCd     ( parsed.getString("org_site_cd"  ) );
         macSetMng.setMacNo      ( parsed.getString("mac_no"       ) );

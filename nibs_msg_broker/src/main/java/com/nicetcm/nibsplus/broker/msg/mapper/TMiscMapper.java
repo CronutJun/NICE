@@ -154,7 +154,7 @@ public interface TMiscMapper {
         "       ORG_SEND_YN = '1',                                                                                                                                    ",
         "       UPDATE_DATE = SYSDATE,                                                                                                                                ",
         "       UPDATE_UID  = 'APmng'                                                                                                                                 ",
-        "WHERE  ORG_CD    = DECODE(CAST(#{orgCd, jdbcType=VARCHAR} AS VARCHAR), 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                ",
+        "WHERE  ORG_CD    = DECODE(#{orgCd, jdbcType=VARCHAR}, 'T20', '020', 'T39', '039', #{orgCd, jdbcType=VARCHAR})                                                ",
         "AND    BRANCH_CD = CASE                                                                                                                                      ",
         "                   WHEN #{orgCd, jdbcType=VARCHAR} <> 'T20' AND  #{orgCd, jdbcType=VARCHAR} <> 'T39' THEN                                                    ",
         "                        #{branchCd, jdbcType=VARCHAR}                                                                                                        ",
@@ -659,10 +659,10 @@ public interface TMiscMapper {
 
     @Select({
         "select * from OP.T_CT_ERROR_MNG                                                                                        ",
-        "where ORG_CD  = #{orgCd, jdbcType=VARCHAR}                                                                             ",
+        "where create_date >= TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD'))                                                       ",
+        "and ORG_CD  = #{orgCd, jdbcType=VARCHAR}                                                                               ",
         "and branch_cd    = #{branchCd, jdbcType=VARCHAR}                                                                       ",
         "and site_cd       = #{siteCd, jdbcType=VARCHAR}                                                                        ",
-        "and create_date >= TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD'))                                                         ",
         "and send_time is NOT NULL                                                                                              ",
         "and nvl( send_status, '0' ) = '2'                                                                                      ",
         "and nvl(error_status, '0') not in ( '7000', '1011', '3011', '9011')                                                    ",
@@ -791,17 +791,17 @@ public interface TMiscMapper {
 
     @Select({
         "select * from OP.T_CT_ERROR_MNG                                                                                        ",
-        "where ORG_CD  = #{orgCd, jdbcType=VARCHAR}                                                                             ",
+        "where create_date >= TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD'))                                                       ",
+        "and ORG_CD  = #{orgCd, jdbcType=VARCHAR}                                                                               ",
         "and branch_cd    = #{branchCd, jdbcType=VARCHAR}                                                                       ",
         "and site_cd       = #{siteCd, jdbcType=VARCHAR}                                                                        ",
-        "and create_date >= TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD'))                                                         ",
         "and send_time is NOT NULL                                                                                              ",
         "and nvl( send_status, '0' ) = '2'                                                                                      ",
         "and nvl(error_status, '0') not in ( '7000', '1011', '3011', '9011')                                                    ",
         "and nvl(error_status, '0') <> '2000'                                                                                   ",
         "and nvl(as_medium, '0000') = '0000'                                                                                    ",
         "and error_cd <> 'AFTMNG'                                                                                               ",
-        "and unlock_time IS NULL                                                                                              ",
+        "and unlock_time IS NULL                                                                                                ",
         "and ( arrival_time is null OR arrival_type is null )    "
     })
     @Results({

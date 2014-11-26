@@ -119,15 +119,17 @@ public class FileSendServiceImpl implements FileSendService {
 	
 					try {
 						putFtp(PutOrgTranFile(szTransDate, szOrgCd));
-					} catch(Exception e) {
+					} catch(RuntimeException e) {
 						System.out.println(e.getMessage());
+					} catch(Exception e) {
+						e.printStackTrace();
 					}
 				}
 			} else {
 				try {
 					putFtp(PutOrgTranFile(szTransDate, szOrgCd));
 				} catch(Exception e) {
-					System.out.println(e.getMessage());
+					e.printStackTrace();
 				}
 			}
 		} finally {
@@ -148,6 +150,8 @@ public class FileSendServiceImpl implements FileSendService {
         if (!connection.authenticateWithPassword(szID, szPwd)) {
             throw new FileMngException(ExceptionType.NETWORK, "ftp 서버에 로그인하지 못했습니다.");
         }
+
+        sftp = new SFTPv3Client(connection);
 	}
 
 	private void putFtp(File file) throws FileMngException, IOException {
@@ -159,7 +163,7 @@ public class FileSendServiceImpl implements FileSendService {
     	int readCnt=0;
     	
         try {
-        	rfile = sftp.openFileWAppend(szDestPath + "/" + file.getName());
+        	rfile = sftp.createFile(szDestPath + "/" + file.getName());
         	fis = new FileInputStream(file);
         	
             while ((readCnt = fis.read(readBuf)) != -1) {
@@ -254,11 +258,11 @@ public class FileSendServiceImpl implements FileSendService {
 			
 			nRtn = GetGiftCardInfoData(pDate, szFilePath);
 		} else {
-			throw new Exception(String.format("해당 기관없음 [%s]\n", pOrgCd));
+			throw new RuntimeException(String.format("해당 기관없음 [%s]\n", pOrgCd));
 		}
 
 		if( nRtn < 0 ) {
-			throw new Exception(String.format("file 생성 실패 [%s]\n", szFileName));
+			throw new RuntimeException(String.format("file 생성 실패 [%s]\n", szFileName));
 		} else {
 			System.out.print(String.format("file 생성 OK !!! [%s]\n", szFileName));
 		}

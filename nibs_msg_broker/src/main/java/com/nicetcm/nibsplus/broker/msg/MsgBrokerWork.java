@@ -223,6 +223,10 @@ public class MsgBrokerWork {
                     throw e;
                 }
             }
+            catch(Exception e ) {
+                MsgBrokerLib.lostWrite( msgThrdSafeData, msg, e );
+                throw e;
+            }
             finally {
                 msgPsr.clearMessage();
             }

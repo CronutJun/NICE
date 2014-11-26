@@ -20,7 +20,7 @@
  -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  BRANCH_CD,                   /*  지점번호        */
+        SELECT  BRANCH_CD AS brch_cd,                   /*  지점번호        */
             MAC_NO,                         /*  기기번호        */
             CLOSE_DATE,                     /*  마감일자        */
             CASH_AMT,                       /*  현송금액        */

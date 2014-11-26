@@ -8,13 +8,12 @@
     http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-
     <bean id="nhFileRenameTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.NhFileRenameTasklet" />
 
+    <bean id="nhFtpTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.NhFtpTasklet" />
+    
     <bean id="tFnNiceTranNhHeaderVO" class="com.nicetcm.nibsplus.filemng.model.TFnNiceTranNhHeaderVO" scope="prototype" />
-
     <bean id="tFnNiceTranNhDataVO" class="com.nicetcm.nibsplus.filemng.model.TFnNiceTranNhDataVO" scope="prototype" />
-
     <bean id="tFnNiceTranNhTailVO" class="com.nicetcm.nibsplus.filemng.model.TFnNiceTranNhTailVO" scope="prototype" />
 
     <bean id="nhItemProcessor" class="org.springframework.batch.item.support.CompositeItemProcessor" scope="step">
@@ -27,6 +26,9 @@
     </bean>
 
     <batch:job id="nhJob">
+        <batch:step id="getFtp" next="dbLoad">
+            <tasklet ref="nhFtpTasklet" />
+        </batch:step>
         <batch:step id="dbLoad" next="fileRename">
             <batch:tasklet>
                 <batch:chunk reader="nhCvsFileItemReader" processor="nhItemProcessor" writer="nhDb2ItemWriter" commit-interval="10000">

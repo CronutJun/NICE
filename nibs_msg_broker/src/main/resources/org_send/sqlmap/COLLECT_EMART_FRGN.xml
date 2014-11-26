@@ -10,7 +10,7 @@
     <!-- 0EM -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  BRANCH_CD    ,
+        SELECT  BRANCH_CD as brch_cd    ,
               ''            ,
               DEPO_DATE     ,
               DEPO_SDATE    ,

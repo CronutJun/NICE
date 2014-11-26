@@ -61,7 +61,7 @@ public class MsgBrokerListener implements MessageListener {
                      blkWrkGrp.putMsg(iIdxInfo, rcv);
                  }
                  catch( Exception e ) {
-                     logger.warn("some is wrong in information of parallelism : []", e.getMessage());
+                     logger.warn("something is wrong in information of parallelism : []", e.getMessage());
                      MsgBrokerWork work = new MsgBrokerWork(rcv, this.forceResp, this.redirectTo, this.noResp);
                      work.doWork();
                  }

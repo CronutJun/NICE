@@ -48,7 +48,8 @@ public class In03101160Impl extends InMsgHandlerImpl {
         try{ comPack.checkBranchMacLength( parsed ); } catch( Exception e ) {}
 
         /* 실시간전송일때는 skip, 배치일경우만 update */
-        if(parsed.getString("addcash_type").equals("B")) {
+        /* 부산은행의 경우는 배치만 존재하므로 update 하도록 수정 2014.11.23 BHJ */
+        if(parsed.getString("addcash_type").equals("B")||parsed.getString("CM.org_cd").equals(MsgBrokerConst.BU_CODE)) {
 
             TFnAtmsAddCashReport tFnAtmsAddCashReport = new TFnAtmsAddCashReport();
             tFnAtmsAddCashReport.setOrgSendYn("1");

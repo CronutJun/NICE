@@ -39,7 +39,7 @@
     <![CDATA[
         SELECT     MNG.trans_date trans1_date,                                                          /* 1차통지 거래일자                */
                    MNG.org_msg_no trans1_seq,                                                          /* 1차통지 전문번호                */
-                   MNG.branch_cd,                                                            /* 국코드                      */
+                   MNG.branch_cd brch_cd,                                                            /* 국코드                      */
                    MNG.mac_no,                                                              /* 단말번호                     */
                    '',
                    '',
@@ -83,12 +83,11 @@
     <![CDATA[
         SELECT     MNG.trans_date trans1_date,
                    MNG.org_msg_no trans1_seq,
-                   MNG.branch_cd,
+                   MNG.branch_cd brch_cd,
                    DECODE( substr( MNG.sec, 1, 1 ), '2', '',  DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no ) ) mac_no, /* 민원출동은 기번 없이 feedback */
-                   mng.crt_no,
-                   LPAD(MNG.org_call_cnt, 2, '0'),
-                   MNG.group_error_cd,
-                   '',
+                   RPAD(NVL(MNG.CRT_NO,' '),15,' ')                                         /*  CRT(15)+출동요청차수(2)+집계분류코드(2) */
+                        ||  LPAD(MNG.ORG_CALL_CNT,2,'0')
+                        ||  RPAD(MNG.GROUP_ERROR_CD,2,' ') error_msg,
                    MNG.send_date,
                    MNG.send_time,
                    MNG.arrival_date,
@@ -133,13 +132,12 @@
     <![CDATA[
         SELECT     MNG.trans_date trans1_date,
                    MNG.org_msg_no trans1_seq,
-                   MNG.BRANCH_CD,
+                   MNG.BRANCH_CD brch_cd,
                    /* DECODE( substr( MNG.sec, 1, 1 ), '2', '',  DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no ) ), 민원출동은 기번 없이 feedback */
                    MNG.MAC_NO,
-                   mng.crt_no,
-                   LPAD(MNG.org_call_cnt, 2, '0'),
-                   MNG.group_error_cd,
-                   '',
+                   RPAD(NVL(MNG.CRT_NO,' '),15,' ')                                         /*  CRT(15)+출동요청차수(2)+집계분류코드(2) */
+                        ||  LPAD(MNG.ORG_CALL_CNT,2,'0')
+                        ||  RPAD(MNG.GROUP_ERROR_CD,2,' ') error_msg,
                    MNG.send_date,
                    MNG.send_time,
                    MNG.arrival_date,
@@ -184,7 +182,7 @@
     <![CDATA[
         SELECT   MNG.trans_date trans1_date,
                    MNG.org_msg_no trans1_seq,
-                   MNG.branch_cd,
+                   MNG.branch_cd brch_cd,
                    MNG.mac_no,
                    ERR.error_msg,
                    '',
@@ -227,7 +225,7 @@
     <![CDATA[
         SELECT     MNG.trans_date trans1_date,
                    MNG.org_msg_no trans1_seq,
-                   MNG.BRANCH_CD,
+                   MNG.branch_cd brch_cd,
                    MNG.mac_no,
                    '',
                    '',
@@ -272,7 +270,7 @@
     <![CDATA[
         SELECT MNG.create_date trans1_date,
                MNG.org_msg_no trans1_seq,
-               MNG.branch_cd,
+               MNG.branch_cd brch_cd,
                MNG.mac_no,
                CASE WHEN LENGTH(MNG.ERROR_CD) = 2
                     THEN MNG.ERROR_CD
@@ -319,11 +317,11 @@
     <![CDATA[
         SELECT     MNG.trans_date trans1_date,
                    MNG.org_msg_no trans1_seq,
-                   MNG.BRANCH_CD,
+                   MNG.branch_cd brch_cd,
                    DECODE( substr( MNG.sec, 1, 1 ), '2', '',  DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no ) ) mac_no, /* 민원출동은 기번 없이 feedback */
-                   mng.crt_no,
-                   LPAD(MNG.org_call_cnt, 2, '0'),
-                   '',
+                    RPAD(NVL(MNG.CRT_NO,' '),15,' ')                                         /*  CRT(15)+출동요청차수(2)+집계분류코드(2) */
+                        ||  LPAD(MNG.ORG_CALL_CNT,2,'0')
+                        ||  RPAD(MNG.GROUP_ERROR_CD,2,' ') error_msg,
                    MNG.send_date,
                    MNG.send_time,
                    MNG.arrival_date,
@@ -364,11 +362,10 @@
         union all
         SELECT TRANS_DATE trans1_date,
                ORG_MSG_NO trans1_seq,
-               BRANCH_CD,
-               MAC_NO,
-               '',
-               LPAD(org_call_cnt, 2, '0'),
-               '',
+               branch_cd brch_cd,
+               MAC_NO,                
+                RPAD(' ',15,' ')                                         /*  CRT(15)+출동요청차수(2)+집계분류코드(2) */
+                        ||  LPAD(ORG_CALL_CNT ,2,'0') error_msg,
                send_date,
                send_time,
                arrival_date,
@@ -401,11 +398,9 @@
     <![CDATA[
         SELECT     MNG.trans_date trans1_date,
                    MNG.org_msg_no trans1_seq,
-                   MNG.BRANCH_CD,
+                   MNG.BRANCH_CD brch_cd,
                    MNG.mac_no,
-                   mng.crt_no,
-                   LPAD(MNG.org_call_cnt, 2, '0'),
-                   '',
+                   LPAD(MNG.org_call_cnt, 2, '0') error_msg,
                    MNG.send_date,
                    MNG.send_time,
                    MNG.arrival_date,
@@ -452,7 +447,7 @@
     <![CDATA[
         SELECT   MNG.trans_date trans1_date,
                    MNG.org_msg_no trans1_seq,
-                   MNG.branch_cd,
+                   MNG.branch_cd brch_cd,
                    MNG.mac_no,
                    ERR.error_msg,
                    MNG.send_date,
@@ -493,7 +488,7 @@
     <![CDATA[
         SELECT   MNG.trans_date trans1_date,
                    MNG.org_msg_no trans1_seq,
-                   MNG.branch_cd,
+                   MNG.branch_cd brch_cd,
                    MNG.mac_no,
                    ERR.error_msg,
                    /* 도착예정없이 도착할 경우 예정시간을 도착시간과 동일하게 송신 처리 -> 외환은행 요청 */
@@ -542,10 +537,10 @@
     <![CDATA[
         SELECT     MNG.trans_date trans1_date,                                                          /*  장애발생일자      */
                    MNG.org_msg_no trans1_seq,                                                          /*  출동요청일련번호    */
-                   MNG.branch_cd,                                                            /*  지점번호            */
+                   MNG.branch_cd brch_cd,                                                            /*  지점번호            */
                    MNG.mac_no,                                                              /*  기기번호            */
                    RPAD(NVL(MNG.CRT_NO,' '),15,' ')                                         /*  CRT(15)+출동요청차수(2)+집계분류코드(2) */
-                        ||  RPAD(MNG.ORG_CALL_CNT,2,' ')
+                        ||  LPAD(MNG.ORG_CALL_CNT,2,'0')
                         ||  RPAD(MNG.GROUP_ERROR_CD,2,' ') error_msg,
                    '',
                    '',
@@ -599,7 +594,7 @@
 				CASE WHEN mng.org_cd = '031'
 					 THEN '0'||mng.branch_cd
 				     ELSE mng.branch_cd
-				END as branch_cd,
+				END as brch_cd,
 				mng.site_cd,		
 				mng.mac_no,
 				mng.create_date,

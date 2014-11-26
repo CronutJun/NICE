@@ -37,7 +37,7 @@
     <![CDATA[
         SELECT  DEAL_DATE        ,
               DEAL_TIME          ,
-              BRANCH_CD           ,
+              BRANCH_CD AS brch_cd           ,
               MAC_NO             ,
               MEMBER_ID casher_id          ,
               CLOSE_DATE         ,

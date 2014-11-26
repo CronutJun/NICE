@@ -49,7 +49,7 @@
     <!-- 0TR -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT BRANCH_CD,
+        SELECT brch_cd,
              mac_no,
              TO_CHAR(sysdate - 1, 'YYYYMMDD') close_date,
              '',
@@ -59,7 +59,7 @@
              '',
              '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM (
-                SELECT  BRANCH_CD, MAC_NO
+                SELECT  BRANCH_CD AS brch_cd, MAC_NO
                 FROM    OP.T_CM_MAC
                 WHERE   ORG_CD = '0TR'
                 AND     OPEN_DATE <= TO_CHAR(sysdate - 1, 'YYYYMMDD')

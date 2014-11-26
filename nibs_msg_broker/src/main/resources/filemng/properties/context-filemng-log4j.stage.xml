@@ -9,7 +9,7 @@
     </appender>
 
     <appender name="root" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/infoap/nibsLog/logs_batch/filemng_root.log"/>
+        <param name="file" value="/share1/nibs_log/batch/filemng_root.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
@@ -20,7 +20,7 @@
     </appender>
 
     <appender name="sqltime" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/infoap/nibsLog/logs_batch/filemng_sqltime.log"/>
+        <param name="file" value="/share1/nibs_log/batch/filemng_sqltime.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
@@ -30,7 +30,7 @@
     </appender>
 
     <appender name="filemng" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/infoap/nibsLog/logs_batch/filemng_app.log"/>
+        <param name="file" value="/share1/nibs_log/batch/filemng_app.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>

@@ -38,7 +38,7 @@
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
         SELECT  '8202' mng_brch_cd,
-                BRANCH_CD,
+                BRANCH_CD AS brch_cd,
                 DECODE(SITE_CD, 'EMPTY', '', SITE_CD) site_cd,
                 DECODE(MAC_NO, 'EMPTY', '', MAC_NO) mac_no,
                 REQ_DATE,

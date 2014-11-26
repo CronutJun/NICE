@@ -45,7 +45,7 @@
 }
  -->
     <sql id="A">
-        branch_cd
+        branch_cd as brch_cd
         ,mac_no
         ,'B' addcash_type
         ,serial_no
@@ -58,7 +58,7 @@
     </sql>
 
     <sql id="B">
-        OP.FC_GET_MAP_BRANCH_CD(0, ORG_CD, BRANCH_CD, MAC_NO) branch_cd
+        OP.FC_GET_MAP_BRANCH_CD(0, ORG_CD, BRANCH_CD, MAC_NO) brch_cd
         ,OP.FC_GET_MAP_MAC_NO(0, ORG_CD, BRANCH_CD, MAC_NO) mac_no
         ,'B' addcash_type
         ,serial_no
@@ -71,7 +71,7 @@
     </sql>
 
     <sql id="C">
-        branch_cd
+        branch_cd as brch_cd
         ,mac_no
         ,'B' addcash_type
         ,'0' pda_yn
@@ -94,7 +94,7 @@
     </sql>
 
     <sql id="D">
-        branch_cd
+        branch_cd as brch_cd
         ,mac_no
         ,safe_type
         ,'B' addcash_type
@@ -117,7 +117,7 @@
 
     <select id="select088" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
         select
-            branch_cd
+            branch_cd as brch_cd
             ,mac_no
             ,safe_type
             ,'B' addcash_type
@@ -137,9 +137,8 @@
             ,office_nm
             ,add_time insert_time
         FROM OP.T_FN_ATMS_ADD_CASH_REPORT
-        where rownum = 1
-        /* WHERE org_send_yn = '0'
-         AND org_cd = '088' */
+        WHERE org_send_yn = '0'
+         AND org_cd = '088'
     </select>
 
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
@@ -150,7 +149,7 @@
                 <when test='orgCd == "031"'><include refid="C"></include></when>
                 <when test='orgCd == "088"'><include refid="D"></include></when>
                 <otherwise>
-                    branch_cd
+                    branch_cd as brch_cd
                     ,mac_no
                     ,'B' addcash_type
                     ,'0' pda_yn

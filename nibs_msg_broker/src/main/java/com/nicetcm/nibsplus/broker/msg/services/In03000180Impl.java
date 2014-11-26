@@ -50,7 +50,7 @@ public class In03000180Impl extends InMsgHandlerImpl {
         String hConfirmYn;
 
         /* 신한atms 는 초기 수신 시 "1" 지사 수정 후 확정 시 "2", 신한 전송 후 "3"으로 설정 */
-        if(MsgBrokerConst.SHATMS_CODE.equals(parsed.getLong("CM.org_cd"))) {
+        if(MsgBrokerConst.SHATMS_CODE.equals(parsed.getString("CM.org_cd"))) {
             hConfirmYn = "1";
         } else {
             /* 기업은행은 은행 확정 그대로 지사 확정하므로 "2" 로 설정 */

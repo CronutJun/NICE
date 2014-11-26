@@ -45,13 +45,18 @@ public class MsgBrokerClassLoader extends ClassLoader {
 
     protected Class findClass(String name) throws ClassNotFoundException {
 
-        byte[] buffer = null;
-        String path = name.replace('.', '/').concat(".class");
-        String filePath = url.getPath() + File.separatorChar + path;
-        logger.warn(filePath);
-        buffer = readFile(filePath);
+        if( name.equals(classNm) ) {
+            byte[] buffer = null;
+            String path = name.replace('.', '/').concat(".class");
+            String filePath = url.getPath() + File.separatorChar + path;
+            logger.warn(filePath);
+            buffer = readFile(filePath);
 
-        return defineClass(name, buffer, 0, buffer.length);
+            return defineClass(name, buffer, 0, buffer.length);
+        }
+        else {
+            return super.findClass(name);
+        }
     }
 
     private byte[] readFile(String filePath) throws ClassNotFoundException {

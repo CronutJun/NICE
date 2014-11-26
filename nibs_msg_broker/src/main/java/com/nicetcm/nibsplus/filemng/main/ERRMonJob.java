@@ -52,7 +52,7 @@ public class ERRMonJob implements Job {
         	MsgBrokerCallAgent.msgBrokerConfig = (Properties)applicationContext.getBean("msgBrokerConfig");
         }
         
-		errMonMapper = applicationContext.getBean("errMonMapper", ERRMonMapper.class);
+		errMonMapper = applicationContext.getBean("ERRMonMapper", ERRMonMapper.class);
 		errMonMapper.mainWhileDelete1();
 		errMonMapper.mainWhileDelete2();
 		
@@ -997,9 +997,7 @@ public class ERRMonJob implements Job {
 	 * @param i
 	 */
 	private void fnCleanup(int Sig) {
-		logger( "ERRMon Main Process fnCleanup Start...Signal=[" + Sig + "]\n" );
-
-		System.exit(0);
+		throw new RuntimeException( "ERRMon Main Process fnCleanup Start...Signal=[" + Sig + "]\n" );
 	}
 
 }

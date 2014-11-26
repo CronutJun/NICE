@@ -30,7 +30,7 @@
     <!-- 003, 004, 081, 039, 088 -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT INF.branch_cd,
+        SELECT INF.branch_cd as brch_cd,
                INF.mac_no,
                INF.mon_send_yn mon_yn,
                INF.the_send_yn tue_yn,
@@ -53,7 +53,7 @@
 
     <select id="selectT20" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT OP.FC_GET_MAP_branch_CD(0, INF.ORG_CD, INF.branch_CD, INF.MAC_NO) branch_cd,
+        SELECT OP.FC_GET_MAP_branch_CD(0, INF.ORG_CD, INF.branch_CD, INF.MAC_NO) brch_cd,
                OP.FC_GET_MAP_MAC_NO(0, INF.ORG_CD, INF.branch_CD, INF.MAC_NO) mac_no,
                INF.mon_send_yn mon_yn,
                INF.the_send_yn tue_yn,
@@ -77,7 +77,7 @@
 
     <select id="selectT39" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT OP.FC_GET_MAP_branch_CD(0, INF.ORG_CD, INF.branch_CD, INF.MAC_NO) branch_cd,
+        SELECT OP.FC_GET_MAP_branch_CD(0, INF.ORG_CD, INF.branch_CD, INF.MAC_NO) brch_cd,
                OP.FC_GET_MAP_MAC_NO(0, INF.ORG_CD, INF.branch_CD, INF.MAC_NO) mac_no,
                INF.mon_send_yn mon_yn,
                INF.the_send_yn tue_yn,
@@ -101,7 +101,7 @@
 
     <select id="select0EM" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT  AA.BRANCH_CD,
+        SELECT  AA.brch_cd,
                 AA.MAC_NO,
                 AA.MON_CHK mon_yn,
                 AA.TUE_CHK tue_yn,
@@ -117,7 +117,7 @@
                '',
                '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM    (
-                    SELECT  BRANCH_CD,
+                    SELECT  BRANCH_CD AS brch_cd,
                             '' AS MAC_NO,
                             '' AS MON_CHK,
                             '' AS TUE_CHK,
@@ -134,7 +134,7 @@
                     WHERE   BASE_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
                     AND     ORG_SEND_YN = '0'
                     union ALL
-                    SELECT  BRANCH_CD,
+                    SELECT  BRANCH_CD AS brch_cd,
                             '',
                             MON_CHK,
                             TUE_CHK,

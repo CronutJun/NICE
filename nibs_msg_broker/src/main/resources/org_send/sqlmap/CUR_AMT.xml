@@ -56,7 +56,7 @@
     <!-- 031, 0HD, 032, 039, 023, 081, 034, 011, 027, 003, 005, 020 -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
 
-        SELECT  BRANCH_CD,
+        SELECT  BRANCH_CD AS brch_cd,
             MAC_NO,
             TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
             '0' inq_close_yn,

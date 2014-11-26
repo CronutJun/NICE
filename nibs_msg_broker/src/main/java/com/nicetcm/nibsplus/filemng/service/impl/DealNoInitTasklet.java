@@ -2,8 +2,6 @@ package com.nicetcm.nibsplus.filemng.service.impl;
 
 import java.io.File;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -18,7 +16,7 @@ import com.nicetcm.nibsplus.filemng.model.FileMngParameterVO;
 
 public class DealNoInitTasklet implements Tasklet {
 
-    private static final Logger logger = LoggerFactory.getLogger(DealNoInitTasklet.class);
+    // private static final Logger logger = LoggerFactory.getLogger(DealNoInitTasklet.class);
 
     @Value("#{config['dealno.local.path']}")
     private String readPath;

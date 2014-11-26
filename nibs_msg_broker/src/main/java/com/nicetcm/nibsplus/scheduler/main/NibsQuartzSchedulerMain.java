@@ -1,5 +1,7 @@
 package com.nicetcm.nibsplus.scheduler.main;
 
+import java.util.Properties;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -35,17 +37,31 @@ public class NibsQuartzSchedulerMain {
         try {
             logger.info("Nibs Quartz Scheduler를 시작 합니다.");
 
-            String[] springConfig  =
-                {   "classpath:/scheduler/spring/context-scheduler.xml",
-                    "classpath:/scheduler/spring/context-scheduler-rmi.xml"
+            String[] springConfig = null;
+            boolean rmiServer = false;
+            
+            if (System.getProperty("QUARTZ_NODE_NAME") == null || "OrgSend".equals(System.getProperty("QUARTZ_NODE_NAME")) || "RMIOnly".equals(System.getProperty("QUARTZ_NODE_NAME"))) {
+            	rmiServer = true;
+            	
+            	springConfig = new String[]{
+	    			"classpath:/scheduler/spring/context-scheduler.xml",
+	    			"classpath:/scheduler/spring/context-scheduler-rmi.xml"
                 };
+            } else {
+            	springConfig = new String[]{
+        			"classpath:/scheduler/spring/context-scheduler.xml"
+            	};
+            }
             
             ApplicationContext applicationContext = new ClassPathXmlApplicationContext(springConfig);
+            Properties config = applicationContext.getBean("config", Properties.class);
 
-            ScheduleExecuter scheduleExecuter = applicationContext.getBean("NibsQuartzScheduler", ScheduleExecuter.class);
-            scheduleExecuter.startSchedule();
+            if (!"RMIOnly".equals(System.getProperty("QUARTZ_NODE_NAME"))) {
+	            ScheduleExecuter scheduleExecuter = applicationContext.getBean("NibsQuartzScheduler", ScheduleExecuter.class);
+	            scheduleExecuter.startSchedule();
+            }
 
-            logger.info("Nibs Quartz Scheduler를 [정상적] 으로 실행 되었습니다.");
+            logger.info("Nibs Quartz Scheduler를 [정상적] 으로 실행 되었습니다." + (rmiServer ? " RMI Service Port : " + config.getProperty("execute.rmi.registry.port"): ""));
         } catch (SchduleException e) {
             //e.printStackTrace();
             logger.error(e.getMessage());

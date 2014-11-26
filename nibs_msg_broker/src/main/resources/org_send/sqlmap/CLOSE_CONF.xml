@@ -48,7 +48,7 @@
  -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT MAC.BRANCH_CD,
+        SELECT MAC.BRANCH_CD as brch_cd,
                 MAC.mac_no,
                 TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
                 '1' close_type,
@@ -71,7 +71,7 @@
                 OR  MAC.close_date > TO_CHAR(SYSDATE, 'YYYYMMDD')
                 )
         MINUS
-        SELECT  CLS.BRANCH_CD,
+        SELECT  CLS.BRANCH_CD as brch_cd,
                 CLS.mac_no,
                 CLS.cash_date inq_date,
                 '1' close_type,

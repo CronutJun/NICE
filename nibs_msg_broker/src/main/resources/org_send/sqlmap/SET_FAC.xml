@@ -44,7 +44,7 @@
     <![CDATA[
         select CHK.CHECK_DATE chk_date,
                '',
-               CHK.BRANCH_CD,
+               CHK.BRANCH_CD brch_cd,
                '',
                '',
                CHK.SITE_CD,
@@ -90,7 +90,7 @@
     <![CDATA[
         select CHK.CHECK_DATE chk_date,                                          /*  관리점검일       */
                '',
-               CHK.BRANCH_CD,                                            /*  영업점코드       */
+               CHK.BRANCH_CD brch_cd,                                            /*  영업점코드       */
                '',                                                      /*  관리점코드       */
                '',
                CHK.SITE_CD site_cd,                                             /*  코너코드        */

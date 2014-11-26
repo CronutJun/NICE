@@ -50,7 +50,7 @@
     <![CDATA[
         SELECT /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/ MNG.trans_date trans1_date,                                                                /* 1차통지 거래일자                    */
                  MNG.org_msg_no trans1_seq,                                                            /* 1차통지 전문번호                    */
-                 MNG.BRANCH_CD,                                                              /* 국코드                          */
+                 MNG.branch_cd brch_cd,                                                              /* 국코드                          */
                  MNG.mac_no,                                                                /* 단말번호                         */
                  MNG.site_cd org_site_cd,                                                               /* 코너코드                         */
                  '',
@@ -115,7 +115,7 @@
     <![CDATA[
         SELECT /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/  MNG.trans_date trans1_date,
                  MNG.org_msg_no trans1_seq,
-                 MNG.BRANCH_CD,
+                 MNG.branch_cd brch_cd,
                  DECODE( substr( MNG.sec, 1, 1 ), '2', '', DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no )) mac_no, /* 민원출동은 기번 없이 feedback */
                  MNG.SITE_CD org_site_cd,
                  LPAD(MNG.org_call_cnt, 2, '0') org_call_cnt,
@@ -214,7 +214,7 @@
     <![CDATA[
         SELECT /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/  MNG.trans_date trans1_date,
                  MNG.org_msg_no trans1_seq,
-                 MNG.BRANCH_CD,
+                 MNG.branch_cd brch_cd,
                  /* DECODE( substr( MNG.sec, 1, 1 ), '2', '', DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no )), 민원출동은 기번 없이 feedback */
                  MNG.MAC_NO,
                  MNG.SITE_CD org_site_cd,
@@ -310,7 +310,7 @@
     <![CDATA[
         SELECT /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/ MNG.trans_date trans1_date,
                  MNG.org_msg_no trans1_seq,
-                 MNG.BRANCH_CD,
+                 MNG.branch_cd brch_cd,
                  MNG.mac_no,
                  '',
                  '',
@@ -395,7 +395,7 @@
     <![CDATA[
         SELECT /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/ MNG.trans_date trans1_date,
                  MNG.org_msg_no trans1_seq,
-                 MNG.BRANCH_CD,
+                 MNG.branch_cd brch_cd,
                  MNG.mac_no,
                  MNG.org_site_cd,
                  '',
@@ -598,7 +598,7 @@
         SELECT  /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/
                  MNG.trans_date trans1_date,
                  MNG.org_msg_no trans1_seq,
-                 MNG.BRANCH_CD,
+                 MNG.branch_cd brch_cd,
                  DECODE( substr( MNG.sec, 1, 1 ), '2', '', DECODE(substr( MNG.sec, 1, 1 ), '8', '', MNG.mac_no )) mac_no, /* 민원출동은 기번 없이 feedback */
                  MNG.SITE_CD org_site_cd,
                  LPAD(MNG.org_call_cnt, 2, '0') org_call_cnt,
@@ -700,7 +700,7 @@
         union all
         SELECT   trans_date,
                  org_msg_no,
-                 BRANCH_CD,
+                 branch_cd brch_cd,
                  MAC_NO,
                  SITE_CD,
                  LPAD(org_call_cnt, 2, '0'),
@@ -757,7 +757,7 @@
     <![CDATA[
         SELECT  /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/ MNG.trans_date trans1_date,
                  MNG.org_msg_no trans1_seq,
-                 MNG.BRANCH_CD,
+                 MNG.branch_cd brch_cd,
                  MNG.mac_no,
                  MNG.SITE_CD org_site_cd,
                  LPAD(MNG.org_call_cnt, 2, '0') org_call_cnt,
@@ -857,7 +857,7 @@
     <![CDATA[
         SELECT /*+ INDEX (MNG IX_T_CT_ERROR_MNG_04) */ MNG.trans_date trans1_date,
                  MNG.org_msg_no trans1_seq,
-                 MNG.BRANCH_CD,
+                 MNG.branch_cd brch_cd,
                  MNG.mac_no,
                  '',
                  '',
@@ -991,7 +991,7 @@
     <![CDATA[
         SELECT /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/ MNG.trans_date trans1_date,
                  MNG.org_msg_no trans1_seq,
-                 MNG.branch_cd,
+                 MNG.branch_cd brch_cd,
                  MNG.mac_no,
                  '',
                  '',
@@ -1065,7 +1065,7 @@
     <![CDATA[
         SELECT  MNG.trans_date trans1_date,                                                                         /*  1차통지 거래일자       */
                  MNG.org_msg_no trans1_seq,                                                                        /*  1차통지    전문일련번호  */
-                 MNG.branch_cd,                                                                          /*  지점코드                */
+                 MNG.branch_cd brch_cd,                                                                          /*  지점코드                */
                  MNG.mac_no,                                                                            /*  기기번호                */
                  MNG.site_cd org_site_cd,                                                                           /*  코너코드                */
                  MNG.org_call_cnt org_call_cnt,                                                                      /*  출동요청차수          */
@@ -1154,7 +1154,7 @@
     <![CDATA[
         SELECT /*+ INDEX(MNG IX_T_CT_ERROR_MNG_04)*/ MNG.trans_date trans1_date,
                  MNG.org_msg_no trans1_seq,
-                 MNG.branch_cd,
+                 MNG.branch_cd brch_cd,
                  MNG.mac_no,
                  '',
                  '',

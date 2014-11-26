@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
@@ -22,7 +20,7 @@ import com.nicetcm.nibsplus.filemng.model.TFnDealNoVO;
 
 public class DealNoNotExistTasklet implements Tasklet {
 
-    private static final Logger logger = LoggerFactory.getLogger(DealNoNotExistTasklet.class);
+    // private static final Logger logger = LoggerFactory.getLogger(DealNoNotExistTasklet.class);
 
     @Value("#{config['dealno.local.path']}")
     private String writePath;

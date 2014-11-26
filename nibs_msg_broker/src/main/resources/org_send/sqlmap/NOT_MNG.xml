@@ -37,7 +37,7 @@
     <!-- 003, 004, 005, 081, 011, 035, 020, 039, 088 -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT BRANCH_CD,
+        SELECT BRANCH_CD AS brch_cd,
              mac_no,
              '',
              '',
@@ -85,7 +85,7 @@
 
     <select id="select0TR" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT BRANCH_CD,
+        SELECT BRANCH_CD AS brch_cd,
              mac_no,
              '',
              '',

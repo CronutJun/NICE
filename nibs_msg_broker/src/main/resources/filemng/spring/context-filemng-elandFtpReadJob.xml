@@ -8,7 +8,7 @@
     http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-    <bean id="fileRenameTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.FileRenameTasklet" />
+    <bean id="fileRenameTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.ElandFileRenameTasklet" />
     
    	<!-- Sap Master -->
     <bean id="sapMaFtpTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.SapMaFtpTasklet" />

@@ -84,7 +84,7 @@ public class NibsQuartzScheduler implements ScheduleExecuter
     @Override
     public void startSchedule() throws SchduleException
     {
-        List<SchedulerVO> scheduleList = scheduleInfoProvider.selectEnableSchedule(System.getProperty("QUARTZ_NODE_NAME") == null ? "OrgSendService" :  System.getProperty("QUARTZ_NODE_NAME"));
+        List<SchedulerVO> scheduleList = scheduleInfoProvider.selectEnableSchedule(System.getProperty("QUARTZ_NODE_NAME") == null ? "OrgSend" :  System.getProperty("QUARTZ_NODE_NAME"));
 
         if(scheduleList.size() == 0) {
             logger.info("실행할 스케쥴이 존재하지 않습니다.");

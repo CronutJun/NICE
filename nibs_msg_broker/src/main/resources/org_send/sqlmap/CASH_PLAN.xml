@@ -42,7 +42,7 @@
 
     <select id="select088" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT BRANCH_CD,
+        SELECT BRANCH_CD AS brch_cd,
              mac_no,
              '',
              '',
@@ -77,7 +77,7 @@
 
     <select id="select031" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              '',
              '',
@@ -113,7 +113,7 @@
 
     <select id="select0WC" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT branch_cd,                                    /* 국코드                              */
+        SELECT branch_cd as brch_cd,                                    /* 국코드                              */
              mac_no,                                        /* 단말번호                             */
              '',
              '',
@@ -148,7 +148,7 @@
 
     <select id="select032" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT BRANCH_CD,
+        SELECT BRANCH_CD AS brch_cd,
              MAC_NO,
              '',
              '',
@@ -183,8 +183,8 @@
 
     <select id="select039" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT OP.FC_GET_MAP_BRANCH_CD(0, ORG_CD, BRANCH_CD, MAC_NO),
-             OP.FC_GET_MAP_MAC_NO(0, ORG_CD, BRANCH_CD, MAC_NO),
+        SELECT OP.FC_GET_MAP_BRANCH_CD(0, ORG_CD, BRANCH_CD, MAC_NO) brch_cd,
+             OP.FC_GET_MAP_MAC_NO(0, ORG_CD, BRANCH_CD, MAC_NO) mac_no,
              '',
              '',
              '',
@@ -219,7 +219,7 @@
 
     <select id="select020" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT BRANCH_CD,
+        SELECT BRANCH_CD AS brch_cd,
              MAC_NO,
              '',
              '',
@@ -290,7 +290,7 @@
 
     <select id="select011" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              '',
              '',
@@ -326,7 +326,7 @@
 
     <select id="select003" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              '',
              '',
@@ -361,7 +361,7 @@
 
     <select id="select027" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              '',
              '',
@@ -398,7 +398,7 @@
     <!-- 004, 005, 081 -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT branch_cd,
+        SELECT branch_cd as brch_cd,
              mac_no,
              '',
              '',

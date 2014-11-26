@@ -31,27 +31,28 @@ public class In02000410Impl extends InMsgHandlerImpl {
 
     @Autowired private StoredProcMapper        splMap;
     @Autowired private TCmSetWorkEtcMapper cmSetWorkEtcMap;
-    
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
         TCmSetWorkEtc cmWorkEtc = new TCmSetWorkEtc();
-        
-        cmWorkEtc.setOrgCd 		    ( parsed.getString("SM.org_cd"		) );
+
+        cmWorkEtc.setOrgCd 		    ( parsed.getString("CM.org_cd"		) );
         cmWorkEtc.setWorkSeq  		( parsed.getString("work_seq"		) );
+        cmWorkEtc.setChangeNo  		( parsed.getString("change_no"		) );
         cmWorkEtc.setBranchCd  		( parsed.getString("branch_cd"		) );
         cmWorkEtc.setSiteCd  		( parsed.getString("site_cd"		) );
         cmWorkEtc.setSiteNm  		( parsed.getString("site_nm"		) );
         cmWorkEtc.setWorkDate  		( parsed.getString("work_date"		) );
-        cmWorkEtc.setWorkCont  		( parsed.getString("work_cont"		) );        
-        
+        cmWorkEtc.setWorkCont  		( parsed.getString("work_cont"		) );
+
         try {
         	cmSetWorkEtcMap.insert( cmWorkEtc );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {
             	TCmSetWorkEtcSpec cmSetWorkEtcSpec = new TCmSetWorkEtcSpec();
-            	cmSetWorkEtcSpec.createCriteria().andOrgCdEqualTo(parsed.getString("SM.org_cd"		))
+            	cmSetWorkEtcSpec.createCriteria().andOrgCdEqualTo(parsed.getString("CM.org_cd"		))
             	                          .andWorkSeqEqualTo(parsed.getString("work_seq"             ));
             	cmSetWorkEtcMap.updateBySpecSelective( cmWorkEtc, cmSetWorkEtcSpec);
             	//cmSetWorkEtcMap.updateByPrimaryKeySelective( cmWorkEtc );
@@ -65,7 +66,7 @@ public class In02000410Impl extends InMsgHandlerImpl {
             logger.warn( "[T_CM_SET_WORK_ETC] Save Error [{}]", e.getLocalizedMessage() );
             throw e;
         }
-       
+
     }
 
 }
