@@ -89,7 +89,7 @@ public class In05000111Impl extends InMsgHandlerImpl {
 
 
         errBasic.setOrgCd( macInfo.getOrgCd() );
-        errBasic.setCreateDate( parsed.getInt("create_date") );
+        errBasic.setCreateDate( parsed.getString("create_date") );
         errBasic.setCreateTime( parsed.getString("create_time") );
         errBasic.setBranchCd( macInfo.getBranchCd() );
         errBasic.setMacNo( macInfo.getMacNo() );

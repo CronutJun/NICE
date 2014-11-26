@@ -40,7 +40,7 @@
                    '',
                    '',
                    intime_deposit_cnt+outtime_deposit_cnt+br_intime_deposit_cnt+br_outtime_deposit_cnt intime_deposit_cnt      ,             /*  입금총건수           */
-                   intime_deposit_amt+outtime_deposit_amt+br_intime_deposit_amt+br_outtime_deposit_amt outtime_withdraw_amt     ,              /*  입금총금액           */
+                   intime_deposit_amt+outtime_deposit_amt+br_intime_deposit_amt+br_outtime_deposit_amt intime_deposit_amt     ,              /*  입금총금액           */
                    '',
                    '',
                    '',

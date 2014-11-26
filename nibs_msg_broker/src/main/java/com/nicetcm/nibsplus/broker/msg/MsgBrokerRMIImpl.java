@@ -21,6 +21,7 @@ import com.nicetcm.nibsplus.broker.msg.services.OutMsgHandler;
 public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
     public static final ConcurrentMap<String, BlockingQueue<byte[]>> rmiSyncAns = new ConcurrentHashMap<String, BlockingQueue<byte[]>>();
+    public static final ConcurrentMap<String, byte[]> rmiOrigMsg = new ConcurrentHashMap<String, byte[]>();
 
     //private TMiscMapper      miscMap;
     private StoredProcMapper splMap;
@@ -75,6 +76,8 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
                 if( !msgThrdSafeData.isNoOutData() ) {
                     rmiSyncAns.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), waitQ);
+                    rmiOrigMsg.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), msg);
+                    MsgBrokerManageRMIImpl.putRMIOrigMsgAvailability(msgPsr.getString("CM.trans_seq_no"), msg);
                     try {
                         MsgBrokerProducer.putDataToPrd(msgPsr);
 
@@ -109,6 +112,8 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
             }
         }
         finally {
+            MsgBrokerManageRMIImpl.removeRMIOrigMsgAvailability(msgPsr.getString("CM.trans_seq_no"));
+            rmiOrigMsg.remove(msgPsr.getString("CM.trans_seq_no"));
             rmiSyncAns.remove(msgPsr.getString("CM.trans_seq_no"));
             msgPsr.clearMessage();
             logger.debug("remove element of rmiSyncAns");

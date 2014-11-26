@@ -145,7 +145,7 @@ public class MsgBrokerWork {
                             waitQ.put( msg );
                         }
                         else if( !msgThrdSafeData.isSkipAnswer() ) {
-                            MsgBrokerManageRMIImpl.ansRMIAvailability( msg );
+                            MsgBrokerManageRMIImpl.ansRMIAvailability( msgPsr.getString("CM.trans_seq_no"), msg );
                         }
                     }
                 }
@@ -182,7 +182,7 @@ public class MsgBrokerWork {
                             waitQ.put( msg );
                         }
                         else if( !msgThrdSafeData.isSkipAnswer() ) {
-                            MsgBrokerManageRMIImpl.ansRMIAvailability( msg );
+                            MsgBrokerManageRMIImpl.ansRMIAvailability( msgPsr.getString("CM.trans_seq_no"), msg );
                         }
                     }
                 }
@@ -217,7 +217,7 @@ public class MsgBrokerWork {
                             waitQ.put( msg );
                         }
                         else if( !msgThrdSafeData.isSkipAnswer() ) {
-                            MsgBrokerManageRMIImpl.ansRMIAvailability( msg );
+                            MsgBrokerManageRMIImpl.ansRMIAvailability( msgPsr.getString("CM.trans_seq_no"), msg );
                         }
                     }
                     throw e;

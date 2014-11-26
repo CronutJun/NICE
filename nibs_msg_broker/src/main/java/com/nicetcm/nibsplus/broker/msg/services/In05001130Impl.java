@@ -43,7 +43,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
          * 정상 및 개국신호의 경우, org_send_yn = '3' 으로 설정한다.
          */
         if( parsed.getString("cl_cd").equals("2") ) {  // 중지중(장애)
-            errBasicSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("create_date") )
+            errBasicSpec.createCriteria().andCreateDateEqualTo( parsed.getString("create_date") )
                                          .andCreateTimeEqualTo( parsed.getString("create_time") )
                                          .andOrgCdEqualTo( "096" )
                                          .andBranchCdEqualTo( "9600" )
@@ -90,7 +90,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
              *  나머지 동시발생 장애 존재여부 체크
              */
             TCtErrorBasic cond = new TCtErrorBasic();
-            cond.setCreateDate( parsed.getInt("create_date") );
+            cond.setCreateDate( parsed.getString("create_date") );
             cond.setCreateTime( parsed.getString("create_time") );
             cond.setMacNo( parsed.getString("mac_no") );
             cond.setErrorCd( parsed.getString("mac_error_cd") );
@@ -144,7 +144,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
         }
         else if ( parsed.getString("cl_cd").equals("0")  ) {       // 서비스중(상태)
             TCtErrorBasic cond = new TCtErrorBasic();
-            cond.setCreateDate( parsed.getInt("create_date") );
+            cond.setCreateDate( parsed.getString("create_date") );
             cond.setCreateTime( parsed.getString("create_time") );
             cond.setMacNo( parsed.getString("mac_no") );
             cond.setErrorCd( parsed.getString("mac_error_cd") );
@@ -190,7 +190,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
         }
         else if ( parsed.getString("cl_cd").equals("5")  ) {       // 서비스오픈(개국)
             TCtErrorBasic cond = new TCtErrorBasic();
-            cond.setCreateDate( parsed.getInt("create_date") );
+            cond.setCreateDate( parsed.getString("create_date") );
             cond.setCreateTime( parsed.getString("create_time") );
             cond.setMacNo( parsed.getString("mac_no") );
             cond.setErrorCd( parsed.getString("mac_error_cd") );

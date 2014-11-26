@@ -7,15 +7,15 @@
     </select>
     
     <select id="sp_cm_fax" statementType="CALLABLE">
-		{ call PKG_CM_FAXMASTER.SP_BATCHPROCESS(TO_CHAR(SYSDATE,'YYYYMMDD'),'') }
+		{ call PKG_CM_FAXMASTER.SP_BATCHPROCESS }
 	</select>
 	
 	<select id="sp_cm_mac_rank" statementType="CALLABLE">
-		{ call SP_CM_MAC_RANK(null) }
+		{ call SP_CM_MAC_RANK }
 	</select>
 	
 	<select id="sp_cm_personnel" statementType="CALLABLE">
-		{ call sp_cm_personnel(null, null, null) }
+		{ call sp_cm_personnel }
 	</select>
 	
 	<select id="sp_cm_update_plan_focus" statementType="CALLABLE">
@@ -23,83 +23,83 @@
 	</select>
 	
 	<select id="sp_ct_check_0EL_alert" statementType="CALLABLE">
-		{ call sp_ct_check_0EL_alert('0EL', null) }
+		{ call sp_ct_check_0EL_alert('0EL') }
 	</select>
 	
 	<select id="sp_ct_check_alert_039" statementType="CALLABLE">
-		{ call sp_ct_check_alert(null) }
+		{ call sp_ct_check_alert }
 	</select>
 	
 	<select id="sp_ct_check_alert_nh_file" statementType="CALLABLE">
-		{ call sp_ct_check_alert_039(null) }
+		{ call sp_ct_check_alert_039 }
 	</select>
 	
 	<select id="sp_ct_check_alert" statementType="CALLABLE">
-		{ call sp_ct_check_alert_nh_file(null) }
+		{ call sp_ct_check_alert_nh_file }
 	</select>
 	
 	<select id="sp_ct_delete_day" statementType="CALLABLE">
-		{ call SP_CT_DELETE_DAY(null) }
+		{ call SP_CT_DELETE_DAY }
 	</select>
 	
 	<select id="sp_ct_report_day_2007_1" statementType="CALLABLE">
-		{ call sp_ct_report_day_2012(null, null) }
+		{ call sp_ct_report_day_2012 }
 	</select>
 	
 	<select id="sp_ct_report_day_2007_2" statementType="CALLABLE">
-		{ call sp_ct_reportoper_modify(null) }
+		{ call sp_ct_reportoper_modify }
 	</select>
 	
 	<select id="sp_fn_bscenter" statementType="CALLABLE">
-		{ call pkg_fn_BsAtms_DemandManager.sp_BsAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_BsAtms_DemandManager.sp_BsAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_cashflow_endamt" statementType="CALLABLE">
-		{ call sp_fn_cashflow_endamt(TO_CHAR(SYSDATE,'YYYYMMDD')) }
+		{ call sp_fn_cashflow_endamt }
 	</select>
 	
 	<select id="sp_fn_center" statementType="CALLABLE">
-		{ call pkg_fn_DemandManager.sp_batchProcess(null, null, null) }
+		{ call pkg_fn_DemandManager.sp_batchProcess }
 	</select>
 	
 	<select id="sp_fn_close_send_wc" statementType="CALLABLE">
-		{ call sp_fn_close_send_wc(null) }
+		{ call sp_fn_close_send_wc }
 	</select>
 	
 	<select id="sp_fn_ctcenter" statementType="CALLABLE">
-		{ call pkg_fn_CtAtms_DemandManager.sp_CtAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_CtAtms_DemandManager.sp_CtAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_day_close_ktis" statementType="CALLABLE">
-		{ call SP_FN_DAY_CLOSE_KTIS(null, null) }
+		{ call SP_FN_DAY_CLOSE_KTIS }
 	</select>
 	
 	<select id="sp_fn_deal_forecast" statementType="CALLABLE">
-		{ call SP_FN_DEAL_FORECAST(TO_CHAR(SYSDATE,'YYYYMMDD'),null) }
+		{ call SP_FN_DEAL_FORECAST }
 	</select>
 	
 	<select id="sp_fn_dealcount" statementType="CALLABLE">
-		{ call sp_fn_dealCount(null) }
+		{ call sp_fn_dealCount }
 	</select>
 	
 	<select id="sp_fn_dgbcenter" statementType="CALLABLE">
-		{ call pkg_fn_DGBAtms_DemandManager.sp_DGBAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_DGBAtms_DemandManager.sp_DGBAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_eland_amt" statementType="CALLABLE">
-		{ call sp_fn_eland_amt(null) }
+		{ call sp_fn_eland_amt }
 	</select>
 	
 	<select id="sp_fn_err_trade" statementType="CALLABLE">
-		{ call sp_fn_err_trade(null) }
+		{ call sp_fn_err_trade }
 	</select>
 	
 	<select id="sp_fn_etc_msum_1" statementType="CALLABLE">
-		{ call sp_fn_lease_msum(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call sp_fn_lease_msum(TO_CHAR(SYSDATE - 1,'YYYYMMDD')) }
 	</select>
 	
 	<select id="sp_fn_etc_msum_2" statementType="CALLABLE">
-		{ call sp_fn_cms_close_msum(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call sp_fn_cms_close_msum(TO_CHAR(SYSDATE - 1,'YYYYMMDD')) }
 	</select>
 	
 	<select id="sp_fn_etc_msum_3" statementType="CALLABLE">
@@ -107,7 +107,7 @@
 	</select>
 	
 	<select id="sp_fn_forcast_addsend_center" statementType="CALLABLE">
-		{ call sp_fn_forcast_addsend_center(null) }
+		{ call sp_fn_forcast_addsend_center }
 	</select>
 	
 	<select id="sp_fn_forcast_data_dsum_atm" statementType="CALLABLE">
@@ -119,47 +119,47 @@
 	</select>
 	
 	<select id="sp_fn_hncenter" statementType="CALLABLE">
-		{ call pkg_fn_HnAtms_DemandManager.sp_HnAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_HnAtms_DemandManager.sp_HnAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_imsi_jan" statementType="CALLABLE">
-		{ call SP_FN_IMSI_JAN(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call SP_FN_IMSI_JAN }
 	</select>
 	
 	<select id="sp_fn_jjcenter" statementType="CALLABLE">
-		{ call pkg_fn_JjAtms_DemandManager.sp_JjAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_JjAtms_DemandManager.sp_JjAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_kbcenter" statementType="CALLABLE">
-		{ call pkg_fn_KbAtms_DemandManager.sp_KbAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_KbAtms_DemandManager.sp_KbAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_kebcenter" statementType="CALLABLE">
-		{ call pkg_fn_KebAtms_DemandManager.sp_KebAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_KebAtms_DemandManager.sp_KebAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_kncenter" statementType="CALLABLE">
-		{ call pkg_fn_KNAtms_DemandManager.sp_KNAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_KNAtms_DemandManager.sp_KNAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_ktiscenter" statementType="CALLABLE">
-		{ call pkg_fn_KTISAtms_DemandManager.sp_KTISAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_KTISAtms_DemandManager.sp_KTISAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_kucenter" statementType="CALLABLE">
-		{ call pkg_fn_KuAtms_DemandManager.sp_KuAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_KuAtms_DemandManager.sp_KuAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_largemonth_1" statementType="CALLABLE">
-		{ call SP_FN_LARGEMONTH() }
+		{ call SP_FN_LARGEMONTH }
 	</select>
 	
 	<select id="sp_fn_largemonth_2" statementType="CALLABLE">
-		{ call sp_fn_risk_month(TO_CHAR(SYSDATE-1,'YYYYMM')) }
+		{ call sp_fn_risk_month }
 	</select>
 	
 	<select id="sp_fn_mac_stock_amt" statementType="CALLABLE">
-		{ call SP_FN_MAC_STOCK_AMT(TO_CHAR(SYSDATE-1,'YYYYMMDD'),null) }
+		{ call SP_FN_MAC_STOCK_AMT(TO_CHAR(SYSDATE - 1,'YYYYMMDD'),null) }
 	</select>
 	
 	<select id="sp_fn_maccount" statementType="CALLABLE">
@@ -167,27 +167,27 @@
 	</select>
 	
 	<select id="sp_fn_man_1" statementType="CALLABLE">
-		{ call SP_FN_MAN(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call SP_FN_MAN }
 	</select>
 	
 	<select id="sp_fn_man_2" statementType="CALLABLE">
-		{ call sp_fn_risk_day(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call sp_fn_risk_day }
 	</select>
 	
 	<select id="sp_fn_nhcenter" statementType="CALLABLE">
-		{ call pkg_fn_NhAtms_DemandManager.sp_NhAtms_batchProcess(null, null, null)} }
+		{ call pkg_fn_NhAtms_DemandManager.sp_NhAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_nice_deal_byday" statementType="CALLABLE">
-		{ call sp_fn_nice_deal_byday(null) }
+		{ call sp_fn_nice_deal_byday }
 	</select>
 	
 	<select id="sp_fn_nice_deal_byhour_1" statementType="CALLABLE">
-		{ call sp_fn_nice_deal_byhour(null) }
+		{ call sp_fn_nice_deal_byhour }
 	</select>
 	
 	<select id="sp_fn_nice_deal_byhour_2" statementType="CALLABLE">
-		{ call sp_fn_nice_deal_byhour_amt(null) }
+		{ call sp_fn_nice_deal_byhour_amt }
 	</select>
 	
 	<select id="sp_fn_nice_dsum_bc_1" statementType="CALLABLE">
@@ -195,11 +195,11 @@
 	</select>
 	
 	<select id="sp_fn_nice_dsum_bc_2" statementType="CALLABLE">
-		{ call sp_fn_nice_dsum_demand(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call sp_fn_nice_dsum_demand(TO_CHAR(SYSDATE - 1,'YYYYMMDD')) }
 	</select>
 	
 	<select id="sp_fn_nice_dsum_bc_3" statementType="CALLABLE">
-		{ call SP_FN_NICE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call SP_FN_NICE_DSUM(TO_CHAR(SYSDATE - 1,'YYYYMMDD')) }
 	</select>
 	
 	<select id="sp_fn_nice_dsum_bc_4" statementType="CALLABLE">
@@ -215,55 +215,55 @@
 	</select>
 	
 	<select id="sp_fn_nice_dsum_bc_7" statementType="CALLABLE">
-		{ call SP_FN_CARRY_FEE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call SP_FN_CARRY_FEE_DSUM(TO_CHAR(SYSDATE - 1,'YYYYMMDD')) }
 	</select>
 	
 	<select id="sp_fn_nice_dsum" statementType="CALLABLE">
-		{ call sp_fn_nice_dsum_0bc(null) }
+		{ call sp_fn_nice_dsum_0bc }
 	</select>
 	
 	<select id="sp_fn_nice_endamt" statementType="CALLABLE">
-		{ call SP_FN_NICE_ENDAMT(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call SP_FN_NICE_ENDAMT }
 	</select>
 	
 	<select id="sp_fn_nice_every_insert" statementType="CALLABLE">
-		{ call sp_fn_nice_every_insert(null) }
+		{ call sp_fn_nice_every_insert }
 	</select>
 	
 	<select id="sp_fn_nice_ticket_cnt" statementType="CALLABLE">
-		{ call sp_fn_nice_ticket_cnt(null) }
+		{ call sp_fn_nice_ticket_cnt }
 	</select>
 	
 	<select id="sp_fn_nice_tran_gift_dsum" statementType="CALLABLE">
-		{ call SP_FN_NICE_TRAN_GIFT_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call SP_FN_NICE_TRAN_GIFT_DSUM }
 	</select>
 	
 	<select id="sp_fn_nice_tran_total" statementType="CALLABLE">
-		{ call sp_fn_nice_tran_total(null, null) }
+		{ call sp_fn_nice_tran_total }
 	</select>
 	
 	<select id="sp_fn_notclose_cancel" statementType="CALLABLE">
-		{ call sp_fn_notclose_cancel(null) }
+		{ call sp_fn_notclose_cancel }
 	</select>
 	
 	<select id="sp_fn_notend_nice" statementType="CALLABLE">
-		{ call SP_FN_NOTEND_NICE(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call SP_FN_NOTEND_NICE }
 	</select>
 	
 	<select id="sp_fn_officeclose" statementType="CALLABLE">
-		{ call SP_FN_OFFICECLOSE() }
+		{ call SP_FN_OFFICECLOSE }
 	</select>
 	
 	<select id="sp_fn_onlycashdatamacclose" statementType="CALLABLE">
-		{ call sp_fn_onlyCashDataMacClose() }
+		{ call sp_fn_onlyCashDataMacClose }
 	</select>
 	
 	<select id="sp_fn_operfundssh" statementType="CALLABLE">
-		{ call sp_fn_OperfundsSh(null) }
+		{ call sp_fn_OperfundsSh }
 	</select>
 	
 	<select id="sp_fn_recv_amt_bs" statementType="CALLABLE">
-		{ call sp_fn_recv_amt_bs(TO_CHAR(SYSDATE,'YYYYMMDD')) }
+		{ call sp_fn_recv_amt_bs }
 	</select>
 	
 	<select id="sp_fn_sendplan_confirm_bs" statementType="CALLABLE">
@@ -287,35 +287,35 @@
 	</select>
 	
 	<select id="sp_fn_servicesend" statementType="CALLABLE">
-		{ call SP_FN_SERVICESEND(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+		{ call SP_FN_SERVICESEND }
 	</select>
 	
 	<select id="sp_fn_sh_opcenter" statementType="CALLABLE">
-		{ call pkg_fn_ShAtms_OpDemandManager.sp_ShAtms_batchProcess(null) }
+		{ call pkg_fn_ShAtms_OpDemandManager.sp_ShAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_shcenter" statementType="CALLABLE">
-		{ call pkg_fn_ShAtms_DemandManager.sp_ShAtms_batchProcess(null) }
+		{ call pkg_fn_ShAtms_DemandManager.sp_ShAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_sitecount" statementType="CALLABLE">
-		{ call SP_FN_SITECOUNT(TO_CHAR(SYSDATE-1,'YYYYMMDD'))} }
+		{ call SP_FN_SITECOUNT }
 	</select>
 	
 	<select id="sp_fn_smcenter" statementType="CALLABLE">
-		{ call pkg_fn_SmAtms_DemandManager.sp_SMAtms_batchProcess(null) }
+		{ call pkg_fn_SmAtms_DemandManager.sp_SMAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_wccenter" statementType="CALLABLE">
-		{ call pkg_fn_WCAtms_DemandManager.sp_WCAtms_batchProcess(null) }
+		{ call pkg_fn_WCAtms_DemandManager.sp_WCAtms_batchProcess }
 	</select>
 	
 	<select id="sp_fn_wr_van_demand" statementType="CALLABLE">
-		{ call sp_fn_wr_van_demand(null) }
+		{ call sp_fn_wr_van_demand }
 	</select>
 	
 	<select id="sp_fn_wrcenter" statementType="CALLABLE">
-		{ call pkg_fn_WrAtms_DemandManager.sp_WrAtms_batchProcess(null, null, null) }
+		{ call pkg_fn_WrAtms_DemandManager.sp_WrAtms_batchProcess }
 	</select>
 	
 	<select id="sp_if_SendSMSCashLack_1" statementType="CALLABLE">
@@ -327,39 +327,39 @@
 	</select>
 	
 	<select id="sp_job_nice_short_cash_config" statementType="CALLABLE">
-		{ call sp_job_nice_short_cash_config() }
+		{ call sp_job_nice_short_cash_config }
 	</select>
 	
 	<select id="sp_phs_push_messages" statementType="CALLABLE">
-		{ call sp_phs_push_messages(null) }
+		{ call sp_phs_push_messages }
 	</select>
 	
 	<select id="sp_su_multireport_all_1" statementType="CALLABLE">
-		{ call sp_su_multireport_day_01(null) }
+		{ call sp_su_multireport_day_01 }
 	</select>
 	
 	<select id="sp_su_multireport_all_2" statementType="CALLABLE">
-		{ call sp_su_multireport_day_02(null) }
+		{ call sp_su_multireport_day_02 }
 	</select>
 	
 	<select id="sp_su_multireport_all_3" statementType="CALLABLE">
-		{ call sp_su_multireport_day_03(null) }
+		{ call sp_su_multireport_day_03 }
 	</select>
 	
 	<select id="sp_su_multireport_all_4" statementType="CALLABLE">
-		{ call sp_su_multireport_day_04(null) }
+		{ call sp_su_multireport_day_04 }
 	</select>
 	
 	<select id="sp_su_multireport_all_5" statementType="CALLABLE">
-		{ call sp_su_multireport_day_05(null) }
+		{ call sp_su_multireport_day_05 }
 	</select>
 	
 	<select id="sp_su_multireport_all_6" statementType="CALLABLE">
-		{ call sp_su_multireport_day_06(null) }
+		{ call sp_su_multireport_day_06 }
 	</select>
 	
 	<select id="sp_update_site" statementType="CALLABLE">
-		{ call sp_update_site() }
+		{ call sp_update_site }
 	</select>
 
     <insert id="sp_ct_month_use_status_003_1">

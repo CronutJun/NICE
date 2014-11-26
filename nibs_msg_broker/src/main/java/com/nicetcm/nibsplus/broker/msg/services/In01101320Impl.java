@@ -63,7 +63,7 @@ public class In01101320Impl extends InMsgHandlerImpl {
 
         TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
         tCtErrorMngSpec.createCriteria()
-        .andCreateDateGreaterThan(Integer.parseInt(MsgBrokerLib.SysDate(-10)))
+        .andCreateDateGreaterThan(MsgBrokerLib.SysDate(-10))
         .andOrgMsgNoEqualTo(szOrgMsgNo)
         .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
         .andBranchCdEqualTo(parsed.getString("brch_cd"))

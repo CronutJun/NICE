@@ -51,7 +51,7 @@
                    SST.MAC_TYPE atm_cl,                                                                        /*  기종구분(ATM/CD)*/
                    SST.BOOTH_TYPE,                                                                      /*  부스형태        */
                    COM.CD_NM1 mac_model,                                                                          /*  기종명         */
-                   SUBSTR(STE.SET_ADDR,1,2) region,                                                            /*  지역          */
+                   SUBSTR(STE.SET_ADDR,1,6) region,                                                            /*  지역          */
                    SST.BANKBOOK_YN,                                                                     /*  통장부(YN)     */
                    STE.OPER_START_TIME oper_time_from,                                                                 /*  운영시간from    */
                    STE.OPER_END_TIME oper_time_to,                                                                   /*  운영시간to      */

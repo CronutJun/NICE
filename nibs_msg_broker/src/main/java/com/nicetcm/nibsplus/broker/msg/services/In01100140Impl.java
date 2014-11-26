@@ -68,8 +68,8 @@ public class In01100140Impl extends InMsgHandlerImpl {
         if(parsed.getString("CM.ret_cd").equals("0000")) {
             TCtErrorMngGuardSpec tCtErrorMngGuardSpec = new TCtErrorMngGuardSpec();
             tCtErrorMngGuardSpec.createCriteria()
-            .andCreateDateEqualTo(parsed.getInt("trans1_date"))
-            .andErrorNoEqualTo(parsed.getString("trans1_seq"));
+            .andCreateDateEqualTo(parsed.getString("trans1_date"))
+            .andErrorNoEqualTo   (parsed.getString("trans1_seq"));
 
             try
             {
@@ -97,8 +97,8 @@ public class In01100140Impl extends InMsgHandlerImpl {
 
             TCtErrorMngGuardSpec tCtErrorMngGuardSpec = new TCtErrorMngGuardSpec();
             tCtErrorMngGuardSpec.createCriteria()
-            .andCreateDateEqualTo(parsed.getInt("trans1_date"))
-            .andErrorNoEqualTo(parsed.getString("trans1_seq"));
+            .andCreateDateEqualTo(parsed.getString("trans1_date"))
+            .andErrorNoEqualTo   (parsed.getString("trans1_seq"));
 
             try
             {

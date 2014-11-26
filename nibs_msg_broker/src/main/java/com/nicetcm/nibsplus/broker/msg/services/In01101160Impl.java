@@ -166,7 +166,7 @@ public class In01101160Impl extends InMsgHandlerImpl {
             tCtErrorMngSpec.createCriteria()
             .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
-            .andCreateDateGreaterThan(Integer.parseInt(MsgBrokerLib.SysDate(-10)))
+            .andCreateDateGreaterThan(MsgBrokerLib.SysDate(-10))
             .andTransDateEqualTo(parsed.getString("trans1_date"))
             .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"));
 
@@ -205,7 +205,7 @@ public class In01101160Impl extends InMsgHandlerImpl {
                 .andOrgCdEqualTo("096")
                 .andBranchCdEqualTo("9600")
                 .andMacNoEqualTo(parsed.getString("mac_no"))
-                .andCreateDateEqualTo(parsed.getInt("trans1_date"))
+                .andCreateDateEqualTo(parsed.getString("trans1_date"))
                 .andCreateTimeEqualTo(parsed.getString("trans1_seq"))
                 .andErrorCdEqualTo(parsed.getString("error_msg").trim())
                 .andOrgSendYnEqualTo("1");
@@ -231,11 +231,19 @@ public class In01101160Impl extends InMsgHandlerImpl {
                 .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
                 .andBranchCdEqualTo(parsed.getString("brch_cd"))
                 .andMacNoEqualTo(parsed.getString("mac_no"))
-                .andCreateDateGreaterThan(Integer.parseInt(MsgBrokerLib.SysDate(-10)))
+                .andCreateDateGreaterThan(MsgBrokerLib.SysDate(-10))
                 .andTransDateEqualTo(parsed.getString("trans1_date"))
                 .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"));
 
-
+                try
+                {
+                    comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMngSpec);
+                } catch (Exception e)
+                {
+                    logger.warn( String.format("[MngEM_AP_SaveArrival] 일괄업무 Org_cd[%3s] mac_no[%s]", parsed.getString("CM.org_cd"), parsed.getString("mac_no")) );
+                    logger.warn( "[MngEM_AP_SaveArrival] Update Err [%.200s]\n", e.getMessage() );
+                    throw e;
+                }
             }
 
         } else {
@@ -337,7 +345,7 @@ public class In01101160Impl extends InMsgHandlerImpl {
             .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
             .andBranchCdEqualTo(branchCd)
             .andMacNoEqualTo(parsed.getString("mac_no"))
-            .andCreateDateGreaterThan(Integer.parseInt(MsgBrokerLib.SysDate(-10)))
+            .andCreateDateGreaterThan(MsgBrokerLib.SysDate(-10))
             .andTransDateEqualTo(parsed.getString("trans1_date"))
             .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"));
 

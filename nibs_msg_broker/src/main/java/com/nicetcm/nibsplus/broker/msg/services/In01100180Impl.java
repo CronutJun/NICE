@@ -60,8 +60,8 @@ public class In01100180Impl extends InMsgHandlerImpl {
 
         TCtErrorMngGuardSpec tCtErrorMngGuardSpec = new TCtErrorMngGuardSpec();
         tCtErrorMngGuardSpec.createCriteria()
-        .andCreateDateEqualTo(parsed.getInt("trans1_date"))
-        .andErrorNoEqualTo(parsed.getString("trans1_seq"));
+        .andCreateDateEqualTo(parsed.getString("trans1_date"))
+        .andErrorNoEqualTo   (parsed.getString("trans1_seq"));
 
         try
         {

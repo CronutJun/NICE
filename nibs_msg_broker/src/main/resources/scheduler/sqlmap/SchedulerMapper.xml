@@ -39,8 +39,16 @@
 		    STATUS ,
 		    REAL_TIME_COMMAND ,
 		    <choose>
-		    	<when test='type != null and type neq ""'>
-		    		UPPER(#{type}) AS T_ARG1,
+		    	<when test='quartzNodeName neq "OrgSend" and param != null and param neq ""'>
+		    		UPPER(#{param}) AS REAL_TIME_COMMAND,
+		    	</when>
+		    	<otherwise>
+		    		REAL_TIME_COMMAND ,
+		    	</otherwise>
+		    </choose>
+		    <choose>
+		    	<when test='quartzNodeName eq "OrgSend" and param != null and param neq ""'>
+		    		UPPER(#{param}) AS T_ARG1,
 		    	</when>
 		    	<otherwise>
 		    		T_ARG1 ,

@@ -206,7 +206,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             throw e;
         }
 
-        errBasic.setCreateDate( parsed.getInt("create_date") );                       /*  발생시간        */
+        errBasic.setCreateDate( parsed.getString("create_date") );                    /*  발생시간        */
         errBasic.setCreateTime( parsed.getString("create_time") );                    /*  발생시간        */
         errBasic.setOrgCd( macInfo.getOrgCd() );                                      /*  기관코드        */
         errBasic.setBranchCd( macInfo.getBranchCd() );                                /*  지점코드        */
@@ -886,7 +886,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              * 원격 명령 요청 후 수신된 개국의 경우 해당 장애 복구 여부를 체크하여 원격관리 테이블에 update 해준다.
              */
             if( parsed.getString("rm_seq").length() > 0 ) {
-                updateRemoteMng( safeData, parsed.getInt("rm_create_date"), parsed.getString("rm_error_no"),
+                updateRemoteMng( safeData, parsed.getString("rm_create_date"), parsed.getString("rm_error_no"),
                         parsed.getString("rm_seq") );
             }
         }
@@ -1194,7 +1194,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         errBasic.setOrgCd( MsgBrokerConst.NICE_CODE );                      /* 2. 기관코드              */
         errBasic.setBranchCd( MsgBrokerConst.NICE_BRCH_CD);                 /* 3. 지점코드              */
         errBasic.setMacNo( parsed.getString("mac_no") );                    /* 4. 기번                  */
-        errBasic.setCreateDate( parsed.getInt("create_date") );
+        errBasic.setCreateDate( parsed.getString("create_date") );
         errBasic.setCreateTime( parsed.getString("create_time") );          /* 8. 발생시간              */
 
         /*
@@ -1362,7 +1362,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         return 0;
     }
 
-    private void updateRemoteMng( MsgBrokerData safeData, int createDate, String errorNo, String rmSeq ) throws Exception {
+    private void updateRemoteMng( MsgBrokerData safeData, String createDate, String errorNo, String rmSeq ) throws Exception {
 
         TCtErrorBasicSpec  errBasicSpec = new TCtErrorBasicSpec();
         TCtErrorTxnSpec    errTxnSpec   = new TCtErrorTxnSpec();
@@ -1423,7 +1423,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
 
 
         TCtRemoteHistorySpec rmtHistSpec = new TCtRemoteHistorySpec();
-        rmtHistSpec.createCriteria().andCreateDateEqualTo( Integer.toString(createDate) )
+        rmtHistSpec.createCriteria().andCreateDateEqualTo( createDate )
                                     .andErrorNoEqualTo( errorNo )
                                     .andCreateSeqEqualTo( rmSeq );
         rmtHist.setExeDate( safeData.getDSysDate());

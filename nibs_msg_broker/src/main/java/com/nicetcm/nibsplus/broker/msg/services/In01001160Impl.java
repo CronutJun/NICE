@@ -60,7 +60,7 @@ public class In01001160Impl extends InMsgHandlerImpl {
 
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
             tCtErrorMngSpec.createCriteria()
-            .andCreateDateGreaterThan(Integer.parseInt(MsgBrokerLib.SysDate(-10)))
+            .andCreateDateGreaterThan(MsgBrokerLib.SysDate(-10))
             .andTransDateEqualTo(parsed.getString("trans1_date"))
             .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"))
             .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
@@ -164,7 +164,7 @@ public class In01001160Impl extends InMsgHandlerImpl {
 
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
             tCtErrorMngSpec.createCriteria()
-            .andCreateDateEqualTo(parsed.getInt("trans1_date"))
+            .andCreateDateEqualTo(parsed.getString("trans1_date"))
             .andErrorNoEqualTo(parsed.getString("trans1_seq"));
 
             List<TCtErrorMng> tCtErrorMngList = null;
@@ -217,8 +217,8 @@ public class In01001160Impl extends InMsgHandlerImpl {
 
                 TCtErrorMngSpec tCtErrorMngSpec2 = new TCtErrorMngSpec();
                 tCtErrorMngSpec2.createCriteria()
-                .andCreateDateEqualTo(parsed.getInt("trans1_date"))
-                .andErrorNoEqualTo(parsed.getString("trans1_seq"));
+                .andCreateDateEqualTo(parsed.getString("trans1_date"))
+                .andErrorNoEqualTo   (parsed.getString("trans1_seq"));
 
                 try
                 {
@@ -267,8 +267,8 @@ public class In01001160Impl extends InMsgHandlerImpl {
 
             TCtErrorMngSpec tCtErrorMngSpec2 = new TCtErrorMngSpec();
             tCtErrorMngSpec2.createCriteria()
-            .andCreateDateEqualTo(parsed.getInt("trans1_date"))
-            .andErrorNoEqualTo(parsed.getString("trans1_seq"));
+            .andCreateDateEqualTo(parsed.getString("trans1_date"))
+            .andErrorNoEqualTo   (parsed.getString("trans1_seq"));
 
 
             try

@@ -40,8 +40,8 @@ public class In01101111Impl extends InMsgHandlerImpl {
 
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
             tCtErrorMngSpec.createCriteria()
-            .andCreateDateEqualTo(parsed.getInt("create_date"))
-            .andErrorNoEqualTo(parsed.getString("error_no"));
+            .andCreateDateEqualTo(parsed.getString("create_date"))
+            .andErrorNoEqualTo   (parsed.getString("error_no"));
 
             List<TCtErrorMng> tCtErrorMngList = tCtErrorMngMapper.selectBySpec(tCtErrorMngSpec);
 
@@ -80,7 +80,7 @@ public class In01101111Impl extends InMsgHandlerImpl {
 
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
             tCtErrorMngSpec.createCriteria()
-            .andCreateDateEqualTo(parsed.getInt("create_date"))
+            .andCreateDateEqualTo(parsed.getString("create_date"))
             .andCreateTimeEqualTo(parsed.getString("create_time"))
             .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
@@ -104,7 +104,7 @@ public class In01101111Impl extends InMsgHandlerImpl {
 
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
             tCtErrorMngSpec.createCriteria()
-            .andCreateDateEqualTo(parsed.getInt("create_date"))
+            .andCreateDateEqualTo(parsed.getString("create_date"))
             .andCreateTimeEqualTo(parsed.getString("create_time"))
             .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
             .andBranchCdEqualTo(parsed.getString("brch_cd"))

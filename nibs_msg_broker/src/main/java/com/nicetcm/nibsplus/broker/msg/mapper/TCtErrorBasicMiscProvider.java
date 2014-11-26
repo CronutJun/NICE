@@ -155,8 +155,8 @@ public class TCtErrorBasicMiscProvider {
              + "AND    TXN.REPAIR_TIME = '999999'                                      \n"
              + "AND    BASIC.CREATE_DATE || BASIC.CREATE_TIME <=                       \n"
              + "                      RTRIM(#{txn.repairDate, jdbcType=VARCHAR})||RTRIM(#{txn.repairTime, jdbcType=VARCHAR}) \n"
-//             + "AND    BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-20, 'YYYYMMDD' ))  ";
-             + "AND    BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))\n";
+//             + "AND    BASIC.CREATE_DATE > TO_CHAR( SYSDATE-20, 'YYYYMMDD' )  ";
+             + "AND    BASIC.CREATE_DATE > TO_CHAR( SYSDATE-10, 'YYYYMMDD' )\n";
              //+ "FOR UPDATE WITH RR                                                       ";
 
         logger.debug("SQL = {}", sql );
@@ -197,14 +197,14 @@ public class TCtErrorBasicMiscProvider {
             sql += "AND     REPAIR_TIME = '999999'                                                                    \n"
                  + "AND     BASIC.CREATE_DATE || BASIC.CREATE_TIME <=                                                 \n"
                  + "            RTRIM(#{txn.repairDate, jdbcType=VARCHAR})||RTRIM(#{txn.repairTime, jdbcType=VARCHAR})\n"
-                 + "AND     BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))                          \n"
+                 + "AND     BASIC.CREATE_DATE > TO_CHAR( SYSDATE-10, 'YYYYMMDD' )                                     \n"
                  + "AND     ( ERROR_STATUS <> '7000'    OR ERROR_STATUS IS NULL )                                     \n";
         else
             sql += "AND     ERROR_CD = #{basic.errorCd, jdbcType=VARCHAR}                                             \n"
                  + "AND     REPAIR_TIME = '999999'                                                                    \n"
                  + "AND     BASIC.CREATE_DATE || BASIC.CREATE_TIME <=                                                 \n"
                  + "            RTRIM(#{txn.repairDate, jdbcType=VARCHAR})||RTRIM(#{txn.repairTime, jdbcType=VARCHAR})\n"
-                 + "AND     BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-10, 'YYYYMMDD' ))                          \n";
+                 + "AND     BASIC.CREATE_DATE > TO_CHAR( SYSDATE-10, 'YYYYMMDD' )                                     \n";
 
         //sql += "FOR UPDATE WITH RR                                                            ";
 
@@ -226,7 +226,7 @@ public class TCtErrorBasicMiscProvider {
              + "       LEFT JOIN OP.T_CT_ERROR_NOTI NOTI ON                                   \n"
              + "       BASIC.ERROR_NO = NOTI.ERROR_NO AND                                     \n"
              + "       BASIC.CREATE_DATE = NOTI.CREATE_DATE                                   \n"
-             + "WHERE  BASIC.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE - 10, 'YYYYMMDD' ))     \n"
+             + "WHERE  BASIC.CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )                \n"
              + "AND    ORG_CD          = RTRIM(#{orgCd, jdbcType=VARCHAR})                    \n"
              + "AND    BRANCH_CD       = RTRIM(#{branchCd, jdbcType=VARCHAR})                 \n"
              + "AND    MAC_NO          = RTRIM(#{macNo, jdbcType=VARCHAR})                    \n"

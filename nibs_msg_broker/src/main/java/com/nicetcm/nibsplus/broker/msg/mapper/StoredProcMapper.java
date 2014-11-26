@@ -172,6 +172,24 @@ public interface StoredProcMapper {
     void spFnMacClose(FnMacClose fnMacClose);
 
     @Select({
+        "CALL op.sp_fn_macSendClose( ",
+            "#{closeDate   , mode=IN,  jdbcType=VARCHAR},",
+            "#{orgCode     , mode=IN,  jdbcType=VARCHAR},",
+            "#{jijumCode   , mode=IN,  jdbcType=VARCHAR},",
+            "#{macNo       , mode=IN,  jdbcType=VARCHAR},",
+            "#{inTime      , mode=IN,  jdbcType=VARCHAR},",
+            "#{sendType    , mode=IN,  jdbcType=VARCHAR},",
+            "#{notSend     , mode=IN,  jdbcType=VARCHAR},",
+            "#{endType     , mode=IN,  jdbcType=VARCHAR},",
+            "#{moveAmt     , mode=IN,  jdbcType=VARCHAR},",
+            "#{userId      , mode=IN,  jdbcType=VARCHAR},",
+            "#{result      , mode=OUT, jdbcType=VARCHAR} ",
+        ")"
+    })
+    @Options(statementType=StatementType.CALLABLE)
+    void spFnMacSendClose(FnMacClose fnMacClose);
+
+    @Select({
         "CALL op.sp_fn_macClose_nh( ",
             "#{closeDate   , mode=IN,  jdbcType=VARCHAR},",
             "#{orgCode     , mode=IN,  jdbcType=VARCHAR},",

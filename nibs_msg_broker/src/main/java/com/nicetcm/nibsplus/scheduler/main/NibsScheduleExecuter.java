@@ -46,6 +46,7 @@ public class NibsScheduleExecuter {
             if (args[0].equals("-L")) {
             	ApplicationContext orgSendBeanContext = new ClassPathXmlApplicationContext("classpath:/org_send/spring/context-orgsend-bean.xml");
                 Map<String, String> mtype = ((OrgSend)orgSendBeanContext.getBean("orgSend", OrgSend.class)).getOrgSendMtype();
+                String type;
                 
             	List<SchedulerVO> scheduleList = scheduleInfoProvider.selectScheduleJobGroup();
             	int count = 1;
@@ -55,18 +56,18 @@ public class NibsScheduleExecuter {
             	System.out.println(StringUtils.leftPad("", 65, "-"));
             	
             	for (SchedulerVO jobGroup : scheduleList) {
-            		System.out.println(String.format("%3d\t%-20s%-25s%s", count++, jobGroup.getQuartzNodeName(), jobGroup.getJobGroup(), mtype.get(jobGroup.getJobGroup())));
+            		System.out.println(String.format("%3d\t%-20s%-25s%s", count++, jobGroup.getQuartzNodeName(), jobGroup.getJobGroup(), (type = mtype.get(jobGroup.getJobGroup()))) == null ? "-" : type);
             	}
 
             	System.out.println(StringUtils.leftPad("", 65, "-"));
             } else {
 	            JobVO jobVO = new JobVO();
-	            jobVO.setQuartzNodeName(args[0]); // "OrgSendService"
+	            jobVO.setQuartzNodeName(args[0]); // "OrgSend"
 	            jobVO.setJobGroup(args[1]); // "ADD_CASH"
 	            jobVO.setJobName(args[2]); // "003"
 	            
 	            if (args.length == 4) {
-	            	jobVO.setType(args[3]); // "AUTO", "ONLY"
+	            	jobVO.setParam(args[3]); // "AUTO", "ONLY"...
 	            }
 	
 	            NibsScheduleExecuter.executeJob(scheduleInfoProvider.selectScheduleByPk(jobVO));

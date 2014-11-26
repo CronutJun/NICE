@@ -17,7 +17,7 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
 
     private static final HashMap<String, MsgBrokerManageRMI> manageRMIs = new HashMap<String, MsgBrokerManageRMI>();
 
-    public static void ansRMIAvailability( byte[] msg ) {
+    public static void ansRMIAvailability( String transSeqNo, byte[] msg ) {
 
         try {
             logger.debug("ansRMI");
@@ -32,7 +32,61 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
                             remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
                             manageRMIs.put(svrIp.trim(), remoteObj);
                         }
-                        remoteObj.putRMIAns( msg );
+                        remoteObj.putRMIAns( transSeqNo, msg );
+                    }
+                }
+            }
+        }
+        catch( Exception e ) {
+            logger.info("manage RMI Error raised. Message = {}", e.getMessage() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.info(se.toString());
+        }
+    }
+
+    public static void putRMIOrigMsgAvailability( String transSeqNo, byte[] msg ) {
+
+        try {
+            logger.debug("putRMI");
+            if( Boolean.parseBoolean(MsgCommon.msgProps.getProperty("rmi.availability", "false")) ) {
+                logger.debug("availability is true");
+                for( String svrIp: MsgCommon.msgProps.getProperty("rmi.availability.servers").split(",") ) {
+                    logger.debug("svrIp = {}", svrIp );
+                    if( svrIp.trim().length() > 0 ) {
+                        MsgBrokerManageRMI remoteObj = manageRMIs.get(svrIp);
+                        if( remoteObj == null ) {
+                            Registry registry = LocateRegistry.getRegistry(svrIp.trim(), Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port", "10199")));
+                            remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
+                            manageRMIs.put(svrIp.trim(), remoteObj);
+                        }
+                        remoteObj.putRMIOrigMsg( transSeqNo, msg );
+                    }
+                }
+            }
+        }
+        catch( Exception e ) {
+            logger.info("manage RMI Error raised. Message = {}", e.getMessage() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.info(se.toString());
+        }
+    }
+
+    public static void removeRMIOrigMsgAvailability( String transSeqNo ) {
+
+        try {
+            logger.debug("removeRMI");
+            if( Boolean.parseBoolean(MsgCommon.msgProps.getProperty("rmi.availability", "false")) ) {
+                logger.debug("availability is true");
+                for( String svrIp: MsgCommon.msgProps.getProperty("rmi.availability.servers").split(",") ) {
+                    logger.debug("svrIp = {}", svrIp );
+                    if( svrIp.trim().length() > 0 ) {
+                        MsgBrokerManageRMI remoteObj = manageRMIs.get(svrIp);
+                        if( remoteObj == null ) {
+                            Registry registry = LocateRegistry.getRegistry(svrIp.trim(), Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port", "10199")));
+                            remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
+                            manageRMIs.put(svrIp.trim(), remoteObj);
+                        }
+                        remoteObj.removeRMIOrigMsg( transSeqNo );
                     }
                 }
             }
@@ -45,18 +99,24 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
     }
 
     @Override
-    public void putRMIAns(byte[] msg) throws Exception {
-        final int transSeqNoLen = 7;
-        final int transSeqNoOfs = 33;
+    public void putRMIAns(String transSeqNo, byte[] msg) throws Exception {
 
-        byte[] bTransSeqNo = new byte[transSeqNoLen];
-
-        System.arraycopy( msg, transSeqNoOfs, bTransSeqNo, 0, transSeqNoLen );
-
-        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(new String(bTransSeqNo));
+        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(transSeqNo);
         if( waitQ != null ) {
             waitQ.put( msg );
         }
+    }
+
+    @Override
+    public void putRMIOrigMsg(String transSeqNo, byte[] msg) throws Exception {
+
+        MsgBrokerRMIImpl.rmiOrigMsg.put(transSeqNo, msg);
+    }
+
+    @Override
+    public void removeRMIOrigMsg(String transSeqNo) throws Exception {
+
+        MsgBrokerRMIImpl.rmiOrigMsg.remove(new String(transSeqNo));
     }
 
 }

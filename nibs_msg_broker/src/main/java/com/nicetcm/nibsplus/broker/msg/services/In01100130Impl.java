@@ -4,8 +4,8 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * Copyright 2014 The NIBS+ Project
  *
  * MSG Broker 나이스 요청전문 에대한 응답일 경우 - 경비사
- * 
- * 
+ *
+ *
  *           2014. 07. 07    K.D.J.
  */
 
@@ -34,10 +34,10 @@ import org.springframework.transaction.TransactionStatus;
 public class In01100130Impl implements InMsgHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(In01100130Impl.class);
-    
+
     @Autowired private SqlSession sqlSession;
     @Autowired private DataSourceTransactionManager msgTX;
-    
+
     @Autowired private CommonPack comPack;
     @Autowired private StoredProcMapper splMap;
 
@@ -48,21 +48,21 @@ public class In01100130Impl implements InMsgHandler {
 
     @Override
     public void inMsgHandle(MsgBrokerData safeData, MsgParser parsed) throws Exception {
-        
+
         TransactionStatus status = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
         try {
             String sSysDate = MsgBrokerLib.SysDate();
             String sNSysDate = MsgBrokerLib.SysDate(1);
             String sSysTime = MsgBrokerLib.SysTime();
             Date   dSysDate = MsgBrokerLib.SysDateD(0);
-            
+
             TCtErrorBasic errBasic = new TCtErrorBasic();
             TCtErrorNoti errNoti = new TCtErrorNoti();
             TCtErrorMngMadeCom errMngMadeCom = new TCtErrorMngMadeCom();
             TCtErrorMngGuard errMngGuard = new TCtErrorMngGuard();
-            
-            if( parsed.getString("CM.ret_cd").equals("0000") 
-            || ( parsed.getString("CM.org_cd").equals(MsgBrokerConst.TAXRF_CODE) 
+
+            if( parsed.getString("CM.ret_cd").equals("0000")
+            || ( parsed.getString("CM.org_cd").equals(MsgBrokerConst.TAXRF_CODE)
               && parsed.getString("CM.ret_cd").equals("00") )) {
                 errBasic.setSendYn("Y");
                 errBasic.setWorkStatus("6040");
@@ -79,12 +79,12 @@ public class In01100130Impl implements InMsgHandler {
                 errNoti.setSendStatus("3");
                 errNoti.setSendSmsStatus("6030");
             }
-    
+
             try {
                 /*
                  * 기기사에서 수신 받은 전문은 2차 출동요청 테이블에서 처리
                  */
-                if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.ATM_HY_CODE) 
+                if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.ATM_HY_CODE)
                 ||  parsed.getString("CM.org_cd").equals(MsgBrokerConst.ATM_CH_CODE)
                 ||  parsed.getString("CM.org_cd").equals(MsgBrokerConst.ATM_LG_CODE) ) {
                     /*
@@ -101,21 +101,21 @@ public class In01100130Impl implements InMsgHandler {
                     errMngMadeCom.setOrgSendYn("1");
                     errMngMadeCom.setUpdateDate( dSysDate );
                     errMngMadeCom.setUpdateUid( "APmngEM" );
-                
+
                     errMngMadeComMap.updateBySpecSelective( errMngMadeCom, errMngMadeComSpec );
                 }
                 else {
                     TCtErrorBasicSpec errBasicSpec = new TCtErrorBasicSpec();
-                    errBasicSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
-                                               .andErrorNoEqualTo( parsed.getString("trans1_seq") );
+                    errBasicSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
+                                               .andErrorNoEqualTo     ( parsed.getString("trans1_seq") );
                     TCtErrorNotiSpec errNotiSpec = new TCtErrorNotiSpec();
-                    errNotiSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
-                                                .andErrorNoEqualTo( parsed.getString("trans1_seq") );
+                    errNotiSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
+                                                .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
                     errBasic.setUpdateDate( dSysDate );
                     errBasic.setUpdateUid( "APmngEM" );
                     errNoti.setUpdateDate( dSysDate );
                     errNoti.setUpdateUid( "APmngEM" );
-                    
+
                     errBasicMap.updateBySpecSelective( errBasic, errBasicSpec );
                     errNotiMap.updateBySpecSelective( errNoti, errNotiSpec );
                 }
@@ -125,8 +125,8 @@ public class In01100130Impl implements InMsgHandler {
                  * 'E'였던 출동요청의 응답을 수신받으면 다시 고객대기 전문이 송신 될 수 있도록 'C'로 바꾼다.
                  */
                 TCtErrorMngGuardSpec errMngGuardSpec = new TCtErrorMngGuardSpec();
-                errMngGuardSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
-                                                .andErrorNoEqualTo( parsed.getString("trans1_seq") );
+                errMngGuardSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
+                                                .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
                 List<TCtErrorMngGuard> ret = errMngGuardMap.selectBySpec( errMngGuardSpec );
                 if( ret.size() > 0 ) {
                     if( errBasic.getSendYn().equals("Y") )
@@ -138,7 +138,7 @@ public class In01100130Impl implements InMsgHandler {
                         errMngGuard.setGuardSendYn(errBasic.getSendYn());
                     errMngGuard.setUpdateDate( dSysDate );
                     errMngGuard.setUpdateUid( "APmngEM" );
-                    
+
                     errMngGuardMap.updateBySpecSelective( errMngGuard,  errMngGuardSpec );
                 }
             }

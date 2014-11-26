@@ -10,7 +10,6 @@
     <javaModelGenerator targetPackage="com.nicetcm.nibsplus.broker.msg.model" targetProject="nibs_msg_broker" />
     <sqlMapGenerator targetPackage="com.nicetcm.nibsplus.broker.msg.mapper" targetProject="nibs_msg_broker" />
     <javaClientGenerator targetPackage="com.nicetcm.nibsplus.broker.msg.mapper" targetProject="nibs_msg_broker" type="ANNOTATEDMAPPER" />
-    <table schema="op" tableName="T_CM_SET_DEMAND_OT" >
-    </table>
+    <table schema="op" tableName="T_CT_ERROR_MNG_GUARD" ></table>
   </context>
 </generatorConfiguration>

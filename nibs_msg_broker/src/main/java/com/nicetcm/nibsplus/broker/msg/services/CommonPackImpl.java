@@ -2552,18 +2552,6 @@ public class CommonPackImpl implements CommonPack {
                         updatedTableCnt++;
                     }
 
-                    if (isNotNullFieldExists(tCterrCall))
-                    {
-                        TCtErrorCallSpec tCtErrorCallSpec = new TCtErrorCallSpec();
-                        tCtErrorCallSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
-                                        .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
-
-                        int updatedCnt = errCallMap.updateBySpecSelective(tCterrCall, tCtErrorCallSpec);
-
-                        logger.warn(">>> T_CT_ERROR_CALL Updated: {}", updatedCnt);
-                        updatedTableCnt++;
-                    }
-
                     if (isNotNullFieldExists(tCterrTxn))
                     {
                         TCtErrorTxnSpec tCtErrorTxnSpec = new TCtErrorTxnSpec();
@@ -2573,6 +2561,18 @@ public class CommonPackImpl implements CommonPack {
                         int updatedCnt = errTxnMap.updateBySpecSelective(tCterrTxn, tCtErrorTxnSpec);
 
                         logger.warn(">>> T_CT_ERROR_TXN Updated: {}", updatedCnt);
+                        updatedTableCnt++;
+                    }
+
+                    if (isNotNullFieldExists(tCterrCall))
+                    {
+                        TCtErrorCallSpec tCtErrorCallSpec = new TCtErrorCallSpec();
+                        tCtErrorCallSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
+                                        .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
+
+                        int updatedCnt = errCallMap.updateBySpecSelective(tCterrCall, tCtErrorCallSpec);
+
+                        logger.warn(">>> T_CT_ERROR_CALL Updated: {}", updatedCnt);
                         updatedTableCnt++;
                     }
 
@@ -2683,18 +2683,6 @@ public class CommonPackImpl implements CommonPack {
                     updatedTableCnt++;
                 }
 
-                if (isNotNullFieldExists(tCterrCall))
-                {
-                    TCtErrorCallSpec tCtErrorCallSpec = new TCtErrorCallSpec();
-                    tCtErrorCallSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
-                                    .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
-
-                    int updatedCnt = errCallMap.updateBySpecSelective(tCterrCall, tCtErrorCallSpec);
-
-                    logger.warn(">>> T_CT_ERROR_CALL Updated: {}", updatedCnt);
-                    updatedTableCnt++;
-                }
-
                 if (isNotNullFieldExists(tCterrTxn))
                 {
                     TCtErrorTxnSpec tCtErrorTxnSpec = new TCtErrorTxnSpec();
@@ -2704,6 +2692,18 @@ public class CommonPackImpl implements CommonPack {
                     int updatedCnt = errTxnMap.updateBySpecSelective(tCterrTxn, tCtErrorTxnSpec);
 
                     logger.warn(">>> T_CT_ERROR_TXN Updated: {}", updatedCnt);
+                    updatedTableCnt++;
+                }
+
+                if (isNotNullFieldExists(tCterrCall))
+                {
+                    TCtErrorCallSpec tCtErrorCallSpec = new TCtErrorCallSpec();
+                    tCtErrorCallSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
+                                    .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
+
+                    int updatedCnt = errCallMap.updateBySpecSelective(tCterrCall, tCtErrorCallSpec);
+
+                    logger.warn(">>> T_CT_ERROR_CALL Updated: {}", updatedCnt);
                     updatedTableCnt++;
                 }
 

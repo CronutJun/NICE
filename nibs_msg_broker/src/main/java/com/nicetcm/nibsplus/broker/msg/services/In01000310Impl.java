@@ -97,7 +97,7 @@ public class In01000310Impl extends InMsgHandlerImpl {
         TCtErrorTxn  errTxn  = new TCtErrorTxn();
 
         errBasic.setOrgCd     (macInfo.getOrgCd());   // org_cd
-        errBasic.setCreateDate(parsed.getInt("call_date"));      // create_date
+        errBasic.setCreateDate(parsed.getString("call_date"));      // create_date
         errBasic.setCreateTime(parsed.getString("call_time"));   // create_time
         errBasic.setBranchCd   (macInfo.getBranchCd());  // jijum_cd
         errBasic.setMacNo     (macInfo.getMacNo());   // mac_no
@@ -192,7 +192,7 @@ public class In01000310Impl extends InMsgHandlerImpl {
             updateTCtErrorMng.setUpdateDate(safeData.getDSysDate());
             updateTCtErrorMng.setUpdateUid("ERRmng");
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
-            tCtErrorMngSpec.createCriteria().andCreateDateEqualTo(parsed.getInt("call_date")).andTransDateEqualTo(parsed.getString("create_date"))
+            tCtErrorMngSpec.createCriteria().andCreateDateEqualTo(parsed.getString("call_date")).andTransDateEqualTo(parsed.getString("create_date"))
                             .andOrgMsgNoEqualTo(parsed.getString("trans1_seq")).andOrgCdEqualTo(parsed.getString("CM.org_cd"))
                             .andBranchCdEqualTo(parsed.getString("brch_cd")).andMacNoEqualTo(parsed.getString("mac_no"));
             try

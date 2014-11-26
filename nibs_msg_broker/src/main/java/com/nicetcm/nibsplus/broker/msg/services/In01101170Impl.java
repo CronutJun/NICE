@@ -153,7 +153,7 @@ public class In01101170Impl extends InMsgHandlerImpl {
             tCtErrorMngSpec.createCriteria()
             .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
-            .andCreateDateGreaterThan(Integer.parseInt(MsgBrokerLib.SysDate(-10)))
+            .andCreateDateGreaterThan(MsgBrokerLib.SysDate(-10))
             .andTransDateEqualTo(parsed.getString("trans1_date"))
             .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"));
 
@@ -225,7 +225,7 @@ public class In01101170Impl extends InMsgHandlerImpl {
                 tCtErrorMngSpec.createCriteria()
                 .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
                 .andBranchCdEqualTo(parsed.getString("brch_cd"))
-                .andCreateDateGreaterThan(Integer.parseInt(MsgBrokerLib.SysDate(-10)))
+                .andCreateDateGreaterThan(MsgBrokerLib.SysDate(-10))
                 .andTransDateEqualTo(parsed.getString("trans1_date"))
                 .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"))
                 .andFormatTypeEqualTo("21");
@@ -234,7 +234,7 @@ public class In01101170Impl extends InMsgHandlerImpl {
                 tCtErrorMngSpec.createCriteria()
                 .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
                 .andBranchCdEqualTo(parsed.getString("brch_cd"))
-                .andCreateDateGreaterThan(Integer.parseInt(MsgBrokerLib.SysDate(-10)))
+                .andCreateDateGreaterThan(MsgBrokerLib.SysDate(-10))
                 .andTransDateEqualTo(parsed.getString("trans1_date"))
                 .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"));
             }

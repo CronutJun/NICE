@@ -96,7 +96,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
          *  macInfo의 값을 errMng로 일괄 복사
          */
         BeanUtils.copyProperties( errBasic, macInfo );
-        errBasic.setCreateDate( parsed.getInt("create_date") );
+        errBasic.setCreateDate( parsed.getString("create_date") );
         errBasic.setCreateTime( parsed.getString("create_time") );
         errBasic.setAtmState( parsed.getString("atm_mode") );
         errBasic.setOrgMsg( parsed.getString("memo") );
@@ -123,7 +123,7 @@ public class In05000110Impl extends InMsgHandlerImpl {
              */
             errBasic.setOrgMsgNo( parsed.getString("create_time") );
 
-            errBasic.setCreateDate( Integer.parseInt(safeData.getSysDate()) );
+            errBasic.setCreateDate( safeData.getSysDate() );
             errBasic.setCreateTime( safeData.getSysTime() );
 
             /*

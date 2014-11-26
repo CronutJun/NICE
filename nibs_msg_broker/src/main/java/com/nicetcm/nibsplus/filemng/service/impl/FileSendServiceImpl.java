@@ -31,6 +31,7 @@ import com.nicetcm.nibsplus.filemng.common.FileMngException;
 import com.nicetcm.nibsplus.filemng.dao.FileSendMapper;
 import com.nicetcm.nibsplus.filemng.service.FileSendService;
 import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
+import com.nicetcm.nibsplus.util.NibsBatchUtil;
 
 /**
  * 여기에 클래스(한글)명.
@@ -93,14 +94,17 @@ public class FileSendServiceImpl implements FileSendService {
 		if ( argv.length != 1 ) {
 			szTransDate = new SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().getTime());
 		} else {
-			if(argv[0].length() < 8) {
-				System.out.print( "Usage : MakeOrgTranFile [calc_date(8)+orgcd(3)]\n" );
-			} else {
+			if (argv[0].length() == 3) {
+				szTransDate = NibsBatchUtil.SysDate();
+				szOrgCd = argv[0];
+			} else if (argv[0].length() == 11) {
 				szTransDate = argv[0].substring(0, 8);
 
 				if( (argv[0].length() - 8) == 3 ) {
 					szOrgCd = argv[0].substring(8);
 				}
+			} else {
+				System.out.print( "Usage : MakeOrgTranFile [calc_date(8)+orgcd(3)]\n" );
 			}
 		}
 

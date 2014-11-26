@@ -66,8 +66,8 @@ public class In01000151Impl extends InMsgHandlerImpl {
         TCtErrorNoti      errNoti  = new TCtErrorNoti();
 
 
-        errBasicSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
-                                     .andErrorNoEqualTo( parsed.getString("trans1_seq") );
+        errBasicSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
+                                     .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
         List<TCtErrorBasic> errBasics = null;
         try {
             errBasicMap.selectBySpec( errBasicSpec );
@@ -82,8 +82,8 @@ public class In01000151Impl extends InMsgHandlerImpl {
             throw e;
         }
 
-        errCallSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
-                                    .andErrorNoEqualTo( parsed.getString("trans1_seq") );
+        errCallSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
+                                    .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
         List<TCtErrorCall> errCalls = null;
         try {
             errCallMap.selectBySpec( errCallSpec );
@@ -98,8 +98,8 @@ public class In01000151Impl extends InMsgHandlerImpl {
             throw e;
         }
 
-        errNotiSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
-                                    .andErrorNoEqualTo( parsed.getString("trans1_seq") );
+        errNotiSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
+                                    .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
         List<TCtErrorCall> errNotis = null;
         try {
             errNotiMap.selectBySpec( errNotiSpec );
@@ -114,8 +114,8 @@ public class In01000151Impl extends InMsgHandlerImpl {
             throw e;
         }
 
-        errTxnSpec.createCriteria().andCreateDateEqualTo( parsed.getInt("trans1_date") )
-                                   .andErrorNoEqualTo( parsed.getString("trans1_seq") );
+        errTxnSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
+                                   .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
         List<TCtErrorCall> errTxns = null;
         try {
             errTxnMap.selectBySpec( errTxnSpec );

@@ -99,7 +99,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
         BeanUtils.copyProperties( errBasic, macInfo );
         BeanUtils.copyProperties( errMngMadeCom, macInfo );
 
-        errBasic.setCreateDate( parsed.getInt("call_date") );
+        errBasic.setCreateDate( parsed.getString("call_date") );
         errBasic.setCreateTime( parsed.getString("call_time") );
         errBasic.setOrgMsgNo( parsed.getString("trans1_seq") );
         errBasic.setTransDate( parsed.getString("trans1_date") );

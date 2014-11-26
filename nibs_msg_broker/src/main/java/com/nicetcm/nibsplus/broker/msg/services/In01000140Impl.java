@@ -117,7 +117,7 @@ public class In01000140Impl extends InMsgHandlerImpl {
          */
         BeanUtils.copyProperties( errBasic, macInfo );
 
-        errBasic.setCreateDate(parsed.getInt("cancel_date"));
+        errBasic.setCreateDate(parsed.getString("cancel_date"));
         errBasic.setCreateTime(parsed.getString("cancel_time"));
         errBasic.setOrgMsgNo  (parsed.getString("trans1_seq"));
         errBasic.setTransDate (parsed.getString("trans1_date"));

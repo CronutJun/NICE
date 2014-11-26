@@ -101,7 +101,7 @@ public class In01000180Impl extends InMsgHandlerImpl {
 
 
             tCtErrorMngSpec.createCriteria()
-            .andCreateDateGreaterThanOrEqualTo(Integer.parseInt(parsed.getString("call_date").equals("") ? parsed.getString("trans1_date") : parsed.getString("call_date")))
+            .andCreateDateGreaterThanOrEqualTo(parsed.getString("call_date").equals("") ? parsed.getString("trans1_date") : parsed.getString("call_date"))
             .andTransDateEqualTo(parsed.getString("trans1_date"))
             .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"))
             .andOrgCdEqualTo(parsed.getString("CM.org_cd"))
@@ -118,7 +118,7 @@ public class In01000180Impl extends InMsgHandlerImpl {
             updateTCtErrorMng.setUpdateUid("ERRmng");
 
             tCtErrorMngSpec.createCriteria()
-            .andCreateDateGreaterThanOrEqualTo(Integer.parseInt(parsed.getString("call_date").equals("") ? parsed.getString("trans1_date") : parsed.getString("call_date")))
+            .andCreateDateGreaterThanOrEqualTo(parsed.getString("call_date").equals("") ? parsed.getString("trans1_date") : parsed.getString("call_date"))
             .andTransDateEqualTo(parsed.getString("trans1_date"))
             .andOrgMsgNoEqualTo(parsed.getString("trans1_seq"))
             .andOrgCdEqualTo(parsed.getString("CM.org_cd"))

@@ -26,6 +26,11 @@ public class FnMacClose {
    private String jijumCode   ;
    private String macNo       ;
    private String closeTime   ;
+   private String inTime      ;
+   private String sendType    ;
+   private String notSend     ;
+   private String endType     ;
+   private Long   moveAmt     ;
    private String userId      ;
    private String result      ;
    /**
@@ -125,6 +130,37 @@ public class FnMacClose {
    public void setCloseTime(String closeTime)
    {
        this.closeTime = closeTime;
+   }
+
+   public String getInTime() {
+       return inTime;
+   }
+   public void setInTime(String inTime) {
+       this.inTime = inTime;
+   }
+   public String getSendType() {
+       return sendType;
+   }
+   public void setSendType(String sendType) {
+       this.sendType = sendType;
+   }
+   public String getNotSend() {
+       return notSend;
+   }
+   public void setNotSend(String notSend) {
+       this.notSend = notSend;
+   }
+   public String getEndType() {
+       return endType;
+   }
+   public void setEndType(String endType) {
+       this.endType = endType;
+   }
+   public Long getMoveAmt() {
+       return moveAmt;
+   }
+   public void setMoveAmt(Long moveAmt) {
+       this.moveAmt = moveAmt;
    }
 
 

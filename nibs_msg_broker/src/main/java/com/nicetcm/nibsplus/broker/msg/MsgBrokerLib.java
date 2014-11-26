@@ -14,6 +14,8 @@ package com.nicetcm.nibsplus.broker.msg;
 
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -23,6 +25,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
+import com.nicetcm.nibsplus.scheduler.model.JobVO;
+import com.nicetcm.nibsplus.scheduler.service.RemoteScheduleExecuter;
 
 public class MsgBrokerLib {
 
@@ -357,5 +361,17 @@ public class MsgBrokerLib {
             for( StackTraceElement se: ie.getStackTrace() )
                 System.out.println(se.toString());
         }
+    }
+
+    /**
+     * FileSend, OrgSend, FileMng등을 호출한다.
+     */
+    public static void invokeSendServices(JobVO jobVO) throws Exception {
+
+        Registry registry = LocateRegistry.getRegistry(MsgCommon.msgProps.getProperty("sender.server.ip"),
+                                               Integer.parseInt(MsgCommon.msgProps.getProperty("sender.server.port", "10399")));
+        RemoteScheduleExecuter remoteObj = (RemoteScheduleExecuter)registry.lookup(MsgCommon.msgProps.getProperty("sender.lookup.name"));
+
+        remoteObj.executeJob(jobVO);
     }
 }

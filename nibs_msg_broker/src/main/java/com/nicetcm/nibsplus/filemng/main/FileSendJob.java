@@ -26,7 +26,11 @@ public class FileSendJob implements Job {
 	    FileSendService fileSendService = (FileSendService) applicationContext.getBean("fileSendService");
 
 	    try {
-	    	fileSendService.execute(args == null ? new String[]{} : new String[]{args});
+	    	if (args == null) {
+	    		fileSendService.execute();
+	    	} else {
+	    		fileSendService.execute(args);
+	    	}
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }

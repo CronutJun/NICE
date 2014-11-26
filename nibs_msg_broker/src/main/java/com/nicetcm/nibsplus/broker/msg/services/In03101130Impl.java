@@ -13,6 +13,7 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerRMIImpl;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
@@ -286,8 +287,8 @@ public class In03101130Impl extends InMsgHandlerImpl {
                     ifCashInsert3.setpMoneyOutAmt      (parsed.getLong("cash_out_amt"));
                     ifCashInsert3.setpCheckInAmt       (parsed.getLong("check_in_amt"));
                     ifCashInsert3.setpCheckOutAmt      (parsed.getLong("check_out_amt"));
-                    ifCashInsert3.setpRemainAmt        (parsed.getLong("cur_rem_amt"));
-                    ifCashInsert3.setpInCnt            (hremAmt);
+                    ifCashInsert3.setpRemainAmt        (hremAmt);
+                    ifCashInsert3.setpInCnt            (0);
                     ifCashInsert3.setpOutCnt           (0);
                     ifCashInsert3.setpChkInCnt         (0);
                     ifCashInsert3.setpChkOutCnt        (0);
@@ -355,6 +356,49 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
             }
 
+        }
+
+        // PDA여부
+        byte[] origMsg = MsgBrokerRMIImpl.rmiOrigMsg.get(parsed.getString("CM.trans_seq_no"));
+        /*
+         * PDA 전문 일경우 프로시져를 호출한다.
+         * 단 최초마감 전문일 경우에는 프로시져 호출하지 않는다.
+         */
+        if( origMsg != null && origMsg[90+8+12+8] != '7' && origMsg[90+8+12+8+1] != '1') {
+            String cashType = ""; /* '0':현송완료,'1':현송취소  */
+            if( parsed.getString("close_type").equals("8") ) {
+                cashType = "1";
+            }
+            else {
+                cashType = "0";
+            }
+            if( parsed.getString("close_date").length() == 0 )
+                parsed.setString("close_date", parsed.getString("inq_date"));
+
+            if( comPack.getError(parsed.getString("CM.ret_cd_src"), parsed.getString("CM.org_cd"), parsed.getString("CM.ret_cd")) < 0 )
+                throw new MsgBrokerException(-1);
+
+            /*
+             * 광주은행의 경우 기관과 나이스 점기번 체계가 다르므로 2014.06.30
+             * 삼성생명의 경우 제외
+             */
+            if( !parsed.getString("CM.org_cd").equals(MsgBrokerConst.SL_CODE) ) {
+                try { comPack.checkBranchMacLength( parsed ); } catch ( Exception e ) {}
+            }
+
+            FnMacClose fnMacClose = new FnMacClose();
+            fnMacClose.setCloseDate( parsed.getString("close_date")  );
+            fnMacClose.setOrgCode  ( parsed.getString("CM.org_code") );
+            fnMacClose.setJijumCode( parsed.getString("brch_cd")     );
+            fnMacClose.setMacNo    ( parsed.getString("mac_no")      );
+            fnMacClose.setInTime   ( parsed.getString("insert_time") );
+            fnMacClose.setSendType ( "1" );
+            fnMacClose.setNotSend  ( cashType );
+            fnMacClose.setEndType  ( "0" );
+            fnMacClose.setMoveAmt  ( new Long(0) );
+            fnMacClose.setUserId   ( parsed.getString("CM.msg_id")   );
+
+            storedProcMapper.spFnMacSendClose(fnMacClose);
         }
 
     }//end method

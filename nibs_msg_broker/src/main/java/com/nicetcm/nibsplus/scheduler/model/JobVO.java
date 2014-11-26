@@ -24,7 +24,7 @@ public class JobVO implements Serializable, Cloneable
     private String quartzNodeName     ;
     private String jobGroup           ;
     private String jobName            ;
-    private String type               ;
+    private String param     	      ;
 
     @Override
     public String toString()
@@ -79,17 +79,17 @@ public class JobVO implements Serializable, Cloneable
     }
 
 	/**
-	 * @return the type
+	 * @return the param
 	 */
-	public String getType() {
-		return type;
+	public String getParam() {
+		return param;
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param param the param to set
 	 */
-	public void setType(String type) {
-		this.type = type;
+	public void setParam(String param) {
+		this.param = param;
 	}
 
 }
