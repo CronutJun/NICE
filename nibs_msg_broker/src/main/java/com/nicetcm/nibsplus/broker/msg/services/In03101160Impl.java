@@ -1,17 +1,24 @@
 package com.nicetcm.nibsplus.broker.msg.services;
 
+import java.nio.ByteBuffer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
+
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnAddCashRealtimeMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnAtmsAddCashReportMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnAtmsAddNhReportMapper;
+import com.nicetcm.nibsplus.broker.msg.model.FnMacClose;
 import com.nicetcm.nibsplus.broker.msg.model.TFnAddCashRealtime;
 import com.nicetcm.nibsplus.broker.msg.model.TFnAddCashRealtimeSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TFnAtmsAddCashReport;
@@ -136,6 +143,70 @@ public class In03101160Impl extends InMsgHandlerImpl {
 
             logger.warn( "[T_FN_ATMS_ADD_NH_REPORT] Update OK" );
         }//endif
+
+        // PDA여부 (요청대기시 요청내역 DB(T_IF_DATA_LOG)에서 조회)
+        String origMsg = comPack.getIfDataLog( safeData, "QS", parsed );
+        logger.warn( "trans_seq_no = {}, origMsg = {}", parsed.getString("CM.trans_seq_no"), origMsg );
+        if( origMsg != null ) {
+            ByteBuffer origBuf  = ByteBuffer.allocateDirect(origMsg.getBytes().length);
+            origBuf.put(origMsg.getBytes());
+            origBuf.position(0);
+            MsgParser msgOrig = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")
+                    + "03001160.json").parseMessage(origBuf);
+            try {
+                if( msgOrig.getString("pda_yn").equals("1") ) {
+                    if( comPack.getError(parsed.getString("CM.ret_cd_src"), parsed.getString("CM.org_cd"), parsed.getString("CM.ret_cd")) < 0 )
+                        throw new MsgBrokerException(-1);
+
+                    /*
+                     * 광주은행의 경우 기관과 나이스 점기번 체계가 다르므로 2014.06.30
+                     * 삼성생명의 경우 제외
+                     */
+                    if( !parsed.getString("CM.org_cd").equals(MsgBrokerConst.SL_CODE) ) {
+                        try { comPack.checkBranchMacLength( parsed ); } catch ( Exception e ) {}
+                    }
+
+                    /*
+                     *  농협은 현송중에 추가현송을 찍으므로 해당 프로시져 호출하면 안된다. 20100920 정희성
+                     */
+                    if( !parsed.getString("CM.org_cd").equals(MsgBrokerConst.NONGH_CODE) ) {
+                        /*
+                         *  유승범 요청 insert_time으로 호출하도록 20090113
+                         */
+                        FnMacClose fnMacClose = new FnMacClose();
+                        fnMacClose.setAddDate  ( parsed.getString("add_date")    );
+                        fnMacClose.setOrgCode  ( parsed.getString("CM.org_cd")   );
+                        fnMacClose.setJijumCode( parsed.getString("brch_cd")     );
+                        fnMacClose.setMacNo    ( parsed.getString("mac_no")      );
+                        fnMacClose.setInTime   ( parsed.getString("insert_time") );
+                        fnMacClose.setUserId   ( parsed.getString("CM.msg_id")   );
+
+                        try {
+                            splMap.spFnPlusSendKn( fnMacClose );
+                            /* 2004.03.30 PDA 수정 요청한 사항 */
+                            if( nstr(fnMacClose.getResult()).equals("OK") ) {
+                                parsed.setString( "CM.ret_cd", "00" );
+                            }
+                            else {
+                                if( nstr(fnMacClose.getResult()).equals("01")
+                                ||  nstr(fnMacClose.getResult()).equals("08") ) {
+                                    parsed.setString("CM.ret_cd", fnMacClose.getResult() );
+                                }
+                                else {
+                                    parsed.setString("CM.ret_cd", "09" );
+                                }
+                            }
+                        }
+                        catch( Exception e) {
+                            logger.warn("SP_FN_PLUSSENDKN CALL ERROR: {}", e.getLocalizedMessage() );
+                        }
+                    }
+                }
+            }
+            finally {
+                msgOrig.clearMessage();
+            }
+        }
 
     }//end method
 }

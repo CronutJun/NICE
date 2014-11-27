@@ -37,7 +37,6 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerConsumer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmCommonMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmMacMapper;
@@ -59,6 +58,7 @@ import com.nicetcm.nibsplus.broker.msg.mapper.TCtOrgSiteChangeMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtUnfinishMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnSendReportMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnStorekeeperMacInfoMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TIfDataLogMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TMiscMapper;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCommon;
@@ -101,6 +101,8 @@ import com.nicetcm.nibsplus.broker.msg.model.TFnSendReport;
 import com.nicetcm.nibsplus.broker.msg.model.TFnSendReportCond;
 import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfoKey;
+import com.nicetcm.nibsplus.broker.msg.model.TIfDataLog;
+import com.nicetcm.nibsplus.broker.msg.model.TIfDataLogKey;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
@@ -135,6 +137,7 @@ public class CommonPackImpl implements CommonPack {
     @Autowired private TMiscMapper             miscMap;
     @Autowired private TCtErrorMngMapper       ctErrorMngMap;
     @Autowired private TFnStorekeeperMacInfoMapper   fnStorekeeperMacInfoMap;
+    @Autowired private TIfDataLogMapper        ifDataLogMap;
 
     /**
      *
@@ -2965,7 +2968,6 @@ public class CommonPackImpl implements CommonPack {
     public void msgSnd(byte[] msg) throws Exception {
         ByteBuffer buf;
         MsgParser msgPsr;
-        MsgBrokerData msgThrdSafeData;
 
         byte[] bMsgType = new byte[4];
         byte[] bWrkType = new byte[4];
@@ -2991,7 +2993,6 @@ public class CommonPackImpl implements CommonPack {
 
             msgPsr = MsgParser.getInstance(inQNm).parseMessage(buf);
             logger.debug("Parse OK");
-            msgThrdSafeData = new MsgBrokerData();
             try {
 
                 MsgBrokerProducer.putDataToPrd(msgPsr);
@@ -3048,4 +3049,96 @@ public class CommonPackImpl implements CommonPack {
         String returnValue = miscMap.fGetOrgSiteCd(orgCd, branchCd, siteCd, macNo);
         return returnValue == null ? "" : returnValue;
     }
+
+    /**
+     * insertIfDataLog
+     * <pre>
+     *   전문을 DBMS에 로깅
+     * </pre>
+     *
+     * @param safeData  쓰레드 세이프 데이터
+     * @param ioCl      In-Outbound 구분
+     * @param parsed    파싱된 전문
+     */
+    @Override
+    public void insertIfDataLog( MsgBrokerData safeData, String ioCl, MsgParser parsed ) throws Exception {
+
+        TIfDataLog tIfDataLog = new TIfDataLog();
+
+        byte[] msg = new byte[parsed.getMessageLength()];
+
+        ByteBuffer buf = parsed.getMessage();
+        buf.position(0);
+        buf.get(msg);
+
+        tIfDataLog.setOrgCd     ( parsed.getString("CM.org_cd")     );
+        if( ioCl.equals("O") ) {
+            if( parsed.getBytes("CM.msg_type")[2] == '0') {
+                tIfDataLog.setTransType( "QS" );
+            }
+            else if( parsed.getBytes("CM.msg_type")[2] == '1') {
+                tIfDataLog.setTransType( "PR" );
+            }
+        }
+        else if( ioCl.equals("I") ){
+            if( parsed.getBytes("CM.msg_type")[2] == '0') {
+                tIfDataLog.setTransType( "PS" );
+            }
+            else if( parsed.getBytes("CM.msg_type")[2] == '1') {
+                tIfDataLog.setTransType( "QR" );
+            }
+        }
+        else {
+            tIfDataLog.setTransType( "XX" );
+        }
+
+        tIfDataLog.setTransDate ( parsed.getString("CM.trans_date") );
+        tIfDataLog.setTransTime ( parsed.getString("CM.trans_time") );
+        tIfDataLog.setTransSeqNo( parsed.getLong("CM.trans_seq_no") );
+        tIfDataLog.setTransData ( new String(msg)       );
+        tIfDataLog.setInsertDate( safeData.getDSysDate() );
+        tIfDataLog.setUpdateDate( safeData.getDSysDate() );
+
+        try {
+            ifDataLogMap.insert( tIfDataLog );
+        }
+        catch( Exception e) {
+            logger.warn("T_IF_DATA_LOG Insert Error [{}]", e.getLocalizedMessage() );
+            throw e;
+        }
+    }
+
+    /**
+     * getIfDataLog
+     * <pre>
+     *   전문로깅에서 전문을 조회
+     * </pre>
+     *
+     * @param safeData  쓰레드 세이프 데이터
+     * @param ioCl      In-Outbound 구분
+     * @param parsed    파싱된 전문
+     */
+    @Override
+    public String getIfDataLog( MsgBrokerData safeData, String ioCl, MsgParser parsed ) throws Exception {
+
+        TIfDataLogKey tIfDataLogKey = new TIfDataLogKey();
+
+        tIfDataLogKey.setOrgCd     ( parsed.getString("CM.org_cd")     );
+        tIfDataLogKey.setTransType ( ioCl );
+        tIfDataLogKey.setTransDate ( parsed.getString("CM.trans_date") );
+        tIfDataLogKey.setTransTime ( parsed.getString("CM.trans_time") );
+        tIfDataLogKey.setTransSeqNo( parsed.getLong("CM.trans_seq_no") );
+
+        try {
+            TIfDataLog tIfDataLog = ifDataLogMap.selectByPrimaryKey( tIfDataLogKey );
+            if( tIfDataLog == null ) return null;
+            else return tIfDataLog.getTransData();
+        }
+        catch ( Exception e ) {
+            logger.warn("T_IF_DATA_LOG get error : {}", e.getMessage() );
+            return null;
+        }
+    }
+
+
 }

@@ -10,6 +10,6 @@
       { "name" : "site_nm",                "kname" : "기관코너명",             "type" : "AN",  "length"  : 80  },
       { "name" : "work_date",              "kname" : "작업일자",               "type" : "AN",  "length"  : 8   },
       { "name" : "work_cont",              "kname" : "작업내용",               "type" : "AN",  "length"  : 600 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 50  }
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 49  }
    ]
 }

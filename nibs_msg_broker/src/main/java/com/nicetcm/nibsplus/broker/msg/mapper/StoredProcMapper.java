@@ -217,6 +217,20 @@ public interface StoredProcMapper {
     void spFnMacCloseEmart(FnMacClose fnMacClose);
 
     @Select({
+        "CALL op.sp_fn_PlusSendKn( ",
+            "#{addDate     , mode=IN,  jdbcType=VARCHAR},",
+            "#{orgCode     , mode=IN,  jdbcType=VARCHAR},",
+            "#{jijumCode   , mode=IN,  jdbcType=VARCHAR},",
+            "#{macNo       , mode=IN,  jdbcType=VARCHAR},",
+            "#{inTime      , mode=IN,  jdbcType=VARCHAR},",
+            "#{userId      , mode=IN,  jdbcType=VARCHAR},",
+            "#{result      , mode=OUT, jdbcType=VARCHAR} ",
+        ")"
+    })
+    @Options(statementType=StatementType.CALLABLE)
+    void spFnPlusSendKn(FnMacClose fnMacClose);
+
+    @Select({
         "SELECT OP.FC_FN_SECURITY( #{argValue, jdbcType=VARCHAR}, #{argType, jdbcType=VARCHAR} ) AS SECURE_RESULT",
         "FROM   DUAL                                                                                           "
     })

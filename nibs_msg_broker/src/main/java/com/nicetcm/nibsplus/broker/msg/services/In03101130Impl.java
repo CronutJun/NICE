@@ -355,50 +355,94 @@ public class In03101130Impl extends InMsgHandlerImpl {
                 msgTX.rollback(safeData.getTXS());
                 safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
             }
-
         }
 
-        // PDA여부
+        // PDA여부 (요청대기시 요청내역 Map에서 조회)
         byte[] origMsg = MsgBrokerRMIImpl.rmiOrigMsg.get(parsed.getString("CM.trans_seq_no"));
+        logger.warn( "trans_seq_no = {}, origMsg = {}", parsed.getString("CM.trans_seq_no"), new String(origMsg) );
         /*
          * PDA 전문 일경우 프로시져를 호출한다.
          * 단 최초마감 전문일 경우에는 프로시져 호출하지 않는다.
          */
-        if( origMsg != null && origMsg[90+8+12+8] != '7' && origMsg[90+8+12+8+1] != '1') {
-            String cashType = ""; /* '0':현송완료,'1':현송취소  */
-            if( parsed.getString("close_type").equals("8") ) {
-                cashType = "1";
+        if( origMsg != null ) {
+
+            ByteBuffer origBuf  = ByteBuffer.allocateDirect(origMsg.length);
+            origBuf.put(origMsg);
+            origBuf.position(0);
+            MsgParser msgOrig = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")
+                    + "03001130.json").parseMessage(origBuf);
+            try {
+                /*
+                 * 기관에서 응답받은 데이터에 들어있지 않은 필드 설정
+                 * pda 전송관련
+                 */
+                parsed.setString( "inq_date", msgOrig.getString("inq_date") );
+                parsed.setString( "pda_yn",   msgOrig.getString("pda_yn")   );
+
+                if( msgOrig.getString("insert_time").length() == 6 ) {
+                    parsed.setString( "insert_time",  msgOrig.getString("insert_time") );
+                }
+
+                if( msgOrig.getString("pda_yn").equals("1") && !msgOrig.getString("close_type").equals("7") ) {
+                    String cashType = ""; /* '0':현송완료,'1':현송취소  */
+                    if( parsed.getString("close_type").equals("8") ) {
+                        cashType = "1";
+                    }
+                    else {
+                        cashType = "0";
+                    }
+                    if( parsed.getString("close_date").length() == 0 )
+                        parsed.setString("close_date", parsed.getString("inq_date"));
+
+                    if( comPack.getError(parsed.getString("CM.ret_cd_src"), parsed.getString("CM.org_cd"), parsed.getString("CM.ret_cd")) < 0 )
+                        throw new MsgBrokerException(-1);
+
+                    /*
+                     * 광주은행의 경우 기관과 나이스 점기번 체계가 다르므로 2014.06.30
+                     * 삼성생명의 경우 제외
+                     */
+                    if( !parsed.getString("CM.org_cd").equals(MsgBrokerConst.SL_CODE) ) {
+                        try { comPack.checkBranchMacLength( parsed ); } catch ( Exception e ) {}
+                    }
+
+                    FnMacClose fnMacClose = new FnMacClose();
+                    fnMacClose.setCloseDate( parsed.getString("close_date")  );
+                    fnMacClose.setOrgCode  ( parsed.getString("CM.org_cd")   );
+                    fnMacClose.setJijumCode( parsed.getString("brch_cd")     );
+                    fnMacClose.setMacNo    ( parsed.getString("mac_no")      );
+                    fnMacClose.setInTime   ( parsed.getString("insert_time") );
+                    fnMacClose.setSendType ( "1" );
+                    fnMacClose.setNotSend  ( cashType );
+                    fnMacClose.setEndType  ( "0" );
+                    fnMacClose.setMoveAmt  ( new Long(0) );
+                    fnMacClose.setUserId   ( parsed.getString("CM.msg_id")   );
+
+                    try {
+                        storedProcMapper.spFnMacSendClose(fnMacClose);
+                    }
+                    catch( Exception e ) {
+                        logger.warn("SP_FN_MAC_SEND_CLOSE - Call Error : [{}]", e.getLocalizedMessage() );
+                        throw e;
+                    }
+
+                    parsed.setString( "CM.ret_cd_src", "P" );
+                    if( fnMacClose.getResult().equals("OK") ) {
+                        parsed.setString( "CM.ret_cd", "00" );
+                    }
+                    else {
+                        if( fnMacClose.getResult().equals("01") || fnMacClose.getResult().equals("02")
+                        ||  fnMacClose.getResult().equals("03") || fnMacClose.getResult().equals("04")
+                        ||  fnMacClose.getResult().equals("05") || fnMacClose.getResult().equals("06")
+                        ||  fnMacClose.getResult().equals("07") || fnMacClose.getResult().equals("08") )
+                            parsed.setString("CM.ret_cd", fnMacClose.getResult());
+                        else
+                            parsed.setString("CM.ret_cd", "09");
+                    }
+                }
             }
-            else {
-                cashType = "0";
+            finally {
+                msgOrig.clearMessage();
             }
-            if( parsed.getString("close_date").length() == 0 )
-                parsed.setString("close_date", parsed.getString("inq_date"));
-
-            if( comPack.getError(parsed.getString("CM.ret_cd_src"), parsed.getString("CM.org_cd"), parsed.getString("CM.ret_cd")) < 0 )
-                throw new MsgBrokerException(-1);
-
-            /*
-             * 광주은행의 경우 기관과 나이스 점기번 체계가 다르므로 2014.06.30
-             * 삼성생명의 경우 제외
-             */
-            if( !parsed.getString("CM.org_cd").equals(MsgBrokerConst.SL_CODE) ) {
-                try { comPack.checkBranchMacLength( parsed ); } catch ( Exception e ) {}
-            }
-
-            FnMacClose fnMacClose = new FnMacClose();
-            fnMacClose.setCloseDate( parsed.getString("close_date")  );
-            fnMacClose.setOrgCode  ( parsed.getString("CM.org_code") );
-            fnMacClose.setJijumCode( parsed.getString("brch_cd")     );
-            fnMacClose.setMacNo    ( parsed.getString("mac_no")      );
-            fnMacClose.setInTime   ( parsed.getString("insert_time") );
-            fnMacClose.setSendType ( "1" );
-            fnMacClose.setNotSend  ( cashType );
-            fnMacClose.setEndType  ( "0" );
-            fnMacClose.setMoveAmt  ( new Long(0) );
-            fnMacClose.setUserId   ( parsed.getString("CM.msg_id")   );
-
-            storedProcMapper.spFnMacSendClose(fnMacClose);
         }
 
     }//end method

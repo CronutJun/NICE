@@ -36,26 +36,26 @@
  -->
     <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
-        SELECT     ENV.MAC_NO,                                      /* 기기번호         */
-                   SITE.SITE_NM,                                    /* 코너명          */
-                   ENV.CHECK_DATE,                                  /* 점검일자         */
-                   ENV.CHECK_TIME,                                  /* 점검시간         */
-                   ENV.booth_top_front    ,                         /* 부스외부 상단 정면간판조명/훼손상태  */
-                   ENV.booth_top_back     ,                         /* 부스외부 상단 후면간판조명/훼손상태  */
-                   ENV.front_board        ,                         /* 전면부 광고판 조명/청결/게시상태       */
-                   ENV.left_board         ,                         /* 좌측면 광고판 조명/청결/게시상태       */
-                   ENV.right_board        ,                         /* 우측면 광고판 조명/청결/게시상태       */
-                   ENV.back_board         ,                         /* 후면부 광고판 조명/청결/게시상태       */
-                   ENV.clean_inout        ,                         /* 내부/외부 청결상태(유리면 포함)       */
-                   ENV.door_state         ,                         /* 출입문 상태       */
-                   ENV.light_inside_state ,                         /* 실내등 상태       */
-                   ENV.aed_state          ,                         /* AED 상태           */
-                   ENV.aircon_state       ,                         /* 에어컨 상태       */
-                   ENV.atm_waiting_state  ,                         /* ATM대기화면(출금버튼유무) 상태       */
-                   ENV.atm_broken         ,                         /* ATM파손상태      */
-                   ENV.interphone_state   ,                         /* 인터폰 연결 상태    */
-                   ENV.exec_comp          ,                         /* 조치자업체구분  */
-                   ENV.executant          ,                         /* 조치자명(직원번호)   */
+        select     env.mac_no,                                      /* 기기번호         */
+                   site.site_nm,                                    /* 코너명          */
+                   env.check_date,                                  /* 점검일자         */
+                   env.check_time,                                  /* 점검시간         */
+                   env.booth_top_front    ,                         /* 부스외부 상단 정면간판조명/훼손상태  */
+                   env.booth_top_back     ,                         /* 부스외부 상단 후면간판조명/훼손상태  */
+                   env.front_board        ,                         /* 전면부 광고판 조명/청결/게시상태       */
+                   env.left_board         ,                         /* 좌측면 광고판 조명/청결/게시상태       */
+                   env.right_board        ,                         /* 우측면 광고판 조명/청결/게시상태       */
+                   env.back_board         ,                         /* 후면부 광고판 조명/청결/게시상태       */
+                   env.clean_inout        ,                         /* 내부/외부 청결상태(유리면 포함)       */
+                   env.door_state         ,                         /* 출입문 상태       */
+                   env.light_inside_state ,                         /* 실내등 상태       */
+                   env.aed_state          ,                         /* aed 상태           */
+                   env.aircon_state       ,                         /* 에어컨 상태       */
+                   env.atm_waiting_state  ,                         /* atm대기화면(출금버튼유무) 상태       */
+                   env.atm_broken         ,                         /* atm파손상태      */
+                   env.interphone_state   ,                         /* 인터폰 연결 상태    */
+                   env.exec_comp          ,                         /* 조치자업체구분  */
+                   env.executant          ,                         /* 조치자명(직원번호)   */
                    '1' insert_type,                                             /* 등록구분         */
                    '',
                    '',

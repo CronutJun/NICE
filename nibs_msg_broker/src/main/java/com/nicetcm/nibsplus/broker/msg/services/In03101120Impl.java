@@ -3,18 +3,21 @@ package com.nicetcm.nibsplus.broker.msg.services;
 /*
  * Copyright 2014 The NIBS+ Project
  *
- * 빈 항목
+ * 거래내역조회
  *
  *
  *           2014. 10. 29    K.D.J.
  */
 
 
+import java.nio.ByteBuffer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
@@ -36,6 +39,27 @@ public class In03101120Impl extends InMsgHandlerImpl {
                 safeData.setSkipAnswer(true);
             }
         }
+
+        /*
+         *  대구은행의 경우 거래내역조회의 응답 일련번호 자리에 조회 요청한 일련번호를 돌려주지 않음
+         */
+        if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.DGB_CODE) ) {
+            String origMsg = comPack.getIfDataLog( safeData, "QS", parsed );
+            if( origMsg != null ) {
+                ByteBuffer origBuf  = ByteBuffer.allocateDirect(origMsg.getBytes().length);
+                origBuf.put(origMsg.getBytes());
+                origBuf.position(0);
+                MsgParser msgOrig = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")
+                        + "03001120.json").parseMessage(origBuf);
+                try {
+                    parsed.setString( "seq_no", msgOrig.getString("seq_no") );
+                }
+                finally {
+                    msgOrig.clearMessage();
+                }
+            }
+        }
+
     }//end method
 
 }

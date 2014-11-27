@@ -71,8 +71,8 @@
 				   NVL(MON.USE_CNT_DIFF_DEPOSIT,  '0') use_cnt_diff_deposit,	                /*	타행고객이용건수-입금	*/
 				   NVL(MON.USE_CNT_DIFF_SUM,      '0') use_cnt_diff_sum,	                    /*	타행고객이용건수-합계	*/
 				   NVL(MON.BANKBOOK_UPDATE_CNT,   '0') bankbook_update_cnt,	                    /*	통장정리이용건수		*/
-				   NVL(MON.EARNED_FEE_IBK,        '0') earned_fee_IBK,	                        /*	수수료수입-IBK			*/
-				   NVL(MON.EARNED_FEE_VAN,'0') + NVL(MON.EARNED_FEE_IBK,'0') earned_fee_VAN,	/*	수수료수입-VAN, 20131231 기업은행측에서 고객수수료로 넣어달라고 함.	*/
+				   NVL(MON.EARNED_FEE_IBK,        '0') earned_fee_ibk,	                        /*	수수료수입-IBK			*/
+				   NVL(MON.EARNED_FEE_VAN,'0') + NVL(MON.EARNED_FEE_IBK,'0') earned_fee_van,	/*	수수료수입-VAN, 20131231 기업은행측에서 고객수수료로 넣어달라고 함.	*/
 				   NVL(INFO.FIN_PENALTY_AMT,'0') penalty_amt,                                   /*	페널티확정금액			*/
 				   DECODE(MON.ORG_SEND_YN,'0','0',NVL(SST.MONTH_FEE,'0') - NVL(INFO.FIN_PENALTY_AMT,'0')) req_month_fee,	/*	청구용역료(매월5일은 금액 0,매월20일 청구용역료)*/        
 		      (SELECT OP.FC_FN_SECURITY( ACCOUNT , '2') FROM OP.T_CM_ACCOUNT

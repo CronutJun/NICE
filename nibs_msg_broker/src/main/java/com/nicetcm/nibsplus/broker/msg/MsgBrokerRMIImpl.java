@@ -63,6 +63,13 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                     throw new Exception("trans_seq_no is empty!!");
 
                 try {
+                    OutMsgHandler outLogging = (OutMsgHandler)MsgBrokerSpringMain.sprCtx.getBean("outIfLoging");
+                    outLogging.outMsgHandle( msgThrdSafeData, msgPsr );
+                }
+                catch( Exception e ) {
+                    logger.warn( "outbound message logging has error: {}", e.getMessage() );
+                }
+                try {
                     /*
                      *  Find and invoke method of instance of biz
                      */
@@ -146,6 +153,13 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                 if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
                     throw new Exception("trans_seq_no is empty!!");
 
+                try {
+                    OutMsgHandler outLogging = (OutMsgHandler)MsgBrokerSpringMain.sprCtx.getBean("outIfLoging");
+                    outLogging.outMsgHandle( msgThrdSafeData, msgPsr );
+                }
+                catch( Exception e ) {
+                    logger.warn( "outbound message logging has error: {}", e.getMessage() );
+                }
                 try {
                     /*
                      *  Find and invoke method of instance of biz

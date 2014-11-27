@@ -71,7 +71,14 @@ public class MsgBrokerWork {
                     /*
                      * 응답전문 수신 일 경우에는 오류코드 체크
                      */
-                    if( msgPsr.getString("CM.msg_type").substring(2, 4).equals("10") ) {
+                    if( msgPsr.getString("CM.msg_type").substring(2, 4).equals(MsgBrokerConst.ANS_CODE) ) {
+                        try {
+                            InMsgHandler inLogging = (InMsgHandler)MsgBrokerSpringMain.sprCtx.getBean("inIfLoging");
+                            inLogging.inMsgHandle( msgThrdSafeData, msgPsr );
+                        }
+                        catch( Exception e ) {
+                            logger.warn( "Inbound message logging has error: {}", e.getMessage() );
+                        }
                         if( !msgPsr.getString("CM.format_type").equals(MsgBrokerConst.EM_CODE) ) {
 
                             CommonPack comPack = MsgBrokerSpringMain.sprCtx.getBean(CommonPack.class);

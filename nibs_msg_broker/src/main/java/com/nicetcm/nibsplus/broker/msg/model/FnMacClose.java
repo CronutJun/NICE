@@ -22,6 +22,7 @@ public class FnMacClose {
    */
 
    private String closeDate   ;
+   private String addDate     ;
    private String orgCode     ;
    private String jijumCode   ;
    private String macNo       ;
@@ -46,6 +47,20 @@ public class FnMacClose {
    public void setCloseDate(String closeDate)
    {
        this.closeDate = closeDate;
+   }
+   /**
+    * @return the addDate
+    */
+   public String getAddDate()
+   {
+       return addDate;
+   }
+   /**
+    * @param closeDate the closeDate to set
+    */
+   public void setAddDate(String addDate)
+   {
+       this.addDate = addDate;
    }
    /**
     * @return the orgCode

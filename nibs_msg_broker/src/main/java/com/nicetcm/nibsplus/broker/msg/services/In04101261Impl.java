@@ -23,10 +23,10 @@ import com.nicetcm.nibsplus.broker.msg.model.TCmNiceEnvCheckSpec;
  * @version 1.0
  * @see
  */
-@Service("in04001261")
-public class In04001261Impl extends InMsgHandlerImpl {
+@Service("in04101261")
+public class In04101261Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(In04001261Impl.class);
+    private static final Logger logger = LoggerFactory.getLogger(In04101261Impl.class);
 
     @Autowired private StoredProcMapper splMap;
 

@@ -12,6 +12,8 @@ package com.nicetcm.nibsplus.broker.msg.jmx;
  * @since   2014.09.05
  */
 
+import java.util.Map.Entry;
+
 import javax.management.AttributeChangeNotification;
 import javax.management.MBeanNotificationInfo;
 import javax.management.Notification;
@@ -21,8 +23,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
@@ -31,6 +31,7 @@ import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerClassLoader;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConsumer;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerShutdown;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerSpringMain;
 
@@ -264,10 +265,20 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     @Override
     public String reattachConsumer(String consumerName) {
         try {
-            MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName);
-            if( con == null )
-                return String.format("No Consumer: %s", consumerName);
-            con.init();
+            if( consumerName != null && consumerName.equals("ALL") ) {
+                for( Entry<String, MsgBrokerConsumer> e: MsgBrokerConsumer.consumers.entrySet()) {
+                    e.getValue().init();
+                }
+                for( Entry<String, MsgBrokerProducer> e: MsgBrokerProducer.producers.entrySet()) {
+                    e.getValue().init();
+                }
+            }
+            else {
+                MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName);
+                if( con == null )
+                    return String.format("No Consumer: %s, set the right name or set \"ALL\"", consumerName);
+                con.init();
+            }
             return "reattachment is succeed";
         }
         catch( Exception e ) {
