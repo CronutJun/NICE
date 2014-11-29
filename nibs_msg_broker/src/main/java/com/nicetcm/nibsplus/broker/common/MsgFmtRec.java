@@ -3,6 +3,7 @@ package com.nicetcm.nibsplus.broker.common;
 import java.util.*;
 
 public class MsgFmtRec {
+    public    MsgFmtRec                    parent;
     public    String                       name;
     public    String                       type;
     public    String                       ref_iteration;
@@ -15,6 +16,7 @@ public class MsgFmtRec {
 
     public MsgFmtRec(){
 
+        this.parent        = null;
         this.name          = "";
         this.type          = "";
         this.ref_iteration = "";

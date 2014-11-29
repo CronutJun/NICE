@@ -27,10 +27,10 @@ public class SFtpTransfer {
 		vo.setAvailableServerPort(22);
 		vo.setUserId("chapweb");
 		vo.setPassword("chapweb");
-		vo.setRemotePath("dir");
-		vo.setFileName("test.txt");
+		vo.setRemotePath("/share/ftp/shinhan/recv");
+		vo.setFileName("201411_21_0510");
 		vo.setLocalPath("/nibs_dev_sftp_local");
-		vo.setFileName("test.txt");
+		//vo.setFileName("test.txt");
 		
 		SFtpTransfer.getFile(vo);
 	}
@@ -76,7 +76,7 @@ public class SFtpTransfer {
 	            	int readCnt=0;
 	                fos = new FileOutputStream(lfile);
 	            	
-	                while ((readCnt = sftp.read(rfile, fileOffset, readBuf, 0, readCnt)) != -1) {
+	                while ((readCnt = sftp.read(rfile, fileOffset, readBuf, 0, readBuf.length)) != -1) {
 	                	fileOffset += readCnt;
 	                	fos.write(readBuf, 0, readCnt);
 	                }

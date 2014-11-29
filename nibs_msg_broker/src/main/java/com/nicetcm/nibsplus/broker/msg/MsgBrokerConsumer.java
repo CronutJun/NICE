@@ -103,9 +103,11 @@ public class MsgBrokerConsumer {
 
         consumer = session.createConsumer(destination);
         consumer.setMessageListener(listener);
+        listener.getBlockingWorkGroup().threadStart();
     }
 
     public void close() throws JMSException {
+        listener.getBlockingWorkGroup().threadStop();
         consumer.close();
         session.close();
         connection.close();

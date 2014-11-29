@@ -190,4 +190,72 @@ public interface SqlServiceMapper {
 	public void sp_ct_month_use_status_003_2();
 
     public void t_ct_error_mng_003_brand_temp();
+    
+    // OracleJob 추가
+    public void sp_batch_error_etc_delete();
+
+	public void sp_check_photo_carry();
+
+	public void sp_cm_cash_wc_insert();
+
+	public void sp_cm_elecsign_retire();
+
+	public void sp_cm_pkg_day();
+
+	public void sp_ct_linefault_status();
+
+	public void sp_ct_lock_histoy_backup();
+
+	public void sp_ct_lockserver_verify();
+
+	public void sp_ct_t_ct_trade_confirm_init();
+
+	public void sp_fn_adjustment_carry();
+
+	public void sp_fn_create_notend_member();
+
+	public void sp_fn_emart_ticket();
+
+	public void sp_fn_make_nodeal_result_his();
+
+	public void sp_fn_notend_fee();
+
+	public void sp_fn_onnuri_dsum();
+
+	public void sp_fn_presafe_history();
+
+	public void sp_if_sendsmsktiserror();
+
+	public void sp_job_arrival_est_time();
+
+	public void sp_job_autosend_push();
+
+	public void sp_job_board_list_notice();
+
+	public void sp_job_fn_sendplan_update_0ki();
+
+	public void sp_job_schedule_mng_notice();
+
+	public void sp_job_t_ct_as_unfinish();
+
+	public void sp_job_t_ct_autosend_mac();
+
+	public void sp_job_t_ct_delay_monitoring();
+
+	public void sp_job_t_ct_error_mng();
+
+	public void sp_job_t_ct_error_mng_guard();
+
+	public void sp_job_t_ct_error_open_check();
+
+	public void sp_job_t_cv_position();
+
+	public void sp_job_t_emart_monitoring();
+
+	public void sp_job_t_fn_sendplan_schedule();
+
+	public void sp_job_t_short_cash_mng();
+
+	public void sp_rc_info_delete();
+
 }

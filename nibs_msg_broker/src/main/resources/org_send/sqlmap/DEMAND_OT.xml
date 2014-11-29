@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DEMAND_OT">
+
+<!--
+<entry key="DEMAND_OT"               value="02001420" />     06. 일회성비용청구
+
+{
+   "name" : "02001420",                    "kname" : "일회성비용청구",
+   "response" : { "code" : "02001420",     "type" : "SELF" },
+   "columns" : [                                                                                                                       
+      { "name" : "CM",          	"kname" : "공통헤더",      "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "DEMAND_MON",		"kname" : "청구월",        "type" : "AN",  "length"  : 6  },                   
+      { "name" : "COST_TYPE",		"kname" : "비용구분",      "type" : "AN",  "length"  : 2  },                    
+      { "name" : "DETAIL_TYPE",		"kname" : "세부항목구분",  "type" : "AN",  "length"  : 8   },                   
+      { "name" : "SEQ",				"kname" : "일련번호",      "type" : "AN",  "length"  : 20  },                   
+      { "name" : "WORK_DATE",		"kname" : "작업일자",      "type" : "AN",  "length"  : 8  },                   
+      { "name" : "CONFIRM_MON",		"kname" : "검수월",        "type" : "AN",  "length"  : 6  },                   
+      { "name" : "DEMAND_AMT",		"kname" : "금액",          "type" : "AN",  "length"  : 8   },                   
+      { "name" : "JIJUM_CD",		"kname" : "영업점코드",    "type" : "AN",  "length"  : 8   },                   
+      { "name" : "SITE_CD",			"kname" : "코너코드",      "type" : "AN",  "length"  : 6   },                   
+      { "name" : "MAC_NO",			"kname" : "단말번호",      "type" : "AN",  "length"  : 12  },                   
+      { "name" : "SITE_NM",			"kname" : "코너명",        "type" : "AN",  "length"  : 80  },                   
+      { "name" : "CONTENT",			"kname" : "상세내용",      "type" : "AN",  "length"  : 400 },
+      { "name" : "filler",          "kname" : "여유공간",      "type" : "AN",  "length"  : 104 }                    
+   ]
+}
+ -->
+    <select id="select088" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+		SELECT  demand_mon,
+		        cost_type, 
+		        detail_type, 
+		        seq, 
+		        work_date, 
+		        confirm_mon, 
+		        demand_amt, 
+		        branch_cd, 
+		        site_cd, 
+		        mac_no,  
+		        site_nm,
+		        content,
+		        '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+		FROM OP.T_CM_SET_DEMAND_OT
+		WHERE   org_cd = '008'
+		AND     demand_mon = to_char(to_char(sysdate-28,'yyyymm'))
+		AND     nvl(org_send_yn, '0') = '0'
+    </select>   
+</mapper>

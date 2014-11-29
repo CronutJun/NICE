@@ -52,11 +52,11 @@ public class NibsScheduleExecuter {
             	int count = 1;
             	
             	System.out.println(StringUtils.leftPad("", 65, "-"));
-            	System.out.println(String.format("%3s\t%-20s%-25s%s", "NO", "QuartzNodeName", "JobGroup", "MessageCode"));
+            	System.out.println(String.format("%3s\t%-25s%-30s%s", "NO", "QuartzNodeName", "JobGroup", "MessageCode"));
             	System.out.println(StringUtils.leftPad("", 65, "-"));
             	
             	for (SchedulerVO jobGroup : scheduleList) {
-            		System.out.println(String.format("%3d\t%-20s%-25s%s", count++, jobGroup.getQuartzNodeName(), jobGroup.getJobGroup(), (type = mtype.get(jobGroup.getJobGroup()))) == null ? "-" : type);
+            		System.out.println(String.format("%3d\t%-25s%-30s%s", count++, jobGroup.getQuartzNodeName(), jobGroup.getJobGroup(), ((type = mtype.get(jobGroup.getJobGroup()))) == null ? "-" : type));
             	}
 
             	System.out.println(StringUtils.leftPad("", 65, "-"));

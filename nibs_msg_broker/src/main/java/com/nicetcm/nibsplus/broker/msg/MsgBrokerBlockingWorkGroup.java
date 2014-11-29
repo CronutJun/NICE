@@ -14,16 +14,21 @@ public class MsgBrokerBlockingWorkGroup {
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerBlockingWorkGroup.class);
 
     private List<MsgBrokerBlockingWorker> blockThreads = new ArrayList<MsgBrokerBlockingWorker>();
+    private boolean forceResp;
+    private String   redirectTo;
+    private boolean noResp;
+    private int      blockCount;
 
-    public MsgBrokerBlockingWorkGroup( boolean forceResp, String redirectTo, boolean noResp, int BlockCount ) {
+    public MsgBrokerBlockingWorkGroup( boolean forceResp, String redirectTo, boolean noResp, int blockCount ) {
+
         MsgBrokerBlockingWorker th;
 
-        for( int i=0; i < BlockCount; i++ ) {
+        this.forceResp  = forceResp;
+        this.redirectTo = redirectTo;
+        this.noResp     = noResp;
+        this.blockCount = blockCount;
 
-            th =  new MsgBrokerBlockingWorker(forceResp, redirectTo, noResp);
-            blockThreads.add( th );
-            th.start();
-        }
+        threadStart();
     }
 
     public void putMsg( int index, byte[] msg ) throws Exception {
@@ -39,6 +44,24 @@ public class MsgBrokerBlockingWorkGroup {
 
     public List<MsgBrokerBlockingWorker> getBlockingThreads() {
         return blockThreads;
+    }
+
+    public void threadStart() {
+
+        threadStop();
+
+        for( int i=0; i < blockCount; i++ ) {
+            MsgBrokerBlockingWorker th =  new MsgBrokerBlockingWorker(forceResp, redirectTo, noResp);
+            blockThreads.add( th );
+            th.start();
+        }
+    }
+
+    public void threadStop() {
+        while( !blockThreads.isEmpty() ) {
+            blockThreads.get(0).stopWork();
+            blockThreads.remove(0);
+        }
     }
 
 }

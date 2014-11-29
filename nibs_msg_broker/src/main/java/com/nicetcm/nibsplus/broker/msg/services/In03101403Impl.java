@@ -23,10 +23,10 @@ import com.nicetcm.nibsplus.broker.msg.model.TFnBrandSvcFeeSpec;
  * @version 1.0
  * @see
  */
-@Service("in03001403")
-public class In03001403Impl extends InMsgHandlerImpl {
+@Service("in03101403")
+public class In03101403Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(In03001403Impl.class);
+    private static final Logger logger = LoggerFactory.getLogger(In03101403Impl.class);
 
     @Autowired private StoredProcMapper splMap;
 

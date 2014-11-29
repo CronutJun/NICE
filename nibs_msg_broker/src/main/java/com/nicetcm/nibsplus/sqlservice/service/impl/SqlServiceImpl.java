@@ -414,4 +414,170 @@ public class SqlServiceImpl implements SqlService {
 	public void tCtErrorMng003BrandTemp(Logger logger) {
 		sqlServiceMapper.t_ct_error_mng_003_brand_temp();
 	}
+	
+	// OracleJob 추가
+	@Override
+	public void spBatchErrorEtcDelete(Logger logger) {
+		sqlServiceMapper.sp_batch_error_etc_delete();
+	}
+	
+	@Override
+	public void spCheckPhotoCarry(Logger logger) {
+		sqlServiceMapper.sp_check_photo_carry();
+	}
+	
+	@Override
+	public void spCmCashWcInsert(Logger logger) {
+		sqlServiceMapper.sp_cm_cash_wc_insert();
+	}
+	
+	@Override
+	public void spCmElecsignRetire(Logger logger) {
+		sqlServiceMapper.sp_cm_elecsign_retire();
+	}
+	
+	@Override
+	public void spCmPkgDay(Logger logger) {
+		sqlServiceMapper.sp_cm_pkg_day();
+	}
+	
+	@Override
+	public void spCtLinefaultStatus(Logger logger) {
+		sqlServiceMapper.sp_ct_linefault_status();
+	}
+	
+	@Override
+	public void spCtLockHistoyBackup(Logger logger) {
+		sqlServiceMapper.sp_ct_lock_histoy_backup();
+	}
+	
+	@Override
+	public void spCtLockserverVerify(Logger logger) {
+		sqlServiceMapper.sp_ct_lockserver_verify();
+	}
+	
+	@Override
+	public void spCtTCtTradeConfirmInit(Logger logger) {
+		sqlServiceMapper.sp_ct_t_ct_trade_confirm_init();
+	}
+	
+	@Override
+	public void spFnAdjustmentCarry(Logger logger) {
+		sqlServiceMapper.sp_fn_adjustment_carry();
+	}
+	
+	@Override
+	public void spFnCreateNotendMember(Logger logger) {
+		sqlServiceMapper.sp_fn_create_notend_member();
+	}
+	
+	@Override
+	public void spFnEmartTicket(Logger logger) {
+		sqlServiceMapper.sp_fn_emart_ticket();
+	}
+	
+	@Override
+	public void spFnMakeNodealResultHis(Logger logger) {
+		sqlServiceMapper.sp_fn_make_nodeal_result_his();
+	}
+	
+	@Override
+	public void spFnNotendFee(Logger logger) {
+		sqlServiceMapper.sp_fn_notend_fee();
+	}
+	
+	@Override
+	public void spFnOnnuriDsum(Logger logger) {
+		sqlServiceMapper.sp_fn_onnuri_dsum();
+	}
+	
+	@Override
+	public void spFnPresafeHistory(Logger logger) {
+		sqlServiceMapper.sp_fn_presafe_history();
+	}
+	
+	@Override
+	public void spIfSendsmsktiserror(Logger logger) {
+		sqlServiceMapper.sp_if_sendsmsktiserror();
+	}
+	
+	@Override
+	public void spJobArrivalEstTime(Logger logger) {
+		sqlServiceMapper.sp_job_arrival_est_time();
+	}
+	
+	@Override
+	public void spJobAutosendPush(Logger logger) {
+		sqlServiceMapper.sp_job_autosend_push();
+	}
+	
+	@Override
+	public void spJobBoardListNotice(Logger logger) {
+		sqlServiceMapper.sp_job_board_list_notice();
+	}
+	
+	@Override
+	public void spJobFnSendplanUpdate0ki(Logger logger) {
+		sqlServiceMapper.sp_job_fn_sendplan_update_0ki();
+	}
+	
+	@Override
+	public void spJobScheduleMngNotice(Logger logger) {
+		sqlServiceMapper.sp_job_schedule_mng_notice();
+	}
+	
+	@Override
+	public void spJobTCtAsUnfinish(Logger logger) {
+		sqlServiceMapper.sp_job_t_ct_as_unfinish();
+	}
+	
+	@Override
+	public void spJobTCtAutosendMac(Logger logger) {
+		sqlServiceMapper.sp_job_t_ct_autosend_mac();
+	}
+	
+	@Override
+	public void spJobTCtDelayMonitoring(Logger logger) {
+		sqlServiceMapper.sp_job_t_ct_delay_monitoring();
+	}
+	
+	@Override
+	public void spJobTCtErrorMng(Logger logger) {
+		sqlServiceMapper.sp_job_t_ct_error_mng();
+	}
+	
+	@Override
+	public void spJobTCtErrorMngGuard(Logger logger) {
+		sqlServiceMapper.sp_job_t_ct_error_mng_guard();
+	}
+	
+	@Override
+	public void spJobTCtErrorOpenCheck(Logger logger) {
+		sqlServiceMapper.sp_job_t_ct_error_open_check();
+	}
+	
+	@Override
+	public void spJobTCvPosition(Logger logger) {
+		sqlServiceMapper.sp_job_t_cv_position();
+	}
+	
+	@Override
+	public void spJobTEmartMonitoring(Logger logger) {
+		sqlServiceMapper.sp_job_t_emart_monitoring();
+	}
+	
+	@Override
+	public void spJobTFnSendplanSchedule(Logger logger) {
+		sqlServiceMapper.sp_job_t_fn_sendplan_schedule();
+	}
+	
+	@Override
+	public void spJobTShortCashMng(Logger logger) {
+		sqlServiceMapper.sp_job_t_short_cash_mng();
+	}
+	
+	@Override
+	public void spRcInfoDelete(Logger logger) {
+		sqlServiceMapper.sp_rc_info_delete();
+	}
 }

@@ -195,7 +195,7 @@ public class In05000150Impl extends InMsgHandlerImpl {
                          * 동일 권종일 경우 카세트 하나라도 정상 이라면 정상 처리를 하기 위함.
                          */
                         if( bs.getTicketCd().equals(parsed.getString(String.format("BI[%d].ticket_cd", i)))
-                        &&  bs.getBillClassifyCd().equals(parsed.getString(String.format("BI[%d].bill_classt_cd", i))) ) {
+                        &&  bs.getBillClassifyCd().equals(parsed.getString(String.format("BI[%d].bill_class_cd", i))) ) {
                             if( parsed.getString(String.format("BI[%d].state", i)).equals("0")
                             ||  (bs.getState().equals("2") && parsed.getString(String.format("BI[%d].state", i)).equals("1")) ) {
                                 bs.setState(parsed.getString(String.format("BI[%d].state", i)));
@@ -347,7 +347,7 @@ public class In05000150Impl extends InMsgHandlerImpl {
                 break;
             }
         }
-        if( isExists ) {
+        if( !isExists ) {
             comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
         }
     }

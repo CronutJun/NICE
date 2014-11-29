@@ -3,13 +3,13 @@
    "response" : { "code" : "03001404",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
-      { "name" : "year_mon",               "kname" : "기준월",                 "type" : "N",   "length"  : 6   },
-      { "name" : "supply_amt",             "kname" : "공급가액",               "type" : "N",   "length"  : 10  },
-      { "name" : "vat_amt",                "kname" : "부가세액",               "type" : "N",   "length"  : 10  },
-      { "name" : "demand_amt",             "kname" : "청구금액",               "type" : "N",   "length"  : 10  },
+      { "name" : "year_mon",               "kname" : "기준월",                 "type" : "AN",  "length"  : 6   },
+      { "name" : "supply_amt",             "kname" : "공급가액",               "type" : "AN",  "length"  : 10  },
+      { "name" : "vat_amt",                "kname" : "부가세액",               "type" : "AN",  "length"  : 10  },
+      { "name" : "demand_amt",             "kname" : "청구금액",               "type" : "AN",  "length"  : 10  },
       { "name" : "org_cd",                 "kname" : "입금은행코드",           "type" : "AN",  "length"  : 3   },
       { "name" : "account_no",             "kname" : "입금계좌",               "type" : "AN",  "length"  : 32  },
-      { "name" : "due_date",               "kname" : "납입기한",               "type" : "N",   "length"  : 8   },
+      { "name" : "due_date",               "kname" : "납입기한",               "type" : "AN",  "length"  : 8   },
       { "name" : "doc_no",                 "kname" : "문서번호",               "type" : "AN",  "length"  : 20  },
       { "name" : "send_nm",                "kname" : "발송자",                 "type" : "AN",  "length"  : 20  },
       { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 101 }

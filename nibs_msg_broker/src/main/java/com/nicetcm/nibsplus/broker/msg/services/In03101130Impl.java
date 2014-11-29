@@ -359,12 +359,12 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
         // PDA여부 (요청대기시 요청내역 Map에서 조회)
         byte[] origMsg = MsgBrokerRMIImpl.rmiOrigMsg.get(parsed.getString("CM.trans_seq_no"));
-        logger.warn( "trans_seq_no = {}, origMsg = {}", parsed.getString("CM.trans_seq_no"), new String(origMsg) );
         /*
          * PDA 전문 일경우 프로시져를 호출한다.
          * 단 최초마감 전문일 경우에는 프로시져 호출하지 않는다.
          */
         if( origMsg != null ) {
+            logger.warn( "trans_seq_no = {}, origMsg = {}", parsed.getString("CM.trans_seq_no"), new String(origMsg) );
 
             ByteBuffer origBuf  = ByteBuffer.allocateDirect(origMsg.length);
             origBuf.put(origMsg);

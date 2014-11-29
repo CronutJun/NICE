@@ -94,4 +94,39 @@ public interface SqlService {
 	public void spCmPasswordChange(Logger logger);
 	public void spCtMonthUseStatus003(Logger logger);
 	public void tCtErrorMng003BrandTemp(Logger logger);
+	
+	// OracleJob 추가
+	public void spBatchErrorEtcDelete(Logger logger);
+	public void spCheckPhotoCarry(Logger logger);
+	public void spCmCashWcInsert(Logger logger);
+	public void spCmElecsignRetire(Logger logger);
+	public void spCmPkgDay(Logger logger);
+	public void spCtLinefaultStatus(Logger logger);
+	public void spCtLockHistoyBackup(Logger logger);
+	public void spCtLockserverVerify(Logger logger);
+	public void spCtTCtTradeConfirmInit(Logger logger);
+	public void spFnAdjustmentCarry(Logger logger);
+	public void spFnCreateNotendMember(Logger logger);
+	public void spFnEmartTicket(Logger logger);
+	public void spFnMakeNodealResultHis(Logger logger);
+	public void spFnNotendFee(Logger logger);
+	public void spFnOnnuriDsum(Logger logger);
+	public void spFnPresafeHistory(Logger logger);
+	public void spIfSendsmsktiserror(Logger logger);
+	public void spJobArrivalEstTime(Logger logger);
+	public void spJobAutosendPush(Logger logger);
+	public void spJobBoardListNotice(Logger logger);
+	public void spJobFnSendplanUpdate0ki(Logger logger);
+	public void spJobScheduleMngNotice(Logger logger);
+	public void spJobTCtAsUnfinish(Logger logger);
+	public void spJobTCtAutosendMac(Logger logger);
+	public void spJobTCtDelayMonitoring(Logger logger);
+	public void spJobTCtErrorMng(Logger logger);
+	public void spJobTCtErrorMngGuard(Logger logger);
+	public void spJobTCtErrorOpenCheck(Logger logger);
+	public void spJobTCvPosition(Logger logger);
+	public void spJobTEmartMonitoring(Logger logger);
+	public void spJobTFnSendplanSchedule(Logger logger);
+	public void spJobTShortCashMng(Logger logger);
+	public void spRcInfoDelete(Logger logger);
 }

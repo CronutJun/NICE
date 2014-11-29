@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:batch="http://www.springframework.org/schema/batch"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <bean id="nhFileRenameTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.NhFileRenameTasklet" />
+
+    <bean id="nhFtpTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.NhFtpTasklet" />
+    
+    <bean id="tFnNiceTranNhHeaderVO" class="com.nicetcm.nibsplus.filemng.model.TFnNiceTranNhHeaderVO" scope="prototype" />
+    <bean id="tFnNiceTranNhDataVO" class="com.nicetcm.nibsplus.filemng.model.TFnNiceTranNhDataVO" scope="prototype" />
+    <bean id="tFnNiceTranNhTailVO" class="com.nicetcm.nibsplus.filemng.model.TFnNiceTranNhTailVO" scope="prototype" />
+
+    <bean id="nhItemProcessor" class="org.springframework.batch.item.support.CompositeItemProcessor" scope="step">
+        <property name="delegates">
+            <list>
+                <bean class="com.nicetcm.nibsplus.filemng.service.impl.NhItemProcessor" scope="step">
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <batch:job id="nhJob">
+        <batch:step id="getFtp" next="dbLoad">
+            <tasklet ref="nhFtpTasklet" />
+        </batch:step>
+        <batch:step id="dbLoad" next="fileRename">
+            <batch:tasklet>
+                <batch:chunk reader="nhCvsFileItemReader" processor="nhItemProcessor" writer="nhDb2ItemWriter" commit-interval="10000">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="fileRename">
+            <tasklet ref="nhFileRenameTasklet" />
+        </batch:step>
+    </batch:job>
+
+    <bean id="nhCvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+
+        <!-- Read a csv file -->
+        <property name="resource"  value="file:#{jobParameters['nh.file.name']}" />
+        <property name="encoding"  value="euc-kr" />
+
+        <property name="lineMapper" ref="nhFileLineMapper"/>
+<!--
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <property name="lineTokenizer">
+                    <bean class="com.nicetcm.nibsplus.util.NibsFixedByteLengthTokenizer">
+                        <property name="byteEncoding" value="euc-kr"/>
+                        <property name="names" value="" />
+                        <property name="columns" value="" />
+                    </bean>
+                </property>
+                <property name="fieldSetMapper">
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+                        <property name="prototypeBeanName" value="tFnNiceTranNhVO" />
+                    </bean>
+                </property>
+
+            </bean>
+        </property>
+ -->
+    </bean>
+
+    <bean id="nhFileLineMapper" class="org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper">
+        <property name="tokenizers">
+            <map>
+                <entry key="VC000111*" value-ref="nhHeaderTokenizer" />
+                <entry key="VC000122*" value-ref="nhDataTokenizer" />
+                <entry key="VC000133*" value-ref="nhTailTokenizer" />
+            </map>
+        </property>
+        <property name="fieldSetMappers">
+            <map>
+                <entry key="VC000111*" value-ref="nhHeaderFieldSetMapper" />
+                <entry key="VC000122*" value-ref="nhDataFieldSetMapper" />
+                <entry key="VC000133*" value-ref="nhTailFieldSetMapper" />
+            </map>
+        </property>
+    </bean>
+
+    <bean id="nhHeaderTokenizer" class="com.nicetcm.nibsplus.util.NibsFixedByteLengthTokenizer">
+        <property name="byteEncoding" value="euc-kr"/>
+        <property name="names" value="workNm, dataType, dataSeq, orgCd, vanCd, totRecordCnt, dealDate, filler" />
+        <property name="columns" value="1-6, 7-8, 9-15, 16-18, 19-21, 22-28, 29-36, 37-100" />
+    </bean>
+
+    <bean id="nhHeaderFieldSetMapper" class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+        <property name="prototypeBeanName" value="tFnNiceTranNhHeaderVO" />
+    </bean>
+
+    <bean id="nhDataTokenizer" class="com.nicetcm.nibsplus.util.NibsFixedByteLengthTokenizer">
+        <property name="byteEncoding" value="euc-kr"/>
+        <property name="names" value="workNm, dataType, dataSeq, nhType, dealDate, dealTime, dealNo, dealGb, msgType, dealAmt, custFee, responseCd, filler" />
+        <property name="columns" value="1-6, 7-8, 9-15, 16-16, 17-24, 25-30, 31-43, 44-49, 50-53, 54-65, 66-70, 71-72, 73-100" />
+    </bean>
+
+    <bean id="nhDataFieldSetMapper" class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+        <property name="prototypeBeanName" value="tFnNiceTranNhDataVO" />
+    </bean>
+
+    <bean id="nhTailTokenizer" class="com.nicetcm.nibsplus.util.NibsFixedByteLengthTokenizer">
+        <property name="byteEncoding" value="euc-kr"/>
+        <property name="names" value="workNm, dataType, dataSeq, orgCd, vanCd, totRecordCnt, dealDate, filler" />
+        <property name="columns" value="1-6, 7-8, 9-15, 16-18, 19-21, 22-28, 29-36, 37-100" />
+    </bean>
+
+    <bean id="nhTailFieldSetMapper" class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+        <property name="prototypeBeanName" value="tFnNiceTranNhTailVO" />
+    </bean>
+
+    <bean id="nhDb2ItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource_OP" />
+        <property name="sql">
+            <value>
+            <![CDATA[
+                INSERT INTO OP.T_FN_NICE_TRAN_NH(DEAL_DATE
+                                                ,DEAL_NO
+                                                ,WORK_TYPE
+                                                ,DEAL_AMT
+                                                ,CUST_FEE
+                                                ,RESPONSE_CD
+                                                ,INSERT_DATE
+                                                ,UPDATE_DATE)
+                VALUES (:dealDate
+                       ,:dealNo
+                       ,'1'
+                       ,:dealAmt
+                       ,:custFee
+                       ,:responseCd
+                       ,sysdate
+                       ,sysdate)
+            ]]>
+            </value>
+        </property>
+        <!-- It will take care matching between object property and sql name parameter -->
+        <property name="itemSqlParameterSourceProvider">
+            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
+        </property>
+    </bean>
+</beans>

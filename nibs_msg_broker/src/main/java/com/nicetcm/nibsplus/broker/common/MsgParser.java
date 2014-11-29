@@ -85,7 +85,7 @@ public class MsgParser {
 
         schemaLength = 0;
         logger.debug("Creating instance: readSchema");
-        readSchema(incFile, msgFmtMap);
+        readSchema(incFile, msgFmtMap, null);
         logger.debug("Creating instance: readSchema OK");
     }
 
@@ -119,7 +119,7 @@ public class MsgParser {
         }
     }
 
-    private void readSchema(String incFile, Map<String, MsgFmtRec> msgMap) throws Exception {
+    private void readSchema(String incFile, Map<String, MsgFmtRec> msgMap, MsgFmtRec parent) throws Exception {
 
         if( includeMap.containsKey(incFile) )
             throw new Exception("reference is recursived.");
@@ -142,16 +142,17 @@ public class MsgParser {
 
         JsonArray results = obj.getJsonArray("columns");
 
-        readSubSchema( results, msgMap );
+        readSubSchema( results, msgMap, parent );
     }
 
-    private void readSubSchema(JsonArray arr, Map<String, MsgFmtRec> msgMap) throws Exception {
+    private void readSubSchema(JsonArray arr, Map<String, MsgFmtRec> msgMap, MsgFmtRec parent) throws Exception {
 
         MsgFmtRec msgFmtRec;
 
         for (JsonObject result : arr.getValuesAs(JsonObject.class)) {
 
             msgFmtRec            = new MsgFmtRec();
+            msgFmtRec.parent     = parent;
             msgFmtRec.name       = result.getString("name");
             msgFmtRec.type       = result.getString("type");
 
@@ -167,12 +168,14 @@ public class MsgParser {
                 if( msgFmtRec.ref_iteration.length() > 0 )
                     throw new Exception(String.format("iteration is not able to be set when ref_iteration property is set! [%s]",
                             msgFmtRec.name));
-                msgFmtRec.iteration = result.getInt("iteration");
+                msgFmtRec.iteration = result.getInt("iteration", 0);
             }
 
             if( result.containsKey("length") ) {
                 msgFmtRec.length = result.getInt("length");
-                schemaLength += msgFmtRec.length;
+                schemaLength += msgFmtRec.length
+                              * (msgFmtRec.iteration == 0 ? 1 : msgFmtRec.iteration)
+                              * ( parent == null ? 1 : (parent.iteration == 0 ? 1 : parent.iteration) );
             }
 
             if( result.containsKey("enc_charset") ) {
@@ -185,14 +188,14 @@ public class MsgParser {
 
             if( msgFmtRec.type.equals("STRUCT") ) {
                 msgFmtRec.schema = new LinkedHashMap<String, MsgFmtRec>();
-                readSubSchema(result.getJsonArray("struct"), msgFmtRec.schema);
+                readSubSchema(result.getJsonArray("struct"), msgFmtRec.schema, msgFmtRec);
             }
 
             if( msgFmtRec.type.equals("INC") ) {
                 msgFmtRec.schema = new LinkedHashMap<String, MsgFmtRec>();
                 String filePath = incFile.substring(0, incFile.lastIndexOf("/")+1);
                 //readSchema(MsgCommon.msgProps.getProperty("schema_path") + result.getString("include"), msgFmtRec.schema);
-                readSchema(filePath + result.getString("include"), msgFmtRec.schema);
+                readSchema(filePath + result.getString("include"), msgFmtRec.schema, msgFmtRec);
             }
 
             msgMap.put(result.getString("name"), msgFmtRec);

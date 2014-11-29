@@ -23,10 +23,10 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtUseStatusMonthlySpec;
  * @version 1.0
  * @see
  */
-@Service("in03001400")
-public class In03001400Impl extends InMsgHandlerImpl {
+@Service("in03101400")
+public class In03101400Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(In03001400Impl.class);
+    private static final Logger logger = LoggerFactory.getLogger(In03101400Impl.class);
 
     @Autowired private StoredProcMapper splMap;
 

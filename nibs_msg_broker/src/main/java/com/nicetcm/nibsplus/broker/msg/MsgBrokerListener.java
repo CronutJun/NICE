@@ -78,7 +78,6 @@ public class MsgBrokerListener implements MessageListener {
          catch( Exception e ) {
              logger.error(e.getMessage());
          }
-
     }
 
 }

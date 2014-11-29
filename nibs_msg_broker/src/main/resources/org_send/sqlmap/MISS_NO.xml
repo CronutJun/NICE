@@ -117,4 +117,34 @@ from   (
         ) A
     ]]>
     </select>
+    <select id="select0HP" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+		SELECT  A.DEAL_DATE as req_date,
+		        A.trans_seq req_seq,
+		        '',
+		        '',
+		        '',
+		        '1' req_code,
+		        '',
+		        '',
+		        '',
+		        '',
+		        '',
+		        '',
+		        '','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+		from   (      
+		            SELECT  TO_CHAR(SYSDATE-1, 'YYYYMMDD') as deal_date,
+		                     trans_seq_no  as trans_seq
+		            FROM 	OP.T_IF_MISSNO_CHK 
+		            WHERE 	trans_seq_no <= (select MAX(trans_seq_no)+1 from OP.t_fn_realtime_TRADE_KIOSK where org_cd = '0HP' AND DEAL_DATE = TO_CHAR(SYSDATE-1, 'YYYYMMDD'))
+		            AND		trans_seq_no > '1000000'
+		            MINUS 
+		            SELECT  DISTINCT deal_date,
+		                    trans_seq_no    as trans_seq
+		            from OP.t_fn_realtime_TRADE_KIOSK
+		            where org_cd = '0HP' 
+		            AND DEAL_DATE = TO_CHAR(SYSDATE-1, 'YYYYMMDD') 
+		        ) A
+    ]]>
+    </select>
 </mapper>

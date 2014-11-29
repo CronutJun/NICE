@@ -803,4 +803,139 @@
     ]]>
     </update>
     
+    
+    
+    
+    <select id="sp_batch_error_etc_delete" statementType="CALLABLE">
+		{ call sp_batch_error_etc_delete() }
+	</select>
+	
+	<select id="sp_check_photo_carry" statementType="CALLABLE">
+		{ call sp_check_photo_carry }
+	</select>
+	
+	<select id="sp_cm_cash_wc_insert" statementType="CALLABLE">
+		{ call sp_cm_cash_wc_insert }
+	</select>
+	
+	<select id="sp_cm_elecsign_retire" statementType="CALLABLE">
+		{ call sp_cm_elecsign_retire }
+	</select>
+	
+	<select id="sp_cm_pkg_day" statementType="CALLABLE">
+		{ call sp_cm_pkg_day }
+	</select>
+	
+	<select id="sp_ct_linefault_status" statementType="CALLABLE">
+		{ call sp_ct_linefault_status }
+	</select>
+	
+	<select id="sp_ct_lock_histoy_backup" statementType="CALLABLE">
+		{ call sp_ct_lock_histoy_backup }
+	</select>
+	
+	<select id="sp_ct_lockserver_verify" statementType="CALLABLE">
+		{ call sp_ct_lockserver_verify }
+	</select>
+	
+	<select id="sp_ct_t_ct_trade_confirm_init" statementType="CALLABLE">
+		{ call sp_ct_t_ct_trade_confirm_init }
+	</select>
+	
+	<select id="sp_fn_adjustment_carry" statementType="CALLABLE">
+		{ call sp_fn_adjustment_carry }
+	</select>
+	
+	<select id="sp_fn_create_notend_member" statementType="CALLABLE">
+		{ call sp_fn_create_notend_member }
+	</select>
+	
+	<select id="sp_fn_emart_ticket" statementType="CALLABLE">
+		{ call sp_fn_emart_ticket(to_char(sysdate-1, 'yyyymmdd')) }
+	</select>
+	
+	<select id="sp_fn_make_nodeal_result_his" statementType="CALLABLE">
+		{ call sp_fn_make_nodeal_result_his }
+	</select>
+	
+	<select id="sp_fn_notend_fee" statementType="CALLABLE">
+		{ call sp_fn_notend_fee }
+	</select>
+	
+	<select id="sp_fn_onnuri_dsum" statementType="CALLABLE">
+		{ call sp_fn_onnuri_dsum }
+	</select>
+	
+	<select id="sp_fn_presafe_history" statementType="CALLABLE">
+		{ call sp_fn_presafe_history }
+	</select>
+	
+	<select id="sp_if_sendsmsktiserror" statementType="CALLABLE">
+		{ call sp_if_sendsmsktiserror('0TR') }
+	</select>
+	
+	<select id="sp_job_arrival_est_time" statementType="CALLABLE">
+		{ call sp_job_arrival_est_time }
+	</select>
+	
+	<select id="sp_job_autosend_push" statementType="CALLABLE">
+		{ call sp_job_autosend_push }
+	</select>
+	
+	<select id="sp_job_board_list_notice" statementType="CALLABLE">
+		{ call sp_job_board_list_notice }
+	</select>
+	
+	<select id="sp_job_fn_sendplan_update_0ki" statementType="CALLABLE">
+		{ call sp_job_fn_sendplan_update_0ki }
+	</select>
+	
+	<select id="sp_job_schedule_mng_notice" statementType="CALLABLE">
+		{ call sp_job_schedule_mng_notice }
+	</select>
+	
+	<select id="sp_job_t_ct_as_unfinish" statementType="CALLABLE">
+		{ call sp_job_t_ct_as_unfinish }
+	</select>
+	
+	<select id="sp_job_t_ct_autosend_mac" statementType="CALLABLE">
+		{ call sp_job_t_ct_autosend_mac }
+	</select>
+	
+	<select id="sp_job_t_ct_delay_monitoring" statementType="CALLABLE">
+		{ call sp_job_t_ct_delay_monitoring }
+	</select>
+	
+	<select id="sp_job_t_ct_error_mng" statementType="CALLABLE">
+		{ call sp_job_t_ct_error_mng }
+	</select>
+	
+	<select id="sp_job_t_ct_error_mng_guard" statementType="CALLABLE">
+		{ call sp_job_t_ct_error_mng_guard }
+	</select>
+	
+	<select id="sp_job_t_ct_error_open_check" statementType="CALLABLE">
+		{ call sp_job_t_ct_error_open_check }
+	</select>
+	
+	<select id="sp_job_t_cv_position" statementType="CALLABLE">
+		{ call sp_job_t_cv_position }
+	</select>
+	
+	<select id="sp_job_t_emart_monitoring" statementType="CALLABLE">
+		{ call sp_job_t_emart_monitoring }
+	</select>
+	
+	<select id="sp_job_t_fn_sendplan_schedule" statementType="CALLABLE">
+		{ call sp_job_t_fn_sendplan_schedule }
+	</select>
+	
+	<select id="sp_job_t_short_cash_mng" statementType="CALLABLE">
+		{ call sp_job_t_short_cash_mng }
+	</select>
+	
+	<select id="sp_rc_info_delete" statementType="CALLABLE">
+		{ call sp_rc_info_delete }
+	</select>
+	
 </mapper>

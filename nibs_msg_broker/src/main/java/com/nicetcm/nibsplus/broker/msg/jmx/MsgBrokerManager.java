@@ -266,10 +266,10 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     public String reattachConsumer(String consumerName) {
         try {
             if( consumerName != null && consumerName.equals("ALL") ) {
-                for( Entry<String, MsgBrokerConsumer> e: MsgBrokerConsumer.consumers.entrySet()) {
+                for( Entry<String, MsgBrokerProducer> e: MsgBrokerProducer.producers.entrySet()) {
                     e.getValue().init();
                 }
-                for( Entry<String, MsgBrokerProducer> e: MsgBrokerProducer.producers.entrySet()) {
+                for( Entry<String, MsgBrokerConsumer> e: MsgBrokerConsumer.consumers.entrySet()) {
                     e.getValue().init();
                 }
             }

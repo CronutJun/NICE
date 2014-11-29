@@ -76,6 +76,7 @@
 
 		                <!-- CM -->
 		                <entry key="DAY_CLOSE"              value="03000320" />     <!-- 59. 일마감-->
+		                <entry key="DAY_CLOSE_KIOSK"        value="03001321" />
 		                <entry key="CUR_AMT"                value="03001110" />     <!-- 27. 현재시재조회-->
 		                <entry key="INQ_CHECK"              value="03001112" />     <!-- 29. 수표명세데이터요청-->
 		                <entry key="CLOSE"                  value="03001130" />     <!-- 11. 마감조회-->

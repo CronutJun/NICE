@@ -666,6 +666,303 @@
         </layout>
     </appender>
 
+    <appender name="sp_batch_error_etc_delete.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_batch_error_etc_delete.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_check_photo_carry.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_check_photo_carry.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_cm_cash_wc_insert.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_cm_cash_wc_insert.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_cm_elecsign_retire.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_cm_elecsign_retire.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_cm_pkg_day.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_cm_pkg_day.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_ct_linefault_status.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_ct_linefault_status.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_ct_lock_histoy_backup.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_ct_lock_histoy_backup.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_ct_lockserver_verify.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_ct_lockserver_verify.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_ct_t_ct_trade_confirm_init.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_ct_t_ct_trade_confirm_init.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_adjustment_carry.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_adjustment_carry.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_create_notend_member.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_create_notend_member.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_emart_ticket.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_emart_ticket.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_make_nodeal_result_his.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_make_nodeal_result_his.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_notend_fee.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_notend_fee.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_onnuri_dsum.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_onnuri_dsum.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_presafe_history.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_presafe_history.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_if_sendsmsktiserror.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_if_sendsmsktiserror.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_arrival_est_time.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_arrival_est_time.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_autosend_push.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_autosend_push.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_board_list_notice.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_board_list_notice.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_fn_sendplan_update_0ki.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_fn_sendplan_update_0ki.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_schedule_mng_notice.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_schedule_mng_notice.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_ct_as_unfinish.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_ct_as_unfinish.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_ct_autosend_mac.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_ct_autosend_mac.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_ct_delay_monitoring.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_ct_delay_monitoring.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_ct_error_mng.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_ct_error_mng.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_ct_error_mng_guard.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_ct_error_mng_guard.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_ct_error_open_check.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_ct_error_open_check.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_cv_position.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_cv_position.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_emart_monitoring.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_emart_monitoring.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_fn_sendplan_schedule.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_fn_sendplan_schedule.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_job_t_short_cash_mng.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_job_t_short_cash_mng.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_rc_info_delete.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_rc_info_delete.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
     <logger name="SP_CM_FAX" additivity="false">
         <level value="info"/>
         <appender-ref ref="sp_cm_fax.sh"/>
@@ -1024,6 +1321,171 @@
     <logger name="SP_UPDATE_SITE" additivity="false">
         <level value="info"/>
         <appender-ref ref="sp_update_site.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_BATCH_ERROR_ETC_DELETE" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_batch_error_etc_delete.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_CHECK_PHOTO_CARRY" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_check_photo_carry.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_CM_CASH_WC_INSERT" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_cm_cash_wc_insert.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_CM_ELECSIGN_RETIRE" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_cm_elecsign_retire.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_CM_PKG_DAY" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_cm_pkg_day.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_CT_LINEFAULT_STATUS" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_ct_linefault_status.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_CT_LOCK_HISTOY_BACKUP" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_ct_lock_histoy_backup.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_CT_LOCKSERVER_VERIFY" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_ct_lockserver_verify.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_CT_T_CT_TRADE_CONFIRM_INIT" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_ct_t_ct_trade_confirm_init.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_ADJUSTMENT_CARRY" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_adjustment_carry.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_CREATE_NOTEND_MEMBER" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_create_notend_member.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_EMART_TICKET" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_emart_ticket.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_MAKE_NODEAL_RESULT_HIS" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_make_nodeal_result_his.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_NOTEND_FEE" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_notend_fee.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_ONNURI_DSUM" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_onnuri_dsum.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_PRESAFE_HISTORY" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_presafe_history.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_IF_SENDSMSKTISERROR" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_if_sendsmsktiserror.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_ARRIVAL_EST_TIME" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_arrival_est_time.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_AUTOSEND_PUSH" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_autosend_push.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_BOARD_LIST_NOTICE" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_board_list_notice.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_FN_SENDPLAN_UPDATE_0KI" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_fn_sendplan_update_0ki.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_SCHEDULE_MNG_NOTICE" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_schedule_mng_notice.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_CT_AS_UNFINISH" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_ct_as_unfinish.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_CT_AUTOSEND_MAC" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_ct_autosend_mac.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_CT_DELAY_MONITORING" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_ct_delay_monitoring.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_CT_ERROR_MNG" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_ct_error_mng.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_CT_ERROR_MNG_GUARD" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_ct_error_mng_guard.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_CT_ERROR_OPEN_CHECK" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_ct_error_open_check.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_CV_POSITION" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_cv_position.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_EMART_MONITORING" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_emart_monitoring.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_FN_SENDPLAN_SCHEDULE" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_fn_sendplan_schedule.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_JOB_T_SHORT_CASH_MNG" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_job_t_short_cash_mng.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_RC_INFO_DELETE" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_rc_info_delete.sh"/>
         <appender-ref ref="consoleAppender"/>
     </logger>
 
