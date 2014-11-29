@@ -484,4 +484,69 @@ public interface TFnNiceTranMapper {
     })
     int updateByCond2(TFnNiceTran record);
 
+    /**
+     * InN1000100Impl 에서 호출
+     *
+     * @author KDJ
+     * @since  Sat Nov 29 13:37:01 KST 2014
+     */
+    @Insert({
+        "insert into OP.T_FN_NICE_TRAN (DEAL_YEAR, DEAL_NO, ",
+        "DEAL_DATE, MAC_NO, ",
+        "ATM_DEAL_NO, DEAL_TYPE, ",
+        "DEAL_CLSS, TRACK_NO, ",
+        "INST_ORG_CD, INST_BRANCH_CD, ",
+        "ACCOUNT_NO, REAL_ACCOUNT_NO, ",
+        "DEAL_AMT, CUST_FEE, ",
+        "BANK_FEE, TRANS_ORG_CD, ",
+        "TRANS_BRANCH_CD, TRANS_ACCOUNT_NO, ",
+        "TRANS_DEPOSITOR, RESPONSE_CD, ",
+        "REFUSE_CD, ORG_RESPONSE_CD, ",
+        "ORG_CD, DEAL_MMDD, ",
+        "ADMIS_ORG, DEAL_STATUS, ",
+        "DEAL_HOUR, DEAL_MI, ",
+        "DEAL_SEC, ERROR_STATUS, ",
+        "DEAL_TIME_TYPE, JOIN_ORG_DEAL_NO, ",
+        "DEPT_CD, OFFICE_CD, ",
+        "TEAM_CD, INSERT_DATE, ",
+        "UPDATE_DATE, NET_ORG_CD, ",
+        "CHECK_AMT, FDEPT_CD, ",
+        "FOFFICE_CD, DEAL_AMT_10000, ",
+        "DEAL_AMT_50000, DEAL_AMT_100000, ",
+        "DEAL_AMT_1000, DEAL_AMT_5000, ",
+        "BRAND_ORG_CD, USER_TEL_NO, ",
+        "GIFT_INITIAL, GIFT_SUB_CD, ",
+        "GIFT_SEQ_NO, ORIGIN_DEAL_DATE, ",
+        "ORIGIN_DEAL_NO, GIFT_JUM_CD, ",
+        "CALC_DATE, ARPC_FAULT)",
+        "values (#{dealYear,jdbcType=VARCHAR}, #{dealNo,jdbcType=VARCHAR}, ",
+        "#{dealDate,jdbcType=VARCHAR}, #{macNo,jdbcType=VARCHAR}, ",
+        "#{atmDealNo,jdbcType=VARCHAR}, #{dealType,jdbcType=VARCHAR}, ",
+        "#{dealClss,jdbcType=VARCHAR}, #{trackNo,jdbcType=VARCHAR}, ",
+        "#{instOrgCd,jdbcType=VARCHAR}, OP.FC_FN_SECURITY(#{instBranchCd,jdbcType=VARCHAR},'1'), ",
+        "OP.FC_FN_SECURITY(#{accountNo,jdbcType=VARCHAR},'1'), OP.FC_FN_SECURITY(#{realAccountNo,jdbcType=VARCHAR},'1'), ",
+        "#{dealAmt,jdbcType=DECIMAL}, #{custFee,jdbcType=DECIMAL}, ",
+        "#{bankFee,jdbcType=DECIMAL}, #{transOrgCd,jdbcType=VARCHAR}, ",
+        "OP.FC_FN_SECURITY(#{transBranchCd,jdbcType=VARCHAR},'1'), OP.FC_FN_SECURITY(#{transAccountNo,jdbcType=VARCHAR},'1'), ",
+        "#{transDepositor,jdbcType=VARCHAR}, #{responseCd,jdbcType=VARCHAR}, ",
+        "#{refuseCd,jdbcType=VARCHAR}, #{orgResponseCd,jdbcType=VARCHAR}, ",
+        "#{orgCd,jdbcType=VARCHAR}, #{dealMmdd,jdbcType=VARCHAR}, ",
+        "#{admisOrg,jdbcType=VARCHAR}, #{dealStatus,jdbcType=VARCHAR}, ",
+        "#{dealHour,jdbcType=VARCHAR}, #{dealMi,jdbcType=VARCHAR}, ",
+        "#{dealSec,jdbcType=VARCHAR}, #{errorStatus,jdbcType=VARCHAR}, ",
+        "#{dealTimeType,jdbcType=VARCHAR}, #{joinOrgDealNo,jdbcType=VARCHAR}, ",
+        "#{deptCd,jdbcType=VARCHAR}, #{officeCd,jdbcType=VARCHAR}, ",
+        "#{teamCd,jdbcType=VARCHAR}, #{insertDate,jdbcType=TIMESTAMP}, ",
+        "#{updateDate,jdbcType=TIMESTAMP}, #{netOrgCd,jdbcType=VARCHAR}, ",
+        "#{checkAmt,jdbcType=DECIMAL}, #{fdeptCd,jdbcType=VARCHAR}, ",
+        "#{fofficeCd,jdbcType=VARCHAR}, #{dealAmt10000,jdbcType=DECIMAL}, ",
+        "#{dealAmt50000,jdbcType=DECIMAL}, #{dealAmt100000,jdbcType=DECIMAL}, ",
+        "#{dealAmt1000,jdbcType=DECIMAL}, #{dealAmt5000,jdbcType=DECIMAL}, ",
+        "#{brandOrgCd,jdbcType=VARCHAR}, OP.FC_FN_SECURITY(#{userTelNo,jdbcType=VARCHAR},'1'), ",
+        "#{giftInitial,jdbcType=VARCHAR}, #{giftSubCd,jdbcType=VARCHAR}, ",
+        "#{giftSeqNo,jdbcType=VARCHAR}, #{originDealDate,jdbcType=VARCHAR}, ",
+        "#{originDealNo,jdbcType=VARCHAR}, #{giftJumCd,jdbcType=VARCHAR}, ",
+        "#{calcDate,jdbcType=VARCHAR}, #{arpcFault,jdbcType=VARCHAR})" })
+    int insertByCond1(TFnNiceTran record);
+
 }

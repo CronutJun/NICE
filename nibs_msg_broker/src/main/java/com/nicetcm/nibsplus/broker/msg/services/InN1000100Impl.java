@@ -436,7 +436,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
 
 
         try {
-            fnNiceTranMap.insert( fnNiceTranRec );
+            fnNiceTranMap.insertByCond1( fnNiceTranRec );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {
