@@ -1,5 +1,7 @@
 package com.nicetcm.nibsplus.sqlservice.dao;
 
+import java.util.Map;
+
 /**
  * DB에서 스케쥴정보 조회
  * <pre>
@@ -46,7 +48,7 @@ public interface SqlServiceMapper {
 
     public void sp_fn_day_close_ktis();
 
-    public void sp_fn_deal_forecast();
+    public void sp_fn_deal_forecast(Map<String, String> param);
 
     public void sp_fn_dealcount();
 
@@ -85,7 +87,7 @@ public interface SqlServiceMapper {
     public void sp_fn_largemonth_1();
     public void sp_fn_largemonth_2();
 
-    public void sp_fn_mac_stock_amt();
+    public void sp_fn_mac_stock_amt(Map<String, String> param);
 
     public void sp_fn_maccount();
 
@@ -102,9 +104,9 @@ public interface SqlServiceMapper {
     public void sp_fn_nice_dsum_bc_1();
     public void sp_fn_nice_dsum_bc_2();
     public void sp_fn_nice_dsum_bc_3();
-    public void sp_fn_nice_dsum_bc_4();
-    public void sp_fn_nice_dsum_bc_5();
-    public void sp_fn_nice_dsum_bc_6();
+    public void sp_fn_nice_dsum_bc_4(Map<String, String> param);
+    public void sp_fn_nice_dsum_bc_5(Map<String, String> param);
+    public void sp_fn_nice_dsum_bc_6(Map<String, String> param);
     public void sp_fn_nice_dsum_bc_7();
 
     public void sp_fn_nice_dsum();
@@ -133,13 +135,13 @@ public interface SqlServiceMapper {
 
     public void sp_fn_sendplan_confirm_bs();
 
-    public void sp_fn_sendplan_confirm_sh();
+    public void sp_fn_sendplan_confirm_sh(Map<String, String> param);
 
-    public void sp_fn_sendplan_confirm();
+    public void sp_fn_sendplan_confirm(Map<String, String> param);
 
     public void sp_fn_sendplan_reform();
 
-    public void sp_fn_sendplan_upload_sh();
+    public void sp_fn_sendplan_upload_sh(Map<String, String> param);
 
     public void sp_fn_servicesend();
 
@@ -257,5 +259,26 @@ public interface SqlServiceMapper {
 	public void sp_job_t_short_cash_mng();
 
 	public void sp_rc_info_delete();
+
+	
+    public void sp_fn_forcast_data_dsum_base_1();
+
+    public void sp_fn_forcast_data_dsum_base_2();
+    
+    public void sp_fn_forcast_inout_center();
+
+    public void sp_ct_check_alert_emartpos();
+
+    public void sp_fn_day_close_kiosk();
+
+    public void sp_fn_kb_van_demand();
+
+    public void sp_fn_voucher_macstock();
+
+    public void sp_fn_voucher_officestock();
+
+    public void sp_insert_nice_lock_time();
+
+    public void sp_job_tb_phs_push_svc_user();
 
 }

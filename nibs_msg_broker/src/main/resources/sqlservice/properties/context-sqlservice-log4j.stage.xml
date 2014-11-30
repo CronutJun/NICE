@@ -963,6 +963,88 @@
         </layout>
     </appender>
     
+    
+    <appender name="sp_fn_forcast_data_dsum_base.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_forcast_data_dsum_base.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_forcast_inout_center.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_forcast_inout_center.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_ct_check_alert_emartpos.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_ct_check_alert_emartpos.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_day_close_kiosk.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_day_close_kiosk.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_kb_van_demand.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_kb_van_demand.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_voucher_macstock.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_voucher_macstock.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_fn_voucher_officestock.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_fn_voucher_officestock.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_insert_nice_lock_time.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_insert_nice_lock_time.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
+    <appender name="sp_phs_push_svc_user.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_phs_push_svc_user.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}] %m%n"/>
+        </layout>
+    </appender>
+    
     <logger name="SP_CM_FAX" additivity="false">
         <level value="info"/>
         <appender-ref ref="sp_cm_fax.sh"/>
@@ -1488,7 +1570,52 @@
         <appender-ref ref="sp_rc_info_delete.sh"/>
         <appender-ref ref="consoleAppender"/>
     </logger>
-
+    <logger name="SP_FN_FORCAST_DATA_DSUM_BASE" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_forcast_data_dsum_base.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_FORCAST_INOUT_CENTER" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_forcast_inout_center.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_CT_CHECK_ALERT_EMARTPOS" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_ct_check_alert_emartpos.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_DAY_CLOSE_KIOSK" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_day_close_kiosk.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_KB_VAN_DEMAND" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_kb_van_demand.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_VOUCHER_MACSTOCK" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_voucher_macstock.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_FN_VOUCHER_OFFICESTOCK" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_fn_voucher_officestock.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_INSERT_NICE_LOCK_TIME" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_insert_nice_lock_time.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    <logger name="SP_PHS_PUSH_SVC_USER" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="sp_phs_push_svc_user.sh"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+    
     <root>
         <priority value="info" />
         <appender-ref ref="root"/>

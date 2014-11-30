@@ -129,4 +129,15 @@ public interface SqlService {
 	public void spJobTFnSendplanSchedule(Logger logger);
 	public void spJobTShortCashMng(Logger logger);
 	public void spRcInfoDelete(Logger logger);
+	
+	// 누락분
+	public void spFnForcastDataDsumBase(Logger logger);
+	public void spFnForcastInoutCenter(Logger logger);
+	public void spCtCheckAlertEmartpos(Logger logger);
+	public void spFnDayCloseKiosk(Logger logger);
+	public void spFnKbVanDemand(Logger logger);
+	public void spFnVoucherMacstock(Logger logger);
+	public void spFnVoucherOfficestock(Logger logger);
+	public void spInsertNiceLockTime(Logger logger);
+	public void spPhsPushSvcUser(Logger logger);
 }

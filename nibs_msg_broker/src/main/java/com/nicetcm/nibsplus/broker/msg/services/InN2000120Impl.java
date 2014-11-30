@@ -1455,6 +1455,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         errCustInfo.setCreateDate( parsed.getString("create_date") );
         errCustInfo.setOrgCd( "096");
         errCustInfo.setBranchCd( "9600" );
+        errCustInfo.setMacNo( parsed.getString("mac_no") );
         errCustInfo.setAtmDealNo( parsed.getString("atm_deal_no") );
         errCustInfo.setCreateTime( parsed.getString("create_time") );
         errCustInfo.setCustOrgCd( parsed.getString("cust_org_cd") );

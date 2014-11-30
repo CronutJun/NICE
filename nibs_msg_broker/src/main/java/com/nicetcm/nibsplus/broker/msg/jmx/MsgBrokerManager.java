@@ -267,9 +267,11 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
         try {
             if( consumerName != null && consumerName.equals("ALL") ) {
                 for( Entry<String, MsgBrokerProducer> e: MsgBrokerProducer.producers.entrySet()) {
+                    e.getValue().close();
                     e.getValue().init();
                 }
                 for( Entry<String, MsgBrokerConsumer> e: MsgBrokerConsumer.consumers.entrySet()) {
+                    e.getValue().close();
                     e.getValue().init();
                 }
             }
@@ -277,6 +279,7 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
                 MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName);
                 if( con == null )
                     return String.format("No Consumer: %s, set the right name or set \"ALL\"", consumerName);
+                con.close();
                 con.init();
             }
             return "reattachment is succeed";
