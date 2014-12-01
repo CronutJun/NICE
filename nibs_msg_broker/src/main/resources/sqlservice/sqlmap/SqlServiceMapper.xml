@@ -27,26 +27,26 @@
 	</select>
 	
 	<select id="sp_ct_check_alert_039" statementType="CALLABLE">
-		{ call sp_ct_check_alert }
-	</select>
-	
-	<select id="sp_ct_check_alert_nh_file" statementType="CALLABLE">
 		{ call sp_ct_check_alert_039 }
 	</select>
 	
-	<select id="sp_ct_check_alert" statementType="CALLABLE">
+	<select id="sp_ct_check_alert_nh_file" statementType="CALLABLE">
 		{ call sp_ct_check_alert_nh_file }
+	</select>
+	
+	<select id="sp_ct_check_alert" statementType="CALLABLE">
+		{ call sp_ct_check_alert }
 	</select>
 	
 	<select id="sp_ct_delete_day" statementType="CALLABLE">
 		{ call SP_CT_DELETE_DAY }
 	</select>
 	
-	<select id="sp_ct_report_day_2007_1" statementType="CALLABLE">
+	<select id="sp_ct_report_day_2012_1" statementType="CALLABLE">
 		{ call sp_ct_report_day_2012 }
 	</select>
 	
-	<select id="sp_ct_report_day_2007_2" statementType="CALLABLE">
+	<select id="sp_ct_report_day_2012_2" statementType="CALLABLE">
 		{ call sp_ct_reportoper_modify }
 	</select>
 	
@@ -75,7 +75,7 @@
 	</select>
 	
 	<select id="sp_fn_deal_forecast" parameterType="map" statementType="CALLABLE">
-		{ call SP_FN_DEAL_FORECAST,#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT} }
+		{ call SP_FN_DEAL_FORECAST(TO_CHAR(SYSDATE,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
 	</select>
 	
 	<select id="sp_fn_dealcount" statementType="CALLABLE">
@@ -190,35 +190,35 @@
 		{ call sp_fn_nice_deal_byhour_amt }
 	</select>
 	
-	<select id="sp_fn_nice_dsum_bc_1" statementType="CALLABLE">
+	<select id="sp_fn_nice_dsum_1" statementType="CALLABLE">
 		{ call sp_fn_update_tran_nh(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
 	</select>
 	
-	<select id="sp_fn_nice_dsum_bc_2" statementType="CALLABLE">
-		{ call sp_fn_nice_dsum_demand }
+	<select id="sp_fn_nice_dsum_2" statementType="CALLABLE">
+		{ call sp_fn_nice_dsum_demand(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
 	</select>
 	
-	<select id="sp_fn_nice_dsum_bc_3" statementType="CALLABLE">
-		{ call SP_FN_NICE_DSUM }
+	<select id="sp_fn_nice_dsum_3" statementType="CALLABLE">
+		{ call SP_FN_NICE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
 	</select>
 	
-	<select id="sp_fn_nice_dsum_bc_4" parameterType="map" statementType="CALLABLE">
+	<select id="sp_fn_nice_dsum_4" parameterType="map" statementType="CALLABLE">
 		{ call SP_FN_MAC_DEALTYPE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
 	</select>
 	
-	<select id="sp_fn_nice_dsum_bc_5" parameterType="map" statementType="CALLABLE">
+	<select id="sp_fn_nice_dsum_5" parameterType="map" statementType="CALLABLE">
 		{ call SP_FN_FORECAST_BASE_NICE(TO_CHAR(SYSDATE-1,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
 	</select>
 	
-	<select id="sp_fn_nice_dsum_bc_6" parameterType="map" statementType="CALLABLE">
+	<select id="sp_fn_nice_dsum_6" parameterType="map" statementType="CALLABLE">
 		{ call SP_FN_FORECAST_BASE_CLOSE(TO_CHAR(SYSDATE-1,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
 	</select>
 	
-	<select id="sp_fn_nice_dsum_bc_7" statementType="CALLABLE">
-		{ call SP_FN_CARRY_FEE_DSUM }
+	<select id="sp_fn_nice_dsum_7" statementType="CALLABLE">
+		{ call SP_FN_CARRY_FEE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
 	</select>
 	
-	<select id="sp_fn_nice_dsum" statementType="CALLABLE">
+	<select id="sp_fn_nice_dsum_0bc" statementType="CALLABLE">
 		{ call sp_fn_nice_dsum_0bc }
 	</select>
 	

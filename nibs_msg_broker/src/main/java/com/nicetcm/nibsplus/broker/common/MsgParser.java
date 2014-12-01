@@ -301,6 +301,8 @@ public class MsgParser {
                 for( i = 0; i < data.iteration; i++) {
 
                     if( e.getValue().schema != null ){
+                        data.refFmt = e.getValue();
+                        data.name = e.getKey();
                         dMap = new LinkedHashMap<String, MsgData>();
                         data.adata.add(dMap);
                         parseSubMessage( td, e.getValue().schema, dMap );
@@ -913,7 +915,7 @@ public class MsgParser {
             if( e.getValue().iteration > 0 ) {
                 for( i = 0; i < e.getValue().iteration; i++) {
 
-                    if( e.getValue().refFmt.schema != null ){
+                    if( e.getValue().refFmt != null && e.getValue().refFmt.schema != null ){
                         syncSubMessage( thrData, e.getValue().adata.get(i) );
                     }
                     else {
@@ -931,17 +933,17 @@ public class MsgParser {
 
                             fmted = String.format(fmt, aElem.getString());
 
-                            if( e.getValue().refFmt.encCharset != null && e.getValue().refFmt.encCharset.length() > 0 ) {
-                                logger.debug("encode charset = {}", e.getValue().refFmt.encCharset);
-                                bFmted = fmted.getBytes(e.getValue().refFmt.encCharset);
+                            if( aElem.refFmt.encCharset != null && aElem.refFmt.encCharset.length() > 0 ) {
+                                logger.debug("encode charset = {}", aElem.refFmt.encCharset);
+                                bFmted = fmted.getBytes(aElem.refFmt.encCharset);
                                 logger.debug("decode value = {}", new String(bFmted, "MS949"));
                             }
                             else {
                                 bFmted = fmted.getBytes();
                             }
 
-                            bTrunc = new byte[e.getValue().length];
-                            System.arraycopy(bFmted, 0, bTrunc, 0, e.getValue().length);
+                            bTrunc = new byte[aElem.length];
+                            System.arraycopy(bFmted, 0, bTrunc, 0, aElem.length);
                             logger.debug("trucated data = {}", new String(bTrunc));
 
                             thrData.msg.put(bTrunc);

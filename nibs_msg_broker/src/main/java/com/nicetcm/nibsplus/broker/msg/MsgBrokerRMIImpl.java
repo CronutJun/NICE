@@ -37,11 +37,12 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         int defTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout"));
         BlockingQueue<byte[]> waitQ = new LinkedBlockingQueue<byte[]>();
         MsgBrokerData msgThrdSafeData = new MsgBrokerData();
-        logger.warn("RMI-I-MSG [{}]", new String(msg) );
+        logger.warn("RMI-IS-MSG [{}]", new String(msg) );
 
         msgThrdSafeData.setNoOutData( false );
 
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
+        logger.warn("O-MSG [{}]", new String(msg) );
         logger.warn("QNm = {}", ret.QNm);
 
         //miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
@@ -130,10 +131,12 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
     public void callBrokerAsync(byte[] msg) throws Exception {
         MsgBrokerData msgThrdSafeData = new MsgBrokerData();
+        logger.warn("RMI-IA-MSG [{}]", new String(msg) );
 
         msgThrdSafeData.setNoOutData( false );
 
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
+        logger.warn("O-MSG [{}]", new String(msg) );
         logger.warn("QNm = {}", ret.QNm);
 
         //miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);

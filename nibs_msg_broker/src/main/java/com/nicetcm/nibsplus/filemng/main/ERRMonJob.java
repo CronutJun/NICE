@@ -680,10 +680,11 @@ public class ERRMonJob implements Job {
 				if (strN03.indexOf("1") != -1) strN03.append(dealStatus);
 				
 				// if ( ! strncmp( N02str, "11111", 5 ) ) {
-				if (!"11111".equals(strN02.substring(0, 5))) {
+				if (!strN02.toString().startsWith("11111")) {
 					try {
 						niceTranErrorSendProc( 2, macNo );
 					} catch(Exception e) {
+						e.printStackTrace();
 						logger( "N02 NiceTranErrorSendProc Error !!!\n" );
 						fnCleanup(-1);
 					}
@@ -693,7 +694,7 @@ public class ERRMonJob implements Job {
 				}
 
 				// if ( ! strncmp( N03str, "101", 3 ) ) {
-				if (!"101".equals(strN03.substring(0, 3))) {
+				if (!strN03.toString().startsWith("101")) {
 					try {
 						niceTranErrorSendProc( 3, macNo);
 					} catch(Exception e) {
@@ -709,7 +710,7 @@ public class ERRMonJob implements Job {
 			} else {
 				strN02 = new StringBuilder();
 				
-				if ( !"1".equals(strN03.substring(0, 1))) {
+				if (!strN03.toString().startsWith("1")) {
 					strN03.append(dealStatus);
 				} else {
 					strN03 = new StringBuilder();

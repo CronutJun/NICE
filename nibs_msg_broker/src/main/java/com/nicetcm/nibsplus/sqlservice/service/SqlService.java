@@ -29,7 +29,7 @@ public interface SqlService {
 	public void spCtCheckAlertNhFile(Logger logger);
 	public void spCtCheckAlert(Logger logger);
 	public void spCtDeleteDay(Logger logger);
-	public void spCtReportDay2007(Logger logger);
+	public void spCtReportDay2012(Logger logger);
 	public void spFnBscenter(Logger logger);
 	public void spFnCashflowEndamt(Logger logger);
 	public void spFnCenter(Logger logger);

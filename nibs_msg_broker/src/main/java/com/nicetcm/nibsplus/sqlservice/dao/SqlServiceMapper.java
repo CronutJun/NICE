@@ -33,8 +33,8 @@ public interface SqlServiceMapper {
 
     public void sp_ct_delete_day();
 
-    public void sp_ct_report_day_2007_1();
-    public void sp_ct_report_day_2007_2();
+    public void sp_ct_report_day_2012_1();
+    public void sp_ct_report_day_2012_2();
 
     public void sp_fn_bscenter();
 
@@ -101,15 +101,15 @@ public interface SqlServiceMapper {
     public void sp_fn_nice_deal_byhour_1();
     public void sp_fn_nice_deal_byhour_2();
 
-    public void sp_fn_nice_dsum_bc_1();
-    public void sp_fn_nice_dsum_bc_2();
-    public void sp_fn_nice_dsum_bc_3();
-    public void sp_fn_nice_dsum_bc_4(Map<String, String> param);
-    public void sp_fn_nice_dsum_bc_5(Map<String, String> param);
-    public void sp_fn_nice_dsum_bc_6(Map<String, String> param);
-    public void sp_fn_nice_dsum_bc_7();
+    public void sp_fn_nice_dsum_1();
+    public void sp_fn_nice_dsum_2();
+    public void sp_fn_nice_dsum_3();
+    public void sp_fn_nice_dsum_4(Map<String, String> param);
+    public void sp_fn_nice_dsum_5(Map<String, String> param);
+    public void sp_fn_nice_dsum_6(Map<String, String> param);
+    public void sp_fn_nice_dsum_7();
 
-    public void sp_fn_nice_dsum();
+    public void sp_fn_nice_dsum_0bc();
 
     public void sp_fn_nice_endamt();
 

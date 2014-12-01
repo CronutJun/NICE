@@ -1,5 +1,7 @@
 package com.nicetcm.nibsplus.broker.msg.services;
 
+import java.nio.ByteBuffer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,21 @@ public class OutN5004600Impl extends OutMsgHandlerImpl {
 
         if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.ELAND_CODE) ) {
 
+            /*
+             * File처리 ...
+             *
+             */
+
+            /*
+             * Client 응답, (대외기관 요청하지 않고 통신서버에서 응답처리)
+             */
+            parsed.setString("CM.ret_cd_src", "S");
+            parsed.setString("CM.ret_cd",     "00");
+            ByteBuffer buf = parsed.getMessage();
+            buf.position(0);
+            byte[] msg = new byte[buf.limit()];
+            buf.get(msg);
+            safeData.setRespMsg(msg);
         }
         else if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.KFTC_CODE) ) {
 

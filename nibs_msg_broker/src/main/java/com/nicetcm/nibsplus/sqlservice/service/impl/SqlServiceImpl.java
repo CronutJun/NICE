@@ -112,14 +112,14 @@ public class SqlServiceImpl implements SqlService {
 	}
 
 	@Override
-	public void spCtReportDay2007(Logger logger) {
+	public void spCtReportDay2012(Logger logger) {
 		try {
-			sqlServiceMapper.sp_ct_report_day_2007_1();
+			sqlServiceMapper.sp_ct_report_day_2012_1();
 		} catch(RuntimeException e) {
 			logger.error(e.getMessage());
 			throw e;
 		}
-		sqlServiceMapper.sp_ct_report_day_2007_2();
+		sqlServiceMapper.sp_ct_report_day_2012_2();
 	}
 
 	@Override
@@ -418,15 +418,15 @@ public class SqlServiceImpl implements SqlService {
 	}
 
 	@Override
-	public void spFnNiceDsumBc(Logger logger) {
+	public void spFnNiceDsum(Logger logger) {
 		try {
-			sqlServiceMapper.sp_fn_nice_dsum_bc_1();
-			sqlServiceMapper.sp_fn_nice_dsum_bc_2();
-			sqlServiceMapper.sp_fn_nice_dsum_bc_3();
-			sqlServiceMapper.sp_fn_nice_dsum_bc_4(new HashMap<String, String>());
-			sqlServiceMapper.sp_fn_nice_dsum_bc_5(new HashMap<String, String>());
-			sqlServiceMapper.sp_fn_nice_dsum_bc_6(new HashMap<String, String>());
-			sqlServiceMapper.sp_fn_nice_dsum_bc_7();
+			sqlServiceMapper.sp_fn_nice_dsum_1();
+			sqlServiceMapper.sp_fn_nice_dsum_2();
+			sqlServiceMapper.sp_fn_nice_dsum_3();
+			sqlServiceMapper.sp_fn_nice_dsum_4(new HashMap<String, String>());
+			sqlServiceMapper.sp_fn_nice_dsum_5(new HashMap<String, String>());
+			sqlServiceMapper.sp_fn_nice_dsum_6(new HashMap<String, String>());
+			sqlServiceMapper.sp_fn_nice_dsum_7();
 		} catch(RuntimeException e) {
 			logger.error(e.getMessage());
 			throw e;
@@ -434,9 +434,9 @@ public class SqlServiceImpl implements SqlService {
 	}
 
 	@Override
-	public void spFnNiceDsum(Logger logger) {
+	public void spFnNiceDsumBc(Logger logger) {
 		try {
-			sqlServiceMapper.sp_fn_nice_dsum();
+			sqlServiceMapper.sp_fn_nice_dsum_0bc();
 		} catch(RuntimeException e) {
 			logger.error(e.getMessage());
 			throw e;

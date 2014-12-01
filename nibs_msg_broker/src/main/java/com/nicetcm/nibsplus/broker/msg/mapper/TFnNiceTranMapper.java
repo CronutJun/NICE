@@ -537,7 +537,7 @@ public interface TFnNiceTranMapper {
         "#{dealTimeType,jdbcType=VARCHAR}, #{joinOrgDealNo,jdbcType=VARCHAR}, ",
         "SUBSTR(OP.FC_GET_JOJIC_CD_BY_MACNO('D', '096', '9600', #{macNo,jdbcType=VARCHAR}), 1, 2), ",
         "SUBSTR(OP.FC_GET_JOJIC_CD_BY_MACNO('O', '096', '9600', #{macNo,jdbcType=VARCHAR}), 3, 2), ",
-        "SUBSTR(OP.FC_GET_JOJIC_CD_BY_MACNO('O', '096', '9600', #{macNo,jdbcType=VARCHAR}), 5, 2), #{insertDate,jdbcType=TIMESTAMP}, ",
+        "SUBSTR(OP.FC_GET_JOJIC_CD_BY_MACNO('J', '096', '9600', #{macNo,jdbcType=VARCHAR}), 5, 2), #{insertDate,jdbcType=TIMESTAMP}, ",
         "#{updateDate,jdbcType=TIMESTAMP}, #{netOrgCd,jdbcType=VARCHAR}, ",
         "#{checkAmt,jdbcType=DECIMAL}, SUBSTR(OP.FC_GET_JOJIC_CD_BY_MACNO('FD', '096', '9600', #{macNo,jdbcType=VARCHAR}), 1, 2), ",
         "SUBSTR(OP.FC_GET_JOJIC_CD_BY_MACNO('FO', '096', '9600', #{macNo,jdbcType=VARCHAR}), 3, 2), #{dealAmt10000,jdbcType=DECIMAL}, ",

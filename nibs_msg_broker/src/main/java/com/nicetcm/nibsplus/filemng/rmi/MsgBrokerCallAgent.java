@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerCallBack;
@@ -47,7 +46,7 @@ public class MsgBrokerCallAgent <PT> {
               .setString("CM.work_type", conf.getWorkType() )
 
               .setString("CM.trans_seq_no", conf.getWorkType() )
-              .setInt   ("CM.body_len", msgPsr.getMessageLength() - MsgBrokerConst.HEADER_LEN )
+              .setInt   ("CM.body_len", msgPsr.getMessageLength() - 90 )
               .setString("CM.trans_date", MsgBrokerLib.SysDate() )
               .setString("CM.trans_time", MsgBrokerLib.SysTime() )
               .setString("CM.service_gb", conf.getServiceGb() );
@@ -55,7 +54,7 @@ public class MsgBrokerCallAgent <PT> {
 
     public void callBrokerSync(int timeout) throws Exception {
 
-        MsgParser msgPsr = MsgParser.getInstance("/msg_schema/"  + this.msgId + ".json");
+        MsgParser msgPsr = MsgParser.getInstance(msgBrokerConfig.getProperty("schema_path")  + this.msgId + ".json");
         ByteBuffer msg = ByteBuffer.allocateDirect( msgPsr.getSchemaLength() );
         msgPsr.newMessage( msg );
         msg.position(0);
@@ -91,7 +90,7 @@ public class MsgBrokerCallAgent <PT> {
     public void callBrokerAync() throws Exception {
 
         //MsgParser msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")  + this.msgId + ".json");
-        MsgParser msgPsr = MsgParser.getInstance("/msg_schema/"  + this.msgId + ".json");
+        MsgParser msgPsr = MsgParser.getInstance(msgBrokerConfig.getProperty("schema_path")  + this.msgId + ".json");
         ByteBuffer msg = ByteBuffer.allocateDirect( msgPsr.getSchemaLength() );
         msgPsr.newMessage( msg );
         msg.position(0);

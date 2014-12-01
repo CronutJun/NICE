@@ -99,8 +99,8 @@
         </layout>
     </appender>
     
-    <appender name="sp_ct_report_day_2007.sh" class="org.apache.log4j.FileAppender">
-        <param name="file" value="/share1/nibs_log/batch/sp_ct_report_day_2007.log"/>
+    <appender name="sp_ct_report_day_2012.sh" class="org.apache.log4j.FileAppender">
+        <param name="file" value="/share1/nibs_log/batch/sp_ct_report_day_2012.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <layout class="org.apache.log4j.PatternLayout">
@@ -711,9 +711,9 @@
         <appender-ref ref="sp_ct_delete_day.sh"/>
         <appender-ref ref="consoleAppender"/>
     </logger>
-    <logger name="SP_CT_REPORT_DAY_2007" additivity="false">
+    <logger name="SP_CT_REPORT_DAY_2012" additivity="false">
         <level value="info"/>
-        <appender-ref ref="sp_ct_report_day_2007.sh"/>
+        <appender-ref ref="sp_ct_report_day_2012.sh"/>
         <appender-ref ref="consoleAppender"/>
     </logger>
     <logger name="SP_FN_BSCENTER" additivity="false">

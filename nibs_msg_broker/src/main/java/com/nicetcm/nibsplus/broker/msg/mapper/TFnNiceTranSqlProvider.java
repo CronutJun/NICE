@@ -575,13 +575,13 @@ public class TFnNiceTranSqlProvider {
             SET("INST_ORG_CD = #{instOrgCd,jdbcType=VARCHAR}");
         }
         if (record.getInstBranchCd() != null) {
-            SET("INST_BRANCH_CD = #{instBranchCd,jdbcType=VARCHAR}");
+            SET("INST_BRANCH_CD = OP.FC_FN_SECURITY(#{instBranchCd,jdbcType=VARCHAR}, '1')");
         }
         if (record.getAccountNo() != null) {
-            SET("ACCOUNT_NO = #{accountNo,jdbcType=VARCHAR}");
+            SET("ACCOUNT_NO = OP.FC_FN_SECURITY(#{accountNo,jdbcType=VARCHAR}, '1')");
         }
         if (record.getRealAccountNo() != null) {
-            SET("REAL_ACCOUNT_NO = #{realAccountNo,jdbcType=VARCHAR}");
+            SET("REAL_ACCOUNT_NO = OP.FC_FN_SECURITY(#{realAccountNo,jdbcType=VARCHAR}, '1')");
         }
         if (record.getDealAmt() != null) {
             SET("DEAL_AMT = #{dealAmt,jdbcType=DECIMAL}");
@@ -596,10 +596,10 @@ public class TFnNiceTranSqlProvider {
             SET("TRANS_ORG_CD = #{transOrgCd,jdbcType=VARCHAR}");
         }
         if (record.getTransBranchCd() != null) {
-            SET("TRANS_BRANCH_CD = #{transBranchCd,jdbcType=VARCHAR}");
+            SET("TRANS_BRANCH_CD = OP.FC_FN_SECURITY(#{transBranchCd,jdbcType=VARCHAR}, '1')");
         }
         if (record.getTransAccountNo() != null) {
-            SET("TRANS_ACCOUNT_NO = #{transAccountNo,jdbcType=VARCHAR}");
+            SET("TRANS_ACCOUNT_NO = OP.FC_FN_SECURITY(#{transAccountNo,jdbcType=VARCHAR}, '1')");
         }
         if (record.getTransDepositor() != null) {
             SET("TRANS_DEPOSITOR = #{transDepositor,jdbcType=VARCHAR}");
@@ -689,7 +689,7 @@ public class TFnNiceTranSqlProvider {
             SET("BRAND_ORG_CD = #{brandOrgCd,jdbcType=VARCHAR}");
         }
         if (record.getUserTelNo() != null) {
-            SET("USER_TEL_NO = #{userTelNo,jdbcType=VARCHAR}");
+            SET("USER_TEL_NO = OP.FC_FN_SECURITY(#{userTelNo,jdbcType=VARCHAR}, '1')");
         }
         if (record.getGiftInitial() != null) {
             SET("GIFT_INITIAL = #{giftInitial,jdbcType=VARCHAR}");
