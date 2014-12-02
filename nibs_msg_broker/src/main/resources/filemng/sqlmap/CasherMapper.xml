@@ -2,6 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.nicetcm.nibsplus.filemng.dao.CasherMapper">
 
+	<delete id="deleteCasherTranDataNew" parameterType="com.nicetcm.nibsplus.filemng.model.CasherTRVO">
+		DELETE FROM OP.T_FN_CHALSI_DEAL
+		WHERE
+	        org_cd = '0CS'
+	        and Branch_Cd = #{szBranch_Cd}
+	        and Deal_Date = #{szDeal_Date}
+	        and Deal_No = #{szDeal_No}
+	        and Deal_Type = #{szDeal_Type}
+	        and Mac_No = #{szMac_No}
+	        and Tenant_Cd = #{szTenant_Cd}
+	        and Pos_No = #{szPos_No}
+	        and Close_Date = #{szClose_Date}
+	        and Casher_Id = #{szCasher_Id}
+	        and Deal_Time = #{szDeal_Time}
+	        and Devicever_Id = #{szDevicever_Id}
+	        and Acudiv = #{szAcudiv}
+	        and Inmon_Flag = #{szInmon_Flag}
+
+    </delete>
+    
 	<insert id="insertCasherTranDataNew" parameterType="com.nicetcm.nibsplus.filemng.model.CasherTRVO">
 		INSERT
 		INTO
@@ -207,6 +227,24 @@
 		    )
 	</insert>
 	
+	<delete id="deleteCasherTranDataOld" parameterType="com.nicetcm.nibsplus.filemng.model.CasherTRVO">
+		delete from OP.T_FN_CHALSI_DEAL
+		where
+			org_cd = '0CS'
+			and Branch_Cd = #{szBranch_Cd}
+			and Deal_Date = #{szDeal_Date}
+			and Deal_No = #{szDeal_No}
+			and Deal_Type = #{szDeal_Type}
+			and Mac_No = #{szMac_No}
+			and Tenant_Cd = #{szTenant_Cd}
+			and Pos_No = #{szPos_No}
+			and Close_Date = #{szClose_Date}
+			and Casher_Id = #{szCasher_Id}
+			and Deal_Time = #{szDeal_Time}
+			and Devicever_Id = #{szDevicever_Id}
+			and Acudiv = #{szAcudiv}
+			and Inmon_Flag = #{szInmon_Flag}
+	</delete>
 	<insert id="insertCasherTranDataOld" parameterType="com.nicetcm.nibsplus.filemng.model.CasherTRVO">
 		INSERT
 		INTO
@@ -316,6 +354,25 @@
 		    )
 	</insert>
 	
+	<delete id="deleteCheckDetailData" parameterType="com.nicetcm.nibsplus.filemng.model.CasherCKVO">
+		delete from OP.T_FN_CHALSI_DEAl_CHECK
+		where
+			org_cd = '0CS'
+			and Branch_Cd = #{szBranchCd}
+			and Deal_Date = #{szDealDate}
+			and Deal_No = #{szDealNo}
+			and Deal_Type = #{szDealType}
+			and Mac_No = #{szMacNo}
+			and Tenant_Cd = #{szTenantCd}
+			and Pos_No = #{szPosNo}
+			and Close_Date = #{szCloseDate}
+			and Casher_Id = #{szCasherId}
+			and Deal_Time = #{szDealTime}
+			and Devicever_Id = #{szDeviceverId}
+			and Acudiv = #{szAcudiv}
+			and Inmon_Flag = #{szInmonFlag}
+			and Check_No = #{szCheckNo}
+	</delete>
 	<insert id="insertCheckDetailData" parameterType="com.nicetcm.nibsplus.filemng.model.CasherCKVO">
 		INSERT
 		INTO
@@ -363,6 +420,26 @@
 		    )
 	</insert>
 	
+	<delete id="deleteTicketDetailData" parameterType="com.nicetcm.nibsplus.filemng.model.CasherTKVO">
+		delete from OP.T_FN_CHALSI_DEAl_TICKET
+		where
+			org_cd = '0CS'
+			and Branch_Cd = #{szBranchCd}
+			and Deal_Date = #{szDealDate}
+			and Deal_No = #{szDealNo}
+			and Deal_Type = #{szDealType}
+			and Mac_No = #{szMacNo}
+			and Tenant_Cd = #{szTenantCd}
+			and Pos_No = #{szPosNo}
+			and Close_Date = #{szCloseDate}
+			and Casher_Id = #{szCasherId}
+			and Deal_Time = #{szDealTime}
+			and Devicever_Id = #{szDeviceverId}
+			and Acudiv = #{szAcudiv}
+			and Inmon_Flag = #{szInmonFlag}
+			and PUBLISH_CD = #{szPublishCd}
+			and TICKET_NO = #{szTicketNo}
+	</delete>
 	<insert id="insertTicketDetailData" parameterType="com.nicetcm.nibsplus.filemng.model.CasherTKVO">
 		INSERT
 		INTO

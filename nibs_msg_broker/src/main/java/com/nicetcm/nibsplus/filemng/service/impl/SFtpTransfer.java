@@ -162,12 +162,25 @@ public class SFtpTransfer {
     
     public static List<String> getFileNames(TransferVO transferVO, String... option) throws FileMngException, IOException {
     	StringBuffer sb = new StringBuffer();
+    	List<String> list = new ArrayList<String>();
     	
     	for (String op : option) {
-    		sb.append(" " + transferVO.getRemotePath() + op);
+    		sb.append(" " + transferVO.getRemotePath() + "/" + op);
     	}
     	
-    	return execCommand(transferVO, "ls" + sb.toString());
+    	for (String filePath : execCommand(transferVO, "ls" + sb.toString())) {
+    		list.add(filePath.substring(filePath.lastIndexOf("/") + 1));
+    	}
+    	
+    	return list;
+    }
+    
+    public static void renameToBak(TransferVO transferVO, String filename) throws FileMngException, IOException {
+    	execCommand(transferVO, "mv " + transferVO.getRemotePath() + "/" + filename + " " + transferVO.getRemotePath() + "/" + filename.substring(filename.length()-4) + ".bak");
+    }
+    
+    public static void deleteFile(TransferVO transferVO, String filename) throws FileMngException, IOException {
+    	execCommand(transferVO, "rm " + transferVO.getRemotePath() + "/" + filename);
     }
     
     private static List<String> execCommand(TransferVO transferVO, String cmd) throws IOException, FileMngException {

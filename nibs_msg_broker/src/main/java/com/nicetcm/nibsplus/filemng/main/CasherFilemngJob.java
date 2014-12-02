@@ -38,7 +38,7 @@ public class CasherFilemngJob implements org.quartz.Job {
         transferVO.setLocalPath(config.getProperty("casher.local.path"));
 
         try {
-			List<String> files = SFtpTransfer.getFileNames(transferVO, "CK_*", "TK_*", "TR_*");
+			List<String> files = SFtpTransfer.getFileNames(transferVO, "CK_*.lst", "TK_*.lst"); // , "TR_*.lst"
 			int count = 0;
 			
 			JobLauncher jobLauncher = (JobLauncher) applicationContext.getBean("jobLauncher");
@@ -47,34 +47,35 @@ public class CasherFilemngJob implements org.quartz.Job {
 
 			if (files != null) {
 				for (String fileName : files) {
-					if (!new File(transferVO.getLocalPath(), fileName.substring(0, fileName.length() - 4) + ".bak").isFile()) {
-						try {
-							// JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();
-							Map<String, JobParameter> parameters = new LinkedHashMap<String, JobParameter>();
-							// 의미없는 값이지만 파라미터를 중복해서 여러번 실행이 불가능 하다. 그런 이유로 추가함.
-							parameters.put("temp", new JobParameter(Calendar.getInstance().getTimeInMillis()));
-							parameters.put("fileName", new JobParameter(transferVO.getLocalPath() + "/" + fileName));
-			
-							JobParameters jobParameters = new JobParameters(parameters);
-							JobExecution execution;
-			
-							if (fileName.startsWith("CK_")) {
-								execution = jobLauncher.run((Job) applicationContext.getBean("casherCKJob"), jobParameters);
-							} else if (fileName.startsWith("TK_")) {
-								execution = jobLauncher.run((Job) applicationContext.getBean("casherTKJob"), jobParameters);
-							} else if (fileName.startsWith("TR_")) {
-								execution = jobLauncher.run((Job) applicationContext.getBean("casherTRJob"), jobParameters);
-							} else {
-								throw new Exception("Do not execution. file name is '" + fileName + "'");
-							}
-			
-							System.out.println("Exit Status : " + execution.getStatus());
-						} catch (Exception e) {
-							e.printStackTrace();
+					try {
+						// JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();
+						Map<String, JobParameter> parameters = new LinkedHashMap<String, JobParameter>();
+						// 의미없는 값이지만 파라미터를 중복해서 여러번 실행이 불가능 하다. 그런 이유로 추가함.
+						parameters.put("temp", new JobParameter(Calendar.getInstance().getTimeInMillis()));
+						parameters.put("fileName", new JobParameter(fileName));
+						parameters.put("casher.file.name", new JobParameter(transferVO.getLocalPath() + "/" + fileName));
+		
+						JobParameters jobParameters = new JobParameters(parameters);
+						JobExecution execution;
+		
+						if (fileName.startsWith("CK_")) {
+							execution = jobLauncher.run((Job) applicationContext.getBean("casherCKJob"), jobParameters);
+						} else if (fileName.startsWith("TK_")) {
+							execution = jobLauncher.run((Job) applicationContext.getBean("casherTKJob"), jobParameters);
+						} else if (fileName.startsWith("TR_")) {
+							execution = jobLauncher.run((Job) applicationContext.getBean("casherTRJob"), jobParameters);
+						} else {
+							throw new Exception("Do not execution. file name is '" + fileName + "'");
 						}
+		
+						SFtpTransfer.deleteFile(transferVO, fileName);
 						
-						count++;
+						System.out.println("Exit Status : " + execution.getStatus());
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
+					
+					count++;
 				}
 
 				if (count > 0) {

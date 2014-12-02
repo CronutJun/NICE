@@ -231,7 +231,7 @@ public class MsgBrokerWork {
                 }
             }
             catch(Exception e ) {
-                MsgBrokerLib.lostWrite( msgThrdSafeData, msg, e );
+                MsgBrokerLib.lostWrite( msgThrdSafeData, msg, msgPsr, e );
                 throw e;
             }
             finally {

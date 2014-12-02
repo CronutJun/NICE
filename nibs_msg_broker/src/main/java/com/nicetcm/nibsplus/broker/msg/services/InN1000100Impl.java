@@ -105,7 +105,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 updateFNMacProc( safeData, parsed, "", 0, 1);
             }
             catch ( Exception e ) {
-                logger.warn("MacProc Error.>> 1 <<" );
+                logger.warn("MacProc Error.>> 1 << {}", e.getMessage() );
             }
         }
 
@@ -137,8 +137,8 @@ public class InN1000100Impl extends InMsgHandlerImpl {
          * t_fn_mac 에 데이터 수정 중 error 에 대해서는 host에 정상응답으로 처리해 준다
          * 잔액조회도 실거래로 인식하도록(무거래에 포함되지 않도록) 한다. 2008.06.23 김희천 대리 요청
          */
-        if( parsed.getString("deal_type").equals("01001")
-        ||  substr( parsed.getString("deal_type"), 0, 1).equals("1")
+        if( ( parsed.getBytes("deal_type")[0] == '0' && !parsed.getString("deal_type").equals("01001") )
+        ||  parsed.getBytes("deal_type")[0] == '1'
         /*
          * 잔액조회
          */
@@ -148,7 +148,11 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 updateFNMacProc( safeData, parsed, ntRet.prevDealStatus, ntRet.UpInFlag, 0 );
             }
             catch ( Exception e ) {
-                logger.warn("MacProc Error.>> 1 <<" );
+                logger.warn("MacProc Error.>> 1 << {}", e.getMessage() );
+                /**
+                for( StackTraceElement se: e.getStackTrace() )
+                    logger.error(se.toString());
+                */
             }
         }
         /*
@@ -159,7 +163,15 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         &&  substr(parsed.getString("deal_type"),0,1).equals("1") ) {
             if( parsed.getString("org_response_cd").equals("A6")
             ||  parsed.getString("org_response_cd").equals("A7") ) {
-
+                TMisc cond = new TMisc();
+                cond.setDealDate( parsed.getString("deal_date") );
+                cond.setDealNo  ( parsed.getString("deal_no")   );
+                try {
+                    splMap.SendSMSNHErr( cond );
+                }
+                catch( Exception e ) {
+                    logger.warn("SP_IF_SENDSMSNHERR Call Error: [{}]", e.getLocalizedMessage() );
+                }
             }
         }
     }
@@ -436,10 +448,12 @@ public class InN1000100Impl extends InMsgHandlerImpl {
 
 
         try {
+            ret.UpInFlag = MsgBrokerConst.TRAN_INSERT_STATE;
             fnNiceTranMap.insertByCond1( fnNiceTranRec );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {
+                ret.UpInFlag = MsgBrokerConst.TRAN_UPDATE_STATE;
                 /*
                  *  2014.02.06 기업은행 입금처리 시 기관에서 응답이 늦게 들어오는 경우를 체크 하기 위해
                  *  ADMIS_ORG 를 사용하기로 함. BY 이재원
@@ -453,6 +467,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                     if( prevNiceTran == null ) {
                         throw new Exception("T_FN_NICE_TRAN NO_DATA_FOUND");
                     }
+                    ret.prevDealStatus = prevNiceTran.getDealStatus();
                 }
                 catch( Exception e ) {
                     logger.warn(">>> [NiceTranProc] 기거래건 검색실패 DEAL_STATUS [{}]", e.getLocalizedMessage());
@@ -681,9 +696,9 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         ||  (!parsed.getString("refuse_cd").equals("306") && !parsed.getString("refuse_cd").equals("401")
           && !parsed.getString("deal_status").equals("3") ) ) {
             fnMacUpd = new TFnMac();
-            fnMacUpd.setOrgCd( fnMac.getOrgCd() );
-            fnMacUpd.setBranchCd( fnMac.getBranchCd() );
-            fnMacUpd.setMacNo( fnMac.getMacNo() );
+            fnMacUpd.setOrgCd( fnMacKey.getOrgCd() );
+            fnMacUpd.setBranchCd( fnMacKey.getBranchCd() );
+            fnMacUpd.setMacNo( fnMacKey.getMacNo() );
             fnMacUpd.setAtmDealNo( parsed.getString("atm_deal_no") );
             fnMacUpd.setLastDealTime( fnMac.getLastDealTime() );
             if( fnMac.getLastDealTime().compareTo(dtLastDealTime) < 0 )
@@ -724,9 +739,9 @@ public class InN1000100Impl extends InMsgHandlerImpl {
              * 잔액조회
              */
             fnMacUpd = new TFnMac();
-            fnMacUpd.setOrgCd( fnMac.getOrgCd() );
-            fnMacUpd.setBranchCd( fnMac.getBranchCd() );
-            fnMacUpd.setMacNo( fnMac.getMacNo() );
+            fnMacUpd.setOrgCd( fnMacKey.getOrgCd() );
+            fnMacUpd.setBranchCd( fnMacKey.getBranchCd() );
+            fnMacUpd.setMacNo( fnMacKey.getMacNo() );
             fnMacUpd.setAtmDealNo( parsed.getString("atm_deal_no") );
             fnMacUpd.setLastDealTime( fnMac.getLastDealTime() );
             if( fnMac.getLastDealTime().compareTo(dtLastDealTime) < 0 )
@@ -750,11 +765,14 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         long lInMacAmt = parsed.getLong("deal_amt");
         lInMacAmt = lInMacAmt - ( parsed.getLong("cash_cnt_1000") * 1000 ) - ( parsed.getLong("cash_cnt_5000") * 5000 );
 
+        logger.debug("lInMacAmt = {}, fnMac.getInMacAmt = {}", lInMacAmt, fnMac.getInMacAmt());
+
         fnMacUpd = new TFnMac();
-        fnMacUpd.setInMacAmt( fnMac.getInMacAmt() );
+        fnMacUpd.setInMacAmt    ( fnMac.getInMacAmt() );
         fnMacUpd.setInMacAmtCw14( fnMac.getInMacAmtCw14() );
         fnMacUpd.setInMacAmtCw54( fnMac.getInMacAmtCw54() );
         fnMacUpd.setInMacAmtCw15( fnMac.getInMacAmtCw15() );
+
         if( upInFlag == MsgBrokerConst.TRAN_INSERT_STATE
         &&  !parsed.getString("deal_status").equals("0") ) {
             logger.warn( "UpdateFNMacProc : 취소,미완료,거절 Data가 처음으로 들어옴" );
@@ -772,9 +790,8 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         else if ( upInFlag == MsgBrokerConst.TRAN_UPDATE_STATE
               && prevDealStatus.equals("0")
               &&  !parsed.getString("deal_status").equals("0")
-              &&  parsed.getString("deal_type").equals("1") ) {
-            lInMacAmt *= -1;
-            fnMacUpd.setInMacAmt( fnMacUpd.getInMacAmt() + lInMacAmt );
+              &&  parsed.getBytes("deal_type")[0] == '1' ) {
+            fnMacUpd.setInMacAmt( fnMacUpd.getInMacAmt() - lInMacAmt );
             fnMacUpd.setInMacAmtCw14( fnMacUpd.getInMacAmtCw14() - (parsed.getLong("cash_cnt_10000") * 10000) );
             fnMacUpd.setInMacAmtCw54( fnMacUpd.getInMacAmtCw54() - (parsed.getLong("cash_cnt_50000") * 50000) );
             fnMacUpd.setInMacAmtCw15( fnMacUpd.getInMacAmtCw15() - (parsed.getLong("cash_cnt_100000") * 100000) );
@@ -783,14 +800,13 @@ public class InN1000100Impl extends InMsgHandlerImpl {
             /*
              * 2005.12.08 자금팀 요청, 현재고를 지급일때 빼주고 입금일때 더해준다
              */
-            if( parsed.getString("deal_type").equals("0") && parsed.getString("deal_status").equals("0") ) {
-                lInMacAmt *= -1;
-                fnMacUpd.setInMacAmt( fnMacUpd.getInMacAmt() + lInMacAmt );
+            if( parsed.getBytes("deal_type")[0] == '0' && parsed.getString("deal_status").equals("0") ) {
+                fnMacUpd.setInMacAmt( fnMacUpd.getInMacAmt() - lInMacAmt );
                 fnMacUpd.setInMacAmtCw14( fnMacUpd.getInMacAmtCw14() - (parsed.getLong("cash_cnt_10000") * 10000) );
                 fnMacUpd.setInMacAmtCw54( fnMacUpd.getInMacAmtCw54() - (parsed.getLong("cash_cnt_50000") * 50000) );
                 fnMacUpd.setInMacAmtCw15( fnMacUpd.getInMacAmtCw15() - (parsed.getLong("cash_cnt_100000") * 100000) );
             }
-            else if( parsed.getString("deal_type").equals("0") && parsed.getString("deal_status").equals("0") ) {
+            else if( parsed.getBytes("deal_type")[0] == '1' && parsed.getString("deal_status").equals("0") ) {
                 /*
                  * 2010.01.29 hREFLUX_5_ALLOW_YN 항목이 0(오만원권 환류 허용안함 ) 일경우 현재고에
                  * 5만원권 입금 거래 내역은 반영하지 않도록 한다.
@@ -802,9 +818,9 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 fnMacUpd.setInMacAmtCw15( fnMacUpd.getInMacAmtCw15() + (parsed.getLong("cash_cnt_100000") * 100000) );
             }
         }
-        fnMacUpd.setOrgCd( fnMac.getOrgCd() );
-        fnMacUpd.setBranchCd( fnMac.getBranchCd() );
-        fnMacUpd.setMacNo( fnMac.getMacNo() );
+        fnMacUpd.setOrgCd( fnMacKey.getOrgCd() );
+        fnMacUpd.setBranchCd( fnMacKey.getBranchCd() );
+        fnMacUpd.setMacNo( fnMacKey.getMacNo() );
         fnMacUpd.setAtmDealNo( parsed.getString("atm_deal_no") );
         fnMacUpd.setLastDealTime( dtLastDealTime );
         fnMacUpd.setUpdateUid( "TRANmng");
@@ -812,7 +828,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         if( fnMac.getFirstDealDate() == null || fnMac.getFirstDealDate().length() == 0)
             fnMacUpd.setFirstDealDate( parsed.getString("deal_date") );
         if( fnMac.getFirstAtmDealNo() == null || fnMac.getFirstAtmDealNo().length() == 0)
-            fnMacUpd.setFirstAtmDealNo( parsed.getString("deal_date") );
+            fnMacUpd.setFirstAtmDealNo( parsed.getString("atm_deal_no") );
         if( n0KKyn != 0 ) {
             fnMacUpd.setOrgCd( "0KK" );
         }

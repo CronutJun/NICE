@@ -358,7 +358,8 @@ public class In03101130Impl extends InMsgHandlerImpl {
         }
 
         // PDA여부 (요청대기시 요청내역 Map에서 조회)
-        byte[] origMsg = MsgBrokerRMIImpl.rmiOrigMsg.get(parsed.getString("CM.trans_seq_no"));
+        //byte[] origMsg = MsgBrokerRMIImpl.rmiOrigMsg.get(parsed.getString("CM.trans_seq_no"));
+        String origMsg = comPack.getIfDataLog(safeData, "QS", parsed);
         /*
          * PDA 전문 일경우 프로시져를 호출한다.
          * 단 최초마감 전문일 경우에는 프로시져 호출하지 않는다.
@@ -366,11 +367,14 @@ public class In03101130Impl extends InMsgHandlerImpl {
         if( origMsg != null ) {
             logger.warn( "trans_seq_no = {}, origMsg = {}", parsed.getString("CM.trans_seq_no"), new String(origMsg) );
 
-            ByteBuffer origBuf  = ByteBuffer.allocateDirect(origMsg.length);
-            origBuf.put(origMsg);
+            ByteBuffer origBuf  = ByteBuffer.allocateDirect(origMsg.getBytes().length);
+            origBuf.put(origMsg.getBytes());
             origBuf.position(0);
+            /**
+             * 03001130.json과 모양이 완전 같은 copy instance용 03011130.json을 사용한다.
+             */
             MsgParser msgOrig = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")
-                    + "03001130.json").parseMessage(origBuf);
+                    + "03011130.json").parseMessage(origBuf);
             try {
                 /*
                  * 기관에서 응답받은 데이터에 들어있지 않은 필드 설정

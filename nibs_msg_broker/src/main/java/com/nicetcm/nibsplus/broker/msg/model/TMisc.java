@@ -43,6 +43,8 @@ public class TMisc {
 
     private String dealDate;
 
+    private String dealNo;
+
     private String closeType;
 
     private long cnt;
@@ -509,6 +511,14 @@ public class TMisc {
 
     public void setTransSeqNo(String transSeqNo) {
         this.transSeqNo = transSeqNo;
+    }
+
+    public String getDealNo() {
+        return dealNo;
+    }
+
+    public void setDealNo(String dealNo) {
+        this.dealNo = dealNo;
     }
 
 

@@ -1,5 +1,10 @@
 package com.nicetcm.nibsplus.filemng.service.impl;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobParameter;
@@ -10,7 +15,9 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 
+import com.nicetcm.nibsplus.filemng.common.FileMngException;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
+import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
 /**
  * Sap Master Ftp Task (STEP1)
@@ -116,9 +123,9 @@ import com.nicetcm.nibsplus.filemng.model.TransferVO;
  * @version 1.0
  * @see
  */
-public class CasherFtpTasklet implements Tasklet {
+public class ShinhanFtpTasklet implements Tasklet {
 
-    private static final Logger logger = LoggerFactory.getLogger(CasherFtpTasklet.class);
+    private static final Logger logger = LoggerFactory.getLogger(ShinhanFtpTasklet.class);
 
     @Value("#{config['host.host']}")
     private String host;
@@ -132,10 +139,10 @@ public class CasherFtpTasklet implements Tasklet {
     @Value("#{config['host.password']}")
     private String password;
 
-    @Value("#{config['casher.remote.path']}")
+    @Value("#{config['shinhan.remote.path']}")
     private String remotePath;
 
-    @Value("#{config['casher.local.path']}")
+    @Value("#{config['shinhan.local.path']}")
     private String localPath;
 
     @Override
@@ -147,7 +154,14 @@ public class CasherFtpTasklet implements Tasklet {
         //Q20140913B11.dat
         String fileName = jobParameters.getString("fileName");
 
-        logger.debug("■■■ Receive File Name: {}", fileName);
+        logger.debug("■■■ Receive File Name   : {}", fileName);
+        logger.debug("■■■ host                : {}", host);
+        logger.debug("■■■ availableServerPort : {}", availableServerPort);
+        logger.debug("■■■ userId              : {}", userId);
+        logger.debug("■■■ password            : {}", password);
+        logger.debug("■■■ remotePath          : {}", remotePath);
+        logger.debug("■■■ localPath           : {}", localPath);
+        logger.debug("■■■ fileName            : {}", fileName);
 
         TransferVO transferVO = new TransferVO();
         transferVO.setHost(host);
@@ -159,15 +173,17 @@ public class CasherFtpTasklet implements Tasklet {
         transferVO.setFileName(fileName);
 
         try {
-	        jobParameters.getParameters().put("casher.file.name", new JobParameter(SFtpTransfer.getFile(transferVO).getAbsolutePath()));
+        	getFile(transferVO);
+	        //jobParameters.getParameters().put("shinhanFileName", new JobParameter(getFile(transferVO).getAbsolutePath()));        	
         } catch(Exception e) {
         	logger.error(e.getMessage());
         }
-
+        
         return RepeatStatus.FINISHED;
     }
     
-    /*private File getFile(TransferVO transferVO) throws FileMngException {
+    private File getFile(TransferVO transferVO) throws FileMngException {
+    	
     	if (findBackupFile(transferVO.getLocalPath(), transferVO.getFileName()).isFile()) {
             throw new FileMngException(ExceptionType.VM_STOP, "이미 처리된 파일입니다.");
     	}
@@ -176,6 +192,6 @@ public class CasherFtpTasklet implements Tasklet {
     }
     
     private File findBackupFile(String path, String name) {
-    	return new File(path, name.substring(0, name.length() - 4) + ".bak");
-    }*/
+    	return new File(path, name+".bak");
+    }
 }

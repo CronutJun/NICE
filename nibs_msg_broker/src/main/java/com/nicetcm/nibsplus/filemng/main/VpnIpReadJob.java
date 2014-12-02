@@ -1,6 +1,5 @@
 package com.nicetcm.nibsplus.filemng.main;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,24 +45,25 @@ public class VpnIpReadJob implements org.quartz.Job {
 	
 			if (files != null) {
 				for (String fileName : files) {
-					if (!new File(transferVO.getLocalPath(), fileName + ".bak").isFile()) {
-						try {
-							// JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();
-							Map<String, JobParameter> parameters = new LinkedHashMap<String, JobParameter>();
-							// 의미없는 값이지만 파라미터를 중복해서 여러번 실행이 불가능 하다. 그런 이유로 추가함.
-							parameters.put("temp", new JobParameter(Calendar.getInstance().getTimeInMillis()));
-							parameters.put("fileName", new JobParameter(transferVO.getLocalPath() + "/" + fileName));
-				
-							JobParameters jobParameters = new JobParameters(parameters);
-							JobExecution execution = jobLauncher.run((Job)applicationContext.getBean("vpnJob"), jobParameters);
-							
-							System.out.println("Exit Status : " + execution.getStatus());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+					try {
+						// JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();
+						Map<String, JobParameter> parameters = new LinkedHashMap<String, JobParameter>();
+						// 의미없는 값이지만 파라미터를 중복해서 여러번 실행이 불가능 하다. 그런 이유로 추가함.
+						parameters.put("temp", new JobParameter(Calendar.getInstance().getTimeInMillis()));
+						parameters.put("fileName", new JobParameter(fileName));
+						parameters.put("vpn.file.name", new JobParameter(transferVO.getLocalPath() + "/" + fileName));
+			
+						JobParameters jobParameters = new JobParameters(parameters);
+						JobExecution execution = jobLauncher.run((Job)applicationContext.getBean("vpnJob"), jobParameters);
+
+						SFtpTransfer.renameToBak(transferVO, fileName);
 						
-						count++;
+						System.out.println("Exit Status : " + execution.getStatus());
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
+						
+					count++;
 				}
 				
 				if (count > 0) {

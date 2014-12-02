@@ -32,6 +32,7 @@
         <!-- Read a csv file -->
         <property name="resource"  value="file:#{jobParameters['casher.file.name']}" />
         <property name="encoding"  value="euc-kr" />
+        <property name="strict"    value="false"/>
 
         <property name="linesToSkip" value="1" />
         

@@ -107,8 +107,6 @@ public class InN3000100Impl extends InMsgHandlerImpl {
 
             }
         }
-        msgTX.rollback(safeData.getTXS());
-        safeData.setTXS(msgTX.getTransaction(MsgBrokerTransaction.defMSGTX));
 
         /*
          *  상품권 마감일 경우 별도 테이블에 저장 처리 하도록 한다.

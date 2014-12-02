@@ -19,6 +19,20 @@ public class NibsBatchUtil {
         FastDateFormat fdt = FastDateFormat.getInstance("yyyyMMdd", Locale.getDefault());
         return fdt.format(today);
     }
+    
+    /**
+     * 현재 날짜를 포멧형태로 구한다
+     * @param format 날짜형태
+     * @return String 현재날짜
+     */
+    public static String SysDate(String format) {
+    	Date today = new Date();
+    	if( format == null || "".equals(format)){
+    		format = "yyyyMMdd";
+    	}
+    	FastDateFormat fdt = FastDateFormat.getInstance(format, Locale.getDefault());
+    	return fdt.format(today);
+    }
 
     /**
      * 현재 날짜를 기준으로 amount만큼 가감한 날짜를 구한다

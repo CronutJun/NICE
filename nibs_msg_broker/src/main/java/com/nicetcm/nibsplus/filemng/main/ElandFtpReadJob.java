@@ -7,7 +7,6 @@
  */
 package com.nicetcm.nibsplus.filemng.main;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,34 +54,35 @@ public class ElandFtpReadJob implements org.quartz.Job {
 	
 			if (files != null) {
 				for (String fileName : files) {
-					if (!new File(transferVO.getLocalPath(), fileName + ".bak").isFile()) {
-						try {
-							// JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();
-							Map<String, JobParameter> parameters = new LinkedHashMap<String, JobParameter>();
-							// 의미없는 값이지만 파라미터를 중복해서 여러번 실행이 불가능 하다. 그런 이유로 추가함.
-							parameters.put("temp", new JobParameter(Calendar.getInstance().getTimeInMillis()));
-							parameters.put("fileName", new JobParameter(transferVO.getLocalPath() + "/" + fileName));
-			
-							JobParameters jobParameters = new JobParameters(parameters);
-							JobExecution execution;
-							
-							if (fileName.endsWith("MASTER.DAT")) {
-								execution = jobLauncher.run((Job) applicationContext.getBean("sapMasterJob"), jobParameters);
-							} else if (fileName.endsWith("DETAIL.DAT")) {
-								execution = jobLauncher.run((Job) applicationContext.getBean("sapDetailJob"), jobParameters);
-							} else if (fileName.endsWith("COUPON.DAT")) {
-								execution = jobLauncher.run((Job) applicationContext.getBean("couponJob"), jobParameters);
-							} else {
-								throw new Exception("Do not execution. file name is '" + fileName + "'");
-							}
-			
-							System.out.println("Exit Status : " + execution.getStatus());
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+					try {
+						// JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();
+						Map<String, JobParameter> parameters = new LinkedHashMap<String, JobParameter>();
+						// 의미없는 값이지만 파라미터를 중복해서 여러번 실행이 불가능 하다. 그런 이유로 추가함.
+						parameters.put("temp", new JobParameter(Calendar.getInstance().getTimeInMillis()));
+						parameters.put("fileName", new JobParameter(fileName));
+						parameters.put("eland.file.name", new JobParameter(transferVO.getLocalPath() + "/" + fileName));
+		
+						JobParameters jobParameters = new JobParameters(parameters);
+						JobExecution execution;
 						
-						count++;
+						if (fileName.endsWith("MASTER.DAT")) {
+							execution = jobLauncher.run((Job) applicationContext.getBean("sapMasterJob"), jobParameters);
+						} else if (fileName.endsWith("DETAIL.DAT")) {
+							execution = jobLauncher.run((Job) applicationContext.getBean("sapDetailJob"), jobParameters);
+						} else if (fileName.endsWith("COUPON.DAT")) {
+							execution = jobLauncher.run((Job) applicationContext.getBean("couponJob"), jobParameters);
+						} else {
+							throw new Exception("Do not execution. file name is '" + fileName + "'");
+						}
+
+						SFtpTransfer.renameToBak(transferVO, fileName);
+		
+						System.out.println("Exit Status : " + execution.getStatus());
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
+					
+					count++;
 				}
 
 				if (count > 0) {

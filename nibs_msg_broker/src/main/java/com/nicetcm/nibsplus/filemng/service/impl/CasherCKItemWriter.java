@@ -20,6 +20,7 @@ public class CasherCKItemWriter implements ItemWriter<CasherCKVO>
     public void write(List<? extends CasherCKVO> items) throws Exception {
         for(CasherCKVO vo : items) {
         	if (vo.getSzDealDate().length() == 8) {
+        		casherMapper.deleteCheckDetailData(vo);
         		casherMapper.insertCheckDetailData(vo);
         	}
         }

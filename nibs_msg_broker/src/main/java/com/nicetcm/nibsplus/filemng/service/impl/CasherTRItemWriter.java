@@ -22,9 +22,11 @@ public class CasherTRItemWriter implements ItemWriter<CasherTRVO>
         	if (vo.getSzDeal_Date().length() == 8) {
     	    	if ("20022".equals(vo.getSzDevicever_Id())) {
     	        	/* 상품권이 추가된 신 버전 */
+    	    		casherMapper.deleteCasherTranDataNew(vo);
     	    		casherMapper.insertCasherTranDataNew(vo);
     	    	} else {
     	    		/* 상품권 추가 전 구버전 */
+    	    		casherMapper.deleteCasherTranDataOld(vo);
     	    		casherMapper.insertCasherTranDataOld(vo);
     	    	}
         	}

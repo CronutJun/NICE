@@ -17,11 +17,14 @@ public class VpnFileRenameTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception
     {
         JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
+        File bakFile = null;
         // ExecutionContext jobContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
 
         String oldAbsolutePath = jobParameters.getString("vpn.file.name").toString();
-        String newAbsolutePath = oldAbsolutePath + ".bak";
+        String newAbsolutePath = (bakFile = new File(oldAbsolutePath + ".bak")).getAbsolutePath();
 
+        if (bakFile.isFile()) bakFile.delete();
+        
         FileUtils.moveFile(new File(oldAbsolutePath), new File(newAbsolutePath));
 
         return RepeatStatus.FINISHED;

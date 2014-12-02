@@ -15,6 +15,7 @@ public interface CasherMapper {
 	 * @param vo
 	 * @return 
 	 */
+	int deleteCasherTranDataNew(CasherTRVO vo);
 	int insertCasherTranDataNew(CasherTRVO vo);
 
 	/**
@@ -26,6 +27,7 @@ public interface CasherMapper {
 	 * @param vo
 	 * @return 
 	 */
+	int deleteCasherTranDataOld(CasherTRVO vo);
 	int insertCasherTranDataOld(CasherTRVO vo);
 
 	/**
@@ -37,6 +39,7 @@ public interface CasherMapper {
 	 * @param vo
 	 * @return 
 	 */
+	int deleteCheckDetailData(CasherCKVO vo);
 	int insertCheckDetailData(CasherCKVO vo);
 
 	/**
@@ -48,5 +51,6 @@ public interface CasherMapper {
 	 * @param vo
 	 * @return 
 	 */
+	int deleteTicketDetailData(CasherTKVO vo);
 	int insertTicketDetailData(CasherTKVO vo);
 }

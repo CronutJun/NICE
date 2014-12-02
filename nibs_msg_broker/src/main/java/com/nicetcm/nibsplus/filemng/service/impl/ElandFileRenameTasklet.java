@@ -17,18 +17,14 @@ public class ElandFileRenameTasklet implements Tasklet {
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception
     {
         JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
+        File bakFile = null;
 
-        String branchCd = jobParameters.getString("branchCd");
         String oldAbsolutePath = jobParameters.getString("eland.file.name");
+        String newAbsolutePath = (bakFile = new File(oldAbsolutePath.substring(0, oldAbsolutePath.length() - 4) + ".bak")).getAbsolutePath();
 
-        if(branchCd == null && oldAbsolutePath != null) {
-            String newAbsolutePath = oldAbsolutePath.substring(0, oldAbsolutePath.length() - 4) + ".bak";
-            File newFile = new File(newAbsolutePath);
-
-            if (!newFile.isFile()) {
-            	FileUtils.moveFile(new File(oldAbsolutePath), newFile);
-            }
-        }
+        if (bakFile.isFile()) bakFile.delete();
+        
+        FileUtils.moveFile(new File(oldAbsolutePath), new File(newAbsolutePath));
 
         return RepeatStatus.FINISHED;
     }

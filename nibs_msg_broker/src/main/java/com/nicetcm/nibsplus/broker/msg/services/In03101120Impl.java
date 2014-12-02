@@ -50,7 +50,7 @@ public class In03101120Impl extends InMsgHandlerImpl {
                 origBuf.put(origMsg.getBytes());
                 origBuf.position(0);
                 MsgParser msgOrig = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")
-                        + "03001120.json").parseMessage(origBuf);
+                        + "03011120.json").parseMessage(origBuf);
                 try {
                     parsed.setString( "seq_no", msgOrig.getString("seq_no") );
                 }

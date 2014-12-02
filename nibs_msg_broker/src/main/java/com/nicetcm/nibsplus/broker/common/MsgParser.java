@@ -242,6 +242,7 @@ public class MsgParser {
             }
             td.pos = 0;
             td.isLive = true;
+            td.isParsed = false;
             td.msg = msg;
             td.msg.position(0);
             td.msgDatMap.clear();
@@ -249,6 +250,7 @@ public class MsgParser {
 
             parseSubMessage( td, msgFmtMap, td.msgDatMap );
 
+            td.isParsed = true;
             td.msg.position(0);
         }
 
@@ -262,12 +264,14 @@ public class MsgParser {
 
         td.pos = 0;
         td.isLive = true;
+        td.isParsed = false;
         td.msg.position(0);
         td.msgDatMap.clear();
         td.messageLength = 0;
 
         parseSubMessage( td, msgFmtMap, td.msgDatMap );
 
+        td.isParsed = true;
         td.msg.position(0);
 
         return this;
@@ -441,6 +445,7 @@ public class MsgParser {
 
             td.pos = 0;
             td.isLive = false;
+            td.isParsed = false;
             td.msg = msg;
             td.msg.position(0);
             td.msgDatMap.clear();
@@ -448,6 +453,7 @@ public class MsgParser {
 
             parseSubMessage( td, msgFmtMap, td.msgDatMap );
 
+            td.isParsed = true;
             td.msg.position(0);
         }
         return this;
@@ -459,12 +465,14 @@ public class MsgParser {
 
         td.pos = 0;
         td.isLive = false;
+        td.isParsed = false;
         td.msg.position(0);
         td.msgDatMap.clear();
         td.messageLength = 0;
 
         parseSubMessage( td, msgFmtMap, td.msgDatMap );
 
+        td.isParsed = true;
         td.msg.position(0);
 
         return this;
@@ -1032,6 +1040,13 @@ public class MsgParser {
         td.msg.position(0);
 
         return td.msg;
+    }
+
+    public boolean isParsed() throws Exception {
+
+        ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+
+        return td.isParsed;
     }
 
 }

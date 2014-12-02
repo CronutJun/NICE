@@ -25,6 +25,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
+import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.scheduler.model.JobVO;
 import com.nicetcm.nibsplus.scheduler.service.RemoteScheduleExecuter;
 
@@ -340,7 +341,7 @@ public class MsgBrokerLib {
      * @param msg
      * @return
      */
-    public static void lostWrite( MsgBrokerData safeData, byte[] msg, Exception e ) {
+    public static void lostWrite( MsgBrokerData safeData, byte[] msg, MsgParser parsed, Exception e ) {
 
         try {
             if( !isLostLogging ) return;

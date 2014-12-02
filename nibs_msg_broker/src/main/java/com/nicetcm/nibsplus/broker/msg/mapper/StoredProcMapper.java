@@ -29,6 +29,12 @@ public interface StoredProcMapper {
     void SendSMSMacInfo(TMacInfo cond);
 
     @Select({
+        "CALL op.sp_if_SendSMSNHErr( #{dealDate, mode=IN, jdbcType=VARCHAR}, #{dealNo, mode=IN, jdbcType=VARCHAR} )"
+    })
+    @Options( statementType = StatementType.CALLABLE )
+    void SendSMSNHErr(TMisc cond);
+
+    @Select({
         "CALL OP.SP_IF_SENDSMSTRANCNTMISMATCH( #{sendMsg,  mode=IN, jdbcType=VARCHAR}, ",
         "                                      #{sendMode, mode=IN, jdbcType=FLOAT} )"
     })
@@ -90,8 +96,8 @@ public interface StoredProcMapper {
             "#{pRemOut5000Amt   , mode=IN, jdbcType=DECIMAL},",
             "#{pRemOut10000Amt  , mode=IN, jdbcType=DECIMAL},",
             "#{pRemOut50000Amt  , mode=IN, jdbcType=DECIMAL},",
-            "#{vFirstInqYN      , mode=OUT, jdbcType=VARCHAR},",
-            "#{vResult          , mode=OUT, jdbcType=VARCHAR},",
+            "#{vFirstInqYN      , mode=OUT, jdbcType=DECIMAL},",
+            "#{vResult          , mode=OUT, jdbcType=DECIMAL},",
             "#{vResultMsg       , mode=OUT, jdbcType=VARCHAR} ",
         ")"
     })
@@ -150,8 +156,8 @@ public interface StoredProcMapper {
             "#{pHolyAddAmt      ,   mode=IN        , jdbcType=DECIMAL},",
             "#{pTodayAddAmt     ,   mode=IN        , jdbcType=DECIMAL},",
             "#{pSafeNo          ,   mode=IN        , jdbcType=DECIMAL},",
-            "#{vFirstInqYN      ,   mode=OUT       , jdbcType=VARCHAR},",
-            "#{vResult          ,   mode=OUT       , jdbcType=VARCHAR},",
+            "#{vFirstInqYN      ,   mode=OUT       , jdbcType=DECIMAL},",
+            "#{vResult          ,   mode=OUT       , jdbcType=DECIMAL},",
             "#{vResultMsg       ,   mode=OUT       , jdbcType=VARCHAR} ",
         ")"
     })
@@ -252,9 +258,9 @@ public interface StoredProcMapper {
     TMisc fcGetOrnzCdByMacNo( TMisc cond );
 
     @Select({
-        "CALL OP.SP_CM_TRANS_SEQNO( #{orgCd,        mode=IN ,  jdbcType=VARCHAR},",
-                                   "#{createDate,   mode=IN ,  jdbcType=VARCHAR},",
-                                   "#{transSeqNo,   mode=OUT,  jdbcType=VARCHAR}",
+        "CALL MSGB.SP_CM_TRANS_SEQNO( #{orgCd,        mode=IN ,  jdbcType=VARCHAR},",
+                                     "#{createDate,   mode=IN ,  jdbcType=VARCHAR},",
+                                     "#{transSeqNo,   mode=OUT,  jdbcType=VARCHAR}",
         ")"
     })
     @Options(statementType=StatementType.CALLABLE)

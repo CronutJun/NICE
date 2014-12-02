@@ -273,7 +273,7 @@ public interface TFnMacMapper {
           "and MAC_NO = #{macNo,jdbcType=VARCHAR}"
     })
     int updateByPrimaryKey(TFnMac record);
-    
+
     /**
      * InN100100Impl.updateFNMacProc 에서 호출
      *
@@ -309,6 +309,9 @@ public interface TFnMacMapper {
         @Result(column = "SHORT_CASH", property = "shortCash", jdbcType = JdbcType.DECIMAL),
         @Result(column = "SHORT_CASH_NOTICE", property = "shortCashNotice", jdbcType = JdbcType.DECIMAL),
         @Result(column = "IN_MAC_AMT", property = "inMacAmt", jdbcType = JdbcType.DECIMAL),
+        @Result(column = "IN_MAC_AMT_CW14", property = "inMacAmtCw14", jdbcType = JdbcType.DECIMAL),
+        @Result(column = "IN_MAC_AMT_CW54", property = "inMacAmtCw54", jdbcType = JdbcType.DECIMAL),
+        @Result(column = "IN_MAC_AMT_CW15", property = "inMacAmtCw15", jdbcType = JdbcType.DECIMAL),
         @Result(column = "LAST_DEAL_TIME", property = "lastDealTime", jdbcType = JdbcType.TIMESTAMP),
         @Result(column = "REFLUX_5_ALLOW_YN", property = "reflux5AllowYn", jdbcType = JdbcType.CHAR) })
     TFnMac selectByJoin1(TFnMacKey cond);
@@ -348,6 +351,9 @@ public interface TFnMacMapper {
         @Result(column = "SHORT_CASH", property = "shortCash", jdbcType = JdbcType.DECIMAL),
         @Result(column = "SHORT_CASH_NOTICE", property = "shortCashNotice", jdbcType = JdbcType.DECIMAL),
         @Result(column = "IN_MAC_AMT", property = "inMacAmt", jdbcType = JdbcType.DECIMAL),
+        @Result(column = "IN_MAC_AMT_CW14", property = "inMacAmtCw14", jdbcType = JdbcType.DECIMAL),
+        @Result(column = "IN_MAC_AMT_CW54", property = "inMacAmtCw54", jdbcType = JdbcType.DECIMAL),
+        @Result(column = "IN_MAC_AMT_CW15", property = "inMacAmtCw15", jdbcType = JdbcType.DECIMAL),
         @Result(column = "LAST_DEAL_TIME", property = "lastDealTime", jdbcType = JdbcType.TIMESTAMP),
         @Result(column = "REFLUX_5_ALLOW_YN", property = "reflux5AllowYn", jdbcType = JdbcType.CHAR) })
     TFnMac selectByJoin2(TFnMacKey cond);

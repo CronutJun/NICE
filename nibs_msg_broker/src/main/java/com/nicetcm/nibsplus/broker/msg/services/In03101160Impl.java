@@ -152,7 +152,7 @@ public class In03101160Impl extends InMsgHandlerImpl {
             origBuf.put(origMsg.getBytes());
             origBuf.position(0);
             MsgParser msgOrig = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path")
-                    + "03001160.json").parseMessage(origBuf);
+                    + "03011160.json").parseMessage(origBuf);
             try {
                 if( msgOrig.getString("pda_yn").equals("1") ) {
                     if( comPack.getError(parsed.getString("CM.ret_cd_src"), parsed.getString("CM.org_cd"), parsed.getString("CM.ret_cd")) < 0 )
