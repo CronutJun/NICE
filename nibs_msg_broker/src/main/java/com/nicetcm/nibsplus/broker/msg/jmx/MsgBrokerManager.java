@@ -275,12 +275,27 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
                     e.getValue().init();
                 }
             }
-            else {
+            else if( consumerName != null && consumerName.startsWith("CLOSE") ) {
+                MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName.substring(5));
+                if( con == null )
+                    return String.format("No Consumer: %s, set the right name or set \"ALL\"", consumerName.substring(5));
+                con.close();
+            }
+            else if( consumerName != null && consumerName.startsWith("START") ) {
+                MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName.substring(5));
+                if( con == null )
+                    return String.format("No Consumer: %s, set the right name or set \"ALL\"", consumerName.substring(5));
+                con.init();
+            }
+            else if( consumerName != null && consumerName.length() > 0 ){
                 MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName);
                 if( con == null )
                     return String.format("No Consumer: %s, set the right name or set \"ALL\"", consumerName);
                 con.close();
                 con.init();
+            }
+            else {
+                return "[Consumer Name]\nALL\nCLOSE[Consumer Name]\nSTART[Consumer Name]";
             }
             return "reattachment is succeed";
         }

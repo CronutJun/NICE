@@ -12,7 +12,9 @@ package com.nicetcm.nibsplus.broker.msg.services;
  *           2014. 07. 31    K.D.J.
  */
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +68,7 @@ public class InN3000900Impl extends InMsgHandlerImpl {
                     parsed.getString("deal_date"), parsed.getString("deal_no_cnt"), e.getLocalizedMessage() );
             throw e;
         }
+
         TFnNiceTranSpec fnNiceTranSpec = new TFnNiceTranSpec();
         fnNiceTranSpec.createCriteria().andDealDateEqualTo( parsed.getString("deal_date") );
         int iCnt = fnNiceTranMap.countBySpec( fnNiceTranSpec );
@@ -135,6 +138,26 @@ public class InN3000900Impl extends InMsgHandlerImpl {
              *  HOST에서 수신한 FTP File 읽어 DB에 Upload 하는 'FILEMng DEALNO 거래일자(8)'
              *  명령어를 실행하여 프로세스 가동
              */
+            Process p = Runtime.getRuntime().exec("ivkAutoSend -L");
+
+            BufferedReader stdInput = new BufferedReader(new
+                 InputStreamReader(p.getInputStream()));
+
+            BufferedReader stdError = new BufferedReader(new
+                 InputStreamReader(p.getErrorStream()));
+
+            String ln = null;
+            // read the output from the command
+            logger.warn("Here is the standard output of the command");
+            while ((ln = stdInput.readLine()) != null) {
+                logger.warn(ln);
+            }
+
+            // read any errors from the attempted command
+            logger.warn("Here is the standard error of the command (if any):\n");
+            while ((ln = stdError.readLine()) != null) {
+                logger.warn(ln);
+            }
 
         }
         else {

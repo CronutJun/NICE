@@ -920,14 +920,4 @@ public interface TMiscMapper {
     })
     List<TCtErrorMng> selectCtErrorMng2(TCtErrorMng tCtErrorMng);
 
-    /**
-     * 전문일련번호 채번
-     *
-     * @author KDJ, on Tue Oct 21 09:08:00 KST 2014
-     */
-    @Select({
-        "select op.f_tranfer from dual"
-    })
-    String fGeTransSeqNo();
-
 }

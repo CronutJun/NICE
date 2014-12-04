@@ -52,6 +52,8 @@ public class In03000212Impl extends InMsgHandlerImpl {
                 fnRTK.setCollectCnt ( parsed.getInt   (String.format("BI[%d].cnt_type2", i)) ); /* 회수매수   */
                 fnRTK.setRemCnt     ( parsed.getInt   (String.format("BI[%d].cnt_type3", i)) ); /* 잔량매수   */
                 fnRTK.setDealCnt    ( parsed.getInt   (String.format("BI[%d].cnt_type4", i)) ); /* 거래매수   */
+                fnRTK.setTransDate  ( parsed.getString("CM.trans_date")   );
+                fnRTK.setTransSeqNo ( parsed.getString("CM.trans_seq_no") );
                 fnRTK.setUpdateDate ( MsgBrokerLib.toDate(parsed.getString("CM.trans_date"), "yyyyMMdd") );
                 fnRTK.setUpdateUid  ( "online" );
                 try {

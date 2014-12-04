@@ -83,7 +83,7 @@ public class MsgBrokerAppConfig {
 
         logger.debug("db_usr = {}", db_url);
 
-        if( db_lock_timeout != null && db_lock_timeout.length() > 0 ) {
+        if( db_lock_timeout != null && db_lock_timeout.length() > 0 && Integer.parseInt(db_lock_timeout) > 0 ) {
             db_url = String.format("%scurrentLockTimeout=%s;", db_url, db_lock_timeout);
         }
         BasicDataSource ds = new BasicDataSource();

@@ -37,6 +37,7 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerConsumer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmCommonMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCmMacMapper;
@@ -103,6 +104,7 @@ import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfoKey;
 import com.nicetcm.nibsplus.broker.msg.model.TIfDataLog;
 import com.nicetcm.nibsplus.broker.msg.model.TIfDataLogKey;
+import com.nicetcm.nibsplus.broker.msg.model.TIfDataLogSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
@@ -829,6 +831,7 @@ public class CommonPackImpl implements CommonPack {
         ErrBasic.setTeamCd( MacInfo.getTeamCd() );
         ErrBasic.setRegDt( safeData.getDSysDate() );
         ErrBasic.setRegId( ErrRcpt.getAcceptNm() );
+        ErrBasic.setSendYn("0");
 
         try {
             errBasicMap.insertSelective( ErrBasic );
@@ -2883,11 +2886,7 @@ public class CommonPackImpl implements CommonPack {
             //CM. Header 셋팅
             setStringHeader(commMsgHeader, msgPsr);
 
-            TMisc misc = new TMisc();
-            misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
-            misc.setCreateDate( msgPsr.getString("CM.trans_date") );
-            splMap.spCmTransSeqNo( misc );
-            msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
+            msgPsr.setString("CM.trans_seq_no", getTransSeqNo(safeData, msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_date")));
 
             //Body 셋팅
             if(columnMap != null) {
@@ -3121,24 +3120,47 @@ public class CommonPackImpl implements CommonPack {
     @Override
     public String getIfDataLog( MsgBrokerData safeData, String ioCl, MsgParser parsed ) throws Exception {
 
-        TIfDataLogKey tIfDataLogKey = new TIfDataLogKey();
+        TIfDataLogSpec tIfDataLogSpec = new TIfDataLogSpec();
 
-        tIfDataLogKey.setOrgCd     ( parsed.getString("CM.org_cd")     );
-        tIfDataLogKey.setTransType ( ioCl );
-        tIfDataLogKey.setTransDate ( parsed.getString("CM.trans_date") );
-        tIfDataLogKey.setTransTime ( parsed.getString("CM.trans_time") );
-        tIfDataLogKey.setTransSeqNo( parsed.getLong("CM.trans_seq_no") );
-
+        tIfDataLogSpec.createCriteria().andOrgCdEqualTo     ( parsed.getString("CM.org_cd")     )
+                                       .andTransTypeEqualTo ( ioCl                              )
+                                       .andTransDateEqualTo ( parsed.getString("CM.trans_date") )
+                                       .andTransSeqNoEqualTo( parsed.getLong("CM.trans_seq_no") );
         try {
-            TIfDataLog tIfDataLog = ifDataLogMap.selectByPrimaryKey( tIfDataLogKey );
-            if( tIfDataLog == null ) return null;
-            else return tIfDataLog.getTransData();
+            List<TIfDataLog> tIfDataLog = ifDataLogMap.selectBySpec( tIfDataLogSpec );
+            if( tIfDataLog == null || tIfDataLog.size() == 0 ) return null;
+            else return tIfDataLog.get(0).getTransData();
         }
         catch ( Exception e ) {
             logger.warn("T_IF_DATA_LOG get error : {}", e.getMessage() );
             return null;
         }
     }
+
+    /**
+     * getTransSeqNo
+     * <pre>
+     *   전문일련번호 채번
+     * </pre>
+     *
+     * @param safeData  쓰레드 세이프 데이터
+     * @param orgCd     기관코드
+     * @param transDate 전문거래일자
+     */
+    @Override
+    public String getTransSeqNo( MsgBrokerData safeData, String orgCd, String transDate ) throws Exception {
+
+        TMisc misc = new TMisc();
+        misc.setOrgCd     ( orgCd     );
+        misc.setCreateDate( transDate );
+        splMap.spCmTransSeqNo( misc );
+
+        msgTX.commit(safeData.getTXS());
+        safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
+
+        return misc.getTransSeqNo();
+    }
+
 
 
 }

@@ -490,11 +490,8 @@ public class In03101130Impl extends InMsgHandlerImpl {
 
                   /* inq_close_yn 이 1일 경우는 ap로 응답전문 보내지 않도록 한다. */
                   .setString( "inq_close_yn",  parsed.getString("inq_close_yn"));
-            TMisc misc = new TMisc();
-            misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
-            misc.setCreateDate( msgPsr.getString("CM.trans_date") );
-            storedProcMapper.spCmTransSeqNo( misc );
-            msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
+
+            msgPsr.setString("CM.trans_seq_no", comPack.getTransSeqNo(safeData, msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_date")));
 
             msgPsr.syncMessage();
 

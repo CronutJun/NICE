@@ -1031,11 +1031,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                       .setString( "CM.work_type", "1130" )
                       .setString( "CM.service_gb", "1" );
 
-                TMisc misc = new TMisc();
-                misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
-                misc.setCreateDate( msgPsr.getString("CM.trans_date") );
-                splMap.spCmTransSeqNo( misc );
-                msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
+                msgPsr.setString("CM.trans_seq_no", comPack.getTransSeqNo(safeData, msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_date")));
 
                 msgPsr.syncMessage();
 

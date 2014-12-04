@@ -1,6 +1,5 @@
 package com.nicetcm.nibsplus.broker.msg;
 
-import java.io.FileOutputStream;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -9,6 +8,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
@@ -23,9 +24,6 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
     public static final ConcurrentMap<String, BlockingQueue<byte[]>> rmiSyncAns = new ConcurrentHashMap<String, BlockingQueue<byte[]>>();
     public static final ConcurrentMap<String, byte[]> rmiOrigMsg = new ConcurrentHashMap<String, byte[]>();
 
-    //private TMiscMapper      miscMap;
-    private StoredProcMapper splMap;
-
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerRMIImpl.class);
 
     public MsgBrokerRMIImpl() {
@@ -35,6 +33,9 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
         byte[] respMsg = null;
         int defTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout"));
+        DataSourceTransactionManager msgTX;
+        StoredProcMapper splMap;
+
         BlockingQueue<byte[]> waitQ = new LinkedBlockingQueue<byte[]>();
         MsgBrokerData msgThrdSafeData = new MsgBrokerData();
         logger.warn("RMI-IS-MSG [{}]", new String(msg) );
@@ -45,18 +46,20 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         logger.warn("O-MSG [{}]", new String(msg) );
         logger.warn("QNm = {}", ret.QNm);
 
-        //miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
+        msgTX = (DataSourceTransactionManager)MsgBrokerSpringMain.sprCtx.getBean(DataSourceTransactionManager.class);
         splMap = (StoredProcMapper)MsgBrokerSpringMain.sprCtx.getBean(StoredProcMapper.class);
 
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
             try {
                 logger.warn("Getting trans_seq_no..");
-                //msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
+
+                TransactionStatus txs = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
                 TMisc misc = new TMisc();
                 misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
                 misc.setCreateDate( msgPsr.getString("CM.trans_date") );
                 splMap.spCmTransSeqNo( misc );
+                msgTX.commit(txs);
                 msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
                 logger.warn("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
@@ -130,7 +133,11 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
     }
 
     public void callBrokerAsync(byte[] msg) throws Exception {
+
         MsgBrokerData msgThrdSafeData = new MsgBrokerData();
+        DataSourceTransactionManager msgTX;
+        StoredProcMapper splMap;
+
         logger.warn("RMI-IA-MSG [{}]", new String(msg) );
 
         msgThrdSafeData.setNoOutData( false );
@@ -139,17 +146,18 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         logger.warn("O-MSG [{}]", new String(msg) );
         logger.warn("QNm = {}", ret.QNm);
 
-        //miscMap = (TMiscMapper)MsgBrokerSpringMain.sprCtx.getBean(TMiscMapper.class);
+        msgTX = (DataSourceTransactionManager)MsgBrokerSpringMain.sprCtx.getBean(DataSourceTransactionManager.class);
         splMap = (StoredProcMapper)MsgBrokerSpringMain.sprCtx.getBean(StoredProcMapper.class);
 
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
             try {
-                //msgPsr.setString("CM.trans_seq_no", miscMap.fGeTransSeqNo());
+                TransactionStatus txs = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
                 TMisc misc = new TMisc();
                 misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
                 misc.setCreateDate( msgPsr.getString("CM.trans_date") );
                 splMap.spCmTransSeqNo( misc );
+                msgTX.commit(txs);
                 msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
                 logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 

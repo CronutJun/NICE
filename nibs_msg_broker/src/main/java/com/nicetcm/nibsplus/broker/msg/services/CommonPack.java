@@ -33,6 +33,7 @@ public interface CommonPack {
     public void insertOrgSigeChnage( MsgBrokerData safeData, TCtOrgSiteChange OrgSiteChange ) throws Exception;
     public void insertIfDataLog( MsgBrokerData safeData, String ioCl, MsgParser parsed ) throws Exception;
     public String getIfDataLog( MsgBrokerData safeData, String ioCl, MsgParser parsed ) throws Exception;
+    public String getTransSeqNo( MsgBrokerData safeData, String orgCd, String transDate ) throws Exception;
     boolean getDupErrorMng(TCtErrorBasic ErrBasic, int CancelYN) throws Exception;
     int getOwnTradeSeqYN(TMisc tMisc);
     int getBoxRecvYN(TMisc tMisc);

@@ -162,19 +162,19 @@ public class In03000205Impl extends InMsgHandlerImpl {
             strcpy( szAryBoxGb2[3], "04" );  위엔
         */
         if(parsed.getInt("dollar_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0010", "01", null, parsed.getInt("dollar_amt"), parsed.getInt("dollar_cnt"));
+            insertTFnBoxOrg(parsed, safeData, "0010", "01", null, parsed.getInt("dollar_cnt"), parsed.getInt("dollar_amt"));
         }
 
         if(parsed.getInt("euro_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0010", "02", null, parsed.getInt("euro_amt"), parsed.getInt("euro_cnt"));
+            insertTFnBoxOrg(parsed, safeData, "0010", "02", null, parsed.getInt("euro_cnt"), parsed.getInt("euro_amt"));
         }
 
         if(parsed.getInt("yen_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0010", "03", null, parsed.getInt("yen_amt"), parsed.getInt("yen_cnt"));
+            insertTFnBoxOrg(parsed, safeData, "0010", "03", null, parsed.getInt("yen_cnt"), parsed.getInt("yen_amt"));
         }
 
         if(parsed.getInt("yuan_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0010", "04", null, parsed.getInt("yuan_amt"), parsed.getInt("yuan_cnt"));
+            insertTFnBoxOrg(parsed, safeData, "0010", "04", null, parsed.getInt("yuan_cnt"), parsed.getInt("yuan_amt"));
         }
 
     }//end method

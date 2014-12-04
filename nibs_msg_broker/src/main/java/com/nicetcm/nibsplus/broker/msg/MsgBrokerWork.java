@@ -39,6 +39,11 @@ public class MsgBrokerWork {
         boolean skipDBProc = false;
 
         try {
+            msgThrdSafeData = new MsgBrokerData();
+            msgThrdSafeData.setKeepResData(true);
+            msgThrdSafeData.setSkipAnswer(false);
+            msgThrdSafeData.setSysDate(MsgBrokerLib.SysDate());
+
             MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "I", true);
             logger.debug("inQNm = {}", ret.QNm);
             logger.warn("forceResp = {}", this.forceResp);
@@ -46,9 +51,6 @@ public class MsgBrokerWork {
 
             msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
             logger.debug("Parse OK");
-            msgThrdSafeData = new MsgBrokerData();
-            msgThrdSafeData.setKeepResData(true);
-            msgThrdSafeData.setSkipAnswer(false);
             try {
                 if( this.forceResp ) {
                     /*
