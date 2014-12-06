@@ -111,6 +111,8 @@ public class MsgBrokerMain {
     public static void main(String[] args) {
 
         try {
+            Runtime.getRuntime().addShutdownHook( new MsgBrokerShutdown() );
+
             InputStream is = MsgBrokerMain.class.getResourceAsStream(
                     String.format("/%s/msg.properties", MsgBrokerConst.SVR_TYPE));
             MsgCommon.msgProps.load(is);
