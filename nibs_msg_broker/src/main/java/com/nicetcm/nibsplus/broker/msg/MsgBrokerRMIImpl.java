@@ -147,7 +147,6 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         msgThrdSafeData.setNoOutData( false );
 
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
-        logger.warn("O-MSG [{}]", new String(msg) );
         logger.warn("QNm = {}", ret.QNm);
 
         msgTX = (DataSourceTransactionManager)MsgBrokerSpringMain.sprCtx.getBean(DataSourceTransactionManager.class);
