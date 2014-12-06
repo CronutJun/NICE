@@ -16,12 +16,13 @@ public class MsgBrokerJMXClient {
         System.out.println("             [-close [consumer name]]");
         System.out.println("             [-start [consumer name]]");
     }
+
     public static void main(String[] args) throws Exception {
         if( args.length == 0 ) {
             printParameter();
             return;
         }
-        if( !args[0].equals("shtudown")
+        if( !args[0].equals("shutdown")
         &&  !args[0].equals("-reset") && !args[0].equals("-close") && !args[0].equals("-start") ) {
             printParameter();
             return;
@@ -62,12 +63,16 @@ public class MsgBrokerJMXClient {
         if( args[0].equals("shutdown") )
             System.out.println(mbeanProxy.shutdownServer("ShutDown"));
         else if( args[0].equals("-reset") ) {
-        //    if()
+            System.out.println(mbeanProxy.reattachConsumer(args[1]));
         }
-        System.out.println(mbeanProxy.reattachConsumer("ABC"));
+        else if( args[0].equals("-close") ) {
+            System.out.println(mbeanProxy.reattachConsumer(String.format("CLOSE%s", args[1])));
+        }
+        else if( args[0].equals("-start") ) {
+            System.out.println(mbeanProxy.reattachConsumer(String.format("CLOSE%s", args[1])));
+        }
 
         mbeanServerConnection.removeNotificationListener(mbeanName, listener);
-
         jmxConnector.close();
     }
 
