@@ -3151,12 +3151,18 @@ public class CommonPackImpl implements CommonPack {
     public String getTransSeqNo( MsgBrokerData safeData, String orgCd, String transDate ) throws Exception {
 
         TMisc misc = new TMisc();
-        misc.setOrgCd     ( orgCd     );
-        misc.setCreateDate( transDate );
-        splMap.spCmTransSeqNo( misc );
+        try {
+            misc.setOrgCd     ( orgCd     );
+            misc.setCreateDate( transDate );
+            splMap.spCmTransSeqNo( misc );
 
-        msgTX.commit(safeData.getTXS());
-        safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
+            msgTX.commit(safeData.getTXS());
+            safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
+        }
+        catch( Exception e ) {
+            msgTX.commit(safeData.getTXS());
+            safeData.setTXS(msgTX.getTransaction( MsgBrokerTransaction.defMSGTX ));
+        }
 
         return misc.getTransSeqNo();
     }

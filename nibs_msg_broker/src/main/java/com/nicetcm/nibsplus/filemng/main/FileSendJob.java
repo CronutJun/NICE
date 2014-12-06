@@ -7,6 +7,7 @@
  */
 package com.nicetcm.nibsplus.filemng.main;
 
+import org.apache.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -17,6 +18,9 @@ import com.nicetcm.nibsplus.filemng.service.FileSendService;
 
 @DisallowConcurrentExecution
 public class FileSendJob implements Job {
+
+	private Logger logger = Logger.getLogger(this.getClass());
+	private Logger errorLogger = Logger.getLogger("FilemngERROR");
 	
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -25,6 +29,8 @@ public class FileSendJob implements Job {
 
 	    FileSendService fileSendService = (FileSendService) applicationContext.getBean("fileSendService");
 
+		logger.info(this.getClass().getName() + " execute...");
+		
 	    try {
 	    	if (args == null) {
 	    		fileSendService.execute();
@@ -32,10 +38,10 @@ public class FileSendJob implements Job {
 	    		fileSendService.execute(args);
 	    	}
 	    } catch (Exception e) {
-	        e.printStackTrace();
+        	errorLogger.error(e.getMessage(), e.getCause());
 	    }
 
-	    System.out.println("Done");
+		logger.info(this.getClass().getName() + " Done");
 	}
 
 }

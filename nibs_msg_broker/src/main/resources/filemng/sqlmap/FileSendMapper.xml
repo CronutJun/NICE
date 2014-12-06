@@ -2019,7 +2019,7 @@
 		SELECT
 		    orgCode,
 		    DECODE(orgCode,'004', 'C',DECODE(SIGN(demandAmt), -1, 'C','D')) orgType,
-		    TO_CHAR(ABS(demandAmt), 'FM000000000000000') demandAmt
+		    LPAD(TO_CHAR(ABS(demandAmt)), 15, '0') demandAmt
 		FROM
 		    (
 		        SELECT
@@ -2070,7 +2070,7 @@
 		                        AND carry_org_cd='1030401'
 		                    )
 		                    dmd,
-		                    OP.t_cm_orgorg2
+		                    OP.t_cm_org org2
 		                WHERE
 		                    org2.org_cd = dmd.org_cd
 		            )

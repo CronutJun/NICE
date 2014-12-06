@@ -40,11 +40,11 @@ public class InM1000100Impl extends InMsgHandlerImpl {
         try {
             rslt = cmBranchEmartsuperMap.selectByPrimaryKey( parsed.getString("brch_cd") );
             if( rslt == null ) {
-                throw new MsgBrokerException( "ERROR_ILL_JIJUM", -85 );
+                throw new MsgBrokerException( "ERROR_ILL_BRANCH", -85 );
             }
         }
         catch( Exception e ) {
-            logger.warn(">>> [T_CM_JIJUM_EMARTSUPER] ERROR [{}]", e.getLocalizedMessage() );
+            logger.warn(">>> [T_CM_BRANCH_EMARTSUPER] ERROR [{}]", e.getLocalizedMessage() );
             throw e;
         }
         parsed.setString( "brch_nm",      rslt.getBranchNm() )

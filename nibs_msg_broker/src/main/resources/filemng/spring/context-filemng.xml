@@ -29,17 +29,6 @@
     			</list>
     		</property>
    		</bean>
-
-        <!-- Log4j 설정 -->
-        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
-            <property name="targetMethod" value="initLogging"/>
-            <property name="arguments">
-                <list>
-                    <value>classpath:filemng/properties/context-filemng-log4j.local.xml</value>
-                </list>
-            </property>
-        </bean>
     </beans>
 
     <!-- DEV 환경 -->
@@ -58,17 +47,6 @@
     			</list>
     		</property>
    		</bean>
-
-        <!-- Log4j 설정 -->
-        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
-            <property name="targetMethod" value="initLogging"/>
-            <property name="arguments">
-                <list>
-                    <value>classpath:filemng/properties/context-filemng-log4j.dev.xml</value>
-                </list>
-            </property>
-        </bean>
     </beans>
 
     <!-- STAGE 환경 -->
@@ -87,17 +65,6 @@
     			</list>
     		</property>
    		</bean>
-   		
-        <!-- Log4j 설정 -->
-        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
-            <property name="targetMethod" value="initLogging"/>
-            <property name="arguments">
-                <list>
-                    <value>classpath:filemng/properties/context-filemng-log4j.stage.xml</value>
-                </list>
-            </property>
-        </bean>
     </beans>
 
     <beans>

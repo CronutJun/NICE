@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 import org.quartz.Calendar;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -14,8 +15,6 @@ import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -36,7 +35,8 @@ import com.nicetcm.nibsplus.scheduler.service.impl.NibsQuartzScheduler;
  * @see
  */
 public class NibsScheduleExecuter {
-    private final static Logger logger = LoggerFactory.getLogger(NibsScheduleExecuter.class);
+	
+    private static Logger logger = Logger.getLogger("ivkAutoSend");
     
 	public NibsScheduleExecuter(String[] args) {
         try {
@@ -51,15 +51,15 @@ public class NibsScheduleExecuter {
             	List<SchedulerVO> scheduleList = scheduleInfoProvider.selectScheduleJobGroup();
             	int count = 1;
             	
-            	System.out.println(StringUtils.leftPad("", 65, "-"));
-            	System.out.println(String.format("%3s\t%-25s%-30s%s", "NO", "QuartzNodeName", "JobGroup", "MessageCode"));
-            	System.out.println(StringUtils.leftPad("", 65, "-"));
+            	logger.info(StringUtils.leftPad("", 65, "-"));
+            	logger.info(String.format("%3s\t%-25s%-30s%s", "NO", "QuartzNodeName", "JobGroup", "MessageCode"));
+            	logger.info(StringUtils.leftPad("", 65, "-"));
             	
             	for (SchedulerVO jobGroup : scheduleList) {
-            		System.out.println(String.format("%3d\t%-25s%-30s%s", count++, jobGroup.getQuartzNodeName(), jobGroup.getJobGroup(), ((type = mtype.get(jobGroup.getJobGroup()))) == null ? "-" : type));
+            		logger.info(String.format("%3d\t%-25s%-30s%s", count++, jobGroup.getQuartzNodeName(), jobGroup.getJobGroup(), ((type = mtype.get(jobGroup.getJobGroup()))) == null ? "-" : type));
             	}
 
-            	System.out.println(StringUtils.leftPad("", 65, "-"));
+            	logger.info(StringUtils.leftPad("", 65, "-"));
             } else {
 	            JobVO jobVO = new JobVO();
 	            jobVO.setQuartzNodeName(args[0]); // "OrgSend"
@@ -74,8 +74,7 @@ public class NibsScheduleExecuter {
 	
             }
         } catch (Exception e) {
-        	logger.error("Nibs Quartz Scheduler를 [비정상적] 으로 종료 되었습니다.\n" + e.getMessage());
-        	e.printStackTrace();
+        	logger.error("Nibs Quartz Scheduler를 [비정상적] 으로 종료 되었습니다.\n" + e.getMessage(), e.getCause());
         }
     	
     }
@@ -85,6 +84,8 @@ public class NibsScheduleExecuter {
         if(schedulerVO == null) {
         	logger.info("해당하는 스케쥴이 존재하지 않습니다.");
         } else {
+        	logger.info(String.format("스케쥴 [%s %s %s] 실행중...", schedulerVO.getQuartzNodeName(), schedulerVO.getJobGroup(), schedulerVO.getJobName()));
+        	
             Class<Job> jobClass = (Class<Job>)Class.forName(schedulerVO.getJobClass());
             jobClass.newInstance().execute(new JobExecutionContext() {
 				@Override

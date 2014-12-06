@@ -570,6 +570,15 @@ public class MsgBrokerConst {
     public static final String CD_MOD                       = "2";   /* 관리업체변경   */
     public static final String CD_DEL                       = "3";   /* 신규취소     */
 
+    public static String  WORKCD_DIFF_KFTC                  = "3280";
+    public static String  WORKCD_SAP_ELAND                  = "4130";
+    public static String  WORKCD_COUPON_ELAND               = "4140";
+    public static String  PROCCD_AUTOSEND                   = "00";
+    public static String  PROCCD_ONLYSEND                   = "01";
+    public static String  PROCCD_FILEMNG                    = "02";
+    public static String  PROCCD_FILESEND                   = "03";
+
+
     public enum  EnumOrgErrorState {
 
         IDX_ST_CASH          ("현금부족",           CD_ERROR_CASH             ),

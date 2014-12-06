@@ -12,7 +12,7 @@ import com.nicetcm.nibsplus.filemng.dao.DealNoMapper;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
 import com.nicetcm.nibsplus.util.NibsBatchUtil;
 
-public class DealNoFtpTasklet implements Tasklet {
+public class DealNoPutFtpTasklet implements Tasklet {
 
     // private static final Logger logger = LoggerFactory.getLogger(DealNoFtpTasklet.class);
 
@@ -46,7 +46,7 @@ public class DealNoFtpTasklet implements Tasklet {
         // final String yyyymmdd = jobParameters.getString("yyyymmdd");
         // final String branchCd = jobParameters.getString("branchCd");
 
-        String fileName = jobContext.getString("file.send.filename");
+        String fileName = jobContext.getString("file.send.filename", null);
 
         TransferVO transferVO = new TransferVO();
         transferVO.setHost(host);
@@ -58,10 +58,13 @@ public class DealNoFtpTasklet implements Tasklet {
         transferVO.setFileName(fileName);
 
         String command = null;
-        try
-        {
-        	SFtpTransfer.putFile(transferVO);
-            command = "[나이스거래누락] 누락 고유번호 HOST 전송처리 완료[" + NibsBatchUtil.SysDate() + "-" + NibsBatchUtil.SysTime() + "]";
+        try {
+        	if (fileName == null) {
+        		command = "[나이스거래누락] 누락 고유번호 HOST 전송할 데이터가 없습니다.[" + NibsBatchUtil.SysDate() + "-" + NibsBatchUtil.SysTime() + "]";
+        	} else {
+        		SFtpTransfer.putFile(transferVO);
+        		command = "[나이스거래누락] 누락 고유번호 HOST 전송처리 완료[" + NibsBatchUtil.SysDate() + "-" + NibsBatchUtil.SysTime() + "]";
+        	}
         } catch (Exception e)
         {
             e.printStackTrace();

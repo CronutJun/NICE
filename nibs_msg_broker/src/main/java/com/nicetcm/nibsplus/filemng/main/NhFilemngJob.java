@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -22,28 +23,33 @@ import com.nicetcm.nibsplus.util.NibsBatchUtil;
 
 @DisallowConcurrentExecution
 public class NhFilemngJob implements org.quartz.Job {
+
+	private Logger logger = Logger.getLogger(this.getClass());
+	private Logger errorLogger = Logger.getLogger("FilemngERROR");
 	
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		ApplicationContext applicationContext = (ApplicationContext)context.getMergedJobDataMap().get("applicationContext");
-		Properties config = applicationContext.getBean("config", Properties.class);
-
-        TransferVO transferVO = new TransferVO();
-        transferVO.setHost(config.getProperty("host.host"));
-        transferVO.setAvailableServerPort(Integer.parseInt(config.getProperty("host.availableServerPort")));
-        transferVO.setUserId(config.getProperty("host.userid"));
-        transferVO.setPassword(config.getProperty("host.password"));
-        transferVO.setRemotePath(config.getProperty("nh.remote.path"));
-        transferVO.setLocalPath(config.getProperty("nh.local.path"));
-
         try {
-			List<String> files = SFtpTransfer.getFileNames(transferVO, "R" + NibsBatchUtil.SysDate() + "*");
+    		ApplicationContext applicationContext = (ApplicationContext)context.getMergedJobDataMap().get("applicationContext");
+    		Properties config = applicationContext.getBean("config", Properties.class);
+
+            TransferVO transferVO = new TransferVO();
+            transferVO.setHost(config.getProperty("host.host"));
+            transferVO.setAvailableServerPort(Integer.parseInt(config.getProperty("host.availableServerPort")));
+            transferVO.setUserId(config.getProperty("host.userid"));
+            transferVO.setPassword(config.getProperty("host.password"));
+            transferVO.setRemotePath(config.getProperty("nh.remote.path"));
+            transferVO.setLocalPath(config.getProperty("nh.local.path"));
+
+			List<String> files = SFtpTransfer.getFileNames(transferVO, "R" + NibsBatchUtil.SysDate() + "*.txt");
 			int count = 0;
 			
 			JobLauncher jobLauncher = (JobLauncher) applicationContext.getBean("jobLauncher");
 			// ex) /Project_NIBS/FTP_RECEIVE/nh/R20140924B11.txt
 			// File[] files = new File(config.getProperty("nh.local.path")).listFiles();
-	
+
+			logger.info(this.getClass().getName() + " execute...");
+			
 			if (files != null) {
 				for (String fileName : files) {
 					try {
@@ -58,25 +64,25 @@ public class NhFilemngJob implements org.quartz.Job {
 						JobExecution execution = jobLauncher.run((Job) applicationContext.getBean("nhJob"), jobParameters);
 
 						SFtpTransfer.renameToBak(transferVO, fileName);
-						
-						System.out.println("Exit Status : " + execution.getStatus());
+
+						logger.info(String.format("%s Exit Status : %s - %s", this.getClass().getName(), execution.getStatus(), fileName));
 					} catch (Exception e) {
-						e.printStackTrace();
+			        	errorLogger.error(e.getMessage(), e.getCause());
 					}
 					
 					count++;
 				}
 
 				if (count > 0) {
-					System.out.println("Done");
+					logger.info(this.getClass().getName() + " Done");
 				} else {
-					System.out.println("No data.");
+					logger.info(this.getClass().getName() + " No data.");
 				}
 			} else {
-				System.out.println("No data.");
+				logger.info(this.getClass().getName() + " No data.");
 			}
         } catch(Exception e) {
-			e.printStackTrace();
+        	errorLogger.error(e.getMessage(), e.getCause());
         }
 	}
 }

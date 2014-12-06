@@ -43,7 +43,6 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         msgThrdSafeData.setNoOutData( false );
 
         MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "O", true);
-        logger.warn("O-MSG [{}]", new String(msg) );
         logger.warn("QNm = {}", ret.QNm);
 
         msgTX = (DataSourceTransactionManager)MsgBrokerSpringMain.sprCtx.getBean(DataSourceTransactionManager.class);
@@ -55,12 +54,17 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                 logger.warn("Getting trans_seq_no..");
 
                 TransactionStatus txs = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
-                TMisc misc = new TMisc();
-                misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
-                misc.setCreateDate( msgPsr.getString("CM.trans_date") );
-                splMap.spCmTransSeqNo( misc );
-                msgTX.commit(txs);
-                msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
+                try {
+                    TMisc misc = new TMisc();
+                    misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
+                    misc.setCreateDate( msgPsr.getString("CM.trans_date") );
+                    splMap.spCmTransSeqNo( misc );
+                    msgTX.commit(txs);
+                    msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
+                }
+                catch( Exception e ) {
+                    msgTX.commit(txs);
+                }
                 logger.warn("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
                 if( msgPsr.getString("CM.trans_seq_no").length() == 0 )
@@ -153,12 +157,17 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         try {
             try {
                 TransactionStatus txs = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
-                TMisc misc = new TMisc();
-                misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
-                misc.setCreateDate( msgPsr.getString("CM.trans_date") );
-                splMap.spCmTransSeqNo( misc );
-                msgTX.commit(txs);
-                msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
+                try {
+                    TMisc misc = new TMisc();
+                    misc.setOrgCd     ( msgPsr.getString("CM.org_cd")     );
+                    misc.setCreateDate( msgPsr.getString("CM.trans_date") );
+                    splMap.spCmTransSeqNo( misc );
+                    msgTX.commit(txs);
+                    msgPsr.setString("CM.trans_seq_no", misc.getTransSeqNo());
+                }
+                catch( Exception e ) {
+                    msgTX.commit(txs);
+                }
                 logger.debug("trans_seq_no = {}", msgPsr.getString("CM.trans_seq_no"));
 
                 if( msgPsr.getString("CM.trans_seq_no").length() == 0 )

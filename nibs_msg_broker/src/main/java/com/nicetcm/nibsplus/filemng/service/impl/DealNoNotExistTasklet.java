@@ -56,7 +56,7 @@ public class DealNoNotExistTasklet implements Tasklet {
 
             FileUtils.writeLines(writeFile, dealNoList);
 
-            jobContext.put("file.send.filename", fileName);
+            jobContext.put("file.send.filename", writeFile.getName());
         }
 
         return RepeatStatus.FINISHED;

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nicetcm.nibsplus.filemng.dao.SapmaMapper;
+import com.nicetcm.nibsplus.filemng.dao.ElandMapper;
 import com.nicetcm.nibsplus.filemng.model.TFnSapDetailVO;
 import com.nicetcm.nibsplus.filemng.model.TFnSapMasterVO;
 
@@ -14,7 +14,7 @@ public class SapDeItemProcessor implements ItemProcessor<TFnSapDetailVO, TFnSapD
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private SapmaMapper sapmaMapper;
+    private ElandMapper elandMapper;
 
     private String branchCd;
 
@@ -31,7 +31,7 @@ public class SapDeItemProcessor implements ItemProcessor<TFnSapDetailVO, TFnSapD
         paramTFnSapMasterVO.setBranchCd(tFnSapDetailVO.getBranchCd());
         paramTFnSapMasterVO.setMemberId(tFnSapDetailVO.getMemberId());
 
-        TFnSapMasterVO dbTFnSapMasterVO = sapmaMapper.selectTFnSapMaster(paramTFnSapMasterVO);
+        TFnSapMasterVO dbTFnSapMasterVO = elandMapper.selectTFnSapMaster(paramTFnSapMasterVO);
 
         if(dbTFnSapMasterVO != null && dbTFnSapMasterVO.getOfficeConfirm().equals("1")) {
             /* 마감완료일 경우, Skip */

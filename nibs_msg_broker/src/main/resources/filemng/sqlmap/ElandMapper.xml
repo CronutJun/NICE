@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http#{//}mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nicetcm.nibsplus.filemng.dao.ElandMapper">
+
+    <delete id="deleteTFnSapMaster" parameterType="com.nicetcm.nibsplus.filemng.model.FileMngParameterVO">
+        DELETE FROM OP.T_FN_ELAND_COUPON WHERE DEAL_DATE = #{dealDate} AND BRANCH_CD = #{branchCd}
+    </delete>
+
+    <select id="selectTFnSapMaster" parameterType="com.nicetcm.nibsplus.filemng.model.TFnSapMasterVO" resultType="com.nicetcm.nibsplus.filemng.model.TFnSapMasterVO">
+        SELECT OFFICE_CONFIRM
+        FROM   OP.T_FN_SAP_MASTER
+        WHERE      DEAL_DATE = #{dealDate}
+               AND BRANCH_CD = #{branchCd}
+               AND MEMBER_ID = #{memberId}
+    </select>
+    
+    <delete id="deleteTFnSapDetail" parameterType="com.nicetcm.nibsplus.filemng.model.FileMngParameterVO">
+        DELETE FROM OP.T_FN_SAP_DETAIL WHERE DEAL_DATE = #{dealDate} AND BRANCH_CD = #{branchCd}
+    </delete>
+
+    <delete id="deleteTFnElandCoupon" parameterType="com.nicetcm.nibsplus.filemng.model.FileMngParameterVO">
+        DELETE FROM OP.T_FN_ELAND_COUPON WHERE DEAL_DATE = #{dealDate} AND BRANCH_CD = #{branchCd}
+    </delete>
+
+    <select id="selectTFnElandCoupon" parameterType="com.nicetcm.nibsplus.filemng.model.TFnElandCouponVO" resultType="com.nicetcm.nibsplus.filemng.model.TFnElandCouponVO">
+        SELECT CONFIRM
+        FROM   OP.T_FN_ELAND_COUPON
+        WHERE      DEAL_DATE = #{dealDate}
+               AND BRANCH_CD = #{branchCd}
+    </select>
+    
+	<delete id="deleteElandSapMaster" parameterType="com.nicetcm.nibsplus.filemng.model.TFnSapDetailVO">
+		delete from OP.T_FN_SAP_MASTER
+		where
+			DEAL_DATE = #{dealDate}
+            and BRANCH_CD = #{branchCd}
+            and MEMBER_ID = #{memberId}
+	</delete>
+	
+	<insert id="insertElandSapMaster" parameterType="com.nicetcm.nibsplus.filemng.model.TFnSapDetailVO">
+        INSERT INTO OP.T_FN_SAP_MASTER(DEAL_DATE
+                                      ,BRANCH_CD
+                                      ,MEMBER_ID
+                                      ,MEMBER_NM
+                                      ,MEMBER_TYPE
+                                      ,CHECK_AMT
+                                      ,CASH_AMT
+                                      ,SELF_CUPON
+                                      ,ETC_CUPON
+                                      ,UPDATE_DATE)
+        VALUES (#{dealDate}
+               ,#{branchCd}
+               ,#{memberId}
+               ,#{memberNm}
+               ,#{memberType}
+               ,#{checkAmt}
+               ,#{cashAmt}
+               ,#{selfCupon}
+               ,#{etcCupon}
+               ,sysdate)
+	</insert>
+	
+	<delete id="deleteElandSapDetail" parameterType="com.nicetcm.nibsplus.filemng.model.TFnSapDetailVO">
+		delete from OP.T_FN_SAP_DETAIL
+		where
+			DEAL_DATE = #{dealDate}
+            and BRANCH_CD = #{branchCd}
+            and MEMBER_ID = #{memberId}
+            and CUPON_CD = #{cuponCd}
+	</delete>
+	
+	<insert id="insertElandSapDetail" parameterType="com.nicetcm.nibsplus.filemng.model.TFnSapDetailVO">
+        INSERT INTO OP.T_FN_SAP_DETAIL(DEAL_DATE
+                                   ,BRANCH_CD
+                                   ,MEMBER_ID
+                                   ,CUPON_CD
+                                   ,CUPON_NM
+                                   ,CUPON_TYPE
+                                   ,CUPON_AMT
+                                   ,UPDATE_DATE)
+        VALUES (#{dealDate}
+               ,#{branchCd}
+               ,#{memberId}
+               ,#{cuponCd}
+               ,#{cuponNm}
+               ,#{cuponType}
+               ,#{cuponAmt}
+               ,sysdate)
+	</insert>
+	
+	<delete id="deleteElandCoupon" parameterType="com.nicetcm.nibsplus.filemng.model.TFnSapDetailVO">
+		delete from OP.T_FN_ELAND_COUPON
+		where
+			DEAL_DATE = #{dealDate}
+            and BRANCH_CD = #{branchCd}
+            and COUPON_CD = #{couponCd}
+            and VOLUME_CD = #{volumeCd}
+	</delete>
+	
+	<insert id="insertElandCoupon" parameterType="com.nicetcm.nibsplus.filemng.model.TFnSapDetailVO">
+        INSERT INTO OP.T_FN_ELAND_COUPON(DEAL_DATE
+                                        ,BRANCH_CD
+                                        ,COUPON_CD
+                                        ,VOLUME_CD
+                                        ,QUANTITY
+                                        ,CONFIRM
+                                        ,INSERT_DATE
+                                        ,INSERT_UID)
+        VALUES (#{dealDate}
+               ,#{branchCd}
+               ,#{couponCd}
+               ,#{volumeCd}
+               ,#{quantity}
+               ,#{confirm}
+               ,sysdate
+               ,'SYSTEM')
+	</insert>
+	
+</mapper>

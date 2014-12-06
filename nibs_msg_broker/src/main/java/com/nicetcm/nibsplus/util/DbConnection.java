@@ -29,9 +29,9 @@ public class DbConnection {
     private static String passwd;
 
     static {
-        jdbc = NiceConfig.getProp("jdbc.op.url");
-        owner = NiceConfig.getProp("jdbc.op.username");
-        passwd = NiceConfig.getProp("jdbc.op.password");
+        jdbc = NiceConfig.getProp("jdbc.url");
+        owner = NiceConfig.getProp("jdbc.username");
+        passwd = NiceConfig.getProp("jdbc.password");
 
         System.out.println("▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼");
         System.out.println("JDBC: " + jdbc);

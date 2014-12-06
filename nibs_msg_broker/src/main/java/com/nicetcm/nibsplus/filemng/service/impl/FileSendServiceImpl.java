@@ -97,6 +97,8 @@ public class FileSendServiceImpl implements FileSendService {
 			if (argv[0].length() == 3) {
 				szTransDate = NibsBatchUtil.SysDate();
 				szOrgCd = argv[0];
+			} else if (argv[0].length() == 8) {
+				szTransDate = argv[0];
 			} else if (argv[0].length() == 11) {
 				szTransDate = argv[0].substring(0, 8);
 
@@ -445,7 +447,7 @@ public class FileSendServiceImpl implements FileSendService {
 			hDataType = StringUtils.defaultIfEmpty(rowValues[0], "");
 			hDealDate = StringUtils.defaultIfEmpty(rowValues[1], "");
 			hDealTime = StringUtils.defaultIfEmpty(rowValues[2], "");
-			hAccountNo = StringUtils.defaultIfEmpty(rowValues[3], "");
+			hAccountNo = StringUtils.defaultIfEmpty(rowValues[3], "").trim(); // 복호화 부분에서 공백, 원 데이터가 공백이 추가됨
 			hMacNo = StringUtils.defaultIfEmpty(rowValues[4], "");
 			hDealAmt = StringUtils.defaultIfEmpty(rowValues[5], "");
 			hNiceDealAmt = StringUtils.defaultIfEmpty(rowValues[6], "");
@@ -3498,7 +3500,9 @@ public class FileSendServiceImpl implements FileSendService {
 					while(true) {
 						if( nMainIdex == nQryIndex ) {
 							// fprintf( fileWriter, "0%-*s%-*s%-*s%-*s%-*s%-*s%*s\n",1, "1", 3,hCol_3, 4,hCol_4, 2,hCol_5, 20,hCol_6, 80,hCol_7, 39, " " );
-							fileWriter.write(String.format("0%1s%-3s%-4s%-2s%-20s%-80s%39s\n", "1",hCol_3,hCol_4,hCol_5,hCol_6,hCol_7, " " ));
+							// fileWriter.write(String.format("0%1s%-3s%-4s%-2s%-20s%-80s%39s\n", "1",hCol_3,hCol_4,hCol_5,hCol_6,hCol_7, " " ));
+							fileWriter.write(String.format("0%1s%-3s%-4s%-2s%-"+minHanCount(20, hCol_6)+"s%-"+minHanCount(80, hCol_7)+"s%39s\n", "1",hCol_3,hCol_4,hCol_5,hCol_6,hCol_7, " " ));
+							
 							break;
 						} else {
 							// fprintf( fileWriter, "00%*s\n", 148, " ");
@@ -3523,14 +3527,15 @@ public class FileSendServiceImpl implements FileSendService {
 
 			} else { /* 세부분류 일경우 포맷 */
 				String szImsi1, szImsi2;
-				szImsi1 = String.format("%02.02f", Float.parseFloat(hCol_8) );
-				szImsi2 = String.format("%02.02f", Float.parseFloat(hCol_9) );
+				szImsi1 = String.format("%05.02f", Float.parseFloat(hCol_8) );
+				szImsi2 = String.format("%05.02f", Float.parseFloat(hCol_9) );
 
 				if( nSubIdex  <= nQryIndex ) {
 					while(true) {
 						if( nSubIdex == nQryIndex ) {
 							// fprintf( fileWriter, "1%-*s%-*s%-*s%-*s%-*s%07d%0*s%0*s%*s\n",3,hCol_2, 4,hCol_3, 1, "1", 2,hCol_5, 20,hCol_6, Integer.parseInt(hCol_7), 5, szImsi1, 5, szImsi2, 102, " " );
-							fileWriter.write(String.format("1%3s%-4s%-1s%-2s%-20s%07d%5s%5s%102s\n",hCol_2,hCol_3, "1",hCol_5,hCol_6, Integer.parseInt(hCol_7), szImsi1, szImsi2, " " ));
+							// fileWriter.write(String.format("1%3s%-4s%-1s%-2s%-20s%07d%5s%5s%102s\n",hCol_2,hCol_3, "1",hCol_5,hCol_6, Integer.parseInt(hCol_7), szImsi1, szImsi2, " " ));
+							fileWriter.write(String.format("1%3s%-4s%-1s%-2s%-"+minHanCount(20, hCol_6)+"s%07d%5s%5s%102s\n",hCol_2,hCol_3, "1",hCol_5,hCol_6, Integer.parseInt(hCol_7), szImsi1, szImsi2, " " ));
 							break;
 						} else {
 							// fprintf( fileWriter, "1       0%*s\n", 141, " ");
@@ -3575,6 +3580,10 @@ public class FileSendServiceImpl implements FileSendService {
 	
 	private Object GetCurTime() {
 		return new SimpleDateFormat("HHmmss").format(Calendar.getInstance().getTime());
+	}
+	
+	private int minHanCount(int cnt, String str) {
+		return cnt - str.replaceAll("[^ㄱ-힣]", "").length();
 	}
 
 }

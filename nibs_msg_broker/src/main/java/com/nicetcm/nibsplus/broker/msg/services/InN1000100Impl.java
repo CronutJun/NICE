@@ -315,10 +315,10 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNTGRec.setDealTimeType( parsed.getString("deal_time_type") );
         fnNTGRec.setJoinOrgDealNo( parsed.getString("join_org_deal_no") );
         fnNTGRec.setNetOrgCd( parsed.getString("net_org_cd") );
-        fnNTGRec.setDealAmtCw54( parsed.getLong("cash_cnt_50000") * 50000);
-        fnNTGRec.setDealAmtCw15( parsed.getLong("cash_cnt_100000") * 100000);
-        fnNTGRec.setDealAmtCw13( parsed.getLong("cash_cnt_1000") * 1000);
-        fnNTGRec.setDealAmtCw53( parsed.getLong("cash_cnt_5000") * 5000);
+        fnNTGRec.setDealAmt50000( parsed.getLong("cash_cnt_50000") * 50000);
+        fnNTGRec.setDealAmt100000( parsed.getLong("cash_cnt_100000") * 100000);
+        fnNTGRec.setDealAmt1000( parsed.getLong("cash_cnt_1000") * 1000);
+        fnNTGRec.setDealAmt5000( parsed.getLong("cash_cnt_5000") * 5000);
         fnNTGRec.setInsertDate( safeData.getDSysDate() );
         fnNTGRec.setUpdateDate( safeData.getDSysDate() );
         fnNTGRec.setBrandOrgCd( parsed.getString("brand_org_cd") );

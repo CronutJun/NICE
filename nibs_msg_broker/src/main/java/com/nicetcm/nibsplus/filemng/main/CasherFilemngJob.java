@@ -1,13 +1,12 @@
 package com.nicetcm.nibsplus.filemng.main;
 
-import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -24,29 +23,36 @@ import com.nicetcm.nibsplus.filemng.service.impl.SFtpTransfer;
 @DisallowConcurrentExecution
 public class CasherFilemngJob implements org.quartz.Job {
 	
+	private Logger logger = Logger.getLogger(this.getClass());
+	private Logger errorLogger = Logger.getLogger("FilemngERROR");
+	
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		ApplicationContext applicationContext = (ApplicationContext)context.getMergedJobDataMap().get("applicationContext");
-		Properties config = applicationContext.getBean("config", Properties.class);
-
-        TransferVO transferVO = new TransferVO();
-        transferVO.setHost(config.getProperty("host.host"));
-        transferVO.setAvailableServerPort(Integer.parseInt(config.getProperty("host.availableServerPort")));
-        transferVO.setUserId(config.getProperty("host.userid"));
-        transferVO.setPassword(config.getProperty("host.password"));
-        transferVO.setRemotePath(config.getProperty("casher.remote.path"));
-        transferVO.setLocalPath(config.getProperty("casher.local.path"));
-
         try {
-			List<String> files = SFtpTransfer.getFileNames(transferVO, "CK_*.lst", "TK_*.lst"); // , "TR_*.lst"
+    		ApplicationContext applicationContext = (ApplicationContext)context.getMergedJobDataMap().get("applicationContext");
+    		Properties config = applicationContext.getBean("config", Properties.class);
+
+            TransferVO transferVO = new TransferVO();
+            transferVO.setHost(config.getProperty("host.host"));
+            transferVO.setAvailableServerPort(Integer.parseInt(config.getProperty("host.availableServerPort")));
+            transferVO.setUserId(config.getProperty("host.userid"));
+            transferVO.setPassword(config.getProperty("host.password"));
+            transferVO.setRemotePath(config.getProperty("casher.remote.path"));
+            transferVO.setLocalPath(config.getProperty("casher.local.path"));
+
+			List<String> files = SFtpTransfer.getFileNames(transferVO, "CK_*.lst", "TK_*.lst", "TR_*.lst"); 
 			int count = 0;
 			
 			JobLauncher jobLauncher = (JobLauncher) applicationContext.getBean("jobLauncher");
 			// ex) D:/pjt/old_nibs/nibsif/data_sample/casher_file/CK_09260000_001_Z023.txt
 			// File[] files = new File(config.getProperty("casher.local.path")).listFiles(new CasherFilenameFilter());
 
+			logger.info(this.getClass().getName() + " execute...");
+			
 			if (files != null) {
 				for (String fileName : files) {
+					logger.info(String.format("%s %s", this.getClass().getName(), fileName));
+					
 					try {
 						// JobParameters jobParameters = new JobParametersBuilder().addString("pid", "10").toJobParameters();
 						Map<String, JobParameter> parameters = new LinkedHashMap<String, JobParameter>();
@@ -70,37 +76,24 @@ public class CasherFilemngJob implements org.quartz.Job {
 		
 						SFtpTransfer.deleteFile(transferVO, fileName);
 						
-						System.out.println("Exit Status : " + execution.getStatus());
+						logger.info(String.format("%s Exit Status : %s - %s", this.getClass().getName(), execution.getStatus(), fileName));
 					} catch (Exception e) {
-						e.printStackTrace();
+			        	errorLogger.error(e.getMessage(), e.getCause());
 					}
 					
 					count++;
 				}
 
 				if (count > 0) {
-					System.out.println("Done");
+					logger.info(this.getClass().getName() + " Done");
 				} else {
-					System.out.println("No data.");
+					logger.info(this.getClass().getName() + " No data.");
 				}
 			} else {
-				System.out.println("No data.");
+				logger.info(this.getClass().getName() + " No data.");
 			}
         } catch(Exception e) {
-			e.printStackTrace();
+        	errorLogger.error(e.getMessage(), e.getCause());
         }
-	}
-
-	class CasherFilenameFilter implements FilenameFilter {
-		/*private String date = null;
-		
-		public ElandFilenameFilter(String date) {
-			this.date = date;
-		}*/
-		
-		@Override
-		public boolean accept(File dir, String name) {
-			return name.toUpperCase().toUpperCase().endsWith(".LST");
-		}
 	}
 }

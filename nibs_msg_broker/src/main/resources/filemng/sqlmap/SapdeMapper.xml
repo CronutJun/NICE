@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nicetcm.nibsplus.filemng.dao.SapdeMapper">
-    <delete id="deleteTFnSapDetail" parameterType="com.nicetcm.nibsplus.filemng.model.FileMngParameterVO">
-        DELETE FROM OP.T_FN_SAP_DETAIL WHERE DEAL_DATE = #{dealDate} AND BRANCH_CD = #{branchCd}
-    </delete>
-</mapper>

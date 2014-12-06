@@ -14,10 +14,10 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 
-@Service("outN5004600")
-public class OutN5004600Impl extends OutMsgHandlerImpl {
+@Service("out03001130")
+public class Out03001130Impl extends OutMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(OutN5004600Impl.class);
+    private static final Logger logger = LoggerFactory.getLogger(Out03001130Impl.class);
 
     @Autowired private StoredProcMapper splMap;
 
@@ -26,22 +26,11 @@ public class OutN5004600Impl extends OutMsgHandlerImpl {
 
         String command = "";
 
-        if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.ELAND_CODE) ) {
-            /*
-             * File처리 ...
-             *
-             */
-            if( parsed.getString("work_cd").equals(MsgBrokerConst.WORKCD_COUPON_ELAND)
-            &&  parsed.getString("proc_cd").equals(MsgBrokerConst.PROCCD_AUTOSEND) ) {
-                command = "ivkAutoSend OrgSend CLOSE_COUPON 0EL";
-            }
-
-        }
-        else if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.KFTC_CODE) ) {
-            if( parsed.getString("work_cd").equals(MsgBrokerConst.WORKCD_DIFF_KFTC)
-            &&  parsed.getString("proc_cd").equals(MsgBrokerConst.PROCCD_FILESEND) ) {
-                command = "ivkAutoSend FilemngService FILE_SEND_0GV SH 000";
-            }
+        if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.TAXRF_CODE) ) {
+            command = String.format("ivkAutoSend SqlService SP_FN_KTIS_CLOSE SH %s^%s^%s^%s^%s",
+                    parsed.getString("inq_date"), parsed.getString("CM.org_cd"),
+                    parsed.getString("brch_cd"),  parsed.getString("mac_no"),
+                    parsed.getString("close_type") );
         }
 
         /**

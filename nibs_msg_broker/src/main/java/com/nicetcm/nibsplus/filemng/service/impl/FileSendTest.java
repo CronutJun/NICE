@@ -24,6 +24,9 @@ public class FileSendTest {
 		// System.out.println(String.format("%010d", 15));
 		// System.out.println(String.format("%02.02f", 19.6543));
 
+		System.out.println("2342343ㅁㄴㅇㄻㄴㅇㄹasdfasf".replaceAll("[^ㄱ-핳]", ""));
+		
+		/*
 		System.out.println(String.format("S%s%3s", " ", " "));
 		System.out.println(String.format("%s/%s", " ", " "));
 		System.out.println(String.format("File 생성 Start [%s]-TransDate[%s], OrgCd[%s]\n", " ", " ", " "));
@@ -255,5 +258,6 @@ public class FileSendTest {
 		System.out.println(String.format("1       0%141s\n", " "));
 		System.out.println(String.format("00%148s\n", " "));
 		System.out.println(String.format("1       0%141s\n", " "));
+		*/
 	}
 }

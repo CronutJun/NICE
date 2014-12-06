@@ -3,9 +3,9 @@ package com.nicetcm.nibsplus.broker.msg.jmx;
 /**
  * Copyright 2014 The NIBS+ Project
  *
- * AMSBrokerManager
+ * MsgBrokerManager
  *
- *  AMSBroker 서버의 관리 ( 셧다운 및 기타 자원관리 )
+ *  MsgBroker 서버의 관리 ( 셧다운 및 기타 자원관리 )
  *
  *
  * @author  K.D.J
@@ -31,6 +31,7 @@ import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerClassLoader;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConsumer;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerMain;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerShutdown;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerSpringMain;
@@ -39,7 +40,27 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
 
     private static final Logger logger = LoggerFactory.getLogger(MsgBrokerManager.class);
 
+    private static final String BROKER_NOTIFY = "msgBroker.notify";
+    private static long seqForNoti = 1;
+
     private long sequenceNumber = 1;
+
+    //public static void sendManagerStatus(String msg) throws Exception{
+    public void sendManagerStatus(String msg) throws Exception {
+
+        //MsgBrokerManager mbean = MsgBrokerMain.getMBean();
+        //Notification n = new Notification(BROKER_NOTIFY, mbean, seqForNoti, msg);
+        //mbean.sendNotification(n);
+        Notification n = new Notification(BROKER_NOTIFY, this, seqForNoti, msg);
+        sendNotification(n);
+
+        seqForNoti++;
+    }
+
+    public MsgBrokerManager() {
+        super();
+        MsgBrokerMain.setMBean(this);
+    }
 
     @Override
     public String shutdownServer(String operation) {
@@ -253,18 +274,25 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
 
     @Override
     public MBeanNotificationInfo[] getNotificationInfo() {
+
         String[] types = new String[] {
                             AttributeChangeNotification.ATTRIBUTE_CHANGE
                          };
         String name = AttributeChangeNotification.class.getName();
         String description = "An attribute of this MBean has changed";
         MBeanNotificationInfo info = new MBeanNotificationInfo(types, name, description);
-        return new MBeanNotificationInfo[] { info };
+
+        String types1[] = new String[] { BROKER_NOTIFY };
+        MBeanNotificationInfo info1 = new MBeanNotificationInfo(types1, Notification.class.getName(), "MessageBroker notification");
+
+        return new MBeanNotificationInfo[] { info, info1 };
     }
 
     @Override
     public String reattachConsumer(String consumerName) {
         try {
+           //MsgBrokerMain.setMBean(this);
+           sendManagerStatus(consumerName);
             if( consumerName != null && consumerName.equals("ALL") ) {
                 for( Entry<String, MsgBrokerProducer> e: MsgBrokerProducer.producers.entrySet()) {
                     e.getValue().close();

@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.nicetcm.nibsplus.filemng.dao.CouponMapper;
+import com.nicetcm.nibsplus.filemng.dao.ElandMapper;
 import com.nicetcm.nibsplus.filemng.model.TFnElandCouponVO;
 
 public class CouponItemProcessor implements ItemProcessor<TFnElandCouponVO, TFnElandCouponVO>
@@ -13,7 +13,7 @@ public class CouponItemProcessor implements ItemProcessor<TFnElandCouponVO, TFnE
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private CouponMapper couponMapper;
+    private ElandMapper elandMapper;
 
     private String branchCd;
 
@@ -25,7 +25,7 @@ public class CouponItemProcessor implements ItemProcessor<TFnElandCouponVO, TFnE
             return null;
         }
 
-        TFnElandCouponVO dbTFnElandCouponVO = couponMapper.selectTFnElandCoupon(tFnElandCouponVO);
+        TFnElandCouponVO dbTFnElandCouponVO = elandMapper.selectTFnElandCoupon(tFnElandCouponVO);
 
         if(dbTFnElandCouponVO != null && dbTFnElandCouponVO.getConfirm().equals("Y")) {
             /* 마감완료일 경우, Skip */

@@ -8,19 +8,8 @@
         </layout>
     </appender>
 
-    <appender name="root" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/share1/nibs_log/batch/scheduler_root.log"/>
-        <param name="Append" value="true"/>
-        <param name="Encoding" value="EUC-KR" />
-        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
-        <layout class="org.apache.log4j.PatternLayout">
-              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
-        </layout>
-        <!-- <filter class="com.skylife.ots.foundation.log.SqlFilter"></filter> -->
-    </appender>
-
-    <appender name="sqltime" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/share1/nibs_log/batch/scheduler_sqltime.log"/>
+    <appender name="root" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="scheduler_root.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
@@ -29,8 +18,8 @@
         </layout>
     </appender>
 
-    <appender name="scheduler" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/share1/nibs_log/batch/scheduler_app.log"/>
+    <appender name="orgsend_app" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="orgsend_app.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
@@ -39,8 +28,8 @@
         </layout>
     </appender>
 
-    <appender name="orgsend" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="file" value="/share1/nibs_log/batch/orgsend_app.log"/>
+    <appender name="orgsend_error" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="orgsend_error.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
@@ -49,22 +38,91 @@
         </layout>
     </appender>
 
-    <logger name="com.nicetcm.nibsplus.scheduler">
-        <level value="debug" />
-        <appender-ref ref="scheduler"/>
-    </logger>
+    <appender name="sqlservice_app" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="sqlservice_app.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="sqlservice_error" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="sqlservice_error.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="filemng_app" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="filemng_app.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="filemng_error" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="filemng_error.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="ivkautosend" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="ivkautosend.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
 
     <logger name="com.nicetcm.nibsplus.orgsend">
-        <level value="debug" />
-        <appender-ref ref="orgsend"/>
+        <level value="info" />
+        <appender-ref ref="orgsend_app"/>
     </logger>
 
-    <logger name="com.bogogt">
-        <level value="info" />
+    <logger name="OrgSendERROR">
+        <level value="error" />
+        <appender-ref ref="orgsend_app"/>
+        <appender-ref ref="orgsend_error"/>
     </logger>
 
-    <logger name="java.sql">
+    <logger name="com.nicetcm.nibsplus.sqlservice">
         <level value="info" />
+        <appender-ref ref="sqlservice_app"/>
+    </logger>
+
+    <logger name="SqlServiceERROR">
+        <level value="error" />
+        <appender-ref ref="sqlservice_app"/>
+        <appender-ref ref="sqlservice_error"/>
+    </logger>
+
+    <logger name="com.nicetcm.nibsplus.filemng">
+        <level value="info" />
+        <appender-ref ref="filemng_app"/>
+    </logger>
+
+    <logger name="FilemngERROR">
+        <level value="error" />
+        <appender-ref ref="filemng_error"/>
+    </logger>
+
+    <logger name="ivkAutoSend">
+        <level value="info" />
+        <appender-ref ref="ivkautosend"/>
     </logger>
 
     <logger name="org.springframework">
@@ -86,18 +144,19 @@
     <logger name="jdbc.resultset" additivity="false">
         <level value="WARN" />
     </logger>
-
-    <logger name="jdbc.sqltiming" additivity="false">
-        <level value="INFO" />
-        <appender-ref ref="sqltime"/>
-    </logger>
-
+    
     <logger name="jdbc.connection" additivity="false">
         <level value="WARN" />
     </logger>
 
+    <logger name="jdbc.sqltiming" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="root"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+
     <root>
-        <priority value="info" />
+        <priority value="warn" />
         <appender-ref ref="root"/>
         <appender-ref ref="consoleAppender"/>
     </root>

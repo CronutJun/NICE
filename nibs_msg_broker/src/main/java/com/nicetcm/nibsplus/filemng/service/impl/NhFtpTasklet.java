@@ -1,7 +1,5 @@
 package com.nicetcm.nibsplus.filemng.service.impl;
 
-import java.io.File;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobParameter;
@@ -12,9 +10,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.nicetcm.nibsplus.filemng.common.FileMngException;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
-import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
 /**
  * Sap Master Ftp Task (STEP1)
@@ -163,7 +159,7 @@ public class NhFtpTasklet implements Tasklet {
         transferVO.setFileName(fileName);
 
         try {
-	        jobParameters.getParameters().put("nh.file.name", new JobParameter(getFile(transferVO).getAbsolutePath()));
+	        jobParameters.getParameters().put("nh.file.name", new JobParameter(SFtpTransfer.getFile(transferVO).getAbsolutePath()));
         } catch(Exception e) {
         	logger.error(e.getMessage());
         }
@@ -171,7 +167,7 @@ public class NhFtpTasklet implements Tasklet {
         return RepeatStatus.FINISHED;
     }
     
-    private File getFile(TransferVO transferVO) throws FileMngException {
+    /*private File getFile(TransferVO transferVO) throws FileMngException {
     	if (findBackupFile(transferVO.getLocalPath(), transferVO.getFileName()).isFile()) {
             throw new FileMngException(ExceptionType.VM_STOP, "이미 처리된 파일입니다.");
     	}
@@ -181,5 +177,5 @@ public class NhFtpTasklet implements Tasklet {
     
     private File findBackupFile(String path, String name) {
     	return new File(path, name.substring(0, name.length() - 4) + ".bak");
-    }
+    }*/
 }

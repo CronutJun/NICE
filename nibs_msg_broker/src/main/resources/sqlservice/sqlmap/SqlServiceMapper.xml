@@ -361,6 +361,14 @@
 	<select id="sp_update_site" statementType="CALLABLE">
 		{ call sp_update_site }
 	</select>
+	
+	<select id="sp_fn_nice_ts_insert" statementType="CALLABLE">
+		{ call sp_fn_nice_ts_insert }
+	</select>
+	
+	<select id="sp_fn_ktis_close" parameterType="map" statementType="CALLABLE">
+		{ call sp_fn_ktis_close(#{cond0}, #{cond1}, #{cond2}, #{cond3}, #{cond4},#{v_RtnOut,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
 
     <insert id="sp_ct_month_use_status_003_1">
     <![CDATA[
@@ -376,7 +384,7 @@
 		select 
 		  cnt.year_mon																							--YEAR_MON              
 		  ,nvl(SST.BRAND_org_cd,'003')                                                                                     --ORG_CD                
-		  ,nvl(SST.mng_BRANCH_cd,'0784')                                                                                     --BRANCH_CD              
+		  ,nvl(SST.mng_branch_cd,'0784')                                                                                     --branch_CD              
 		  ,cnt.mac_no                                                                                           --MAC_NO                
 		  ,nvl(SST.set_type,'99')                                                                                         --SET_TYPE              
 		  ,SITE.open_date                                                                                       --SET_DATE              
@@ -419,7 +427,7 @@
 		    , sysdate  -- insert_date                                                                           --INSERT_DATE     
 		    , '' --update_uid                                                                                   --UPDATE_UID      
 		    , sysdate  -- update_date                                                                                --UPDATE_DATE     
-		    , '' -- BRANCH_nm                                                                                    --BRANCH_NM        
+		    , '' -- branch_nm                                                                                    --branch_NM        
 		    /*,''                                                                                                 --SEQ  */
 		from
 		    (
@@ -481,7 +489,7 @@
 		          ,T_FN_NICE_MAC_ORG_DSUM BOOK
 		      where DSUM.deal_date between TO_CHAR(SYSDATE-25,'YYYYMM')||'01' AND TO_CHAR(LAST_DAY(SYSDATE-25),'YYYYMMDD')
 		      and DSUM.mac_no in
-		        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and BRANCH_cd = '9600' and join_cd = '003')
+		        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and branch_cd = '9600' and join_cd = '003')
 		      AND DSUM.DEAL_DATE = DEPO.DEAL_DATE(+)
 		      AND DSUM.MAC_NO = DEPO.MAC_NO(+)
 		      AND DEPO.ORG_CD(+) = '003'
@@ -500,15 +508,15 @@
 		    , T_CM_SITE     	SITE
 		where
 		 cnt.mac_no = MAC.mac_no
-		 AND MAC.ORG_CD = '096' AND MAC.BRANCH_CD = '9600'
+		 AND MAC.ORG_CD = '096' AND MAC.branch_CD = '9600'
 		 AND MAC.MAC_MODEL <> '7000'					-- 키오스크 제외
 		 AND MAC.ORG_CD = SITE.ORG_CD
-		 AND MAC.BRANCH_CD = SITE.BRANCH_CD
+		 AND MAC.branch_CD = SITE.branch_CD
 		 AND MAC.SITE_CD = SITE.SITE_CD
-		 AND SITE.ORG_CD = SST.ORG_CD(+)
-		 AND SITE.BRANCH_CD = SST.BRANCH_CD(+)
-		 AND SITE.SITE_CD = SST.SITE_CD(+)
-		 and sst.org_Cd(+) = '096' and sst.BRANCH_cd(+) = '9600'
+		 AND mac.ORG_CD = SST.ORG_CD(+)
+		 AND mac.branch_CD = SST.branch_CD(+)
+		 AND mac.mac_no = SST.mac_no(+)
+		  and sst.org_Cd(+) = '096' and sst.branch_cd(+) = '9600'
 	]]>
     </insert>
     
@@ -524,47 +532,47 @@
 		, ORG_SEND_YN, INSERT_UID, INSERT_DATE, UPDATE_UID, UPDATE_DATE, BRANCH_NM  /*, SEQ */
 		)
 		select 
-		  cnt.year_mon																			--YEAR_MON              
-		  ,'003'			                                                                                    --ORG_CD                
-		  ,'0000'			                                                                                    --BRANCH_CD              
-		  ,'0000'	                                                                                            --MAC_NO                
-		  ,'99'			                                                                                        --SET_TYPE              
+		  cnt.year_mon                                      --YEAR_MON              
+		  ,'003'                                                                                          --ORG_CD                
+		  ,'0000'                                                                                         --branch_CD              
+		  ,'0000'                                                                                             --MAC_NO                
+		  ,'99'                                                                                             --SET_TYPE              
 		  ,'20130801'                                                                                       --SET_DATE              
 		  , to_char(last_day(sysdate-25),'dd')                                                      --USE_DAY               
 		  ,'0' mONTH_FEE                                                                                        --MONTH_FEE              
 		  ,'2' booth_type                                                                                       --BOOTH_TYPE             
 		  ,sum(nvl(kbTimeDealCnt,0) + nvl(kbOtDealCnt,0)                            -- 자행인출건수                  
 		      + nvl(otherTimeDealCnt,0) + nvl(otherOtDealCnt,0))                 -- 타행인출건수                  인출총건수                          --USE_CNT_TOTAL_WITHDRAW
-		      																
+		                                      
 		  ,sum(kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt      -- 자행이체건수                  
-		      +otheraTimeDealCnt+otheraOtDealCnt)                                -- 타행이체건수                  이체총건수       	                --USE_CNT_TOTAL_TRANSFER 
-		      																
+		      +otheraTimeDealCnt+otheraOtDealCnt)                                -- 타행이체건수                  이체총건수                         --USE_CNT_TOTAL_TRANSFER 
+		                                      
 		  , sum(nvl(CNT.DEPOCNT,0))                                         --입금총건수                          --USE_CNT_TOTAL_DEPOSIT                                               
-		      																
+		                                      
 		  , sum(kbTimeDealCnt + kbOtDealCnt                                         -- 자행인출건수                   
 		      +otherTimeDealCnt+otherOtDealCnt                                  -- 타행인출건수                   
 		      +kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt  -- 자행이체건수                   
 		      +otheraTimeDealCnt+otheraOtDealCnt                                -- 타행이체건수                   
-		      +nvl(CNT.DEPOCNT,0) )                                                 -- 자행입금건수                   총합계		                        --USE_CNT_TOTAL_SUM       
-		      																
-		  , sum(kbTimeDealCnt + kbOtDealCnt) 									--자행인출건수                        --USE_CNT_SAME_WITHDRAW   
+		      +nvl(CNT.DEPOCNT,0) )                                                 -- 자행입금건수                   총합계                           --USE_CNT_TOTAL_SUM       
+		                                      
+		  , sum(kbTimeDealCnt + kbOtDealCnt)                  --자행인출건수                        --USE_CNT_SAME_WITHDRAW   
 		  , sum(kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt) --자행이체건수                        --USE_CNT_SAME_TRANSFER   
-		  , sum(nvl(CNT.DEPOCNT,0)) 												--자행입금건수                        --USE_CNT_SAME_DEPOSIT    
+		  , sum(nvl(CNT.DEPOCNT,0))                         --자행입금건수                        --USE_CNT_SAME_DEPOSIT    
 		  , sum(kbTimeDealCnt + kbOtDealCnt                                         -- 자행인출건수                
 		    + kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt   -- 자행이체건수                
-		    + nvl(CNT.DEPOcnt,0))                                                -- 자행입금건수                자행총건수     					    --USE_CNT_SAME_SUM               																
-		  , sum(otherTimeDealCnt+otherOtDealCnt) 								--타행인출건수     				    --USE_CNT_DIFF_WITHDRAW      
-		  , sum(otheraTimeDealCnt+otheraOtDealCnt) 								--타행이체건수  			            --USE_CNT_DIFF_TRANSFER      
-		  , 0 																--타행입금건수                        --USE_CNT_DIFF_DEPOSIT       
+		    + nvl(CNT.DEPOcnt,0))                                                -- 자행입금건수                자행총건수                   --USE_CNT_SAME_SUM                                              
+		  , sum(otherTimeDealCnt+otherOtDealCnt)                --타행인출건수                --USE_CNT_DIFF_WITHDRAW      
+		  , sum(otheraTimeDealCnt+otheraOtDealCnt)                --타행이체건수                    --USE_CNT_DIFF_TRANSFER      
+		  , 0                                 --타행입금건수                        --USE_CNT_DIFF_DEPOSIT       
 		  , sum(otherTimeDealCnt+otherOtDealCnt+ otheraTimeDealCnt+otheraOtDealCnt) --타행총건수                       --USE_CNT_DIFF_SUM           
-		  , sum(nvl(CNT.BOOKcnt,0)) 												--통장정리건수                        --BANKBOOK_UPDATE_CNT        
+		  , sum(nvl(CNT.BOOKcnt,0))                         --통장정리건수                        --BANKBOOK_UPDATE_CNT        
 		  --cashsTimeDealCnt+cashsOtDealCnt 현금서비스건수_당타행구분안됨,                                                  
 		  --kbTimeDealCnt + kbOtDealCnt+ kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt                    
 		  --+otherTimeDealCnt+otherOtDealCnt+otheraTimeDealCnt+otheraOtDealCnt+cashsTimeDealCnt+cashsOtDealCnt              
 		  --거래총건수,                                                                                                       
-			--kbTimeBankFee+kbajTimeBankFee+kbatTimeBankFee 자행시간내수수료,                                               
-			--kbOtBankFee+kbajOtBankFee+kbatOtBankFee 자행시간외수수료,                                                     
-			, sum(kbTimeBankFee+kbOtBankFee+kbajTimeBankFee+kbajOtBankFee+kbatTimeBankFee+kbatOtBankFee) --자행수수료  --EARNED_FEE_IBK              
+		  --kbTimeBankFee+kbajTimeBankFee+kbatTimeBankFee 자행시간내수수료,                                               
+		  --kbOtBankFee+kbajOtBankFee+kbatOtBankFee 자행시간외수수료,                                                     
+		  , sum(kbTimeBankFee+kbOtBankFee+kbajTimeBankFee+kbajOtBankFee+kbatTimeBankFee+kbatOtBankFee) --자행수수료  --EARNED_FEE_IBK              
 		  , sum( ( (otherTimeCustFee + otherOtCustFee)                                                                           
 		        -(otherTimeBankFee + otherOtBankFee) )                                                                      
 		        + ( (otheraTimeCustFee + otheraOtCustFee)                                                                                     
@@ -576,7 +584,7 @@
 		    , sysdate  -- insert_date                                                                           --INSERT_DATE     
 		    , '' --update_uid                                                                                   --UPDATE_UID      
 		    , sysdate  -- update_date                                                                                --UPDATE_DATE     
-		    , '' -- BRANCH_nm                                                                                    --BRANCH_NM        
+		    , '' -- branch_nm                                                                                    --branch_NM        
 		/*    ,''                                                                                                 --SEQ             */
 		    /*
 		    ( (otherTimeCustFee + otherOtCustFee)
@@ -648,7 +656,7 @@
 		          ,T_FN_NICE_MAC_ORG_DSUM BOOK
 		      where DSUM.deal_date between TO_CHAR(SYSDATE-25,'YYYYMM')||'01' AND TO_CHAR(LAST_DAY(SYSDATE-25),'YYYYMMDD')
 		      and DSUM.mac_no in
-		        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and BRANCH_cd = '9600' and join_cd = '0BK')
+		        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and branch_cd = '9600' and join_cd = '0BK')
 		      AND DSUM.DEAL_DATE = DEPO.DEAL_DATE(+)
 		      AND DSUM.MAC_NO = DEPO.MAC_NO(+)
 		      AND DEPO.ORG_CD(+) = '003'

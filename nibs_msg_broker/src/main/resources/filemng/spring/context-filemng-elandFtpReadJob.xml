@@ -16,6 +16,7 @@
     <bean id="sapMaItemProcessor" class="com.nicetcm.nibsplus.filemng.service.impl.SapMaItemProcessor" scope="step">
         <property name="branchCd" value="#{jobParameters['branchCd']}" />
     </bean>
+    <bean id="db2SapMaItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.ElandSapMasterItemWriter"></bean>
 
      <!-- Sap Detail -->
     <bean id="sapDeFtpTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.SapDeFtpTasklet" />
@@ -23,6 +24,7 @@
     <bean id="sapDeItemProcessor" class="com.nicetcm.nibsplus.filemng.service.impl.SapDeItemProcessor" scope="step">
         <property name="branchCd" value="#{jobParameters['branchCd']}" />
     </bean>
+    <bean id="db2SapDeItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.ElandSapDetailItemWriter"></bean>
 
     <!-- Coupon -->
     <bean id="couponFtpTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.CouponFtpTasklet" />
@@ -30,8 +32,9 @@
     <bean id="couponItemProcessor" class="com.nicetcm.nibsplus.filemng.service.impl.CouponItemProcessor" scope="step">
         <property name="branchCd" value="#{jobParameters['branchCd']}" />
     </bean>
+    <bean id="db2CouponItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.ElandCouponItemWriter"></bean>
 
-    <batch:job id="elandFtpReadJob">
+    <batch:job id="sapMasterJob">
     	<!-- Sap Master -->
         <batch:step id="getSapMaFtp" next="dbLoadSapMa">
             <tasklet ref="sapMaFtpTasklet" />
@@ -45,10 +48,12 @@
                 </batch:chunk>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="fileRenameSapMa" next="getSapDeFtp">
+        <batch:step id="fileRenameSapMa">
             <tasklet ref="fileRenameTasklet" />
         </batch:step>
+    </batch:job>
         
+    <batch:job id="sapDetailJob">
         <!-- Sap Detail -->
         <batch:step id="getSapDeFtp" next="dbLoadSapDe">
             <tasklet ref="sapDeFtpTasklet" />
@@ -62,10 +67,12 @@
                 </batch:chunk>
             </batch:tasklet>
         </batch:step>
-        <batch:step id="fileRenameSapDe" next="getCouponFtp">
+        <batch:step id="fileRenameSapDe">
             <tasklet ref="fileRenameTasklet" />
         </batch:step>
+    </batch:job>
         
+    <batch:job id="couponJob">
         <!-- Coupon -->
         <batch:step id="getCouponFtp" next="dbLoadCoupon">
             <tasklet ref="couponFtpTasklet" />
@@ -115,40 +122,6 @@
             </bean>
         </property>
     </bean>
-
-    <bean id="db2SapMaItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
-        <property name="dataSource" ref="dataSource_OP" />
-        <property name="sql">
-            <value>
-            <![CDATA[
-                INSERT INTO OP.T_FN_SAP_MASTER(DEAL_DATE
-                                              ,BRANCH_CD
-                                              ,MEMBER_ID
-                                              ,MEMBER_NM
-                                              ,MEMBER_TYPE
-                                              ,CHECK_AMT
-                                              ,CASH_AMT
-                                              ,SELF_CUPON
-                                              ,ETC_CUPON
-                                              ,UPDATE_DATE)
-                VALUES (:dealDate
-                       ,:branchCd
-                       ,:memberId
-                       ,:memberNm
-                       ,:memberType
-                       ,:checkAmt
-                       ,:cashAmt
-                       ,:selfCupon
-                       ,:etcCupon
-                       ,sysdate)
-            ]]>
-            </value>
-        </property>
-        <!-- It will take care matching between object property and sql name parameter -->
-        <property name="itemSqlParameterSourceProvider">
-            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
-        </property>
-    </bean>
     
     <!-- Sap Detail -->
     <bean id="cvsSapDeFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
@@ -173,36 +146,6 @@
                     </bean>
                 </property>
             </bean>
-        </property>
-    </bean>
-
-    <bean id="db2SapDeItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
-        <property name="dataSource" ref="dataSource_OP" />
-        <property name="sql">
-            <value>
-            <![CDATA[
-                INSERT INTO OP.T_FN_SAP_DETAIL(DEAL_DATE
-                                           ,BRANCH_CD
-                                           ,MEMBER_ID
-                                           ,CUPON_CD
-                                           ,CUPON_NM
-                                           ,CUPON_TYPE
-                                           ,CUPON_AMT
-                                           ,UPDATE_DATE)
-                VALUES (:dealDate
-                       ,:branchCd
-                       ,:memberId
-                       ,:cuponCd
-                       ,:cuponNm
-                       ,:cuponType
-                       ,:cuponAmt
-                       ,sysdate)
-            ]]>
-            </value>
-        </property>
-        <!-- It will take care matching between object property and sql name parameter -->
-        <property name="itemSqlParameterSourceProvider">
-            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
         </property>
     </bean>
     
@@ -232,33 +175,4 @@
         </property>
     </bean>
 
-    <bean id="db2CouponItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
-        <property name="dataSource" ref="dataSource_OP" />
-        <property name="sql">
-            <value>
-            <![CDATA[
-                INSERT INTO OP.T_FN_ELAND_COUPON(DEAL_DATE
-                                                ,BRANCH_CD
-                                                ,COUPON_CD
-                                                ,VOLUME_CD
-                                                ,QUANTITY
-                                                ,CONFIRM
-                                                ,INSERT_DATE
-                                                ,INSERT_UID)
-                VALUES (:dealDate
-                       ,:branchCd
-                       ,:couponCd
-                       ,:volumeCd
-                       ,:quantity
-                       ,:confirm
-                       ,sysdate
-                       ,'SYSTEM')
-            ]]>
-            </value>
-        </property>
-        <!-- It will take care matching between object property and sql name parameter -->
-        <property name="itemSqlParameterSourceProvider">
-            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
-        </property>
-    </bean>
 </beans>

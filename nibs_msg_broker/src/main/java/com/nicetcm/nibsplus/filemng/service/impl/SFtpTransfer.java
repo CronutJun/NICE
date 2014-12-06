@@ -123,7 +123,7 @@ public class SFtpTransfer {
         try {
             try {
 	            sftp = new SFTPv3Client(connection = connect(transferVO));
-	            rfile = sftp.openFileWAppend(transferVO.getRemotePath() + "/" + transferVO.getFileName());
+	            rfile = sftp.createFile(transferVO.getRemotePath() + "/" + transferVO.getFileName());
 	
 	            lfile = new File(transferVO.getLocalPath(), transferVO.getFileName());
 	
@@ -176,7 +176,7 @@ public class SFtpTransfer {
     }
     
     public static void renameToBak(TransferVO transferVO, String filename) throws FileMngException, IOException {
-    	execCommand(transferVO, "mv " + transferVO.getRemotePath() + "/" + filename + " " + transferVO.getRemotePath() + "/" + filename.substring(filename.length()-4) + ".bak");
+    	execCommand(transferVO, "mv " + transferVO.getRemotePath() + "/" + filename + " " + transferVO.getRemotePath() + "/" + filename.substring(0, filename.length()-4) + ".bak");
     }
     
     public static void deleteFile(TransferVO transferVO, String filename) throws FileMngException, IOException {

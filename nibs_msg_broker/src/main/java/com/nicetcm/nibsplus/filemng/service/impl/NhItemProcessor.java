@@ -1,7 +1,5 @@
 package com.nicetcm.nibsplus.filemng.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -10,9 +8,8 @@ import com.nicetcm.nibsplus.filemng.model.TFnNiceTranNhDataVO;
 import com.nicetcm.nibsplus.filemng.model.TFnNiceTranNhHeaderVO;
 import com.nicetcm.nibsplus.filemng.model.TFnNiceTranNhTailVO;
 
-public class NhItemProcessor implements ItemProcessor<Object, Object>
-{
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+public class NhItemProcessor implements ItemProcessor<Object, Object> {
+    // private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private NhMapper nhMapper;

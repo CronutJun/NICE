@@ -37,7 +37,6 @@
 		    JOB_EXPLAIN ,
 		    CRON_EXPRESSION ,
 		    STATUS ,
-		    REAL_TIME_COMMAND ,
 		    <choose>
 		    	<when test='quartzNodeName neq "OrgSend" and param != null and param neq ""'>
 		    		UPPER(#{param}) AS REAL_TIME_COMMAND,

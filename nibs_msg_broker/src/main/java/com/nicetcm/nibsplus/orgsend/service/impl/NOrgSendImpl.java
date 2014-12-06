@@ -12,9 +12,8 @@ import org.apache.ibatis.session.ResultContext;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.log4j.Logger;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -45,7 +44,8 @@ import com.nicetcm.nibsplus.orgsend.service.NOrgSendService;
 @ContextConfiguration(locations = {"classpath:/uat/context-orgsend.xml"})
 public class NOrgSendImpl implements NOrgSendService
 {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	private Logger logger = Logger.getLogger(this.getClass());
+	private Logger errorLogger = Logger.getLogger("SqlServiceERROR");
 
     @Resource(name= "sqlSessionFactory_OP")
     private SqlSessionFactory sqlSessionFactory;
@@ -85,8 +85,7 @@ public class NOrgSendImpl implements NOrgSendService
     }
 
     @Override
-    public void execute(OrgSendExternalVO orgSendExternalVO) throws Exception
-    {
+    public void execute(OrgSendExternalVO orgSendExternalVO) throws Exception {
     	/*
         SqlSessionFactory sqlSessionFactory = null;
 
@@ -96,37 +95,29 @@ public class NOrgSendImpl implements NOrgSendService
             sqlSessionFactory = sqlSessionFactoryIN;
         }
         */
-
-        Configuration configuration = sqlSessionFactory.getConfiguration();
-
-        Collection<String> mappedStatementNames = configuration.getMappedStatementNames();
-
-        SqlSession session = null;
         try {
-            session = sqlSessionFactory.openSession(ExecutorType.REUSE, false);
+            Configuration configuration = sqlSessionFactory.getConfiguration();
+            Collection<String> mappedStatementNames = configuration.getMappedStatementNames();
+        	SqlSession session = sqlSessionFactory.openSession(ExecutorType.REUSE, false);
 
-            //logger.info("s " + Thread.currentThread().getName() + " length: " + mappedStatementNames.size());
-
-            OrgSendQryParamVO orgSendQryParamVO = new OrgSendQryParamVO();
-            orgSendQryParamVO.setOrgCd(orgSendExternalVO.getOrgCd());
-
-            OrgSendResultHandler orgSendResultHandler = new OrgSendResultHandler(orgSendExternalVO);
-
-            String perfix = orgSendExternalVO.getQueryName() + ".select";
-
-            if(mappedStatementNames.contains(perfix + orgSendExternalVO.getOrgCd())) {
-                session.select(perfix + orgSendExternalVO.getOrgCd(), orgSendQryParamVO, orgSendResultHandler);
-            } else {
-                session.select(perfix + "Default", orgSendQryParamVO, orgSendResultHandler);
-            }
-
-            //logger.info("e " + Thread.currentThread().getName());
-
+        	try {
+	            OrgSendQryParamVO orgSendQryParamVO = new OrgSendQryParamVO();
+	            orgSendQryParamVO.setOrgCd(orgSendExternalVO.getOrgCd());
+	
+	            OrgSendResultHandler orgSendResultHandler = new OrgSendResultHandler(orgSendExternalVO);
+	
+	            String perfix = orgSendExternalVO.getQueryName() + ".select";
+	
+	            if(mappedStatementNames.contains(perfix + orgSendExternalVO.getOrgCd())) {
+	                session.select(perfix + orgSendExternalVO.getOrgCd(), orgSendQryParamVO, orgSendResultHandler);
+	            } else {
+	                session.select(perfix + "Default", orgSendQryParamVO, orgSendResultHandler);
+	            }
+        	} finally {
+        		session.close();
+        	}
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-            session.close();
+        	errorLogger.error(e.getMessage(), e.getCause());
         }
     }
 

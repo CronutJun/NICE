@@ -13,11 +13,9 @@ import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.nicetcm.nibsplus.filemng.common.FileMngException;
-import com.nicetcm.nibsplus.filemng.dao.CouponMapper;
+import com.nicetcm.nibsplus.filemng.dao.ElandMapper;
 import com.nicetcm.nibsplus.filemng.model.FileMngParameterVO;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
-import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
 /**
  *
@@ -52,7 +50,7 @@ public class CouponFtpTasklet implements Tasklet {
     private String localPath;
 
     @Autowired
-    private CouponMapper couponMapper;
+    private ElandMapper elandMapper;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception
@@ -60,21 +58,10 @@ public class CouponFtpTasklet implements Tasklet {
         JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
         // ExecutionContext jobContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
 
-        final String prefix = "NICE_";
-        final String suffix = "_COUPON.dat";
-        final String delimiter = "_";
-
+        final String fileName = jobParameters.getString("fileName");
         final String yyyymmdd = jobParameters.getString("yyyymmdd");
-        final String branchCd = jobParameters.getString("branchCd");
-
-        String fileName = null;
-        if(branchCd != null) {
-            fileName = prefix + branchCd + delimiter + yyyymmdd + suffix;
-            //NICE_8228_20140913_COUPON.dat
-        } else {
-            fileName = prefix + yyyymmdd + suffix;
-            //NICE_20140917_COUPON.dat
-        }
+        String branchCd = fileName.substring(fileName.lastIndexOf("/") + 6);
+        branchCd = branchCd.startsWith(yyyymmdd) ? null : branchCd.substring(0, 4);
 
         logger.debug("■■■ Receive File Name: {}", fileName);
 
@@ -88,7 +75,7 @@ public class CouponFtpTasklet implements Tasklet {
         transferVO.setFileName(fileName);
 
         try {
-	        File file = getFile(transferVO);
+	        File file = SFtpTransfer.getFile(transferVO); // getFile(transferVO);
 	        
 	        logger.info("file.getAbsolutePath(): {}", file.getAbsolutePath());
 	        
@@ -97,7 +84,7 @@ public class CouponFtpTasklet implements Tasklet {
 	            fileMngParameterVO.setDealDate(yyyymmdd);
 	            fileMngParameterVO.setBranchCd(branchCd);
 	
-	            int affectRows = couponMapper.deleteTFnElandCoupon(fileMngParameterVO);
+	            int affectRows = elandMapper.deleteTFnElandCoupon(fileMngParameterVO);
 	
 	            logger.info("DELETE T_FN_SAP_DETAIL Affect Rows: {}", affectRows);
 	        }
@@ -110,7 +97,7 @@ public class CouponFtpTasklet implements Tasklet {
 	    return RepeatStatus.FINISHED;
     }
     
-    private File getFile(TransferVO transferVO) throws FileMngException {
+    /*private File getFile(TransferVO transferVO) throws FileMngException {
     	if (findBackupFile(transferVO.getLocalPath(), transferVO.getFileName()).isFile()) {
             throw new FileMngException(ExceptionType.VM_STOP, "이미 처리된 파일입니다.");
     	}
@@ -120,5 +107,5 @@ public class CouponFtpTasklet implements Tasklet {
     
     private File findBackupFile(String path, String name) {
     	return new File(path, name.substring(0, name.length() - 4) + ".bak");
-    }
+    }*/
 }

@@ -174,6 +174,8 @@ public interface SqlServiceMapper {
     public void sp_su_multireport_all_6();
 
     public void sp_update_site();
+
+    public void sp_fn_nice_ts_insert();
     
 	public void sp_cm_password_change_1();
 
@@ -280,5 +282,7 @@ public interface SqlServiceMapper {
     public void sp_insert_nice_lock_time();
 
     public void sp_job_tb_phs_push_svc_user();
+
+	public String sp_fn_ktis_close(Map<String, Object> paramObj);
 
 }

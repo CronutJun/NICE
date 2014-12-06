@@ -16,11 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.nicetcm.nibsplus.filemng.common.FileMngException;
-import com.nicetcm.nibsplus.filemng.dao.SapdeMapper;
+import com.nicetcm.nibsplus.filemng.dao.ElandMapper;
 import com.nicetcm.nibsplus.filemng.model.FileMngParameterVO;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
-import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
 /**
  *
@@ -76,7 +74,7 @@ public class SapDeFtpTasklet implements Tasklet {
     private String localPath;
 
     @Autowired
-    private SapdeMapper sapdeMapper;
+    private ElandMapper elandMapper;
 
     @Override
     public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception
@@ -84,21 +82,10 @@ public class SapDeFtpTasklet implements Tasklet {
         JobParameters jobParameters = chunkContext.getStepContext().getStepExecution().getJobParameters();
         // ExecutionContext jobContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
 
-        final String prefix = "NICE_";
-        final String suffix = "_DETAIL.dat";
-        final String delimiter = "_";
-
+        final String fileName = jobParameters.getString("fileName");
         final String yyyymmdd = jobParameters.getString("yyyymmdd");
-        final String branchCd = jobParameters.getString("branchCd");
-
-        String fileName = null;
-        if(branchCd != null) {
-            fileName = prefix + yyyymmdd + delimiter + branchCd + suffix;
-            //NICE_20140913_8228_DETAIL.dat
-        } else {
-            fileName = prefix + yyyymmdd + suffix;
-            //NICE_20140913_DETAIL.dat
-        }
+        String branchCd = fileName.substring(fileName.lastIndexOf("/") + 6);
+        branchCd = branchCd.startsWith(yyyymmdd) ? null : branchCd.substring(0, 4);
 
         logger.debug("■■■ Receive File Name: {}", fileName);
 
@@ -112,7 +99,7 @@ public class SapDeFtpTasklet implements Tasklet {
         transferVO.setFileName(fileName);
 
         try {
-	        File file = getFile(transferVO);
+	        File file = SFtpTransfer.getFile(transferVO); // getFile(transferVO);
 	        
 	        logger.info("file.getAbsolutePath(): {}", file.getAbsolutePath());
 	        
@@ -121,7 +108,7 @@ public class SapDeFtpTasklet implements Tasklet {
 	            fileMngParameterVO.setDealDate(yyyymmdd);
 	            fileMngParameterVO.setBranchCd(branchCd);
 	
-	            int affectRows = sapdeMapper.deleteTFnSapDetail(fileMngParameterVO);
+	            int affectRows = elandMapper.deleteTFnSapDetail(fileMngParameterVO);
 	
 	            logger.info("DELETE T_FN_SAP_DETAIL Affect Rows: {}", affectRows);
 	        }
@@ -134,7 +121,7 @@ public class SapDeFtpTasklet implements Tasklet {
         return RepeatStatus.FINISHED;
     }
     
-    private File getFile(TransferVO transferVO) throws FileMngException {
+    /*private File getFile(TransferVO transferVO) throws FileMngException {
     	if (findBackupFile(transferVO.getLocalPath(), transferVO.getFileName()).isFile()) {
             throw new FileMngException(ExceptionType.VM_STOP, "이미 처리된 파일입니다.");
     	}
@@ -144,5 +131,5 @@ public class SapDeFtpTasklet implements Tasklet {
     
     private File findBackupFile(String path, String name) {
     	return new File(path, name.substring(0, name.length() - 4) + ".bak");
-    }
+    }*/
 }

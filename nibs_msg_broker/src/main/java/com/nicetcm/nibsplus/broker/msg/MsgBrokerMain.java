@@ -23,6 +23,7 @@ public class MsgBrokerMain {
 
     private static MsgBrokerRMIServer rmi;
     private static JMXConnectorServer cs;
+    private static MsgBrokerManager   mbean;
     private DatagramSocket isRun;
 
     public static final Logger logger = LoggerFactory.getLogger(MsgBrokerMain.class);
@@ -168,6 +169,18 @@ public class MsgBrokerMain {
 
     public static void stopJMX() throws Exception {
         cs.stop();
+    }
+
+    public static JMXConnectorServer getJMXConnectorServer() {
+        return cs;
+    }
+
+    public static MsgBrokerManager getMBean() {
+        return mbean;
+    }
+
+    public static void setMBean(MsgBrokerManager src) {
+        mbean = src;
     }
 
 }

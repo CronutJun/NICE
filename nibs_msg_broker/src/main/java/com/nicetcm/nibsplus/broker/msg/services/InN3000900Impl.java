@@ -138,7 +138,7 @@ public class InN3000900Impl extends InMsgHandlerImpl {
              *  HOST에서 수신한 FTP File 읽어 DB에 Upload 하는 'FILEMng DEALNO 거래일자(8)'
              *  명령어를 실행하여 프로세스 가동
              */
-            Process p = Runtime.getRuntime().exec("ivkAutoSend -L");
+            Process p = Runtime.getRuntime().exec( "ivkAutoSend FilemngService DEALNO SH " + parsed.getString("deal_date") );
 
             BufferedReader stdInput = new BufferedReader(new
                  InputStreamReader(p.getInputStream()));
