@@ -868,6 +868,108 @@ public class MsgParser {
         return this;
     }
 
+    public java.math.BigDecimal getBigDecimal(String name) throws Exception {
+
+        ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+
+        return getBigDecimal(td, name);
+    }
+
+    public java.math.BigDecimal getBigDecimal(ThrData td, String name) throws Exception {
+
+        MsgData md = getField(td.msgDatMap, name);
+
+        if( td.isLive ) {
+            byte[] data = new byte[md.length];
+
+            td.msg.position(md.pos);
+            td.msg.get(data);
+
+            String conv = new String(data).trim();
+            return new java.math.BigDecimal(conv.length() == 0 ? "0" : conv);
+        }
+        else {
+            return md.getBigDecimal();
+        }
+    }
+
+    public MsgParser setBigDecimal(String name, java.math.BigDecimal value) throws Exception {
+
+        ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+
+        return setBigDecimal(td, name, value);
+    }
+
+    public MsgParser setBigDecimal(ThrData td, String name, java.math.BigDecimal value) throws Exception {
+
+        MsgData md = getField(td.msgDatMap, name);
+
+        if( td.isLive) {
+            String fmt = String.format("%%0%df", md.length);
+
+            String fmted = String.format(fmt, value);
+
+            td.msg.position(md.pos);
+            td.msg.put(fmted.getBytes());
+        }
+        else {
+            md.setBigDecimal(value);
+        }
+
+        return this;
+    }
+
+    public java.math.BigInteger getBigInteger(String name) throws Exception {
+
+        ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+
+        return getBigInteger(td, name);
+    }
+
+    public java.math.BigInteger getBigInteger(ThrData td, String name) throws Exception {
+
+        MsgData md = getField(td.msgDatMap, name);
+
+        if( td.isLive ) {
+            byte[] data = new byte[md.length];
+
+            td.msg.position(md.pos);
+            td.msg.get(data);
+
+            String conv = new String(data).trim();
+            return new java.math.BigInteger(conv.length() == 0 ? "0" : conv);
+        }
+        else {
+            return md.getBigInteger();
+        }
+    }
+
+    public MsgParser setBigInteger(String name, java.math.BigInteger value) throws Exception {
+
+        ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());
+
+        return setBigInteger(td, name, value);
+    }
+
+    public MsgParser setBigInteger(ThrData td, String name, java.math.BigInteger value) throws Exception {
+
+        MsgData md = getField(td.msgDatMap, name);
+
+        if( td.isLive) {
+            String fmt = String.format("%%0%dd", md.length);
+
+            String fmted = String.format(fmt, value);
+
+            td.msg.position(md.pos);
+            td.msg.put(fmted.getBytes());
+        }
+        else {
+            md.setBigInteger(value);
+        }
+
+        return this;
+    }
+
     public MsgParser addRow(String name) throws Exception {
 
         ThrData td = msgThrMap.get(java.lang.Thread.currentThread().getId());

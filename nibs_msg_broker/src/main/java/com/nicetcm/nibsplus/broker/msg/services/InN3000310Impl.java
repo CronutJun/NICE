@@ -4,12 +4,12 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * Copyright 2014 The NIBS+ Project
  *
  * MSG Broker NICE 점주관리 시재 장애내역
- * 
+ *
  * <pre>
  * MngNC_NiceJumjuCashFault
  * </pre>
- * 
- *           2014. 07. 31    K.D.J. 
+ *
+ *           2014. 07. 31    K.D.J.
  */
 
 import org.slf4j.Logger;
@@ -27,16 +27,16 @@ import com.nicetcm.nibsplus.broker.msg.model.TCtStorekeeperCashFault;
 public class InN3000310Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(InN3000310Impl.class);
-    
+
     @Autowired private StoredProcMapper splMap;
     @Autowired private TCtStorekeeperCashFaultMapper ctStorekeeperCashFaultMap;
-    
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
 
         TCtStorekeeperCashFault ctStkprCashFault = new TCtStorekeeperCashFault();
-        
-        ctStkprCashFault.setOrgCd      ( parsed.getString("org_cd"       ) );
+
+        ctStkprCashFault.setOrgCd      ( parsed.getString("CM.org_cd"    ) );
         ctStkprCashFault.setBranchCd   ( "9600"                            );
         ctStkprCashFault.setMacNo      ( parsed.getString("mac_no"       ) );
         ctStkprCashFault.setDealDate   ( parsed.getString("deal_date"    ) );

@@ -166,6 +166,7 @@
      { "name" : "ATMS.N510.0300.Q",              "kname" : "NICE 개별망 집계 요청"       },
      { "name" : "ATMS.N510.0410.Q",              "kname" : "기기위치 정보"               },
      { "name" : "ATMS.N510.0110.Q",              "kname" : "VAN-운영자금청구"            },
-     { "name" : "ATMS.M100.0100.Q",              "kname" : "지점정보조회"                }
+     { "name" : "ATMS.M100.0100.Q",              "kname" : "지점정보조회"                },
+     { "name" : "ATMS.M100.0200.Q",              "kname" : "인증번호조회"                }
   ]
 }

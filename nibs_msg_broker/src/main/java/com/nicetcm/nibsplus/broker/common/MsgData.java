@@ -122,6 +122,30 @@ public class MsgData {
         data = Double.toString(value).getBytes();
     }
 
+    public java.math.BigInteger getBigInteger() throws Exception {
+        if( data == null || data.length == 0 )
+            return new java.math.BigInteger("0");
+        else if( new String(data).trim().length() == 0 )
+            return new java.math.BigInteger("0");
+        else return new java.math.BigInteger(new String(data).trim());
+    }
+
+    public void setBigInteger(java.math.BigInteger value)  throws Exception {
+        data = value.toString().getBytes();
+    }
+
+    public java.math.BigDecimal getBigDecimal() throws Exception {
+        if( data == null || data.length == 0 )
+            return new java.math.BigDecimal("0");
+        else if( new String(data).trim().length() == 0 )
+            return new java.math.BigDecimal("0");
+        else return new java.math.BigDecimal(new String(data).trim());
+    }
+
+    public void setBigDecimal(java.math.BigDecimal value)  throws Exception {
+        data = value.toString().getBytes();
+    }
+
     public LinkedHashMap<String, MsgData> addArrayData(boolean parsing) throws Exception {
 
         if( this.refFmt.ref_iteration.length() == 0 )
