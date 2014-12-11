@@ -2,7 +2,9 @@ package com.nicetcm.nibsplus.broker.msg;
 
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
-import java.net.DatagramSocket;
+import java.net.BindException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.rmi.registry.LocateRegistry;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +26,7 @@ public class MsgBrokerMain {
     private static MsgBrokerRMIServer rmi;
     private static JMXConnectorServer cs;
     private static MsgBrokerManager   mbean;
-    private DatagramSocket isRun;
+    private static ServerSocket       isRun;
 
     public static final Logger logger = LoggerFactory.getLogger(MsgBrokerMain.class);
     public static String serverNo = "";
@@ -35,17 +37,6 @@ public class MsgBrokerMain {
 
     public MsgBrokerMain() {
         try {
-            /**
-             * 중복 검증
-             */
-            try {
-                isRun = new DatagramSocket(10799);
-            }
-            catch( Exception e ) {
-                logger.error("Detect duplicate running..");
-                throw e;
-            }
-
             /**
              * Lost msg logging
              */
@@ -121,10 +112,20 @@ public class MsgBrokerMain {
              */
             MsgBrokerMain.serverNo = MsgCommon.msgProps.getProperty("server.number", "0");
 
-
             org.apache.log4j.xml.DOMConfigurator.configure(MsgBrokerMain.class.getResource(
                     String.format("/%s/log4j.xml", MsgBrokerConst.SVR_TYPE)));
 
+            /**
+             * 중복 검증
+             */
+            try {
+                isRun = new ServerSocket( 10799, 1, InetAddress.getLocalHost() );
+            }
+            catch( BindException be ) {
+                System.out.println("MessageBroker is already running.");
+                logger.error("Detect duplicate running..");
+                System.exit(0);
+            }
             logger.warn("===================== START MSG BROKER =====================");
             //RMISocketFactory.setSocketFactory(new MsgBrokerRMISocketFactory());
             startJMXConnectorServer();

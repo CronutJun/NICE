@@ -540,13 +540,13 @@ public interface TCmSiteMapper {
         "                                                SITE.NOT_OPER_END_TIME),'HH24MI') )                         ",
         "          )                                                                                                 ",
         ") SUB                                                                                                       ",
-        "WHERE DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD')                ",
+        "WHERE DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD')                ",
         "                                                       ||'080000', 'YYYY-MM-DD HH24:MI:SS'),                ",
         "                                                  3, TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')                    ",
         "                                                       ||'080000', 'YYYY-MM-DD HH24:MI:SS'),                ",
         "              DECODE(#{waitTime, jdbcType=DECIMAL}, 0, SYSDATE,                                             ",
         "                      SYSDATE + (1 / (24*60)) * #{waitTime, jdbcType=DECIMAL})) >= STTM                     ",
-        "AND   DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD')                ",
+        "AND   DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD')                ",
         "                                                       ||'080000', 'YYYY-MM-DD HH24:MI:SS'),                ",
         "                                                  3, TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')                    ",
         "                                                       ||'080000', 'YYYY-MM-DD HH24:MI:SS'),                ",
@@ -554,10 +554,10 @@ public interface TCmSiteMapper {
         "                      SYSDATE + (1 / (24*60)) * #{waitTime, jdbcType=DECIMAL})) < EDTM                      "
     })
     @Results({
-        @Result(column="START_TIME", property="startTime", jdbcType=JdbcType.VARCHAR)
+        @Result(column="START_TIME", property="operStartTime", jdbcType=JdbcType.VARCHAR)
     })
     TCmSite selectByJoin1(TCmSiteCond cond);
- 
+
     /**
      * CommonPackImpl.getAutoSendInfo 에서 호출
      *
@@ -567,31 +567,31 @@ public interface TCmSiteMapper {
         "SELECT                                                                                                                                   ",
         "FROM (                                                                                                                                   ",
         "      SELECT  CASE WHEN SITE01.H_OPER_END_TIME < SITE01.H_OPER_START_TIME THEN                                                           ",
-        "                   DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD') || '000000', 'YYYYMMDDHH24MISS'),",
+        "                   DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD') || '000000', 'YYYYMMDDHH24MISS'),",
         "                            TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || '000000','YYYYMMDDHH24MISS'))                                        ",
         "              ELSE                                                                                                                       ",
-        "                   DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE+1, 'YYYYMMDD')                                 ",
+        "                   DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE+1, 'YYYYMMDD')                                 ",
         "                                                 || DECODE(SITE01.H_OPER_START_TIME, '2400', '2359', SITE01.H_OPER_START_TIME)           ",
         "                                                 || '00', 'YYYYMMDDHH24MISS'),                                                           ",
         "                            TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD') || DECODE(SITE01.H_OPER_START_TIME, '2400', '2359',                     ",
         "                                                                             SITE01.H_OPER_START_TIME)                                   ",
         "                                                                 || '00', 'YYYYMMDDHH24MISS'))                                           ",
         "              END AS STTM,                                                                                                               ",
-        "              DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                                       ",
+        "              DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                                       ",
         "                                            || DECODE(SITE01.H_OPER_START_TIME, '2400', '2359', SITE01.H_OPER_START_TIME)                ",
         "                                            || '00', 'YYYYMMDDHH24MISS'),                                                                ",
         "                       TO_DATE(TO_CHAR(SYSDATE, 'YYYYMMDD')                                                                              ",
         "                                 || DECODE(SITE01.H_OPER_START_TIME, '2400', '2359', SITE01.H_OPER_START_TIME)                           ",
         "                                 || '00', 'YYYYMMDDHH24MISS')) AS STTM1,                                                                 ",
         "              CASE WHEN SITE01.H_OPER_END_TIME < SITE01.H_OPER_START_TIME THEN                                                           ",
-        "                   DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                                  ",
+        "                   DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                                  ",
         "                                                                            || DECODE(SITE01.H_OPER_END_TIME, '2400', '2359',            ",
         "                                                                                        SITE01.H_OPER_END_TIME)                          ",
         "                                                                            || '00', 'YYYYMMDDHH24MISS'),                                ",
         "                            TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD') || DECODE(SITE01.H_OPER_END_TIME, '2400', '2359', SITE01.H_OPER_END_TIME)",
         "                                      || '00', 'YYYYMMDDHH24MISS'))                                                                      ",
         "              ELSE                                                                                                                       ",
-        "                   DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                                  ",
+        "                   DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                                  ",
         "                                                                            || DECODE(SITE01.H_OPER_END_TIME, '2400', '2359',            ",
         "                                                                                        SITE01.H_OPER_END_TIME)                          ",
         "                                                                            || '00', 'YYYYMMDDHH24MISS'),                                ",
@@ -604,7 +604,7 @@ public interface TCmSiteMapper {
         "                            || DECODE(SITE01.H_OPER_END_TIME, '2400', '2359', SITE01.H_OPER_END_TIME)                                    ",
         "                            || '00', 'YYYYMMDDHH24MISS')                                                                                 ",
         "              ELSE                                                                                                                       ",
-        "                   DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE+1, 'YYYYMMDD')                                 ",
+        "                   DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE+1, 'YYYYMMDD')                                 ",
         "                                                                            || DECODE(SITE01.H_OPER_END_TIME, '2400', '2359',            ",
         "                                                                                        SITE01.H_OPER_END_TIME)                          ",
         "                                                                            || '00','YYYYMMDDHH24MISS'),                                 ",
@@ -636,14 +636,14 @@ public interface TCmSiteMapper {
         "WHERE  (DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),    ",
         "                                                    3, TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),        ",
         "                 DECODE(#{waitTime, jdbcType=DECIMAL}, 0, SYSDATE, SYSDATE + (1 / (24*60)) * #{waitTime, jdbcType=DECIMAL} )) >= STTM    ",
-        "        AND DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),",
+        "        AND DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),",
         "                                                        3, TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),    ",
         "                     DECODE(#{waitTime, jdbcType=DECIMAL}, 0, SYSDATE, SYSDATE + (1 / (24*60)) * #{waitTime, jdbcType=DECIMAL} )) < EDTM ",
         "       )                                                                                                                                 ",
-        "OR     (DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),    ",
+        "OR     (DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),    ",
         "                                                    3, TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD') || '080000','YYYY-MM-DD HH24:MI:SS'),         ",
         "                 DECODE(#{waitTime, jdbcType=DECIMAL}, 0, SYSDATE, SYSDATE + (1 / (24*60)) * #{waitTime, jdbcType=DECIMAL} )) >= STTM1   ",
-        "        AND DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),",
+        "        AND DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),",
         "                                                        3, TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD') || '080000', 'YYYY-MM-DD HH24:MI:SS'),    ",
         "                     DECODE(#{waitTime, jdbcType=DECIMAL}, 0, SYSDATE, SYSDATE + (1 / (24*60)) * #{waitTime, jdbcType=DECIMAL} )) < EDTM1",
         "       )                                                                                                                                 "
@@ -653,7 +653,7 @@ public interface TCmSiteMapper {
         @Result(column="OUT_CD", property="outCd", jdbcType=JdbcType.VARCHAR)
     })
     TCmSite selectByJoin2(TCmSiteCond cond);
-    
+
     /**
      * CommonPackImpl.getAutoSendInfo 에서 호출
      *
@@ -671,7 +671,7 @@ public interface TCmSiteMapper {
         @Result(column="OUT_CD", property="outCd", jdbcType=JdbcType.VARCHAR)
     })
     TCmSite selectByCond1(TCmSiteCond cond);
-    
+
     /**
      * CommonPackImpl.getAutoSendInfo 에서 호출
      *
@@ -689,7 +689,7 @@ public interface TCmSiteMapper {
         @Result(column="OUT_CD", property="outCd", jdbcType=JdbcType.VARCHAR)
     })
     TCmSite selectByCond2(TCmSiteCond cond);
-    
+
     /**
      * CommonPackImpl.getAutoSendInfo 에서 호출
      *
@@ -700,11 +700,11 @@ public interface TCmSiteMapper {
         "FROM                                                                                                   ",
         "(                                                                                                      ",
         "    SELECT ORG_CD, BRANCH_CD, SITE_CD, NICE_START_TIME, NICE_END_TIME,                                 ",
-        "           DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2,                                              ", 
+        "           DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2,                                              ",
         "                   TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')||NICE_START_TIME, 'YYYYMMDDHH24MISS'),        ",
         "                   TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')||NICE_START_TIME,'YYYYMMDDHH24MISS')) AS STTM,  ",
         "           CASE WHEN NICE_START_TIME < NICE_END_TIME THEN                                              ",
-        "                DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2,                                         ",
+        "                DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2,                                         ",
         "                        TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')||NICE_END_TIME, 'YYYYMMDDHH24MISS'),     ",
         "                        TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')||NICE_END_TIME,'YYYYMMDDHH24MISS'))        ",
         "           ELSE                                                                                        ",
@@ -717,8 +717,8 @@ public interface TCmSiteMapper {
         "    AND    LENGTH(NICE_START_TIME) = 4                                                                 ",
         "    AND    LENGTH(NICE_END_TIME) = 4                                                                   ",
         "    AND    ROWNUM = 1                                                                                  ",
-        ") SUB                                                                                                  ", 
-        "WHERE  DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2,                                                  ",
+        ") SUB                                                                                                  ",
+        "WHERE  DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2,                                                  ",
         "                TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD')||'080000', 'YYYY-MM-DD HH24:MI:SS'),           ",
         "                                                   3,                                                  ",
         "                TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')||'080000', 'YYYY-MM-DD HH24:MI:SS'),               ",
@@ -729,7 +729,7 @@ public interface TCmSiteMapper {
         @Result(column="ORG_CD", property="orgCd", jdbcType=JdbcType.VARCHAR)
     })
     TCmSite selectByCond3( TCmSiteCond cond );
-    
+
     /**
      * CommonPackImpl.getAutoSendInfo 에서 호출
      *
@@ -738,7 +738,7 @@ public interface TCmSiteMapper {
     @Select({
         "SELECT STTM AS START_TIME                                                                                                  ",
         "FROM (                                                                                                                     ",
-        "      SELECT  DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                         ",
+        "      SELECT  DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                         ",
         "                                                               || DECODE(OPER_START_TIME, '2400', '2359', OPER_START_TIME) ",
         "                                                               || '00','YYYYMMDDHH24MISS'),                                ",
         "                      TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')                                                                  ",
@@ -749,7 +749,7 @@ public interface TCmSiteMapper {
         "                     || DECODE(OPER_END_TIME, '2400', '2359', OPER_END_TIME)                                               ",
         "                     || '59','YYYYMMDDHH24MISS')                                                                           ",
         "              ELSE                                                                                                         ",
-        "                   DECODE(#{sendTypeDetailn jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                    ",
+        "                   DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD')                    ",
         "                                                                    || DECODE(OPER_END_TIME, '2400', '2359', OPER_END_TIME)",
         "                                                                    || '59','YYYYMMDDHH24MISS'),                           ",
         "                      TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')                                                                  ",
@@ -758,7 +758,7 @@ public interface TCmSiteMapper {
         "              END  AS EDTM                                                                                                 ",
         "      FROM    OP.T_CM_SITE                                                                                                 ",
         "      WHERE   ORG_CD = #{orgCd, jdbcType=VARCHAR}                                                                          ",
-        "      AND     BRANCH_CD = F_GET_NICE_BRANCH_CD(#{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, '', #{macNo, jdbcType=VARCHAR})",
+        "      AND     BRANCH_CD = OP.F_GET_NICE_BRANCH_CD(#{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, '', #{macNo, jdbcType=VARCHAR})",
         "      AND     SITE_CD = #{siteCd, jdbcType=VARCHAR}                                                                        ",
         "      AND ( (NOT_OPER_START_DATE IS NULL AND NOT_OPER_END_DATE IS NULL)                                                    ",
         "          OR                                                                                                               ",
@@ -775,13 +775,13 @@ public interface TCmSiteMapper {
         "                              TO_DATE(DECODE(NOT_OPER_END_TIME, '2400', '2359', NOT_OPER_END_TIME),'HH24MI'))              ",
         "          )                                                                                                                ",
         ") SUB                                                                                                                      ",
-        "WHERE DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD')                               ",
+        "WHERE DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD')                               ",
         "                                                       || '080000','YYYY-MM-DD HH24:MI:SS'),                               ",
         "                                                  3, TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')                                   ",
         "                                                       || '080000','YYYY-MM-DD HH24:MI:SS'),                               ",
         "              DECODE(#{waitTime, jdbcType=DECIMAL}, 0, SYSDATE,                                                            ",
         "                      SYSDATE + (1 / (24*60)) * #{waitTime, jdbcType=DECIMAL} )) >= STTM                                   ",
-        "AND   DECODE(#{sendTypeDetail, jdbcType=VARCHAR}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD')                               ",
+        "AND   DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE + 1,'YYYYMMDD')                               ",
         "                                                       || '080000', 'YYYY-MM-DD HH24:MI:SS'),                              ",
         "                                                  3, TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD')                                   ",
         "                                                       || '080000', 'YYYY-MM-DD HH24:MI:SS'),                              ",
@@ -789,7 +789,7 @@ public interface TCmSiteMapper {
         "                      SYSDATE, SYSDATE + (1 / (24*60)) * #{waitTime, jdbcType=DECIMAL} )) < EDTM                           "
    })
     @Results({
-        @Result(column="START_TIME", property="startTime", jdbcType=JdbcType.VARCHAR)
+        @Result(column="START_TIME", property="operStartTime", jdbcType=JdbcType.VARCHAR)
     })
     TCmSite selectByCond4(TCmSiteCond cond);
 

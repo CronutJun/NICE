@@ -59,7 +59,7 @@ public class MsgBrokerConsumer {
 
         byte[] read = new byte[msgPsr.getMessage().limit()];
         msgPsr.getMessage().get(read);
-        logger.error("O-MSG : [{}],[{}]", read.length, new String(read));
+        logger.error("R-MSG : [{}],[{}]", read.length, new String(read));
         reqData.writeBytes(read);
         mq.produce( reqData );
 
@@ -101,14 +101,17 @@ public class MsgBrokerConsumer {
         else
             destination = session.createQueue(String.format("%s?consumer.exclusive=%s", queue, exclusive));
 
+        listener.getBlockingWorkGroup().threadStart();
+
         consumer = session.createConsumer(destination);
         consumer.setMessageListener(listener);
-        listener.getBlockingWorkGroup().threadStart();
     }
 
     public void close() throws JMSException {
-        listener.getBlockingWorkGroup().threadStop();
+        connection.stop();
+        consumer.setMessageListener(null);
         consumer.close();
+        listener.getBlockingWorkGroup().threadStop();
         session.close();
         connection.close();
     }

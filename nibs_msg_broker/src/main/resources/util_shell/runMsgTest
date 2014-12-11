@@ -1,1 +1,1 @@
-$JAVA_HOME/bin/java -cp $HOME/MsgBroker/nibs_msg_broker-0.0.1-SNAPSHOT-jar-with-dependencies.jar -Dserver.type=stage1 com.nicetcm.nibsplus.broker.msg.util.MsgBrokerTester $*
+$JAVA_HOME/bin/java -cp $HOME/MsgBroker/nibs_msg_broker-0.0.1-SNAPSHOT.jar -Dserver.type=stage1 com.nicetcm.nibsplus.broker.msg.util.MsgBrokerTester $*

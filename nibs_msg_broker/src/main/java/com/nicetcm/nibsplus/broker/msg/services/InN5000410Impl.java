@@ -54,6 +54,10 @@ public class InN5000410Impl extends InMsgHandlerImpl {
                 throw new MsgBrokerException( String.format("...해당 거래내역 없음 DEAL_DATE[%s] DEAL_NO[%s]",
                         parsed.getString("deal_date"), parsed.getString("deal_no")), -91 );
             }
+            parsed.setString("mac_gb",   rslt.getMacCl()   ); /*  기기구분(제휴/브랜드/결합부스)   */
+            parsed.setString("tel_no",   rslt.getTelNo()   ); /*  관리전화번호                     */
+            parsed.setString("site_nm",  rslt.getSiteNm()  ); /*  사이트명                         */
+            parsed.setString("set_addr", rslt.getSetAddr() ); /*  사이트주소                       */
         }
         catch( Exception e ) {
             parsed.setString( "CM.ret_cd", "91" );
@@ -61,10 +65,6 @@ public class InN5000410Impl extends InMsgHandlerImpl {
                     parsed.getString("deal_date"), parsed.getString("deal_no"), e.getLocalizedMessage()) );
             throw e;
         }
-
-        String sMsgType = parsed.getString("CM.msg_type");
-
-        parsed.setString( "CM.ret_cd", "S" );
-        parsed.setString( "CM.msg_type",   sMsgType.substring(0, 2) + MsgBrokerConst.ANS_CODE );
+        safeData.setKeepResData( false );
     }
 }

@@ -28,7 +28,9 @@ public class MsgBrokerBlockingWorkGroup {
         this.noResp     = noResp;
         this.blockCount = blockCount;
 
+        /** KDJ
         threadStart();
+        */
     }
 
     public void putMsg( int index, byte[] msg ) throws Exception {

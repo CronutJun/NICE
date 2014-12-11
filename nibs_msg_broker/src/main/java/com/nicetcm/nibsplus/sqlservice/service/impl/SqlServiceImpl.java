@@ -63,7 +63,7 @@ public class SqlServiceImpl implements SqlService {
 	}
 
 	@Override
-	public void SP_CT_CHECK0EL_ALERT(Logger logger) {
+	public void SP_CT_CHECK_0EL_ALERT(Logger logger) {
 		try {
 			sqlServiceMapper.sp_ct_check_0EL_alert();
 		} catch(RuntimeException e) {

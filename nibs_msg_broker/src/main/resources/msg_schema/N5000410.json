@@ -10,6 +10,6 @@
       { "name" : "tel_no",                 "kname" : "기기관리 전화번호",      "type" : "AN",  "length"  : 20  },
       { "name" : "site_nm",                "kname" : "기기명",                 "type" : "AN",  "length"  : 40  },
       { "name" : "set_addr",               "kname" : "기기주소",               "type" : "AN",  "length"  : 200 },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 48  }
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 36  }
    ]
 }

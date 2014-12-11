@@ -1,0 +1,48 @@
+# JMX putty tunneling 연결을 하려면 java.rmi.server.hostname property를 localhost로 셋하고
+# 직접 연결하려면 IP address를 셋한다.
+# 2014-10-22  K.D.J
+# JMX Agent
+if [ $# -lt 1 ]
+then
+  echo "Usage: msgb [parameters..]"
+  echo "Parameters - [startup]"
+  echo "             [shutdown]"
+  echo "             [-reset [consumer name,ALL]]"
+  echo "             [-close [consumer name]]"
+  echo "             [-start [consumer name]]"
+  exit 0
+fi
+if [ -z "$MB_SERVER_TYPE" ]
+then
+  MB_SERVER_TYPE=stage1
+fi
+if [ $1 == "startup" ]
+then
+  # JMX putty tunneling 연결을 하려면 java.rmi.server.hostname property를 localhost로 셋하고
+  # 직접 연결하려면 IP address를 셋한다.
+  # 2014-10-22  K.D.J
+  # JMX Agent
+  PROC_NUM=`ps -ef|grep "MsgBrokerMain"|grep -v "grep"|wc -l`
+  if [ $PROC_NUM -eq 1 ];
+  then
+     echo "MsgBroker is already running.."
+     exit 0
+  fi
+  MB_LOCAL_IP=$(ifconfig `ifconfig -l | awk '{print $1}'` | grep inet | grep -v inet6 | awk '{print $2}')
+  echo "MB_SERVER_TYPE=$MB_SERVER_TYPE"
+  echo "MB_LOCAL_IP=$MB_LOCAL_IP"
+  cd $HOME/MsgBroker
+  # 기본 JMX
+  #nohup $JAVA_HOME/bin/java -server -Xms512m -Xmx1024m -Dserver.type=$MB_SERVER_TYPE -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10899 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=localhost -Dfile.encoding=UTF-8 -cp nibs_msg_broker-0.0.1-SNAPSHOT.jar com.nicetcm.nibsplus.broker.msg.MsgBrokerMain > /dev/null 2>&1 &
+  # JMX Agent
+  if [ "$MB_SERVER_TYPE" == "stage1" ] || [ "$MB_SERVER_TYPE" == "stage2" ] ; then
+    MB_CONF_NO=`echo $MB_SERVER_TYPE | cut -c6-7`
+    echo "JENNIFER_CONF_NO=$MB_CONF_NO"
+    nohup $JAVA_HOME/bin/java -server -javaagent:/infowas/jennifer/agent/jennifer.javaagent.jar -Djennifer.config=/infowas/jennifer/conf/MB$MB_CONF_NO.conf -Xms512m -Xmx1024m -Dserver.type=$MB_SERVER_TYPE -Dcom.sun.management.jmxremote -Dcom.nicetcm.nibsplus.broker.msg.jmxremote.port=10899 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=$MB_LOCAL_IP -Dfile.encoding=UTF-8 -cp nibs_msg_broker-0.0.1-SNAPSHOT.jar com.nicetcm.nibsplus.broker.msg.MsgBrokerMain > /dev/null 2>&1 &
+  else
+    nohup $JAVA_HOME/bin/java -server -Xms512m -Xmx1024m -Dserver.type=$MB_SERVER_TYPE -Dcom.sun.management.jmxremote -Dcom.nicetcm.nibsplus.broker.msg.jmxremote.port=10899 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false -Djava.rmi.server.hostname=$MB_LOCAL_IP -Dfile.encoding=UTF-8 -cp nibs_msg_broker-0.0.1-SNAPSHOT.jar com.nicetcm.nibsplus.broker.msg.MsgBrokerMain > /dev/null 2>&1 &
+  fi
+else
+  cd $HOME/MsgBroker
+  $JAVA_HOME/bin/java -Xms128m -Xmx128m -Dserver.type=$MB_SERVER_TYPE -Dfile.encoding=UTF-8 -cp nibs_msg_broker-0.0.1-SNAPSHOT.jar com.nicetcm.nibsplus.broker.msg.jmx.MsgBrokerJMXClient $*
+fi

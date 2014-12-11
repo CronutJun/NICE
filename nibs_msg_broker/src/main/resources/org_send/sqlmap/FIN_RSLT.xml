@@ -551,7 +551,7 @@
                  '',
                  '',
                  '',
-                 REPLACE(substrb(MNG.MSG,1,100), CHR(10), ' ') memo,                                                             /*  조치특이사항  */
+                 REPLACE(substrb(MNG.MSG,1,100), x'0a', ' ') memo,                                                             /*  조치특이사항  */
                  '',
                  '',
                  '',

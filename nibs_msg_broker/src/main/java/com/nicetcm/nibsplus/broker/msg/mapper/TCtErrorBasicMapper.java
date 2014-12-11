@@ -366,16 +366,17 @@ public interface TCtErrorBasicMapper {
     })
 
     int updateByPrimaryKey(TCtErrorBasic record);
+
     /**
      * GetDupErrorMng에서 호출 된다.
      *
      * @author KDJ on  Fri Jun 27 14:12:12 KST 2014
      */
     @Update({
-        "UPDATE /*+ index (T_CT_ERROR_MNG IX_T_CT_ERROR_MNG_03) */ OP.T_CT_ERROR_MNG SET",
+        "UPDATE /*+ index (T_CT_ERROR_MNG IX_T_CT_ERROR_MNG_03) */ OP.T_CT_ERROR_BASIC SET",
         "   ORG_MSG     = #{orgMsg, jdbcType=VARCHAR},",
         "   UPDATE_UID  = 'ERRmng',",
-        "   UPDATE_DATE = SYSDATE",
+        "   UPDATE_DATE = #{updateDate, jdbcType=TIMESTAMP}",
         "WHERE   CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )",
         "AND     ORG_CD       = #{orgCd, jdbcType=VARCHAR}",
         "AND     BRANCH_CD    = OP.F_GET_NICE_BRANCH_CD( #{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, '', #{macNo, jdbcType=VARCHAR} )",
@@ -548,6 +549,30 @@ public interface TCtErrorBasicMapper {
         @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true)
     })
     List<TCtErrorBasic> selectByCond5( TCtErrorBasic cond );
+
+    /**
+     * GetDupErrorMng에서 호출 된다.
+     *
+     * @author KDJ on  Fri Jun 27 14:12:12 KST 2014
+     */
+    @Select({
+        "SELECT  ERROR_NO, CREATE_DATE, CREATE_TIME            ",
+        "FROM    OP.T_CT_ERROR_MNG                             ",
+        "WHERE   CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )",
+        "AND     ORG_CD       = #{orgCd, jdbcType=VARCHAR}",
+        "AND     BRANCH_CD    = OP.F_GET_NICE_BRANCH_CD( #{orgCd, jdbcType=VARCHAR}, #{branchCd, jdbcType=VARCHAR}, '', #{macNo, jdbcType=VARCHAR} )",
+        "AND     MAC_NO       = #{macNo, jdbcType=VARCHAR}",
+        "AND     ERROR_CD     = #{errorCd, jdbcType=VARCHAR}",
+        "AND     TRANS_DATE  = RTRIM(#{transDate, jdbcType=VARCHAR})",
+        "AND     RTRIM(ORG_MSG_NO)   = RTRIM(#{orgMsgNo, jdbcType=VARCHAR})",
+        "AND     NVL(ERROR_STATUS, '0') <> '7000'"
+    })
+    @Results({
+        @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="CREATE_DATE", property="createDate", jdbcType=JdbcType.VARCHAR, id=true),
+        @Result(column="CREATE_TIME", property="createTime", jdbcType=JdbcType.VARCHAR, id=true)
+    })
+    List<TCtErrorBasic> selectByCond6(TCtErrorBasic cond);
 
     /**
      * CommonPackImpl.updateErrMng 에서 호출

@@ -396,7 +396,8 @@ public class FileSendServiceImpl implements FileSendService {
 			hCDType = StringUtils.defaultIfEmpty(rowValues[11], "");
 
 			// fprintf( fileWriter, "D%.*s96%.*s%.*s%.*s%.*s%.*s%.*s%.*s%.*s%.*s%.*s%.*s%*s\n", 2, hSetYn, 8, hMacNo, 8, hSetDate, 8, hOpenDate, 8, hUpdateDate, 8, hCloseDate, 6, hZipNo, 60, hSetPlace, 30, hSetAddr, 20, hInterPhone, 1, hPicYn, 2, hCDType, 36, " ");
-			fileWriter.write(String.format("D%2s96%8s%8s%8s%8s%8s%6s%60s%30s%20s%1s%2s%36s\n", hSetYn, hMacNo, hSetDate, hOpenDate, hUpdateDate, hCloseDate, hZipNo, hSetPlace, hSetAddr, hInterPhone, hPicYn, hCDType, " "));
+			// fileWriter.write(String.format("D%2s96%8s%8s%8s%8s%8s%6s%60s%30s%20s%1s%2s%36s\n", hSetYn, hMacNo, hSetDate, hOpenDate, hUpdateDate, hCloseDate, hZipNo, hSetPlace, hSetAddr, hInterPhone, hPicYn, hCDType, " "));
+			fileWriter.write(String.format("D%2s96%8s%8s%8s%8s%8s%6s%-"+minHanCount(60, hSetPlace)+"s%-"+minHanCount(30, hSetAddr)+"s%20s%1s%2s%36s\n", hSetYn, hMacNo, hSetDate, hOpenDate, hUpdateDate, hCloseDate, hZipNo, hSetPlace, hSetAddr, hInterPhone, hPicYn, hCDType, " "));
 
 			ncount++;
 	    }
@@ -505,7 +506,8 @@ public class FileSendServiceImpl implements FileSendService {
 			hSetAddr = StringUtils.defaultIfEmpty(rowValues[4], "");
 
 			// fprintf( fileWriter, "BD03102%.*s%.*s%.*s080022 8252%.*s%.*s%*s\n", 16, hMacNo, 50, hSetPlace, 8, hOpenDate, 6, hZipNo, 100, hSetAddr, 52, " ");
-			fileWriter.write(String.format("BD03102%16s%50s%8s080022 8252%6s%100s%52s\n", hMacNo, hSetPlace, hOpenDate, hZipNo, hSetAddr, " "));
+			// fileWriter.write(String.format("BD03102%16s%50s%8s080022 8252%6s%100s%52s\n", hMacNo, hSetPlace, hOpenDate, hZipNo, hSetAddr, " "));
+			fileWriter.write(String.format("BD03102%16s%-"+minHanCount(50, hSetPlace)+"s%8s080022 8252%6s%-"+minHanCount(100, hSetAddr)+"s%52s\n", hMacNo, hSetPlace, hOpenDate, hZipNo, hSetAddr, " "));
 
 			ncount++;
 	    }
@@ -1566,7 +1568,8 @@ public class FileSendServiceImpl implements FileSendService {
 			// fprintf( fileWriter, "VC000222%07ldI", ncount+1 );
 			fileWriter.write(String.format("VC000222%07dI", ncount+1 ));
 			// fprintf( fileWriter, "%.*s%.*s%.*s%.*s%.*s%.*s%.*s%*s\n", 3, hType, 4, hMacNo, 30, hSetPlace, 100, hSetAddr, 15, hInterphoneNo, 6, hZipNo, 6, hJoinMojumCd, 20, " ");
-			fileWriter.write(String.format("%3s%4s%30s%100s%15s%6s%6s%20s\n", hType, hMacNo, hSetPlace, hSetAddr, hInterphoneNo, hZipNo, hJoinMojumCd, " "));
+			// fileWriter.write(String.format("%3s%4s%30s%100s%15s%6s%6s%20s\n", hType, hMacNo, hSetPlace, hSetAddr, hInterphoneNo, hZipNo, hJoinMojumCd, " "));
+			fileWriter.write(String.format("%3s%4s%-"+minHanCount(30, hSetPlace)+"s%-"+minHanCount(100, hSetAddr)+"s%15s%6s%6s%20s\n", hType, hMacNo, hSetPlace, hSetAddr, hInterphoneNo, hZipNo, hJoinMojumCd, " "));
 
 			ncount++;
 	    }
@@ -1617,7 +1620,7 @@ public class FileSendServiceImpl implements FileSendService {
 
 		hPreActDate = fileSendMapper.pickupGetNongHBrandMacData2(pTransDate);
 
-		hPreActYM = hPreActDate;
+		hPreActYM = hPreActDate.substring(0, 6);
 
 		ncount = 0;
 
@@ -1728,7 +1731,7 @@ public class FileSendServiceImpl implements FileSendService {
 		while(true) {
 			/* 영업내 Data부 Header */
 			// fprintf( fileWriter, "ATM00122%07ld%2s03 012200110096%4s%6s%6s%6s%*s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), 116, " " );
-			fileWriter.write(String.format("ATM00122%07d%2s03 012200110096%4s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
+			fileWriter.write(String.format("ATM00122%07d%2s03 01220011009600%2s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
 
 			/* Header 와 Trailer도 count에 포함 */
 			ncount++;
@@ -1799,7 +1802,7 @@ public class FileSendServiceImpl implements FileSendService {
 
 			/* 영업외 Data부 Header */
 			// fprintf( fileWriter, "ATM00122%07ld%2s03 012300110096%4s%6s%6s%6s%*s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), 116, " " );
-			fileWriter.write(String.format("ATM00122%07d%2s03 012300110096%4s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
+			fileWriter.write(String.format("ATM00122%07d%2s03 01230011009600%2s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
 			ncount++;
 
 			nDataCnt = 0;
@@ -1951,7 +1954,7 @@ public class FileSendServiceImpl implements FileSendService {
 
 		/* 영업내 Data부 Header */
 		// fprintf( fileWriter, "ATM00122%07ld%2s03 012200110096%4s%6s%6s%6s%*s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), 116, " " );
-		fileWriter.write(String.format("ATM00122%07d%2s03 012200110096%4s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
+		fileWriter.write(String.format("ATM00122%07d%2s03 01220011009600%2s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
 
 		/* Header 와 Trailer도 count에 포함 */
 		ncount++;
@@ -2019,7 +2022,7 @@ public class FileSendServiceImpl implements FileSendService {
 
 		/* 영업외 Data부 Header */
 		// fprintf( fileWriter, "ATM00122%07ld%2s03 012300110096%4s%6s%6s%6s%*s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), 116, " " );
-		fileWriter.write(String.format("ATM00122%07d%2s03 012300110096%4s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
+		fileWriter.write(String.format("ATM00122%07d%2s03 01230011009600%2s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
 		ncount++;
 
 		nDataCnt = 0;
@@ -2577,7 +2580,7 @@ public class FileSendServiceImpl implements FileSendService {
 			return -1;
 		}
 
-		/* 휴일에는 전송하지 않는다. */
+		/* 휴일에는 전송하지 않는다. */ 
 		if( !pTransDate.equals(hPreActDate)) {
 			System.out.print(String.format(">>> [GetCommonTranData-%s] 휴일 전송 안함 [%s]\n", szOrgCd,  pTransDate));
 			return -2;
@@ -2595,7 +2598,7 @@ public class FileSendServiceImpl implements FileSendService {
 		while(true) {
 			/* 영업내 Data부 Header */
 			// fprintf( fileWriter, "012200110096%4s%6s%6s%6s%*s\n", szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), 116, " " );
-			fileWriter.write(String.format("012200110096%4s%6s%6s%6s%116s\n", szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
+			fileWriter.write(String.format("01220011009600%2s%6s%6s%6s%116s\n", szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
 
 			nDataCnt = 0;
 			nTotAcptCnt     = 0;
@@ -2656,7 +2659,7 @@ public class FileSendServiceImpl implements FileSendService {
 
 			/* 영업외 Data부 Header */
 			// fprintf( fileWriter, "012300110096%4s%6s%6s%6s%*s\n", szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), 116, " " );
-			fileWriter.write(String.format("012300110096%4s%6s%6s%6s%116s\n", szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
+			fileWriter.write(String.format("01230011009600%2s%6s%6s%6s%116s\n", szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
 
 			nDataCnt = 0;
 
@@ -3049,7 +3052,8 @@ public class FileSendServiceImpl implements FileSendService {
 			hJoinsNo = StringUtils.defaultIfEmpty(rowValues[12], "");
 
 			// fprintf( fileWriter, "%.*s%.*s%07ld%.*s%.*s11V01%.*s%.*s%.*s%.*s%.*s%.*s%.*s%.*s%.*s%.*s%*s\n", 6, hWorkType, 2, hDataType, ncount+1, 16, hAccountNo, 8, hDealDate, 4, hJijumCd, 4, hMacNo, 16, hDealNo, 13, hDealAmt, 8, hMacNm, 1, hDealStatus, 9,hCustFee, 16, hAccountNo2, 10, hJoinsNo, 8, hDealDate, 17, " ");
-			fileWriter.write(String.format("%6s%2s%07d%16s%8s11V01%4s%4s%16s%13s%8s%1s%9s%16s%10s%8s%17s\n", hWorkType, hDataType, ncount+1, hAccountNo, hDealDate, hJijumCd, hMacNo, hDealNo, hDealAmt, hMacNm, hDealStatus,hCustFee, hAccountNo2, hJoinsNo, hDealDate, " "));
+			// fileWriter.write(String.format("%6s%2s%07d%16s%8s11V01%4s%4s%16s%13s%8s%1s%9s%16s%10s%8s%17s\n", hWorkType, hDataType, ncount+1, hAccountNo, hDealDate, hJijumCd, hMacNo, hDealNo, hDealAmt, hMacNm, hDealStatus,hCustFee, hAccountNo2, hJoinsNo, hDealDate, " "));
+			fileWriter.write(String.format("%6s%2s%07d%16s%8s11V01%4s%4s%16s%13s%"+minHanCount(8, hMacNm)+"s%1s%9s%16s%10s%8s%17s\n", hWorkType, hDataType, ncount+1, hAccountNo, hDealDate, hJijumCd, hMacNo, hDealNo, hDealAmt, hMacNm, hDealStatus,hCustFee, hAccountNo2, hJoinsNo, hDealDate, " "));
 
 			if( "1".equals(hDealStatus)) {
 				lnTotalAmt = lnTotalAmt + Long.parseLong(hDealAmt);
@@ -3313,7 +3317,8 @@ public class FileSendServiceImpl implements FileSendService {
 			// fprintf( fileWriter, "NI000222%07ld096", ncount+1 );
 			fileWriter.write(String.format("NI000222%07d096", ncount+1 ));
 			// fprintf( fileWriter, "%.*s%.*s%.*s%.*s%.*s%.*s%*s\n", 4, hMacNo, 1, hType, 30, hSetPlace, 100, hSetAddr, 15, hInterphoneNo, 6, hZipNo, 26, " ");
-			fileWriter.write(String.format("%4s%1s%30s%100s%15s%6s%26s\n", hMacNo, hType, hSetPlace, hSetAddr, hInterphoneNo, hZipNo, " "));
+			// fileWriter.write(String.format("%4s%1s%30s%100s%15s%6s%26s\n", hMacNo, hType, hSetPlace, hSetAddr, hInterphoneNo, hZipNo, " "));
+			fileWriter.write(String.format("%4s%1s%-"+minHanCount(30, hSetPlace)+"s%-"+minHanCount(100, hSetAddr)+"s%-15s%6s%26s\n", hMacNo, hType, hSetPlace, hSetAddr, hInterphoneNo, hZipNo, " "));
 
 			ncount++;
 	    }

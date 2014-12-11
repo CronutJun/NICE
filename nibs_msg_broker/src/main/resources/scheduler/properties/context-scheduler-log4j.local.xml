@@ -18,58 +18,8 @@
         </layout>
     </appender>
 
-    <appender name="orgsend_app" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
-        <param name="file" value="orgsend_app.log"/>
-        <param name="Append" value="true"/>
-        <param name="Encoding" value="EUC-KR" />
-        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
-        <layout class="org.apache.log4j.PatternLayout">
-              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
-        </layout>
-    </appender>
-
-    <appender name="orgsend_error" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
-        <param name="file" value="orgsend_error.log"/>
-        <param name="Append" value="true"/>
-        <param name="Encoding" value="EUC-KR" />
-        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
-        <layout class="org.apache.log4j.PatternLayout">
-              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
-        </layout>
-    </appender>
-
-    <appender name="sqlservice_app" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
-        <param name="file" value="sqlservice_app.log"/>
-        <param name="Append" value="true"/>
-        <param name="Encoding" value="EUC-KR" />
-        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
-        <layout class="org.apache.log4j.PatternLayout">
-              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
-        </layout>
-    </appender>
-
-    <appender name="sqlservice_error" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
-        <param name="file" value="sqlservice_error.log"/>
-        <param name="Append" value="true"/>
-        <param name="Encoding" value="EUC-KR" />
-        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
-        <layout class="org.apache.log4j.PatternLayout">
-              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
-        </layout>
-    </appender>
-
-    <appender name="filemng_app" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
-        <param name="file" value="filemng_app.log"/>
-        <param name="Append" value="true"/>
-        <param name="Encoding" value="EUC-KR" />
-        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
-        <layout class="org.apache.log4j.PatternLayout">
-              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
-        </layout>
-    </appender>
-
-    <appender name="filemng_error" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
-        <param name="file" value="filemng_error.log"/>
+    <appender name="rootError" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="scheduler_error.log"/>
         <param name="Append" value="true"/>
         <param name="Encoding" value="EUC-KR" />
         <param name="DatePattern" value="'.'yyyy-MM-dd"/>
@@ -88,41 +38,23 @@
         </layout>
     </appender>
 
-    <logger name="com.nicetcm.nibsplus.orgsend">
-        <level value="info" />
-        <appender-ref ref="orgsend_app"/>
-    </logger>
-
-    <logger name="OrgSendERROR">
+    <logger name="error">
         <level value="error" />
-        <appender-ref ref="orgsend_app"/>
-        <appender-ref ref="orgsend_error"/>
-    </logger>
-
-    <logger name="com.nicetcm.nibsplus.sqlservice">
-        <level value="info" />
-        <appender-ref ref="sqlservice_app"/>
-    </logger>
-
-    <logger name="SqlServiceERROR">
-        <level value="error" />
-        <appender-ref ref="sqlservice_app"/>
-        <appender-ref ref="sqlservice_error"/>
-    </logger>
-
-    <logger name="com.nicetcm.nibsplus.filemng">
-        <level value="info" />
-        <appender-ref ref="filemng_app"/>
-    </logger>
-
-    <logger name="FilemngERROR">
-        <level value="error" />
-        <appender-ref ref="filemng_error"/>
+        <appender-ref ref="root"/>
+        <appender-ref ref="rootError"/>
     </logger>
 
     <logger name="ivkAutoSend">
         <level value="info" />
         <appender-ref ref="ivkautosend"/>
+    </logger>
+    
+    <logger name="com.nicetcm.nibsplus.broker">
+        <level value="error" />
+    </logger>
+    
+    <logger name="com.nicetcm.nibsplus.scheduler">
+        <level value="info" />
     </logger>
 
     <logger name="org.springframework">

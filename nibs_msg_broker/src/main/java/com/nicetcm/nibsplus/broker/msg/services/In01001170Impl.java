@@ -79,7 +79,7 @@ public class In01001170Impl extends InMsgHandlerImpl {
 
                     try
                     {
-                        comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMng);
+                        comPack.updateErrorMng(safeData, updateTCtErrorMng, tCtErrorMng);
                     } catch (Exception e)
                     {
                         logger.warn( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
@@ -350,7 +350,7 @@ public class In01001170Impl extends InMsgHandlerImpl {
 
                             try
                             {
-                                comPack.updateErrorMng(updateTCtErrorMng3, tCtErrorMng3);
+                                comPack.updateErrorMng(safeData, updateTCtErrorMng3, tCtErrorMng3);
                             } catch (Exception e)
                             {
                                 logger.warn( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());
@@ -385,7 +385,7 @@ public class In01001170Impl extends InMsgHandlerImpl {
 
                             try
                             {
-                                comPack.updateErrorMng(updateTCtErrorMng3, tCtErrorMng3);
+                                comPack.updateErrorMng(safeData, updateTCtErrorMng3, tCtErrorMng3);
                             } catch (Exception e)
                             {
                                 logger.warn( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());

@@ -24,7 +24,7 @@ public interface SqlService {
 	public void SP_CM_MAC_RANK(Logger logger);
 	public void SP_CM_PERSONNEL(Logger logger);
 	public void SP_CM_UPDATE_PLAN_FOCUS(Logger logger);
-	public void SP_CT_CHECK0EL_ALERT(Logger logger);
+	public void SP_CT_CHECK_0EL_ALERT(Logger logger);
 	public void SP_CT_CHECK_ALERT_039(Logger logger);
 	public void SP_CT_CHECK_ALERT_NH_FILE(Logger logger);
 	public void SP_CT_CHECK_ALERT(Logger logger);

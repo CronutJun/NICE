@@ -1,9 +1,11 @@
 package com.nicetcm.nibsplus.scheduler.service.impl;
 
 import java.util.List;
+import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.log4j.Logger;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
@@ -16,11 +18,11 @@ import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerListener;
 import org.quartz.impl.StdSchedulerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.nicetcm.nibsplus.orgsend.common.MsgLogger;
 import com.nicetcm.nibsplus.scheduler.common.SchduleException;
 import com.nicetcm.nibsplus.scheduler.constant.ExceptionType;
 import com.nicetcm.nibsplus.scheduler.listener.OrgSendAllTriggerListener;
@@ -49,7 +51,11 @@ import com.nicetcm.nibsplus.scheduler.service.ScheduleInfoProvider;
 public class NibsQuartzScheduler implements ScheduleExecuter
 {
 
-    private final static Logger logger = LoggerFactory.getLogger(NibsQuartzScheduler.class);
+	@Autowired
+	private MsgLogger msgLogger;
+	
+    private final static Logger logger = Logger.getLogger(NibsQuartzScheduler.class);
+    private final static Logger errorLogger = Logger.getLogger("error");
 
     @Resource(name="ScheduleDBInfoProvider")
     private ScheduleInfoProvider scheduleInfoProvider;
@@ -85,29 +91,35 @@ public class NibsQuartzScheduler implements ScheduleExecuter
     public void startSchedule() throws SchduleException
     {
         List<SchedulerVO> scheduleList = scheduleInfoProvider.selectEnableSchedule(System.getProperty("QUARTZ_NODE_NAME") == null ? "OrgSend" :  System.getProperty("QUARTZ_NODE_NAME"));
-
+        
         if(scheduleList.size() == 0) {
             logger.info("실행할 스케쥴이 존재하지 않습니다.");
             return;
         } else {
-            logger.info("총 실행대상 스케쥴은 {}개 입니다.", scheduleList.size());
+            logger.info(String.format("총 실행대상 스케쥴은 %d개 입니다.", scheduleList.size()));
         }
 
+        
+        Properties schedulerProperty = new Properties(); 
         Scheduler scheduler = null;
 
-        try
-        {
-            scheduler = new StdSchedulerFactory().getScheduler();
-        } catch (SchedulerException e1)
-        {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+        try {
+        	schedulerProperty.setProperty("org.quartz.jobStore.class", "org.quartz.simpl.RAMJobStore");
+        	schedulerProperty.setProperty("org.quartz.jobStore.misfireThreshold", (10 * 60 * 1000) + "");
+        	schedulerProperty.setProperty("org.quartz.threadPool.class", "org.quartz.simpl.SimpleThreadPool");
+        	schedulerProperty.setProperty("org.quartz.threadPool.threadCount", String.valueOf(scheduleList.size()));
+        	
+    		scheduler = new StdSchedulerFactory(schedulerProperty).getScheduler();
+        } catch (SchedulerException e1) {
+        	errorLogger.error(e1.getMessage(), e1.getCause());
         }
 
         int createCnt = 1;
 
         //스케쥴리스트 반복
         for(SchedulerVO schedulerVO : scheduleList) {
+        	// if (!schedulerVO.getJobGroup().equals("NICE_ACPT")) continue;
+        	
             Class<Job> jobClass = null;
 
             try
@@ -133,13 +145,11 @@ public class NibsQuartzScheduler implements ScheduleExecuter
                 logger.info("[" + createCnt + "]" + schedulerVO.toPrettyString() + " ==> Fired");
                 createCnt++;
 
-                //if(createCnt == 2) {
-                //    break;
-                //}
+                /*if(createCnt == 150) {
+                    break;
+                }*/
             } catch (Exception e) {
-
-                e.printStackTrace();
-                logger.info(schedulerVO.toPrettyString() + " ==> MisFired !!!!!!!!!!!!!!!!!!!!!!!!");
+            	errorLogger.error(schedulerVO.toPrettyString() + " ==> MisFired !!!!!!!!!!!!!!!!!!!!!!!!", e.getCause());
                 throw new SchduleException(ExceptionType.VM_STOP, "MisFired Schedule");
             }
         }//end for
@@ -147,17 +157,15 @@ public class NibsQuartzScheduler implements ScheduleExecuter
         try
         {
 
-            TriggerListener orgSendAllTriggerListener = new OrgSendAllTriggerListener(OrgSendAllTriggerListener.class.getSimpleName());
-            scheduler.getListenerManager().addTriggerListener(orgSendAllTriggerListener);
+            TriggerListener orgSendAllTriggerListener = new OrgSendAllTriggerListener(msgLogger, OrgSendAllTriggerListener.class.getSimpleName());
+            
+        	scheduler.getListenerManager().addTriggerListener(orgSendAllTriggerListener);
+        	scheduler.start();
 
-            scheduler.start();
+            logger.info(String.format("총 실행대상 스케쥴: %d개중 %d개 start", scheduleList.size(), createCnt-1));
 
-            logger.info("총 실행대상 스케쥴: {}개중 {}개 start", scheduleList.size(), createCnt-1);
-
-        } catch (SchedulerException e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (SchedulerException e) {
+        	errorLogger.error(e.getMessage(), e.getCause());
         }
 
         logger.info("스케쥴 로딩 완료");

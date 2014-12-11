@@ -42,10 +42,11 @@ import com.nicetcm.nibsplus.orgsend.service.NOrgSendService;
 @Service("NOrgSendImpl")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/uat/context-orgsend.xml"})
-public class NOrgSendImpl implements NOrgSendService
-{
-	private Logger logger = Logger.getLogger(this.getClass());
-	private Logger errorLogger = Logger.getLogger("SqlServiceERROR");
+public class NOrgSendImpl implements NOrgSendService {
+
+	/*@Autowired
+	private MsgLogger msgLogger;*/
+	private Logger errorLogger = Logger.getLogger("OrgSendERROR");
 
     @Resource(name= "sqlSessionFactory_OP")
     private SqlSessionFactory sqlSessionFactory;
@@ -62,7 +63,7 @@ public class NOrgSendImpl implements NOrgSendService
     private MsgBrokerConf makeHeader(OrgSendExternalVO orgSendExternalVO) throws OrgSendException {
 
         if(orgSend == null) {
-            logger.debug("orgSend is null");
+        	errorLogger.error("orgSend is null");
         }
         String orgSendMtypeCd = orgSend.getOrgSendMtype().get(orgSendExternalVO.getQueryName());
 
@@ -139,12 +140,10 @@ public class NOrgSendImpl implements NOrgSendService
             Map<String, Object> resultMap = (HashMap)context.getResultObject();
 
             MsgBrokerConf msgBrokerConf = null;
+            Map<String, String> msgBodyMap = new HashMap<String, String>();
 
-            try
-            {
+            try {
                 msgBrokerConf = makeHeader(orgSendExternalVO);
-
-                Map<String, String> msgBodyMap = new HashMap<String, String>();
 
                 for(Map.Entry<String, Object> entry : resultMap.entrySet()) {
 
@@ -157,13 +156,11 @@ public class NOrgSendImpl implements NOrgSendService
 
                 }
 
-                logger.debug(msgBodyMap.toString());
-                msgTransferService.send(msgBrokerConf, msgBodyMap, orgSendExternalVO.getTransferType());
-
-            } catch (OrgSendException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                // logger.debug(msgBodyMap.toString());
+                
+                msgTransferService.send(msgBrokerConf, msgBodyMap, orgSendExternalVO);
+            } catch (OrgSendException e) {
+            	errorLogger.error(String.format("%s %s\n%s", Thread.currentThread().getName(), e.getMessage(), msgBodyMap.toString()), e.getCause());
             }
         }
 

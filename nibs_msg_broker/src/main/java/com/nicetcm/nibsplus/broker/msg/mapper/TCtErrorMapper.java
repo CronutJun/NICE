@@ -224,7 +224,7 @@ public interface TCtErrorMapper {
         "                      END),                                                                                                     ",
         "            WAIT_TIME1 ),                                                                                                       ",
         "          WAIT_TIME1)                                                                                                           ",
-        "        AS WAIT_TIME, /* 자동통보 대기시간 */                                                                                   ",
+        "        AS WAIT_TIME1, /* 자동통보 대기시간 */                                                                                  ",
         "        ERROR_MOT_YN,                                                                                                           ",
         "        GROUP_ERROR_CD,                                                                                                         ",
         "        GUARD_YN  /* 경비사 통보 여부 */                                                                                        ",

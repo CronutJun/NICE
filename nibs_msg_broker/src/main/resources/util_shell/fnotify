@@ -1,0 +1,77 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use Carp;
+use File::Monitor;
+use File::Monitor::Delta;
+
+$| = 1;
+
+my $monitor = File::Monitor->new;
+
+# push @ARGV, '.' unless @ARGV;
+push @ARGV, '.';
+
+while ( my $obj = shift ) {
+    $monitor->watch(
+        {
+            name    => $obj,
+            recurse => 1
+        }
+    );
+}
+
+my @attr = qw(
+  created deleted mtime ctime uid gid mode
+  size files_created files_deleted
+);
+
+while ( 1 ) {
+    sleep 1;
+    my $is_created = 0;
+    my $file_name;
+    my $val;
+    for my $change ( $monitor->scan ) {
+        my $is_dir_changed = 0;
+        if( -d $change->name ) {
+           $is_dir_changed = 1;
+        }
+        else {
+           print $change->name, " changed\n";
+        }
+        for my $attr ( @attr ) {
+            if ( $attr =~ /^files_/ ) {
+                my @val = $change->$attr;
+                $val = join( ' ', @val );
+                if( $attr eq "files_created" && $val ) {
+                    $is_created = 1;
+                    $file_name = $val;
+                    $monitor->watch(
+                        {
+                            name    => $val,
+                            recurse => 1
+                        }
+                    );
+                }
+            }
+            else {
+                $val = $change->$attr;
+            }
+            if ( ($val && $is_dir_changed == 0) || ($val && $attr =~ /^files_/) ) {
+                printf( "%14s = %s\n", $attr, $val );
+            }
+
+        }
+        if( -f $change->name ) {
+           system("tail -n -10 " . $change->name);
+        }
+        if( $is_created == 1 ) {
+           if( -f $file_name ) {
+              system("tail -n -10 " . $file_name);
+           }
+           $is_created = 0;
+           $file_name  = "";
+        }
+    }
+}

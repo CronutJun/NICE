@@ -49,5 +49,7 @@ public class InM1000100Impl extends InMsgHandlerImpl {
         }
         parsed.setString( "brch_nm",      rslt.getBranchNm() )
               .setString( "br_master_nm", rslt.getStorekeeperNm() );
+
+        safeData.setKeepResData( false );
     }
 }

@@ -531,7 +531,7 @@ public class CommonPackImpl implements CommonPack {
           || ErrBasic.getOrgCd().equals(MsgBrokerConst.KNATMS_CODE)
           || ErrBasic.getOrgCd().equals(MsgBrokerConst.BUATMS_CODE))
         &&   ErrBasic.getSec() != null && ErrBasic.getSec().length() > 0 ) { /* 출동요청 전문 일경우 */
-            if( getDupErrorMng(ErrBasic, 0) )
+            if( getDupErrorMng(safeData, ErrBasic, 0) )
                 return;
         }
         else {
@@ -585,7 +585,7 @@ public class CommonPackImpl implements CommonPack {
                  */
                 else
                     ErrNoti.setSendType("0");
-                sSendTypeDetail = "5";
+                sSendTypeDetail = "0";
             }
             /*
              *  수분 후 자동 통보
@@ -837,8 +837,8 @@ public class CommonPackImpl implements CommonPack {
             errBasicMap.insertSelective( ErrBasic );
             errRcptMap.insertSelective( ErrRcpt );
             errNotiMap.insertSelective( ErrNoti );
-            errTxnMap.insertSelective( ErrTxn );
             errCallMap.insertSelective( ErrCall );
+            errTxnMap.insertSelective( ErrTxn );
         }
         catch ( Exception e ) {
             logger.warn( "Insert ErrorMng error = {}", e.getMessage() );
@@ -1426,7 +1426,7 @@ public class CommonPackImpl implements CommonPack {
      *
      */
     @Override
-    public boolean getDupErrorMng( TCtErrorBasic ErrBasic, int CancelYN ) throws Exception {
+    public boolean getDupErrorMng( MsgBrokerData safeData, TCtErrorBasic ErrBasic, int CancelYN ) throws Exception {
 
         List<TCtUnfinish> unfinish;
 
@@ -1452,7 +1452,29 @@ public class CommonPackImpl implements CommonPack {
         &&  CancelYN == 0
         && ( nstr(unfinish.get(0).getOrgMsg()).length()  == 0
           || !nstr(unfinish.get(0).getOrgMsg()).equals(ErrBasic.getOrgMsg()) ) ) {
-            errBasicMap.updateByCond1( ErrBasic );
+            ErrBasic.setUpdateDate( safeData.getDSysDate() );
+
+            List<TCtErrorBasic> listBasic = errBasicMap.selectByCond6( ErrBasic );
+            for( TCtErrorBasic eBasic: listBasic ) {
+                TCtErrorBasic errBasic = new TCtErrorBasic();
+                errBasic.setErrorNo   ( eBasic.getErrorNo()     );
+                errBasic.setCreateDate( eBasic.getCreateDate()  );
+                errBasic.setCreateTime( eBasic.getCreateTime()  );
+                errBasic.setOrgMsg    ( ErrBasic.getOrgMsg()    );
+                errBasic.setUpdateUid ( "ERRmng" );
+                errBasic.setUpdateDate( ErrBasic.getUpdateDate());
+                errBasicMap.updateByPrimaryKeySelective( errBasic );
+                /**
+                 * KDJ, txn은 무조건 Update
+                 */
+                TCtErrorTxn errTxn = new TCtErrorTxn();
+                errTxn.setErrorNo   ( errBasic.getErrorNo() );
+                errTxn.setCreateDate( errBasic.getCreateDate() );
+                errTxn.setCreateTime( errBasic.getCreateTime() );
+                errTxn.setUpdateDate( errBasic.getUpdateDate() );
+                errTxn.setUpdateUid ( errBasic.getUpdateUid()  );
+                errTxnMap.updateByPrimaryKeySelective( errTxn );
+            }
         }
         return true;
     }
@@ -1925,27 +1947,26 @@ public class CommonPackImpl implements CommonPack {
          && nstr(ErrBasic.getErrorCd()).equals("NI141") ) {
             return MsgBrokerConst.AUTO_FINISH;
         }
-        TMisc misc;
         try {
-            misc = miscMap.selectHoliday();
+            miscHoli = miscMap.selectHoliday();
         }
         catch ( Exception e ) {
-            misc = new TMisc();
+            miscHoli = new TMisc();
             logger.warn(">>> [getAutoSendInfo] 주말인지 찾기 실패 에러-> 정상처리한다.[{}]", e.getMessage());
             logger.warn(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
             logger.warn(">>>             기관 [{}]", ErrBasic.getOrgCd());
             logger.warn(">>>             지점 [{}]", ErrBasic.getBranchCd());
             logger.warn(">>>             사이트 [{}]", ErrBasic.getSiteCd());
-            misc.setHoliday("0");
+            miscHoli.setHoliday("0");
         }
-        if( misc == null ) {
-            misc = new TMisc();
+        if( miscHoli == null ) {
+            miscHoli = new TMisc();
             logger.warn(">>> [getAutoSendInfo] 주말인지 찾기 실패 에러-> 정상처리한다.[NO_DATA_FOUND]");
             logger.warn(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
             logger.warn(">>>             기관 [{}]", ErrBasic.getOrgCd());
             logger.warn(">>>             지점 [{}]", ErrBasic.getBranchCd());
             logger.warn(">>>             사이트 [{}]", ErrBasic.getSiteCd());
-            misc.setHoliday("0");
+            miscHoli.setHoliday("0");
         }
 
         /*
@@ -2030,6 +2051,8 @@ public class CommonPackImpl implements CommonPack {
         }
         catch( Exception e ) {
             logger.warn(">>> [getAutoSendInfo] 운영시간 외 장애 발생 [{}]", e.getMessage());
+            //for( StackTraceElement se: e.getStackTrace() )
+            //    logger.warn(se.toString());
             logger.warn(">>>             발생일자 [{}]", ErrBasic.getCreateDate());
             logger.warn(">>>             발생시간 [{}]", ErrBasic.getCreateTime());
             return MsgBrokerConst.AUTO_SEND_FALSE;
@@ -2149,11 +2172,11 @@ public class CommonPackImpl implements CommonPack {
                 logger.warn(">>>             사이트 [{}]", ErrBasic.getSiteCd());
                 return MsgBrokerConst.AUTO_SEND_FALSE;
             }
-            if( substr(retMemberRec.getNiceHp(), 0, 4).equals("010") ) {
+            if( substr(retMemberRec.getNiceHp(), 0, 3).equals("010") ) {
                 return MsgBrokerConst.AUTO_SEND_TRUE;
             }
             else {
-               logger.warn(">>> [gGetAutoSendInfo] 전화번호가 010이 아님");
+               logger.warn(">>> [gGetAutoSendInfo] 전화번호가 010이 아님 [{}]", substr(retMemberRec.getNiceHp(), 0, 3) );
                return MsgBrokerConst.AUTO_SEND_FALSE;
             }
         }
@@ -2511,6 +2534,12 @@ public class CommonPackImpl implements CommonPack {
                 TCtErrorTxn tCterrTxn = new TCtErrorTxn();
                 BeanUtils.copyProperties(tCterrTxn, updateTCtErrorMng);
 
+                /**
+                 * KDJ. TXN은 무조건 Update친다.
+                 */
+                tCterrTxn.setUpdateDate( updateTCtErrorMng.getUpdateDate() );
+                tCterrTxn.setUpdateUid ( updateTCtErrorMng.getUpdateUid()  );
+
                 //멀터건이 조회될경우 반복하며 Update
                 for (TCtErrorMng tCtErrorMng : tCtErrorMngList)
                 {
@@ -2558,18 +2587,6 @@ public class CommonPackImpl implements CommonPack {
                         updatedTableCnt++;
                     }
 
-                    if (isNotNullFieldExists(tCterrTxn))
-                    {
-                        TCtErrorTxnSpec tCtErrorTxnSpec = new TCtErrorTxnSpec();
-                        tCtErrorTxnSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
-                                        .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
-
-                        int updatedCnt = errTxnMap.updateBySpecSelective(tCterrTxn, tCtErrorTxnSpec);
-
-                        logger.warn(">>> T_CT_ERROR_TXN Updated: {}", updatedCnt);
-                        updatedTableCnt++;
-                    }
-
                     if (isNotNullFieldExists(tCterrCall))
                     {
                         TCtErrorCallSpec tCtErrorCallSpec = new TCtErrorCallSpec();
@@ -2581,6 +2598,18 @@ public class CommonPackImpl implements CommonPack {
                         logger.warn(">>> T_CT_ERROR_CALL Updated: {}", updatedCnt);
                         updatedTableCnt++;
                     }
+
+                    //if (isNotNullFieldExists(tCterrTxn))
+                    //{
+                        TCtErrorTxnSpec tCtErrorTxnSpec = new TCtErrorTxnSpec();
+                        tCtErrorTxnSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
+                                        .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
+
+                        int updatedCnt = errTxnMap.updateBySpecSelective(tCterrTxn, tCtErrorTxnSpec);
+
+                        logger.warn(">>> T_CT_ERROR_TXN Updated: {}", updatedCnt);
+                        updatedTableCnt++;
+                    //}
 
                     logger.warn(">>>>>> TOTAL Updated Table Count: {}", updatedTableCnt);
 
@@ -2619,7 +2648,7 @@ public class CommonPackImpl implements CommonPack {
      * @throws InvocationTargetException
      */
     @Override
-    public int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMng tCtErrorMng) throws IllegalAccessException, InvocationTargetException {
+    public int updateErrorMng(MsgBrokerData safeData, TCtErrorMng updateTCtErrorMng, TCtErrorMng tCtErrorMng) throws IllegalAccessException, InvocationTargetException {
 
         int returnValue = 0;
 
@@ -2645,6 +2674,11 @@ public class CommonPackImpl implements CommonPack {
                 TCtErrorTxn tCterrTxn = new TCtErrorTxn();
                 BeanUtils.copyProperties(tCterrTxn, updateTCtErrorMng);
 
+                /**
+                 * KDJ. TXN은 무조건 Update친다.
+                 */
+                tCterrTxn.setUpdateDate( updateTCtErrorMng.getUpdateDate() );
+                tCterrTxn.setUpdateUid ( updateTCtErrorMng.getUpdateUid()  );
 
                 //조회된 TCtErrorMng에서 PK를 추출
                 //errorNo              ;   //장애번호
@@ -2689,18 +2723,6 @@ public class CommonPackImpl implements CommonPack {
                     updatedTableCnt++;
                 }
 
-                if (isNotNullFieldExists(tCterrTxn))
-                {
-                    TCtErrorTxnSpec tCtErrorTxnSpec = new TCtErrorTxnSpec();
-                    tCtErrorTxnSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
-                                    .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
-
-                    int updatedCnt = errTxnMap.updateBySpecSelective(tCterrTxn, tCtErrorTxnSpec);
-
-                    logger.warn(">>> T_CT_ERROR_TXN Updated: {}", updatedCnt);
-                    updatedTableCnt++;
-                }
-
                 if (isNotNullFieldExists(tCterrCall))
                 {
                     TCtErrorCallSpec tCtErrorCallSpec = new TCtErrorCallSpec();
@@ -2712,6 +2734,18 @@ public class CommonPackImpl implements CommonPack {
                     logger.warn(">>> T_CT_ERROR_CALL Updated: {}", updatedCnt);
                     updatedTableCnt++;
                 }
+
+                //if (isNotNullFieldExists(tCterrTxn))
+                //{
+                    TCtErrorTxnSpec tCtErrorTxnSpec = new TCtErrorTxnSpec();
+                    tCtErrorTxnSpec.createCriteria().andErrorNoEqualTo(tCtErrorMng.getErrorNo()).andCreateDateEqualTo(tCtErrorMng.getCreateDate())
+                                    .andCreateTimeEqualTo(tCtErrorMng.getCreateTime());
+
+                    int updatedCnt = errTxnMap.updateBySpecSelective(tCterrTxn, tCtErrorTxnSpec);
+
+                    logger.warn(">>> T_CT_ERROR_TXN Updated: {}", updatedCnt);
+                    updatedTableCnt++;
+                //}
 
                 logger.warn(">>>>>> TOTAL Updated Table Count: {}", updatedTableCnt);
 

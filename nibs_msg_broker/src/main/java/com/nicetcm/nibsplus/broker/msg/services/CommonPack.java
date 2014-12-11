@@ -34,14 +34,14 @@ public interface CommonPack {
     public void insertIfDataLog( MsgBrokerData safeData, String ioCl, MsgParser parsed ) throws Exception;
     public String getIfDataLog( MsgBrokerData safeData, String ioCl, MsgParser parsed ) throws Exception;
     public String getTransSeqNo( MsgBrokerData safeData, String orgCd, String transDate ) throws Exception;
-    boolean getDupErrorMng(TCtErrorBasic ErrBasic, int CancelYN) throws Exception;
+    boolean getDupErrorMng(MsgBrokerData safeData, TCtErrorBasic ErrBasic, int CancelYN) throws Exception;
     int getOwnTradeSeqYN(TMisc tMisc);
     int getBoxRecvYN(TMisc tMisc);
     int getTicketDealRecvYN(TMisc tMisc);
     int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMngSpec tCtErrorMngSpec) throws IllegalAccessException, InvocationTargetException;
     String parseErrorMsg(String errorMsg, int pos);
     String fGetNiceBranchCd(String orgCd, String branchCd, String orgSiteCd, String macNo);
-    int updateErrorMng(TCtErrorMng updateTCtErrorMng, TCtErrorMng tCtErrorMng) throws IllegalAccessException, InvocationTargetException;
+    int updateErrorMng(MsgBrokerData safeData, TCtErrorMng updateTCtErrorMng, TCtErrorMng tCtErrorMng) throws IllegalAccessException, InvocationTargetException;
     String fcGetMapSiteCd(String cType, String orgCd, String branchCd, String siteCd);
     void msgSnd(MsgBrokerData safeData, CommMsgHeader commMsgHeader, Map<String, byte[]> columnMap, String type) throws Exception;
     void msgSnd(byte[] msg) throws Exception;

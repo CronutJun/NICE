@@ -1,11 +1,13 @@
 package com.nicetcm.nibsplus.scheduler.listener;
 
+import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
+import org.quartz.JobKey;
 import org.quartz.Trigger;
 import org.quartz.Trigger.CompletedExecutionInstruction;
 import org.quartz.TriggerListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.nicetcm.nibsplus.orgsend.common.MsgLogger;
 
 /**
  * Quartz Listener
@@ -20,11 +22,13 @@ import org.slf4j.LoggerFactory;
 public class OrgSendAllTriggerListener implements TriggerListener
 {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger errorLogger = Logger.getLogger("error");
 
+    private MsgLogger msgLogger;
     private String name;
 
-    public OrgSendAllTriggerListener(String name) {
+    public OrgSendAllTriggerListener(MsgLogger msgLogger, String name) {
+    	this.msgLogger = msgLogger;
         this.name = name;
     }
 
@@ -34,39 +38,35 @@ public class OrgSendAllTriggerListener implements TriggerListener
     }
 
     @Override
-    public void triggerFired(Trigger trigger, JobExecutionContext context)
-    {
-
-        logger.info("◈◈◈ triggerFired ◈◈◈ {}", getInfo(trigger, context));
-
+    public void triggerFired(Trigger trigger, JobExecutionContext context) {
+    	JobKey jobKey = trigger.getJobKey();
+    	msgLogger.info(jobKey.getGroup(), jobKey.getName(), String.format("%-20s%s", "triggerFired", getInfo(trigger)));
     }
 
     @Override
-    public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context)
-    {
-        logger.info("◈◈◈ vetoJobExecution ◈◈◈ {}", getInfo(trigger, context));
+    public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context){
+    	JobKey jobKey = trigger.getJobKey();
+    	msgLogger.info(jobKey.getGroup(), jobKey.getName(), String.format("%-20s%s", "vetoJobExecution", getInfo(trigger)));
         return false;
     }
 
     @Override
-    public void triggerMisfired(Trigger trigger)
-    {
-        logger.info("◈◈◈ triggerMisfired ◈◈◈");
-
+    public void triggerMisfired(Trigger trigger) {
+    	// JobKey jobKey = trigger.getJobKey();
+    	// msgLogger.info(jobKey.getGroup(), jobKey.getName(), String.format("%-20s%s", "triggerMisfired", getInfo(trigger)));
+    	errorLogger.error(String.format("%-20s%s", "triggerMisfired", getInfo(trigger)));
     }
 
     @Override
-    public void triggerComplete(Trigger trigger, JobExecutionContext context, CompletedExecutionInstruction triggerInstructionCode)
-    {
-        logger.info("◈◈◈ triggerComplete ◈◈◈ {}", getInfo(trigger, context));
+    public void triggerComplete(Trigger trigger, JobExecutionContext context, CompletedExecutionInstruction triggerInstructionCode) {
+    	JobKey jobKey = context.getJobDetail().getKey();
+    	msgLogger.info(jobKey.getGroup(), jobKey.getName(), String.format("%-20s%s", "triggerComplete", getInfo(trigger)));
 
     }
 
-    private String getInfo(Trigger trigger, JobExecutionContext context) {
+    private String getInfo(Trigger trigger) {
         return new StringBuilder()
-        .append(context.getJobDetail().getKey().getGroup() + "/" + context.getJobDetail().getKey().getName())
-        .append(" = ")
-        .append("S:" + trigger.getStartTime() + " E:" + trigger.getEndTime() + " F:" + trigger.getFinalFireTime())
+        .append(String.format("%-30s %s", trigger.getJobKey().getGroup() + " " + trigger.getJobKey().getName(), "S:" + trigger.getStartTime() + (trigger.getEndTime() != null ? (" E:" + trigger.getEndTime()) : "") + (trigger.getFinalFireTime() != null ? (" F:" + trigger.getFinalFireTime()) : "")))
         .toString();
     }
 

@@ -11,6 +11,7 @@ package com.nicetcm.nibsplus.broker.msg.services;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.Random;
 
 import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
 import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
@@ -79,8 +80,24 @@ public class InN1000100Impl extends InMsgHandlerImpl {
          * 20110719 러시앤캐시 관련 추가
          * 러시앤캐시 대출상담대기 거래는 t_fn_nice_tran에 넣지 않고 다른테이블에 넣은 후 return
          */
-        if( parsed.getString("deal_type").equals("36000") ) {
-            insertUpdateRCInfo( safeData, parsed );
+        /*
+         * 20141210
+         * 러시앤캐시 서비스 종료.
+         * 웰컴저축은행인 경우 문자 전송
+         */
+        if( parsed.getString("deal_type").equals("36000") && parsed.getString("CM.org_cd").equals("0WJ") ) {
+            String sMsg = String.format("[웰컴저축은행]상담신청이 완료되어 빠른시간내에 연락드리겠습니다.");
+
+            TMisc arg = new TMisc();
+            arg.setTelNo( parsed.getString("user_tel_no") );
+            arg.setSendMsg( sMsg );
+            try {
+                splMap.sendSMS( arg );
+            }
+            catch( Exception e ) {
+                logger.warn("sendSMS call error {}", e.getLocalizedMessage() );
+                throw e;
+            }
             return;
         }
         /*

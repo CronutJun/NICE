@@ -36,14 +36,14 @@ public class SqlServiceJob implements Job {
      */
 	@Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        JobDataMap jobDataMap = context.getMergedJobDataMap();
+        SchedulerVO schedulerVO = (SchedulerVO)jobDataMap.get("SchedulerVO");
+        
         try {
-            JobDataMap jobDataMap = context.getMergedJobDataMap();
-            SchedulerVO schedulerVO = (SchedulerVO)jobDataMap.get("SchedulerVO");
-            
             ApplicationContext applicationContext = (ApplicationContext)jobDataMap.get("applicationContext");
             SqlService sqlService = applicationContext.getBean("sqlServiceImpl", SqlServiceImpl.class);
 
-    		logger.info(String.format("%s %s[%s] execute.", this.getClass().getName(), schedulerVO.getJobGroup(), schedulerVO.getRealTimeCommand()));
+    		logger.info(String.format("%s %-35s[%s] execute.", Thread.currentThread().getName(), schedulerVO.getJobGroup(), StringUtils.defaultIfEmpty(schedulerVO.getRealTimeCommand(), "")));
     		
 			Method method = null;
 			try {
@@ -62,12 +62,12 @@ public class SqlServiceJob implements Job {
 			} else if (methodWithParam != null) {
 				retObj = methodWithParam.invoke(sqlService, logger, schedulerVO.getRealTimeCommand());
 			} else {
-				throw new RuntimeException("Is not exist batch. " + schedulerVO.getRealTimeCommand());
+				throw new RuntimeException("Is not exist batch. " + schedulerVO.getJobGroup());
 			}
 
-			logger.info(String.format("%s %s success. returnValue:%s", this.getClass().getName(), schedulerVO.getRealTimeCommand(), StringUtils.defaultIfEmpty((String)retObj, "")));
+			logger.info(String.format("%s %-35s[%s] success. returnValue:%s", Thread.currentThread().getName(), schedulerVO.getJobGroup(), StringUtils.defaultIfEmpty(schedulerVO.getRealTimeCommand(), ""), StringUtils.defaultIfEmpty((String)retObj, "")));
 		} catch (Exception e) {
-			errorLogger.error(e.getMessage(), e.getCause());
+			errorLogger.info(String.format("%s %s %s[%s]", Thread.currentThread().getName(), e.getMessage(), schedulerVO.getJobGroup(), StringUtils.defaultIfEmpty(schedulerVO.getRealTimeCommand(), "")));
 		}
     }
 }

@@ -45,14 +45,14 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
 
     private long sequenceNumber = 1;
 
-    //public static void sendManagerStatus(String msg) throws Exception{
-    public void sendManagerStatus(String msg) throws Exception {
+    public static void sendManagerStatus(String msg) throws Exception{
+    //public void sendManagerStatus(String msg) throws Exception {
 
-        //MsgBrokerManager mbean = MsgBrokerMain.getMBean();
-        //Notification n = new Notification(BROKER_NOTIFY, mbean, seqForNoti, msg);
-        //mbean.sendNotification(n);
-        Notification n = new Notification(BROKER_NOTIFY, this, seqForNoti, msg);
-        sendNotification(n);
+        MsgBrokerManager mbean = MsgBrokerMain.getMBean();
+        Notification n = new Notification(BROKER_NOTIFY, mbean, seqForNoti, msg);
+        mbean.sendNotification(n);
+        //Notification n = new Notification(BROKER_NOTIFY, this, seqForNoti, msg);
+        //sendNotification(n);
 
         seqForNoti++;
     }
@@ -290,9 +290,10 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
 
     @Override
     public String reattachConsumer(String consumerName) {
+        String msg = "";
         try {
            //MsgBrokerMain.setMBean(this);
-           sendManagerStatus(consumerName);
+            sendManagerStatus(consumerName);
             if( consumerName != null && consumerName.equals("ALL") ) {
                 for( Entry<String, MsgBrokerProducer> e: MsgBrokerProducer.producers.entrySet()) {
                     e.getValue().close();
@@ -302,18 +303,21 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
                     e.getValue().close();
                     e.getValue().init();
                 }
+                msg = "reattachment is succeed";
             }
-            else if( consumerName != null && consumerName.startsWith("CLOSE") ) {
+            else if( consumerName != null && consumerName.substring(0, 5).equals("CLOSE") ) {
                 MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName.substring(5));
                 if( con == null )
                     return String.format("No Consumer: %s, set the right name or set \"ALL\"", consumerName.substring(5));
                 con.close();
+                msg = String.format("closing is succeed [%s]", consumerName);
             }
-            else if( consumerName != null && consumerName.startsWith("START") ) {
+            else if( consumerName != null && consumerName.substring(0, 5).equals("START") ) {
                 MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName.substring(5));
                 if( con == null )
                     return String.format("No Consumer: %s, set the right name or set \"ALL\"", consumerName.substring(5));
                 con.init();
+                msg = String.format("starting is succeed [%s]", consumerName);
             }
             else if( consumerName != null && consumerName.length() > 0 ){
                 MsgBrokerConsumer con = MsgBrokerConsumer.consumers.get(consumerName);
@@ -321,11 +325,12 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
                     return String.format("No Consumer: %s, set the right name or set \"ALL\"", consumerName);
                 con.close();
                 con.init();
+                msg = String.format("reattachment is succeed [%s]", consumerName);
             }
             else {
                 return "[Consumer Name]\nALL\nCLOSE[Consumer Name]\nSTART[Consumer Name]";
             }
-            return "reattachment is succeed";
+            return msg;
         }
         catch( Exception e ) {
             return e.getMessage();

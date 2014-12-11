@@ -288,7 +288,7 @@
                     DECODE(MNG.recv_user_uid, NULL, 'NICE', MBR.member_nm),
                             MNG.recv_user_nm) AS arrival_nm,
                DECODE(MBR.nice_hp, NULL, '0800228252', MBR.nice_hp) arrival_tel_no,
-               REPLACE(substrb(MNG.MSG,1,100), CHR(10), ' ') memo,
+               REPLACE(substrb(MNG.MSG,1,100), x'0a', ' ') memo,
                '',
                '',
                '',

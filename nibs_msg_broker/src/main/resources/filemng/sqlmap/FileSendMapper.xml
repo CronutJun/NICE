@@ -1000,7 +1000,7 @@
 		    'NC'||DECODE(M.JOIN_CD, '0MS', 'B', 'I')                              AS JOIN_ORG_CD,
 		    T.MAC_NO,
 		    CASE
-		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31000' <!-- 잔액조회 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31000' -- 잔액조회 -->
 		        THEN '312400'
 		        WHEN
 		            (
@@ -1014,91 +1014,91 @@
 	                    WHEN T.DEAL_TIME_TYPE = '2' -- 예금인출-시간외
 	                    THEN '012300'
 	                    ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
-	                END <!-- 수취조회 -->
+	                END -- 수취조회 -->
 	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31002'
-	            THEN <!-- 수취조회-자행이체 -->
+	            THEN -- 수취조회-자행이체 -->
 	                CASE
 	                    WHEN
 	                        (
 	                            T.TRANS_ORG_CD = '0011'
 	                         OR T.TRANS_ORG_CD = '0012'
 	                        )
-	                    THEN <!-- 수취조회 - 자행이체 - 시간내 -->
+	                    THEN -- 수취조회 - 자행이체 - 시간내 -->
 	                        CASE
 	                            WHEN T.DEAL_TIME_TYPE = '1'
-	                            THEN '312490'<!-- 수취조회 - 자행이체 - 시간외 -->
+	                            THEN '312490'-- 수취조회 - 자행이체 - 시간외 -->
 	                            WHEN T.DEAL_TIME_TYPE = '2'
 	                            THEN '312590'
 	                            ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
 	                        END
-	                    ELSE <!-- 수취조회 - 타행이체 - 시간내 -->
+	                    ELSE -- 수취조회 - 타행이체 - 시간내 -->
 	                        CASE
 	                            WHEN T.DEAL_TIME_TYPE = '1'
-	                            THEN '312491'<!-- 수취조회 - 타행이체 - 시간외 -->
+	                            THEN '312491'-- 수취조회 - 타행이체 - 시간외 -->
 	                            WHEN T.DEAL_TIME_TYPE = '2'
 	                            THEN '312591'
 	                            ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
 	                        END
-	                END <!-- 계죄이체 -->
+	                END -- 계죄이체 -->
 	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '40000'
-	            THEN <!-- 계좌이체 - 자행 -->
+	            THEN -- 계좌이체 - 자행 -->
 	                CASE
 	                    WHEN
 	                        (
 	                            T.TRANS_ORG_CD = '0011'
 	                         OR T.TRANS_ORG_CD = '0012'
 	                        )
-	                    THEN <!-- 계좌이체 - 자행이체 - 시간내 -->
+	                    THEN -- 계좌이체 - 자행이체 - 시간내 -->
 	                        CASE
 	                            WHEN T.DEAL_TIME_TYPE = '1'
-	                            THEN '012290'<!-- 계좌이체 - 자행이체 - 시간외 -->
+	                            THEN '012290'-- 계좌이체 - 자행이체 - 시간외 -->
 	                            WHEN T.DEAL_TIME_TYPE = '2'
 	                            THEN '012390'
 	                            ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
 	                        END
-	                    ELSE <!-- 계좌이체 - 타행이체 - 시간내 -->
+	                    ELSE -- 계좌이체 - 타행이체 - 시간내 -->
 	                        CASE
 	                            WHEN T.DEAL_TIME_TYPE = '1'
-	                            THEN '012291'<!-- 계좌이체  - 타행이체 - 시간외 -->
+	                            THEN '012291'-- 계좌이체  - 타행이체 - 시간외 -->
 	                            WHEN T.DEAL_TIME_TYPE = '2'
 	                            THEN '012391'
 	                            ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
 	                        END
 	                END
-                <!-- 통장정리조회 -->
+                -- 통장정리조회 -->
 	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31003'
 	            THEN '312440'
-            	<!-- 통장정리 -->
+            	-- 통장정리 -->
 	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31004'
 	            THEN '012240'
-	            <!-- 공과금납부조회 -->
+	            -- 공과금납부조회 -->
 	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '30001'
-	            THEN <!-- MS 거래 -->
+	            THEN -- MS 거래 -->
 	                CASE
 	                    WHEN T.TRACK_NO = '3'
 	                    THEN '312470'
-	                    <!-- IC 거래 -->
+	                    -- IC 거래 -->
 	                    WHEN T.TRACK_NO = '4'
 	                    THEN '312460'
 	                    ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
 	                END 
-                <!-- 공과금납부 -->
+                -- 공과금납부 -->
 	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '50001'
-	            THEN <!-- MS 거래 -->
+	            THEN -- MS 거래 -->
 	                CASE
 	                    WHEN T.TRACK_NO = '3'
 	                    THEN '012270'
-	                    <!-- IC 거래 -->
+	                    -- IC 거래 -->
 	                    WHEN T.TRACK_NO = '4'
 	                    THEN '012260'
 	                    ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
 	                END
-                <!-- 해외거래 지급일경우 국내 지급(시간내)와 같이 취급 2012.06.15 농협요청 -->
-	            WHEN
-	                (
-	                    T.DEAL_TYPE||T.DEAL_CLSS = '01110' <!-- 해외예금지급 -->
-	                 OR T.DEAL_TYPE||T.DEAL_CLSS = '01010' <!-- 해외당좌지급 -->
-	                 OR T.DEAL_TYPE||T.DEAL_CLSS = '01310' <!-- 해외현금서비스 -->
+                -- 해외거래 지급일경우 국내 지급(시간내)와 같이 취급 2012.06.15 농협요청 -->
+	            WHEN (
+	                    T.DEAL_TYPE||T.DEAL_CLSS = '01110' -- 해외예금지급 -->
+	                 OR T.DEAL_TYPE||T.DEAL_CLSS = '01010' -- 해외당좌지급 -->
+	                 OR T.DEAL_TYPE||T.DEAL_CLSS = '01310' -- 해외현금서비스 -->
+	                 )
 	                THEN '012200'
 	                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
             END AS TRADE_TYPE,
@@ -1164,7 +1164,6 @@
             LPAD(T.DEAL_AMT, 12, '0') AS DEAL_AMT,
             CASE
                 WHEN
-                    T.DEAL_TYPE = '0' OR T.DEAL_TYPE = '4'*/
                     T.DEAL_TYPE = '0'
                 AND T.ORG_CD <> '011'
                 AND T.ORG_CD <> '012'
@@ -1187,7 +1186,7 @@
             T.MAC_NO = M.MAC_NO
         AND T.DEAL_DATE = #{szDate}
         AND T.ADMIS_ORG = 'B'
-        AND M.JOIN_CD IN ('011', '012') <!-- MS삭제*/ -->
+        AND M.JOIN_CD IN ('011', '012') -- MS삭제*/
         AND C.MAC_NO = T.MAC_NO
         AND C.BRANCH_CD = '9600'
         AND C.ORG_CD = '096'
@@ -1297,7 +1296,7 @@
 		    OP.T_CM_MAC MAC,
 		    OP.T_CM_SITE SITE,
 		    OP.T_CT_NICE_MAC NMAC,
-		    OP.T_CM_COMMONCO1
+		    OP.T_CM_COMMON CO1
 		WHERE
 		    MAC.ORG_CD = '096'
 		AND MAC.BRANCH_CD = '9600'
@@ -1666,7 +1665,7 @@
 
 	<select id="pickupGetKETranData3" parameterType="string" resultType="string">
 		SELECT
-		    TO_CHAR(to_date(:szDate, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
 		FROM
 		    DUAL
 	</select>

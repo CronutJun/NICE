@@ -244,7 +244,7 @@
                   END AS call_class,
              DECODE(MNG.recv_user_nm, NULL, 'NICE', MNG.recv_user_nm) arrival_nm,
              DECODE(MNG.recv_tele_no, NULL, '0800228252', MNG.recv_tele_no) arrival_tel_no,
-             replace(substrb(MNG.msg, 1, 98), CHR(10), ' ') memo
+             replace(substrb(MNG.msg, 1, 98), x'0a', ' ') memo
           FROM OP.T_CT_ERROR_MNG MNG
               ,OP.T_CT_ERROR ERR
           WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 2), 'YYYYMMDD')

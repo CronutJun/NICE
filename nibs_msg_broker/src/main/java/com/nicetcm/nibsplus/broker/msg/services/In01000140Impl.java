@@ -136,7 +136,7 @@ public class In01000140Impl extends InMsgHandlerImpl {
             /************************************************************************************
              신한은행의 경우 전일 복구신호를 당일 출동요청건에 대해 보내 주기도 하므로 중복 체크 필요
             ************************************************************************************/
-            if(comPack.getDupErrorMng(errBasic, 1) == false) {
+            if(comPack.getDupErrorMng(safeData, errBasic, 1) == false) {
                 logger.warn( String.format("전문번호 [%s-%s] 의 미완료 출동요청 장애 없음", errBasic.getTransDate(), errBasic.getOrgMsgNo() ));
                 throw new MsgBrokerException(-1);
             }

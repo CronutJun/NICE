@@ -43,7 +43,8 @@ public class MsgBrokerProducer {
     public static void putDataToPrd(MsgParser msgPsr) throws Exception {
 
         MsgBrokerProducer prd = null;
-        if( msgPsr.getString("CM.org_cd").equals(MsgBrokerConst.NICE_CODE) ) {
+        if( msgPsr.getString("CM.org_cd").equals(MsgBrokerConst.NICE_CODE)
+        ||  msgPsr.getString("CM.org_cd").equals(MsgBrokerConst.KFTC_CODE) ) {
             logger.warn("Send data to ATMS.{}.{}.Q", msgPsr.getString("CM.msg_type"),msgPsr.getString("CM.work_type") );
             prd = MsgBrokerProducer.producers.get( String.format("ATMS.%s.%s.Q",
                                                                  msgPsr.getString("CM.msg_type"),

@@ -69,7 +69,7 @@ public class MsgBrokerJMXClient {
             System.out.println(mbeanProxy.reattachConsumer(String.format("CLOSE%s", args[1])));
         }
         else if( args[0].equals("-start") ) {
-            System.out.println(mbeanProxy.reattachConsumer(String.format("CLOSE%s", args[1])));
+            System.out.println(mbeanProxy.reattachConsumer(String.format("START%s", args[1])));
         }
 
         mbeanServerConnection.removeNotificationListener(mbeanName, listener);

@@ -170,7 +170,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
         /* 현장  부가업무 연동              */
         /* 세트 해제일 경우, 아래 루트를 수행한다.  */
-        if(parsed.getString("inout_type").startsWith("2")) {
+        if(parsed.getString("inout_type").substring(0,1).equals("2")) {
             /* 해당테이블의 대상 Data를 검색하여 Update 치고 push 테이블에도 insert 처리 */
 
             TCmCheckMaster tCmCheckMasterParam = new TCmCheckMaster();
@@ -646,8 +646,8 @@ public class In01000161Impl extends InMsgHandlerImpl {
                 }//end for (EXEC SQL CLOSE CURCMA;)
             }//end list
 
-        //end of if(parsed.getString("inout_type").startsWith("2")) {
-        } else if(parsed.getString("inout_type").startsWith("1")) { /* 경비설정-완료 */
+        //end of if(parsed.getString("inout_type").substring(0,1).equals("2")) {
+        } else if(parsed.getString("inout_type").substring(0,1).equals("1")) { /* 경비설정-완료 */
             /* 해당테이블의 대상 Data를 검색하여 Update 치고 push 테이블에도 insert 처리 */
 
 
@@ -1132,14 +1132,14 @@ public class In01000161Impl extends InMsgHandlerImpl {
                 }//end for (EXEC SQL CLOSE CURCMA;)
             }//end list
 
-        } //end of if(parsed.getString("inout_type").startsWith("1")) {
+        } //end of if(parsed.getString("inout_type").substring(0,1).equals("1")) {
 
         /* 출동 요청 도착 일 경우( 경비(1), 장애(2), 현송(3) 일 경우 ) 장애 테이블에 도착 및 완료 에 update */
         /* 환경일 경우에만 제외 '4') */
-        if(parsed.getString("arrival_type").startsWith("4") == false) {
+        if(parsed.getString("arrival_type").substring(0,1).equals("4") == false) {
             /* 경비설정('1')일 경우 Lock_date, Lock_time에 해제('2')일 경우 UnLock_date UnLock_time에 */
             /* 해당 사이트의 미완료된 장애건에 대해 모두 저장 */
-            if(parsed.getString("inout_type").startsWith("1")) {
+            if(parsed.getString("inout_type").substring(0,1).equals("1")) {
                 /* 경비 설정은 완료여부와 관계없이    -> 수정(아래참조) */
                 /* 경비 해제시간이 있으면서 경비 설정시간이 없는건 중     */
                 /* 경비 해제시간 보다 설정시간이 이후 인것               */
@@ -1178,7 +1178,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         try
                         {
-                            comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMng);
+                            comPack.updateErrorMng(safeData, updateTCtErrorMng, tCtErrorMng);
 
                             logger.warn( "[T_CT_ERROR_MNG] Update OK");
 
@@ -1220,7 +1220,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
 
                         try
                         {
-                            comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMng);
+                            comPack.updateErrorMng(safeData, updateTCtErrorMng, tCtErrorMng);
 
                             logger.warn( "[T_CT_ERROR_MNG] Update OK");
 

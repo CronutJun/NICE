@@ -47,7 +47,7 @@
                 ,'0Z') error_cd,                                             /* 장애코드(그룹장애코드기반 맵핑) */
              ERR.ERROR_MSG,
              MNG.ACCEPT_NM acpt_nm,                                         /* 접수자명                 */
-             REPLACE(substrb(MNG.MSG,1,100), CHR(10), ' ') memo,                     /* 특이사항                 */
+             REPLACE(substrb(MNG.MSG,1,100), x'0a', ' ') memo,                     /* 특이사항                 */
              MNG.CREATE_TIME org_msg_no,                                       /* 출동요청일련번호         */
              '',
              MNG.SEND_DATE,                                         /* 출동통보일자               */

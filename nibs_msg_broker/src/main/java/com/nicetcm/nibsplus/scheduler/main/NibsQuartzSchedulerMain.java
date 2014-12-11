@@ -63,9 +63,7 @@ public class NibsQuartzSchedulerMain {
 
             logger.info("Nibs Quartz Scheduler를 [정상적] 으로 실행 되었습니다." + (rmiServer ? " RMI Service Port : " + config.getProperty("execute.rmi.registry.port"): ""));
         } catch (SchduleException e) {
-            //e.printStackTrace();
-            logger.error(e.getMessage());
-            logger.error("Nibs Quartz Scheduler를 [비정상적] 으로 종료 되었습니다.");
+            logger.error("Nibs Quartz Scheduler를 [비정상적] 으로 종료 되었습니다.", e.getCause());
             System.exit(-1);
         }
     }

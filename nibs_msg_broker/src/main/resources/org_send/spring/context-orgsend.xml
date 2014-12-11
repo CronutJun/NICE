@@ -67,6 +67,10 @@
     </beans>
 
     <beans>
+    	<bean id="msgLogger" class="com.nicetcm.nibsplus.orgsend.common.MsgLogger">
+    		<property name="logPath"><value>#{config['log.path']}</value></property>
+    	</bean>
+    	
         <!-- 상수 alias 설정
         <util:constant id="AUTO_SEND" static-field="com.nicetcm.nibsplus.orgsend.constant.TransferType.AUTO_SEND" />
         <util:constant id="ONLY_SEND" static-field="com.nicetcm.nibsplus.orgsend.constant.TransferType.ONLY_SEND" /> -->

@@ -2,14 +2,16 @@ package com.nicetcm.nibsplus.orgsend.service.impl;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerCallBack;
+import com.nicetcm.nibsplus.orgsend.common.MsgLogger;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
+import com.nicetcm.nibsplus.orgsend.model.OrgSendExternalVO;
 import com.nicetcm.nibsplus.orgsend.rmi.MsgBrokerCallAgent;
 import com.nicetcm.nibsplus.orgsend.service.MsgTransferService;
 
@@ -25,13 +27,14 @@ import com.nicetcm.nibsplus.orgsend.service.MsgTransferService;
  * @see
  */
 @Service("MsgRmiTransfer")
-public class MsgRmiTransfer implements MsgTransferService
-{
+public class MsgRmiTransfer implements MsgTransferService {
 
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+	@Autowired
+	private MsgLogger msgLogger;
+	private Logger errorLogger = Logger.getLogger("OrgSendERROR");
 
     @Override
-    public void send(MsgBrokerConf msgBrokerConf, final Map<String, String> msgBodyMap, TransferType transferType)
+    public void send(MsgBrokerConf msgBrokerConf, final Map<String, String> msgBodyMap, OrgSendExternalVO orgSendExternalVO)
     {
 
         //전문의 필수값 설정
@@ -77,22 +80,19 @@ public class MsgRmiTransfer implements MsgTransferService
         //전문호출 객체 생성
         MsgBrokerCallAgent<Object> agent = new MsgBrokerCallAgent<Object>(msgBrokerConf, null, callback);
 
-
-        try
-        {
-            if(transferType.equals(TransferType.AUTO_SEND)) {
+        try {
+            if(orgSendExternalVO.getTransferType().equals(TransferType.AUTO_SEND)) {
                 //동기식 전문호출(Timeout설정)
-                logger.info("Call " + Thread.currentThread().getName() + "★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★");
+            	msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), String.format("Sync Call - %s", msgBodyMap.toString()));
                 agent.callBrokerSync(10); //타임아웃 10초 설정
-                logger.info("End " + Thread.currentThread().getName() + "★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★");
+                msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), "Sync End");
             } else {
                 //비동기식 전문호출
+            	msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), String.format("Async Call - %s", msgBodyMap.toString()));
                 agent.callBrokerAync();
             }
-        } catch (Exception e)
-        {
-            //통신중에 Exception이 발생한 경우 적절한 처리
-            e.printStackTrace();
+        } catch (Exception e) {
+        	errorLogger.error(String.format("%s %s\n%s", Thread.currentThread().getName(), e.getMessage(), msgBodyMap.toString()), e.getCause());
         }
     }//end method
 }

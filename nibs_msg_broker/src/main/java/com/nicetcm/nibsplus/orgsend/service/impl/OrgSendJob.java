@@ -2,6 +2,7 @@ package com.nicetcm.nibsplus.orgsend.service.impl;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -9,6 +10,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
+import com.nicetcm.nibsplus.orgsend.common.MsgLogger;
 import com.nicetcm.nibsplus.orgsend.constant.NibsDataSource;
 import com.nicetcm.nibsplus.orgsend.constant.TransferType;
 import com.nicetcm.nibsplus.orgsend.model.OrgSendExternalVO;
@@ -34,6 +36,8 @@ import com.nicetcm.nibsplus.orgsend.service.NOrgSendService;
 @DisallowConcurrentExecution
 public class OrgSendJob implements Job {
 
+	private Logger errorLogger = Logger.getLogger("OrgSendERROR");
+	
     /**
      * Quartz에서 실행시킴
      * <pre>
@@ -49,6 +53,9 @@ public class OrgSendJob implements Job {
         JobDataMap jobDataMap = context.getMergedJobDataMap();
 
         ApplicationContext applicationContext = (ApplicationContext)jobDataMap.get("applicationContext");
+        // Map<String, String> mtype = ((OrgSend)applicationContext.getBean("orgSend", OrgSend.class)).getOrgSendMtype();
+    	MsgLogger msgLogger = (MsgLogger)applicationContext.getBean("msgLogger");
+        
         NOrgSendService nOrgSendService = applicationContext.getBean("NOrgSendImpl", NOrgSendService.class);
 
         if (MsgBrokerCallAgent.msgBrokerConfig == null) {
@@ -62,13 +69,11 @@ public class OrgSendJob implements Job {
 
         OrgSendExternalVO orgSendExternalVO = new OrgSendExternalVO(applicationContext, queryName, orgCd, transferType, nibsDataSource);
 
-        try
-        {
+        try {
             nOrgSendService.execute(orgSendExternalVO);
-        } catch (Exception e)
-        {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception e) {
+        	msgLogger.info(queryName, orgCd, String.format("%s", e.getMessage()));
+        	errorLogger.error(String.format("%s %s", Thread.currentThread().getName(), e.getMessage()), e.getCause());
         }
     }
     

@@ -58,7 +58,7 @@ public class In01101111Impl extends InMsgHandlerImpl {
 
                     try
                     {
-                        comPack.updateErrorMng(updateTCtErrorMng, tCtErrorMng);
+                        comPack.updateErrorMng(safeData, updateTCtErrorMng, tCtErrorMng);
                     } catch (Exception e)
                     {
                         logger.warn( "[T_CT_ERROR_MNG] Update Err [{}]", e.getMessage());

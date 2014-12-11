@@ -36,11 +36,13 @@ public class MsgBrokerQInitializer {
 
     public MsgBrokerQInitializer initConsumers() throws Exception {
 
-        defPrefetchSize = Integer.parseInt(MsgCommon.msgProps.getProperty("consumer.prefetch.size", "10"));
+        defPrefetchSize = Integer.parseInt(MsgCommon.msgProps.getProperty("consumer.prefetch.size", "1"));
 
         if( obj.containsKey("consumers")) {
             JsonArray arr = obj.getJsonArray("consumers");
             for (JsonObject elem : arr.getValuesAs(JsonObject.class)) {
+                if( elem.getBoolean("disabled", false) )
+                    continue;
                 MsgBrokerConsumer.consumers
                 .put(elem.getString("name"),
                     new MsgBrokerConsumer(MsgCommon.msgProps.getProperty("consumer.host"), elem.getString("name"), elem.getBoolean("exclusive", true), elem.getInt("prefetch_size", defPrefetchSize),
@@ -66,19 +68,14 @@ public class MsgBrokerQInitializer {
         if( obj.containsKey("producers")) {
             JsonArray arr = obj.getJsonArray("producers");
             for (JsonObject elem : arr.getValuesAs(JsonObject.class)) {
+                if( elem.getBoolean("disabled", false) )
+                    continue;
                 MsgBrokerProducer.producers
                 .put(elem.getString("name"),
                     new MsgBrokerProducer(MsgCommon.msgProps.getProperty("producer.host"), elem.getString("name")));
             }
-            /*
-             * NS 나이스 상태전문 Producers
-             */
-            // MsgBrokerProducer.producers.put("N200.0120", new MsgBrokerProducer(MsgCommon.msgProps.getProperty("producer.host"), "N200.0120"));
-            /*
-             * ES 신한 통전문 중계 Producers
-             */
-            // MsgBrokerProducer.producers.put("0500.0110", new MsgBrokerProducer(MsgCommon.msgProps.getProperty("producer.host"), "0500.0110"));
         }
+
         return this;
     }
 }

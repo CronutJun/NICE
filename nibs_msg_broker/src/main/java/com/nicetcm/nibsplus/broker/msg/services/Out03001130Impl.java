@@ -26,12 +26,14 @@ public class Out03001130Impl extends OutMsgHandlerImpl {
 
         String command = "";
 
-        if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.TAXRF_CODE) ) {
+        if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.TAXRF_CODE)
+        &&  parsed.getString("close_type").equals("2") ) {
             command = String.format("ivkAutoSend SqlService SP_FN_KTIS_CLOSE SH %s^%s^%s^%s^%s",
                     parsed.getString("inq_date"), parsed.getString("CM.org_cd"),
                     parsed.getString("brch_cd"),  parsed.getString("mac_no"),
                     parsed.getString("close_type") );
         }
+        else return;
 
         /**
          * Command 실행
@@ -59,22 +61,17 @@ public class Out03001130Impl extends OutMsgHandlerImpl {
             }
         }
 
-        /**
-         *  금결원을 제외한 기관은 WEB으로 바로 응답
-         */
-        if( !parsed.getString("CM.org_cd").equals(MsgBrokerConst.KFTC_CODE) ) {
-            safeData.setNoOutData( true );
+        safeData.setNoOutData( true );
 
-            /*
-             * Client 응답, (대외기관 요청하지 않고 통신서버에서 응답처리)
-             */
-            parsed.setString("CM.ret_cd_src", "S");
-            parsed.setString("CM.ret_cd",     "00");
-            ByteBuffer buf = parsed.getMessage();
-            buf.position(0);
-            byte[] msg = new byte[buf.limit()];
-            buf.get(msg);
-            safeData.setRespMsg(msg);
-        }
+        /*
+         * Client 응답, (대외기관 요청하지 않고 통신서버에서 응답처리)
+         */
+        parsed.setString("CM.ret_cd_src", "S");
+        parsed.setString("CM.ret_cd",     "00");
+        ByteBuffer buf = parsed.getMessage();
+        buf.position(0);
+        byte[] msg = new byte[buf.limit()];
+        buf.get(msg);
+        safeData.setRespMsg(msg);
     }
 }

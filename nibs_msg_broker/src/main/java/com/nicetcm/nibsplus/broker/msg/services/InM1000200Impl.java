@@ -44,7 +44,16 @@ public class InM1000200Impl extends InMsgHandlerImpl {
          */
         Random rd = new Random();
         String sRand = String.format("%06d", rd.nextInt(999999));
-        String sMsg  = String.format("한국전자금융 인증번호  [%s]", sRand);
+        
+        String sMsg;
+        
+        /* 0WJ 웰컴저축은행의 경우 별도 메시지를 보여 주도록 한다. */
+        if( parsed.getString("authenti_org_cd").equals("0WJ") ) {
+          sMsg = String.format("[웰컴저축은행] CD/ATM 상담신청에 휴대폰 소지 인증번호 [%s]를 입력해 주세요", sRand);
+        }
+        else {
+            sMsg = String.format("한국전자금융 인증번호  [%s]", sRand);
+        }
 
         logger.warn(String.format(" 인증번호 발생 [%s]-[%s]", sRand, parsed.getString("user_telno")) );
         TMisc arg = new TMisc();
@@ -58,5 +67,7 @@ public class InM1000200Impl extends InMsgHandlerImpl {
             throw e;
         }
         parsed.setString( "authenti_no", sRand );
+
+        safeData.setKeepResData( false );
     }
 }
