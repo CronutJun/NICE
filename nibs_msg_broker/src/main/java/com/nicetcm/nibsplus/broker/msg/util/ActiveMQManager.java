@@ -677,11 +677,11 @@ public class ActiveMQManager {
 
     private static void printArgInfo() {
         System.out.println("Usage: java ActiveMQManager [-lc : list consumers  ]");
-        System.out.println("                            [-rc : remove consumers] [queue name]");
+        System.out.println("                            [-rc : remove consumers] [queue name, ALL]");
         System.out.println("                            [-bc : browse consumers] [queue name]");
         System.out.println("                            [-lp : list producers  ]");
         System.out.println("                            [-rp : remove producers] [queue name]");
-        System.out.println("                            [-bp : browse producers] [queue name]");
+        System.out.println("                            [-bp : browse producers] [queue name, ALL]");
     }
 
     public static void main(String[] args) {
@@ -696,7 +696,7 @@ public class ActiveMQManager {
             return;
         }
         if( args[0].equals("-rc") || args[0].equals("-lrc") || args[0].equals("-rp") ) {
-            if( args.length > 2 ) {
+            if( args.length != 2 ) {
                 printArgInfo();
                 return;
             }
@@ -721,7 +721,7 @@ public class ActiveMQManager {
                 amq.listAll( "P" );
             }
             else if(args[0].equals("-rc") || args[0].equals("-lrc") ) {
-                if( args.length == 1 )
+                if( args[1].equals("ALL") )
                     amq.removeAll( "C" );
                 else
                     amq.remove( "C", args[1] );
