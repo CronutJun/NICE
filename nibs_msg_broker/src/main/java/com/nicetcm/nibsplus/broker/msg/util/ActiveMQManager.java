@@ -680,8 +680,8 @@ public class ActiveMQManager {
         System.out.println("                            [-rc : remove consumers] [queue name, ALL]");
         System.out.println("                            [-bc : browse consumers] [queue name]");
         System.out.println("                            [-lp : list producers  ]");
-        System.out.println("                            [-rp : remove producers] [queue name]");
-        System.out.println("                            [-bp : browse producers] [queue name, ALL]");
+        System.out.println("                            [-rp : remove producers] [queue name, ALL]");
+        System.out.println("                            [-bp : browse producers] [queue name]");
     }
 
     public static void main(String[] args) {
