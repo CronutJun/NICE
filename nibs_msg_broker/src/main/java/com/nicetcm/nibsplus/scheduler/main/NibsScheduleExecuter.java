@@ -74,6 +74,8 @@ public class NibsScheduleExecuter {
 	
             }
         } catch (Exception e) {
+        	e.printStackTrace(System.err);
+        	
         	logger.error("Nibs Quartz Scheduler를 [비정상적] 으로 종료 되었습니다.\n" + e.getMessage(), e.getCause());
         }
     	

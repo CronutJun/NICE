@@ -83,12 +83,13 @@ public class MsgBrokerShutdown extends Thread {
             logger.warn("Shutdown complete.");
             for( Thread t: Thread.getAllStackTraces().keySet() ) {
                 if( t.isAlive() && this.getId() != t.getId() ) {
-                    t.getThreadGroup().interrupt();
+                    t.interrupt();
                 }
             }
 
         }
         catch( Exception e ) {
+            logger.error(e.getMessage());
             for( StackTraceElement se: e.getStackTrace() )
                 logger.error(se.toString());
         }

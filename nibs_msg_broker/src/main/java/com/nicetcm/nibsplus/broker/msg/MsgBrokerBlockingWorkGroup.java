@@ -62,6 +62,7 @@ public class MsgBrokerBlockingWorkGroup {
     public void threadStop() {
         while( !blockThreads.isEmpty() ) {
             blockThreads.get(0).stopWork();
+            logger.warn("parallel threads {} is stopped", blockThreads.get(0).getName() );
             blockThreads.remove(0);
         }
     }

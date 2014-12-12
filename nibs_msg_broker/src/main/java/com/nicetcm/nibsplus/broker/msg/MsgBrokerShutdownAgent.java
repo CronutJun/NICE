@@ -1,5 +1,7 @@
 package com.nicetcm.nibsplus.broker.msg;
 
+import javax.jms.JMSException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,12 +40,12 @@ public class MsgBrokerShutdownAgent extends Thread {
         Thread.currentThread().setName("SHUTDOWN-" + type);
         try {
             if( type.equals("consumer") ) {
-                con.close();
-                logger.warn("Consumer \"{}\" is closed.", nm);
-                for(MsgBrokerBlockingWorker th: con.getListener().getBlockingWorkGroup().getBlockingThreads()) {
-                    logger.warn("parallel threads {} is going to stop", th.getName() );
-                    th.stopWork();
-                    logger.warn("parallel threads {} is stopped", th.getName() );
+                try {
+                    con.close();
+                    logger.warn("Consumer \"{}\" is closed.", nm);
+                }
+                catch( JMSException je ) {
+                    logger.warn("Consumer \"{}\"'s status is \"{}\"", nm, je.getMessage() );
                 }
                 MsgBrokerConsumer.consumers.remove(nm);
             }

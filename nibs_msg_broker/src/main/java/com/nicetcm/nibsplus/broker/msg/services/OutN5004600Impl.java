@@ -64,10 +64,13 @@ public class OutN5004600Impl extends OutMsgHandlerImpl {
             }
 
             // read any errors from the attempted command
+            boolean sErr = false;
             logger.warn("Here is the standard error of the command (if any):\n");
             while ((ln = stdError.readLine()) != null) {
                 logger.warn(ln);
+                sErr = true;
             }
+            if( sErr ) throw new Exception("Error is occured by shell script.");
         }
 
         /**

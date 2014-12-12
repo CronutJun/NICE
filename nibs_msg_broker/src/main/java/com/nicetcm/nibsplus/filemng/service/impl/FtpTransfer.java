@@ -10,24 +10,33 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
-import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.filemng.common.FileMngException;
 import com.nicetcm.nibsplus.filemng.model.TransferVO;
-import com.nicetcm.nibsplus.filemng.service.FileTransferService;
 import com.nicetcm.nibsplus.orgsend.constant.ExceptionType;
 
-@Service("ftpTransfer")
-public class FtpTransfer implements FileTransferService
-{
+public class FtpTransfer {
+
+	public static void main(String[] args) throws FileMngException {
+		TransferVO vo = new TransferVO();
+		vo.setHost("127.0.0.1");
+		vo.setAvailableServerPort(21);
+		vo.setUserId("master");
+		vo.setPassword("master");
+		vo.setRemotePath("/aa");
+		vo.setFileName("20140430.txt");
+		vo.setLocalPath("/");
+		//vo.setFileName("test.txt");
+		
+		FtpTransfer.putFile(vo);
+	}
+	
     /**
      * 원하는 파일을 로컬 폴더에 다운로드 한다
      * @param TransferVO 전송정보
      * @return File
      */
-    @Override
-    public File getFile(TransferVO transferVO) throws FileMngException
-    {
+    public static File getFile(TransferVO transferVO) throws FileMngException {
         FileOutputStream fos = null;
         FTPClient ftp = null;
         File f = null;
@@ -79,7 +88,7 @@ public class FtpTransfer implements FileTransferService
             ftp.logout();
 
         } catch (Exception e) {
-            throw new FileMngException(ExceptionType.VM_STOP, e.getMessage());
+            throw new FileMngException(ExceptionType.VM_STOP, transferVO.getHost() + " " + e.getMessage());
         } finally {
             if (fos != null)
                 try
@@ -114,9 +123,7 @@ public class FtpTransfer implements FileTransferService
      * @return
      * @throws FileMngException
      */
-    @Override
-    public File putFile(TransferVO transferVO) throws FileMngException
-    {
+    public static File putFile(TransferVO transferVO) throws FileMngException {
         FileInputStream fis = null;
         FTPClient ftp = null;
         File f = null;
@@ -150,17 +157,16 @@ public class FtpTransfer implements FileTransferService
 
             // FTPFile[] ftpFileList = ftp.listFiles();
 
-            f = new File(transferVO.getLocalPath() + "/" + transferVO.getFileName());
+            f = new File(transferVO.getLocalPath(), transferVO.getFileName());
 
             fis = new FileInputStream(f);
-
 
             ftp.storeFile(transferVO.getFileName(), fis);
             ftp.logout();
 
         } catch (Exception e)
         {
-            throw new FileMngException(ExceptionType.VM_STOP, e.getMessage());
+            throw new FileMngException(ExceptionType.VM_STOP, transferVO.getHost() + " " + e.getMessage());
         } finally
         {
             if (fis != null)

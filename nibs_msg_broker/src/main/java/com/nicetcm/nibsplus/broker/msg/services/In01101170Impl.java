@@ -148,6 +148,8 @@ public class In01101170Impl extends InMsgHandlerImpl {
 
             TCtErrorMng updateTCtErrorMng = new TCtErrorMng();
             updateTCtErrorMng.setOrgSendYn(hSEND_YN);
+            updateTCtErrorMng.setUpdateDate( safeData.getDSysDate() );
+            updateTCtErrorMng.setUpdateUid ("ERRmng");
 
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
             tCtErrorMngSpec.createCriteria()
@@ -218,6 +220,8 @@ public class In01101170Impl extends InMsgHandlerImpl {
 
             TCtErrorMng updateTCtErrorMng = new TCtErrorMng();
             updateTCtErrorMng.setOrgSendYn(hSEND_YN);
+            updateTCtErrorMng.setUpdateDate( safeData.getDSysDate() );
+            updateTCtErrorMng.setUpdateUid ("ERRmng");
 
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
 

@@ -122,6 +122,7 @@
      { "name" : "N500.4600",                     "kname" : "통신서버 내부실행"           },
      { "name" : "M100.0100",                     "kname" : "지점정보조회"                },
      { "name" : "M100.0200",                     "kname" : "인증번호조회"                },
+     { "name" : "DISPATCH.PEND",                 "kname" : "장애 후 적체된 데이터 분산용"},
      { "name" : "M100.0900",                     "kname" : "POLL"                        }  ],
   "producers" : [
      { "name" : "ATMS.004.H.Q",                  "kname" : "국민은행"                    },

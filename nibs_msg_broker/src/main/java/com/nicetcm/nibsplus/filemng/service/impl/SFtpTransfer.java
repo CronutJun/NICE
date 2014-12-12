@@ -27,12 +27,12 @@ public class SFtpTransfer {
 		vo.setAvailableServerPort(22);
 		vo.setUserId("chapweb");
 		vo.setPassword("chapweb");
-		vo.setRemotePath("/share/ftp/shinhan/recv");
-		vo.setFileName("201411_21_0510");
-		vo.setLocalPath("/nibs_dev_sftp_local");
+		vo.setRemotePath("/share/ftp/host_file");
+		vo.setFileName("20140430.txt");
+		vo.setLocalPath("/");
 		//vo.setFileName("test.txt");
 		
-		SFtpTransfer.getFile(vo);
+		SFtpTransfer.putFile(vo);
 	}
 	
 	private static Connection connect(TransferVO transferVO) throws IOException, FileMngException {
@@ -96,7 +96,7 @@ public class SFtpTransfer {
                 }
             }
         } catch (Exception e) {
-            throw new FileMngException(ExceptionType.VM_STOP, e.getMessage());
+            throw new FileMngException(ExceptionType.VM_STOP, transferVO.getHost() + " " + e.getMessage());
         }
 
         return lfile;
@@ -154,7 +154,7 @@ public class SFtpTransfer {
                 }
             }
         } catch (Exception e) {
-            throw new FileMngException(ExceptionType.VM_STOP, e.getMessage());
+            throw new FileMngException(ExceptionType.VM_STOP, transferVO.getHost() + " " + e.getMessage());
         }
 
         return lfile;

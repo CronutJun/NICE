@@ -40,13 +40,11 @@ public class OrgSendAllTriggerListener implements TriggerListener
     @Override
     public void triggerFired(Trigger trigger, JobExecutionContext context) {
     	JobKey jobKey = trigger.getJobKey();
-    	msgLogger.info(jobKey.getGroup(), jobKey.getName(), String.format("%-20s%s", "triggerFired", getInfo(trigger)));
+    	msgLogger.info(jobKey.getGroup(), jobKey.getName(), getInfo("triggerFired", trigger, null));
     }
 
     @Override
     public boolean vetoJobExecution(Trigger trigger, JobExecutionContext context){
-    	JobKey jobKey = trigger.getJobKey();
-    	msgLogger.info(jobKey.getGroup(), jobKey.getName(), String.format("%-20s%s", "vetoJobExecution", getInfo(trigger)));
         return false;
     }
 
@@ -54,20 +52,17 @@ public class OrgSendAllTriggerListener implements TriggerListener
     public void triggerMisfired(Trigger trigger) {
     	// JobKey jobKey = trigger.getJobKey();
     	// msgLogger.info(jobKey.getGroup(), jobKey.getName(), String.format("%-20s%s", "triggerMisfired", getInfo(trigger)));
-    	errorLogger.error(String.format("%-20s%s", "triggerMisfired", getInfo(trigger)));
+    	errorLogger.error(String.format("%-20s%s", getInfo("triggerMisfired", trigger, null)));
     }
 
     @Override
     public void triggerComplete(Trigger trigger, JobExecutionContext context, CompletedExecutionInstruction triggerInstructionCode) {
     	JobKey jobKey = context.getJobDetail().getKey();
-    	msgLogger.info(jobKey.getGroup(), jobKey.getName(), String.format("%-20s%s", "triggerComplete", getInfo(trigger)));
-
+    	msgLogger.info(jobKey.getGroup(), jobKey.getName(), getInfo("triggerComplete", trigger, context));
     }
 
-    private String getInfo(Trigger trigger) {
-        return new StringBuilder()
-        .append(String.format("%-30s %s", trigger.getJobKey().getGroup() + " " + trigger.getJobKey().getName(), "S:" + trigger.getStartTime() + (trigger.getEndTime() != null ? (" E:" + trigger.getEndTime()) : "") + (trigger.getFinalFireTime() != null ? (" F:" + trigger.getFinalFireTime()) : "")))
-        .toString();
+    private String getInfo(String type, Trigger trigger, JobExecutionContext context) {
+        return String.format("%-20s%-25s%s", type, trigger.getJobKey().getGroup() + " " + trigger.getJobKey().getName(), (context != null ? "NextTime : " + context.getNextFireTime() : ""));
     }
 
 }

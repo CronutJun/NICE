@@ -64,6 +64,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
 
         TCtErrorBasic     errBasic = new TCtErrorBasic();
         TCtErrorNoti      errNoti  = new TCtErrorNoti();
+        TCtErrorTxn       errTxn   = new TCtErrorTxn();
 
 
         errBasicSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
@@ -100,7 +101,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
 
         errNotiSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
                                     .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
-        List<TCtErrorCall> errNotis = null;
+        List<TCtErrorNoti> errNotis = null;
         try {
             errNotiMap.selectBySpec( errNotiSpec );
             if( errNotis.size() == 0 ) {
@@ -116,7 +117,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
 
         errTxnSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
                                    .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
-        List<TCtErrorCall> errTxns = null;
+        List<TCtErrorTxn> errTxns = null;
         try {
             errTxnMap.selectBySpec( errTxnSpec );
             if( errTxns.size() == 0 ) {
@@ -160,6 +161,15 @@ public class In01000151Impl extends InMsgHandlerImpl {
         errBasic.setUpdateDate    ( safeData.getDSysDate() );
         errBasic.setUpdateUid     ( "ERRmngR" );
 
+        errTxn.setUpdateDate    ( safeData.getDSysDate() );
+        errTxn.setUpdateUid     ( "ERRmngR" );
+        try {
+            errBasicMap.updateBySpecSelective( errBasic, errBasicSpec );
+        }
+        catch( Exception e ) {
+            logger.warn( "[T_CT_ERROR_BASIC] Update Err [{}]", e.getLocalizedMessage() );
+            throw e;
+        }
 
         try {
             errNotiMap.updateBySpecSelective( errNoti, errNotiSpec );
@@ -170,10 +180,10 @@ public class In01000151Impl extends InMsgHandlerImpl {
         }
 
         try {
-            errBasicMap.updateBySpecSelective( errBasic, errBasicSpec );
+            errTxnMap.updateBySpecSelective( errTxn, errTxnSpec );
         }
         catch( Exception e ) {
-            logger.warn( "[T_CT_ERROR_BASIC] Update Err [{}]", e.getLocalizedMessage() );
+            logger.warn( "[T_CT_ERROR_TXN] Update Err [{}]", e.getLocalizedMessage() );
             throw e;
         }
 

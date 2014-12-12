@@ -44,6 +44,7 @@ public class In01100130Impl implements InMsgHandler {
     @Autowired private TCtErrorBasicMapper errBasicMap;
     @Autowired private TCtErrorMngMadeComMapper errMngMadeComMap;
     @Autowired private TCtErrorNotiMapper errNotiMap;
+    @Autowired private TCtErrorTxnMapper errTxnMap;
     @Autowired private TCtErrorMngGuardMapper errMngGuardMap;
 
     @Override
@@ -58,6 +59,7 @@ public class In01100130Impl implements InMsgHandler {
 
             TCtErrorBasic errBasic = new TCtErrorBasic();
             TCtErrorNoti errNoti = new TCtErrorNoti();
+            TCtErrorTxn errTxn = new TCtErrorTxn();
             TCtErrorMngMadeCom errMngMadeCom = new TCtErrorMngMadeCom();
             TCtErrorMngGuard errMngGuard = new TCtErrorMngGuard();
 
@@ -111,13 +113,19 @@ public class In01100130Impl implements InMsgHandler {
                     TCtErrorNotiSpec errNotiSpec = new TCtErrorNotiSpec();
                     errNotiSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
                                                 .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
+                    TCtErrorTxnSpec errTxnSpec = new TCtErrorTxnSpec();
+                    errTxnSpec.createCriteria().andCreateDateEqualTo( parsed.getString("trans1_date") )
+                                               .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
                     errBasic.setUpdateDate( dSysDate );
                     errBasic.setUpdateUid( "APmngEM" );
                     errNoti.setUpdateDate( dSysDate );
                     errNoti.setUpdateUid( "APmngEM" );
+                    errTxn.setUpdateDate( dSysDate );
+                    errTxn.setUpdateUid( "APmngEM" );
 
                     errBasicMap.updateBySpecSelective( errBasic, errBasicSpec );
                     errNotiMap.updateBySpecSelective( errNoti, errNotiSpec );
+                    errTxnMap.updateBySpecSelective( errTxn, errTxnSpec );
                 }
                 /*
                  * 20100526 출동요청전문 전송 전에 고객대기건이 접수 된경우 혹은 장애접수시 고객대기로 접수될경우

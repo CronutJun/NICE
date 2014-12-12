@@ -23,8 +23,10 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorBasicMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorTxnMapper;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasicSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
 
 @Service("in05001130")
 public class In05001130Impl extends InMsgHandlerImpl {
@@ -33,6 +35,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
 
     @Autowired private StoredProcMapper splMap;
     @Autowired private TCtErrorBasicMapper errBasicMap;
+    @Autowired private TCtErrorTxnMapper errTxnMap;
 
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
@@ -69,6 +72,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
             }
 
             TCtErrorBasic updBasic = new TCtErrorBasic();
+            TCtErrorTxn updTxn = new TCtErrorTxn();
             for( TCtErrorBasic errBasic: rslt ) {
                 updBasic.setOrgSendYn( "1" );
                 updBasic.setUpdateDate( safeData.getDSysDate() );
@@ -81,6 +85,20 @@ public class In05001130Impl extends InMsgHandlerImpl {
                 }
                 catch( Exception e ) {
                     logger.warn( String.format("[SaveIBKBrandErrState][ERR][Pri] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]",
+                            parsed.getString("create_date"), parsed.getString("create_time"),
+                            parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
+                    throw e;
+                }
+                updTxn.setUpdateDate( safeData.getDSysDate() );
+                updTxn.setUpdateUid( "online" );
+                updTxn.setErrorNo( errBasic.getErrorNo() );
+                updTxn.setCreateDate( errBasic.getCreateDate() );
+                updTxn.setCreateTime( errBasic.getCreateTime() );
+                try {
+                    errTxnMap.updateByPrimaryKeySelective( updTxn );
+                }
+                catch( Exception e ) {
+                    logger.warn( String.format("[SaveIBKBrandErrState][ERR][Pri] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE TXN Error [%s]",
                             parsed.getString("create_date"), parsed.getString("create_time"),
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                     throw e;
@@ -139,6 +157,20 @@ public class In05001130Impl extends InMsgHandlerImpl {
                                 parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                         throw e;
                     }
+                    updTxn.setUpdateDate( safeData.getDSysDate() );
+                    updTxn.setUpdateUid( "online" );
+                    updTxn.setErrorNo( errBasic.getErrorNo() );
+                    updTxn.setCreateDate( errBasic.getCreateDate() );
+                    updTxn.setCreateTime( errBasic.getCreateTime() );
+                    try {
+                        errTxnMap.updateByPrimaryKeySelective( updTxn );
+                    }
+                    catch( Exception e ) {
+                        logger.warn( String.format("[SaveIBKBrandErrState][ERR][Etc] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE TXN Error [%s]",
+                                parsed.getString("create_date"), parsed.getString("create_time"),
+                                parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
+                        throw e;
+                    }
                 }
             }
         }
@@ -169,6 +201,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                 throw e;
             }
             TCtErrorBasic updBasic = new TCtErrorBasic();
+            TCtErrorTxn updTxn = new TCtErrorTxn();
             for( TCtErrorBasic errBasic: rslt ) {
                 updBasic.setOrgSendYn( "3" );
                 updBasic.setUpdateDate( safeData.getDSysDate() );
@@ -182,6 +215,20 @@ public class In05001130Impl extends InMsgHandlerImpl {
                 }
                 catch( Exception e ) {
                     logger.warn( String.format("[SaveIBKBrandErrState][ERR][FIN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]",
+                            parsed.getString("create_date"), parsed.getString("create_time"),
+                            parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
+                    throw e;
+                }
+                updTxn.setUpdateDate( safeData.getDSysDate() );
+                updTxn.setUpdateUid( "online" );
+                updTxn.setErrorNo( errBasic.getErrorNo() );
+                updTxn.setCreateDate( errBasic.getCreateDate() );
+                updTxn.setCreateTime( errBasic.getCreateTime() );
+                try {
+                    errTxnMap.updateByPrimaryKeySelective( updTxn );
+                }
+                catch( Exception e ) {
+                    logger.warn( String.format("[SaveIBKBrandErrState][ERR][FIN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE TXN Error [%s]",
                             parsed.getString("create_date"), parsed.getString("create_time"),
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                     throw e;
@@ -215,6 +262,7 @@ public class In05001130Impl extends InMsgHandlerImpl {
                 throw e;
             }
             TCtErrorBasic updBasic = new TCtErrorBasic();
+            TCtErrorTxn updTxn = new TCtErrorTxn();
             for( TCtErrorBasic errBasic: rslt ) {
                 updBasic.setOrgSendYn( "3" );
                 updBasic.setUpdateDate( safeData.getDSysDate() );
@@ -228,6 +276,20 @@ public class In05001130Impl extends InMsgHandlerImpl {
                 }
                 catch( Exception e ) {
                     logger.warn( String.format("[SaveIBKBrandErrState][ERR][OPEN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE Error [%s]",
+                            parsed.getString("create_date"), parsed.getString("create_time"),
+                            parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
+                    throw e;
+                }
+                updTxn.setUpdateDate( safeData.getDSysDate() );
+                updTxn.setUpdateUid( "online" );
+                updTxn.setErrorNo( errBasic.getErrorNo() );
+                updTxn.setCreateDate( errBasic.getCreateDate() );
+                updTxn.setCreateTime( errBasic.getCreateTime() );
+                try {
+                    errTxnMap.updateByPrimaryKeySelective( updTxn );
+                }
+                catch( Exception e ) {
+                    logger.warn( String.format("[SaveIBKBrandErrState][ERR][OPEN] CREATE_DATE[%s] CREATE_TIME[%s] MAC_NO[%s] ERROR_CD[%s] UPDATE TXN Error [%s]",
                             parsed.getString("create_date"), parsed.getString("create_time"),
                             parsed.getString("mac_no"), parsed.getString("mac_error_cd"), e.getLocalizedMessage()) );
                     throw e;

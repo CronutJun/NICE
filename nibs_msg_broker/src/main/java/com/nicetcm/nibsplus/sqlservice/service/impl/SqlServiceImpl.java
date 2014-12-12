@@ -775,7 +775,7 @@ public class SqlServiceImpl implements SqlService {
 			throw e;
 		}
 		
-    	new NibsScheduleExecuter(new String[]{"ManualOrgSendService", "MONTH_USE_STATUS", "003"});
+    	new NibsScheduleExecuter(new String[]{"OrgSend", "MONTH_USE_STATUS", "003"});
 	}
 
 	@Override

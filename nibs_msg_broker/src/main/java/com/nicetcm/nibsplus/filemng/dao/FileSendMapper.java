@@ -23,11 +23,14 @@ import org.apache.ibatis.annotations.Param;
  * @see
  */
 public interface FileSendMapper {
+	public int updatePutOrgTranFile(@Param("szFileName") String szFileName, @Param("ftpsuccess") int ftpsuccess);
+	public void insertPutOrgTranFile(@Param("szFileName") String szFileName, @Param("ftpsuccess") int ftpsuccess);
+	public String pickupGetSHTranData(String pTransDate);
+	
 	public String pickupGetCNTranData(String pTransDate);
 	public String pickupGetCNMacData(String pTransDate);
 	public String pickupGetCNMacDataPrev(String pTransDate);
 	public String pickupGetBCTranData(String pTransDate);
-	public String pickupGetSHTranData(String pTransDate);
 	public String pickupGetSCTranData(String pTransDate);
 	public String pickupGetHNetTranData(String pTransDate);
 	public String pickupGetHNetNewTranData(String pTransDate);
@@ -84,6 +87,7 @@ public interface FileSendMapper {
 	public List<LinkedHashMap<String, Object>> selectGetHNetTranData(String hPreDate);
 	public List<LinkedHashMap<String, Object>> selectGetHNetNewTranData(String hPreDate);
 	public List<LinkedHashMap<String, Object>> selectGetCUTranData(String hPreDate);
+	public List<LinkedHashMap<String, Object>> selectGetBJTranData(String hPreDate);
 	public List<LinkedHashMap<String, Object>> selectGetCityTranData(String szDate);
 	public List<LinkedHashMap<String, Object>> selectGetLGTranData(String szDate);
 	public List<LinkedHashMap<String, Object>> selectGetLCTranData(String szDate);
@@ -110,6 +114,5 @@ public interface FileSendMapper {
 	public List<LinkedHashMap<String, Object>> selectGetSuHMacData(String pTransDate);
 	public List<LinkedHashMap<String, Object>> selectGetKFTCTranData(String pTransDate);
 	public List<LinkedHashMap<String, Object>> selectGetGiftCardInfoData();
-	public int updatePutOrgTranFile(@Param("szFileName") String szFileName, @Param("ftpsuccess") int ftpsuccess);
-	public void insertPutOrgTranFile(@Param("szFileName") String szFileName, @Param("ftpsuccess") int ftpsuccess);
+	public List<LinkedHashMap<String, Object>> selectGetCNOperData(String pTransDate);
 }

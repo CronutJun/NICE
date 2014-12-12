@@ -161,6 +161,8 @@ public class In01101160Impl extends InMsgHandlerImpl {
 
             TCtErrorMng updateTCtErrorMng = new TCtErrorMng();
             updateTCtErrorMng.setOrgSendYn(hSEND_YN);
+            updateTCtErrorMng.setUpdateDate(safeData.getDSysDate());
+            updateTCtErrorMng.setUpdateUid("ERRmng");
 
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
             tCtErrorMngSpec.createCriteria()
@@ -199,6 +201,8 @@ public class In01101160Impl extends InMsgHandlerImpl {
             if(parsed.getString("CM.service_gb").equals("1")) {
                 TCtErrorMng updateTCtErrorMng = new TCtErrorMng();
                 updateTCtErrorMng.setOrgSendYn(hSEND_YN);
+                updateTCtErrorMng.setUpdateDate(safeData.getDSysDate());
+                updateTCtErrorMng.setUpdateUid("ERRmng");
 
                 TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
                 tCtErrorMngSpec.createCriteria()
@@ -225,6 +229,8 @@ public class In01101160Impl extends InMsgHandlerImpl {
                 *********************************************************************************************/
                 TCtErrorMng updateTCtErrorMng = new TCtErrorMng();
                 updateTCtErrorMng.setOrgSendYn(hSEND_YN);
+                updateTCtErrorMng.setUpdateDate(safeData.getDSysDate());
+                updateTCtErrorMng.setUpdateUid("ERRmng");
 
                 TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
                 tCtErrorMngSpec.createCriteria()
@@ -339,6 +345,8 @@ public class In01101160Impl extends InMsgHandlerImpl {
 
             TCtErrorMng updateTCtErrorMng = new TCtErrorMng();
             updateTCtErrorMng.setOrgSendYn(hSEND_YN);
+            updateTCtErrorMng.setUpdateDate(safeData.getDSysDate());
+            updateTCtErrorMng.setUpdateUid("ERRmng");
 
             TCtErrorMngSpec tCtErrorMngSpec = new TCtErrorMngSpec();
             tCtErrorMngSpec.createCriteria()

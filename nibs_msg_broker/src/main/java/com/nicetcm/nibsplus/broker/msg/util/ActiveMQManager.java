@@ -1,27 +1,27 @@
 package com.nicetcm.nibsplus.broker.msg.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.io.File;
 
-import org.apache.activemq.command.ActiveMQBytesMessage;
-import org.fusesource.jansi.AnsiConsole;
-
-import sun.jvmstat.monitor.*;
-import sun.management.ConnectorAddressLink;
-import sun.tools.jconsole.LocalVirtualMachine;
-
+import javax.jms.BytesMessage;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.QueueBrowser;
+import javax.jms.QueueSession;
+import javax.jms.Session;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.IntrospectionException;
@@ -38,16 +38,19 @@ import javax.management.ReflectionException;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
-import javax.management.openmbean.CompositeData;
 
-
-
+import org.apache.activemq.ActiveMQConnection;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.commons.lang.StringUtils;
+import org.fusesource.jansi.AnsiConsole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import sun.tools.jconsole.LocalVirtualMachine;
+
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerMain;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerMain;
 
 
 public class ActiveMQManager {
@@ -100,11 +103,14 @@ public class ActiveMQManager {
                             : (o1.getObjectName().getKeyProperty("destinationName").equals(o2.getObjectName().getKeyProperty("destinationName")) ? 0 : 1));
                 }
             });
+            int iPending = 0;
             for(ObjectInstance que: lst ) {
+                iPending = Integer.parseInt(getMBeanAttr(connection, que.getObjectName(), "EnqueueCount").toString())
+                         - Integer.parseInt(getMBeanAttr(connection, que.getObjectName(), "DequeueCount").toString());
+                if( iPending < 0 ) iPending = 0;
                 AnsiConsole.out.println(String.format("%-18s%22d%22s%20s%20s",
                                                               que.getObjectName().getKeyProperty("destinationName"),
-                                                              Integer.parseInt(getMBeanAttr(connection, que.getObjectName(), "EnqueueCount").toString()) -
-                                                              Integer.parseInt(getMBeanAttr(connection, que.getObjectName(), "DequeueCount").toString()),
+                                                              getMBeanAttr(connection, que.getObjectName(), "QueueSize"),
                                                               getMBeanAttr(connection, que.getObjectName(), "ConsumerCount"),
                                                               getMBeanAttr(connection, que.getObjectName(), "EnqueueCount"),
                                                               getMBeanAttr(connection, que.getObjectName(), "DequeueCount")
@@ -196,6 +202,37 @@ public class ActiveMQManager {
 
     public void browse(String dest, String queName) {
 
+        try {
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(MsgCommon.msgProps.getProperty("consumer.host","tcp://localhost:61616"));
+            ActiveMQConnection conn = (ActiveMQConnection)connectionFactory.createConnection();
+            conn.start();
+
+            QueueSession queueSession = conn.createQueueSession(true, Session.AUTO_ACKNOWLEDGE);
+            Queue queue = queueSession.createQueue(queName + "?consumer.prefetchSize=1000");
+            QueueBrowser browser = queueSession.createBrowser(queue);
+            Enumeration<?> messagesInQueue = browser.getEnumeration();
+
+            int i = 1;
+            while (messagesInQueue.hasMoreElements()) {
+                BytesMessage queueMessage = (BytesMessage) messagesInQueue.nextElement();
+                byte[] msg = new byte[(int)queueMessage.getBodyLength()];
+                queueMessage.readBytes(msg);
+                System.out.println(String.format("[%07d][%s][%s]", i, queueMessage.getJMSMessageID(), new String(msg)));
+                i++;
+            }
+            System.out.println("Browse end.");
+
+            browser.close();
+            queueSession.close();
+            conn.close();
+        }
+        catch( Exception e ) {
+            logger.error(e.getMessage());
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
+        }
+
+        /*
         MBeanServerConnection connection;
 
         try {
@@ -250,7 +287,112 @@ public class ActiveMQManager {
             for( StackTraceElement se: e.getStackTrace() )
                 logger.error(se.toString());
         }
+        */
 
+    }
+
+    public void move(String dest, String srcQueName, String trgQueName, String msgId, int count) {
+
+        String tDest = trgQueName;
+        if( tDest == null || tDest.length() == 0 )
+            tDest = "DISPATCH.PEND";
+
+        /**
+         * 건수로 DISPATCH
+         */
+        if( msgId == null || msgId.length() == 0 ) {
+            try {
+                ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(MsgCommon.msgProps.getProperty("consumer.host","tcp://localhost:61616"));
+                ActiveMQConnection conn = (ActiveMQConnection)connectionFactory.createConnection();
+                conn.start();
+
+                /*
+                 * Transaction 처리를 하려면 아래 라인의 주석을 풀고, 그 아래라인은 막는다. (Transaction은 느리다.)
+                 */
+                //QueueSession queueSession = conn.createQueueSession(true, Session.AUTO_ACKNOWLEDGE);
+                QueueSession queueSession = conn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+                Queue srcQueue = queueSession.createQueue(srcQueName + "?consumer.prefetchSize=1000");
+                MessageConsumer consumer = queueSession.createConsumer(srcQueue);
+
+                Queue destQueue = queueSession.createQueue(tDest);
+                MessageProducer producer = queueSession.createProducer(destQueue);
+
+                System.out.println("Move start.");
+                for( int i = 0; i < count; i++ ) {
+                    BytesMessage queueMessage = (BytesMessage)consumer.receive();
+                    byte[] msg = new byte[(int)queueMessage.getBodyLength()];
+                    queueMessage.readBytes(msg);
+                    producer.send(queueMessage);
+                    /*
+                     * Transaction처리를 하려면 아래 라인의 주석을 푼다.
+                     */
+                    //queueSession.commit();
+                    System.out.println(String.format("[%07d][%s] is moved to [%s][%s]", i+1, queueMessage.getJMSMessageID(), tDest, new String(msg)));
+                }
+                System.out.println("Move end.");
+
+                producer.close();
+                consumer.close();
+                queueSession.close();
+                conn.close();
+            }
+            catch( Exception e ) {
+                logger.error(e.getMessage());
+                for( StackTraceElement se: e.getStackTrace() )
+                    logger.error(se.toString());
+            }
+        }
+        /**
+         * Message ID로 DISPATCH - 1건
+         */
+        else {
+            MBeanServerConnection connection;
+            String[] sig = { "java.lang.String", "java.lang.String" };
+
+            try {
+                // Acquire a connection to the MBean server
+                connection = connect(dest);
+
+                Set<ObjectInstance> mbeans = queryForQueue(connection, srcQueName);
+                if( mbeans.size() == 0 )
+                    System.out.println("Queue [" + srcQueName + "] is not found.");
+                else {
+                    try {
+                        ObjectInstance ques[] = {null};
+                        ques = mbeans.toArray(ques);
+                        Object[] params = { msgId, tDest };
+                        if( (Boolean)connection.invoke(ques[0].getObjectName(), "moveMessageTo", params, sig) ) {
+                            System.out.println(String.format("Message ID : [%s] is successfully moved to %s", msgId, tDest));
+                        }
+                    }
+                    catch (NullPointerException e) {
+                        logger.error(e.getMessage());
+                        for( StackTraceElement se: e.getStackTrace() )
+                            logger.error(se.toString());
+                    }
+                    catch (InstanceNotFoundException e) {
+                        logger.error(e.getMessage());
+                        for( StackTraceElement se: e.getStackTrace() )
+                            logger.error(se.toString());
+                    }
+                    catch (MBeanException e) {
+                        logger.error(e.getMessage());
+                        for( StackTraceElement se: e.getStackTrace() )
+                            logger.error(se.toString());
+                    }
+                    catch (ReflectionException e) {
+                        logger.error(e.getMessage());
+                        for( StackTraceElement se: e.getStackTrace() )
+                            logger.error(se.toString());
+                    }
+                }
+            }
+            catch (IOException e) {
+                logger.error(e.getMessage());
+                for( StackTraceElement se: e.getStackTrace() )
+                    logger.error(se.toString());
+            }
+        }
     }
 
     private MBeanServerConnection connect(String dest)  throws IOException {
@@ -679,6 +821,7 @@ public class ActiveMQManager {
         System.out.println("Usage: java ActiveMQManager [-lc : list consumers  ]");
         System.out.println("                            [-rc : remove consumers] [queue name, ALL]");
         System.out.println("                            [-bc : browse consumers] [queue name]");
+        System.out.println("                            [-mc : move consume msg] [queue name] [count, target queue name, msg_id] [count, msg_id]");
         System.out.println("                            [-lp : list producers  ]");
         System.out.println("                            [-rp : remove producers] [queue name, ALL]");
         System.out.println("                            [-bp : browse producers] [queue name]");
@@ -689,7 +832,7 @@ public class ActiveMQManager {
             printArgInfo();
             return;
         }
-        if( !args[0].equals("-lc") && !args[0].equals("-rc") && !args[0].equals("-bc")
+        if( !args[0].equals("-lc") && !args[0].equals("-rc") && !args[0].equals("-bc") && !args[0].equals("-mc")
          && !args[0].equals("-llc") && !args[0].equals("-lrc") && !args[0].equals("-lbc")
          && !args[0].equals("-lp") && !args[0].equals("-rp") && !args[0].equals("-bp")) {
             printArgInfo();
@@ -703,6 +846,12 @@ public class ActiveMQManager {
         }
         if( args[0].equals("-bc") || args[0].equals("-lbc") || args[0].equals("-bp") ) {
             if( args.length != 2 ) {
+                printArgInfo();
+                return;
+            }
+        }
+        if( args[0].equals("-mc") ) {
+            if( args.length != 3 && args.length != 4 ) {
                 printArgInfo();
                 return;
             }
@@ -725,6 +874,20 @@ public class ActiveMQManager {
                     amq.removeAll( "C" );
                 else
                     amq.remove( "C", args[1] );
+            }
+            else if( args[0].equals("-mc") ) {
+                if( args.length == 3 ) {
+                    if( StringUtils.isNumeric(args[2]))
+                        amq.move( "C", args[1], "", "", Integer.parseInt(args[2]) );
+                    else
+                        amq.move( "C", args[1], "", args[2], 0 );
+                }
+                else {
+                    if( StringUtils.isNumeric(args[3]) )
+                        amq.move( "C", args[1], args[2], "", Integer.parseInt(args[3]) );
+                    else
+                        amq.move( "C", args[1], args[2], args[3], 0 );
+                }
             }
             else if(args[0].equals("-bc") || args[0].equals("-lbc") ) {
                 amq.browse( "C", args[1] );
