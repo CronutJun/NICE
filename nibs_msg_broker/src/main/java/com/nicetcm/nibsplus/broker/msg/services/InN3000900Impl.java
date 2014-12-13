@@ -26,6 +26,7 @@ import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerFilenameFilter;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnHostTranCntMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceTranMapper;
@@ -138,27 +139,8 @@ public class InN3000900Impl extends InMsgHandlerImpl {
              *  HOST에서 수신한 FTP File 읽어 DB에 Upload 하는 'FILEMng DEALNO 거래일자(8)'
              *  명령어를 실행하여 프로세스 가동
              */
-            Process p = Runtime.getRuntime().exec( "ivkAutoSend FilemngService DEALNO SH " + parsed.getString("deal_date") );
-
-            BufferedReader stdInput = new BufferedReader(new
-                 InputStreamReader(p.getInputStream()));
-
-            BufferedReader stdError = new BufferedReader(new
-                 InputStreamReader(p.getErrorStream()));
-
-            String ln = null;
-            // read the output from the command
-            logger.warn("Here is the standard output of the command");
-            while ((ln = stdInput.readLine()) != null) {
-                logger.warn(ln);
-            }
-
-            // read any errors from the attempted command
-            logger.warn("Here is the standard error of the command (if any):\n");
-            while ((ln = stdError.readLine()) != null) {
-                logger.warn(ln);
-            }
-
+            if( !MsgBrokerLib.execUnixCommand("ivkAutoSend FilemngService DEALNO SH " + parsed.getString("deal_date")) )
+                throw new Exception(String.format("명령 [%s] 실행 오류", "ivkAutoSend FilemngService DEALNO SH "));
         }
         else {
             logger.warn("거래건수 일치");

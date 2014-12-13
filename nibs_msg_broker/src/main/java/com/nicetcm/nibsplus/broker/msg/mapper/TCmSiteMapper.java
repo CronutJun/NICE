@@ -564,7 +564,7 @@ public interface TCmSiteMapper {
      * @author KDJ, on Tue Jul 01 15:57:31 KST 2014
      */
     @Select({
-        "SELECT                                                                                                                                   ",
+        "SELECT STTM                                                                                                                                ",
         "FROM (                                                                                                                                   ",
         "      SELECT  CASE WHEN SITE01.H_OPER_END_TIME < SITE01.H_OPER_START_TIME THEN                                                           ",
         "                   DECODE(#{sendTypeDetail, jdbcType=DECIMAL}, 2, TO_DATE(TO_CHAR(SYSDATE+1,'YYYYMMDD') || '000000', 'YYYYMMDDHH24MISS'),",
@@ -649,8 +649,7 @@ public interface TCmSiteMapper {
         "       )                                                                                                                                 "
     })
     @Results({
-        @Result(column="OUT_TYPE", property="outType", jdbcType=JdbcType.VARCHAR),
-        @Result(column="OUT_CD", property="outCd", jdbcType=JdbcType.VARCHAR)
+        @Result(column="STTM", property="siteNm", jdbcType=JdbcType.VARCHAR)
     })
     TCmSite selectByJoin2(TCmSiteCond cond);
 

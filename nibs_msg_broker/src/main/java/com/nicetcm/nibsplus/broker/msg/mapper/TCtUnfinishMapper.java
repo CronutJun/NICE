@@ -230,6 +230,7 @@ public interface TCtUnfinishMapper {
      *
      * @author KDJ on Tue Jul 01 09:59:32 KST 2014
      */
+    /** Trigger 분리에 의한 불일치로 쿼리를 변경한다. 2014-12-13 KDJ
     @Select({
         "SELECT  ERROR_NO, ORG_MSG",
         "FROM    OP.T_CT_UNFINISH",
@@ -239,6 +240,18 @@ public interface TCtUnfinishMapper {
         "AND     ERROR_CD    = #{errorCd, jdbcType=VARCHAR}",
         "AND     CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )",
         "AND     TRANS_DATE  = RTRIM(#{transDate, jdbcType=VARCHAR})",
+        "AND     RTRIM(ORG_MSG_NO)   = RTRIM(#{orgMsgNo, jdbcType=VARCHAR})"
+    })
+    */
+    @Select({
+        "SELECT  ERROR_NO, ORG_MSG                                         ",
+        "FROM    OP.T_CT_ERROR_BASIC                                       ",
+        "WHERE   ORG_CD      = #{orgCd, jdbcType=VARCHAR}                  ",
+        "AND     BRANCH_CD   = #{branchCd, jdbcType=VARCHAR}               ",
+        "AND     MAC_NO      = #{macNo, jdbcType=VARCHAR}                  ",
+        "AND     ERROR_CD    = #{errorCd, jdbcType=VARCHAR}                ",
+        "AND     CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )         ",
+        "AND     TRANS_DATE  = #{transDate, jdbcType=VARCHAR}              ",
         "AND     RTRIM(ORG_MSG_NO)   = RTRIM(#{orgMsgNo, jdbcType=VARCHAR})"
     })
     @Results({
@@ -254,6 +267,7 @@ public interface TCtUnfinishMapper {
      *
      * @author KDJ on Tue Jul 01 09:59:32 KST 2014
      */
+    /** Trigger 분리에 의한 불일치로 쿼리를 변경한다. 2014-12-13 KDJ
     @Select({
         "SELECT  ERROR_NO, ORG_MSG",
         "FROM    OP.T_CT_UNFINISH",
@@ -263,6 +277,17 @@ public interface TCtUnfinishMapper {
         "AND     CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )",
         "AND     TRANS_DATE  = RTRIM(#{transDate, jdbcType=VARCHAR})",
         "AND     RTRIM(ORG_MSG_NO)   = RTRIM(#{orgMsgNo, jdbcType=VARCHAR})"
+    })
+    */
+    @Select({
+        "SELECT  ERROR_NO, ORG_MSG                                       ",
+        "FROM    OP.T_CT_ERROR_BASIC                                     ",
+        "WHERE   ORG_CD      = #{orgCd, jdbcType=VARCHAR}                ",
+        "AND     BRANCH_CD   = #{branchCd, jdbcType=VARCHAR}             ",
+        "AND     MAC_NO      = #{macNo, jdbcType=VARCHAR}                ",
+        "AND     CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )       ",
+        "AND     TRANS_DATE  = #{transDate, jdbcType=VARCHAR}            ",
+        "AND     RTRIM(ORG_MSG_NO) = RTRIM(#{orgMsgNo, jdbcType=VARCHAR})"
     })
     @Results({
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true),
@@ -276,6 +301,7 @@ public interface TCtUnfinishMapper {
      *
      * @author KDJ on Tue Jul 01 09:59:32 KST 2014
      */
+    /** Trigger 분리에 의한 불일치로 쿼리를 변경한다. 2014-12-13 KDJ
     @Select({
         "SELECT  ERROR_NO",
         "FROM    OP.T_CT_UNFINISH",
@@ -284,6 +310,17 @@ public interface TCtUnfinishMapper {
         "AND     MAC_NO      = #{macNo, jdbcType=VARCHAR}",
         "AND     ERROR_CD    = #{errorCd, jdbcType=VARCHAR}",
         "AND     CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )"
+    })
+    */
+    @Select({
+        "SELECT  ERROR_NO                                              ",
+        "FROM    OP.T_CT_ERROR_BASIC                                   ",
+        "WHERE   ORG_CD      = #{orgCd, jdbcType=VARCHAR}              ",
+        "AND     BRANCH_CD   = #{branchCd, jdbcType=VARCHAR}           ",
+        "AND     MAC_NO      = #{macNo, jdbcType=VARCHAR}              ",
+        "AND     ERROR_CD    = #{errorCd, jdbcType=VARCHAR}            ",
+        "AND    (ERROR_STATUS IS NULL OR ERROR_STATUS != '7000')       ",
+        "AND     CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )     "
     })
     @Results({
         @Result(column="ERROR_NO", property="errorNo", jdbcType=JdbcType.VARCHAR, id=true)

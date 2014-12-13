@@ -83,7 +83,8 @@ public class In05000110Impl extends InMsgHandlerImpl {
             /**
              * SMS 전송
              */
-            splMap.SendSMSMacInfo( macInfo );
+            if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.SHATMS_CODE) )
+                splMap.SendSMSMacInfo( macInfo );
             throw e;
         }
 

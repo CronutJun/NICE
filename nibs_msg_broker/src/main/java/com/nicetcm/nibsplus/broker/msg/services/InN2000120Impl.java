@@ -742,7 +742,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                             continue;
                         }
 
-                        errBasic.setErrorCd( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())) );
+                        errBasic.setMadeErrCd( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())) );
                         comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
 
                         errBasic.setMadeErrCd(null);

@@ -12,7 +12,9 @@ package com.nicetcm.nibsplus.broker.msg;
  *           @author  K.D.J
  */
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -23,6 +25,8 @@ import java.util.Locale;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
@@ -30,6 +34,8 @@ import com.nicetcm.nibsplus.scheduler.model.JobVO;
 import com.nicetcm.nibsplus.scheduler.service.RemoteScheduleExecuter;
 
 public class MsgBrokerLib {
+
+    private static final Logger logger = LoggerFactory.getLogger(MsgBrokerLib.class);
 
     public static boolean isLostLogging = false;
     public static String lostLogFile;
@@ -374,5 +380,41 @@ public class MsgBrokerLib {
         RemoteScheduleExecuter remoteObj = (RemoteScheduleExecuter)registry.lookup(MsgCommon.msgProps.getProperty("sender.lookup.name"));
 
         remoteObj.executeJob(jobVO);
+    }
+
+    /**
+     * Unix command 실행
+     */
+    public static boolean execUnixCommand(String command) {
+        try {
+            Process p = Runtime.getRuntime().exec( command );
+
+            BufferedReader stdInput = new BufferedReader(new
+                 InputStreamReader(p.getInputStream()));
+
+            BufferedReader stdError = new BufferedReader(new
+                 InputStreamReader(p.getErrorStream()));
+
+            String ln = null;
+            logger.warn("Standard output of the command");
+            while ((ln = stdInput.readLine()) != null) {
+                logger.warn(ln);
+            }
+
+            boolean sErr = true;
+            logger.warn("Standard error of the command (if any):\n");
+            while ((ln = stdError.readLine()) != null) {
+                logger.warn(ln);
+                if( !ln.startsWith("log4j") )
+                    sErr = false;
+            }
+            return sErr;
+        }
+        catch( Exception e ) {
+            logger.warn(e.getMessage());
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
+            return false;
+        }
     }
 }

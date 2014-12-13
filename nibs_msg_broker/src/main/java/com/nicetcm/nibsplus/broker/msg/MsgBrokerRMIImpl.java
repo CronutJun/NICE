@@ -81,12 +81,17 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                 /*
                  *  Find and invoke method of instance of biz
                  */
-                OutMsgHandler bizBranch = (OutMsgHandler)MsgBrokerSpringMain
-                        .sprCtx.getBean("out" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
-                if( bizBranch == null ) {
-                    logger.debug("There's no spring bean : {}", "out" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
+                try {
+                    OutMsgHandler bizBranch = (OutMsgHandler)MsgBrokerSpringMain
+                            .sprCtx.getBean("out" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
+                    bizBranch.outMsgHandle( msgThrdSafeData, msgPsr );
                 }
-                bizBranch.outMsgHandle( msgThrdSafeData, msgPsr );
+                catch( Exception e ) {
+                    if( e.getMessage().substring(0, 7).equals("No bean") )
+                        logger.debug("There's no spring bean : {}", "out" + msgPsr.getString("CM.msg_type") + msgPsr.getString("CM.work_type"));
+                    else
+                        throw e;
+                }
 
                 if( !msgThrdSafeData.isNoOutData() ) {
                     rmiSyncAns.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), waitQ);

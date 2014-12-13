@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
+
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
@@ -71,7 +73,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
                                      .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
         List<TCtErrorBasic> errBasics = null;
         try {
-            errBasicMap.selectBySpec( errBasicSpec );
+            errBasics = errBasicMap.selectBySpec( errBasicSpec );
             if( errBasics.size() == 0 ) {
                 throw new Exception( String.format("ErrBasic - 해당데이터가 없습니다. create_date[%s], error_no[%s]",
                         parsed.getInt("trans1_date"), parsed.getString("trans1_seq")) );
@@ -87,7 +89,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
                                     .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
         List<TCtErrorCall> errCalls = null;
         try {
-            errCallMap.selectBySpec( errCallSpec );
+            errCalls = errCallMap.selectBySpec( errCallSpec );
             if( errCalls.size() == 0 ) {
                 throw new Exception( String.format("ErrCall - 해당데이터가 없습니다. create_date[%s], error_no[%s]",
                         parsed.getInt("trans1_date"), parsed.getString("trans1_seq")) );
@@ -103,7 +105,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
                                     .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
         List<TCtErrorNoti> errNotis = null;
         try {
-            errNotiMap.selectBySpec( errNotiSpec );
+            errNotis = errNotiMap.selectBySpec( errNotiSpec );
             if( errNotis.size() == 0 ) {
                 throw new Exception( String.format("ErrNoti - 해당데이터가 없습니다. create_date[%s], error_no[%s]",
                         parsed.getInt("trans1_date"), parsed.getString("trans1_seq")) );
@@ -119,7 +121,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
                                    .andErrorNoEqualTo   ( parsed.getString("trans1_seq") );
         List<TCtErrorTxn> errTxns = null;
         try {
-            errTxnMap.selectBySpec( errTxnSpec );
+            errTxns = errTxnMap.selectBySpec( errTxnSpec );
             if( errTxns.size() == 0 ) {
                 throw new Exception( String.format("ErrTxn - 해당데이터가 없습니다. create_date[%s], error_no[%s]",
                         parsed.getString("trans1_date"), parsed.getString("trans1_seq")) );
@@ -134,7 +136,7 @@ public class In01000151Impl extends InMsgHandlerImpl {
         /*
          *  이미 완료된 건은 update 하지 않도록 한다.
          */
-        if( errBasics.get(0).getErrorStatus().equals("7000") )  {
+        if( nstr(errBasics.get(0).getErrorStatus()).equals("7000") )  {
             logger.warn(">>> 완료장애에 대한 콜수신확인 수신 create_date[{}], error_no[{}]",
                     parsed.getInt("trans1_date"), parsed.getString("trans1_seq") );
             throw new MsgBrokerException(String.format(">>> 완료장애에 대한 콜수신확인 수신 create_date[%s], error_no[%s]",

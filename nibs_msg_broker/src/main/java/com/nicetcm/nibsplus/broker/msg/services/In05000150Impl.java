@@ -75,7 +75,7 @@ public class In05000150Impl extends InMsgHandlerImpl {
         }
 
         public void setBillClassifyCd(String billClassifyCd) {
-            this.billClassifyCd = ticketCd;
+            this.billClassifyCd = billClassifyCd;
         }
 
         public String getState() {
@@ -124,7 +124,8 @@ public class In05000150Impl extends InMsgHandlerImpl {
             /**
              * SMS 전송
              */
-            splMap.SendSMSMacInfo( macInfo );
+            if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.SHATMS_CODE) )
+                splMap.SendSMSMacInfo( macInfo );
             throw e;
         }
 

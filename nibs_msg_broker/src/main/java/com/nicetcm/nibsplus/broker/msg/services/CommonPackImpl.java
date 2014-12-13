@@ -66,9 +66,9 @@ import com.nicetcm.nibsplus.broker.msg.model.TCmCommon;
 import com.nicetcm.nibsplus.broker.msg.model.TCmCommonSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMac;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacCond;
-import com.nicetcm.nibsplus.broker.msg.model.TCmMacKey;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacNo;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacNoSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCmMacSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMember;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMemberCond;
 import com.nicetcm.nibsplus.broker.msg.model.TCmSite;
@@ -103,7 +103,6 @@ import com.nicetcm.nibsplus.broker.msg.model.TFnSendReportCond;
 import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TFnStorekeeperMacInfoKey;
 import com.nicetcm.nibsplus.broker.msg.model.TIfDataLog;
-import com.nicetcm.nibsplus.broker.msg.model.TIfDataLogKey;
 import com.nicetcm.nibsplus.broker.msg.model.TIfDataLogSpec;
 import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
 import com.nicetcm.nibsplus.broker.msg.model.TMisc;
@@ -393,15 +392,16 @@ public class CommonPackImpl implements CommonPack {
          */
         if( nstr(MacInfo.getOrgCd()).equals(MsgBrokerConst.CS_CODE)
         && (MacInfo.getBranchCd() == null || MacInfo.getBranchCd().length() == 0) ) {
-            TCmMacKey macKey = new TCmMacKey();
-            macKey.setOrgCd( MacInfo.getOrgCd() );
-            macKey.setBranchCd( MacInfo.getBranchCd() );
-            macKey.setMacNo( MacInfo.getMacNo() );
+            TCmMacSpec macSpec = new TCmMacSpec();
+            macSpec.createCriteria().andOrgCdEqualTo( MacInfo.getOrgCd() )
+                                    .andMacNoEqualTo( MacInfo.getMacNo() );
 
-            cmMac = cmMacMap.selectByPrimaryKey( macKey );
-            if( cmMac == null ) {
-                throw new Exception("첼시코드 파악 실패..");
+            List<TCmMac> cmMacs = cmMacMap.selectBySpec( macSpec );
+
+            if( cmMacs.size() == 0 ) {
+                throw new Exception("첼시 지점 코드 파악 실패..");
             }
+            MacInfo.setBranchCd( cmMacs.get(0).getBranchCd() );
         }
 
         /*
@@ -444,9 +444,9 @@ public class CommonPackImpl implements CommonPack {
          */
         if( macInfo != null && macInfo.getDeptCd() != null && substr(macInfo.getDeptCd(),0,1).equals("8") )  {
             TFnStorekeeperMacInfoKey skmiKey = new TFnStorekeeperMacInfoKey();
-            skmiKey.setOrgCd( macInfo.getOrgCd() );
-            skmiKey.setBranchCd( macInfo.getBranchCd() );
-            skmiKey.setMacNo( macInfo.getMacNo() );
+            skmiKey.setOrgCd( MacInfo.getOrgCd() );
+            skmiKey.setBranchCd( MacInfo.getBranchCd() );
+            skmiKey.setMacNo( MacInfo.getMacNo() );
 
             MacInfo.setStoreKeeperYn( "1" );
 
@@ -551,6 +551,7 @@ public class CommonPackImpl implements CommonPack {
              * 자동 SMS 전송 정보관련
              */
             iAutoSMS = getAutoSendInfo( ErrBasic, MacInfo, retASI );
+            logger.warn("retASi.waitTime = {}", retASI.waitTime);
             /**
              *  중복 장애가 있으면
              */
@@ -770,8 +771,10 @@ public class CommonPackImpl implements CommonPack {
             ErrNoti.setSendPlanDatetime( safeData.getDSysDate() );
         }
         else if( nstr(sSendTypeDetail).equals("1") ) {
-            ErrNoti.setSendCheckDatetime( DateUtils.addDays( safeData.getDSysDate(),  (1 / (24*60)) * (retASI.waitTime - 1) ));
-            ErrNoti.setSendPlanDatetime( DateUtils.addDays( safeData.getDSysDate(),  (1 / (24*60)) * retASI.waitTime ));
+            //ErrNoti.setSendCheckDatetime( DateUtils.addDays( safeData.getDSysDate(),  (1 / (24*60)) * (retASI.waitTime - 1) ));
+            //ErrNoti.setSendPlanDatetime( DateUtils.addDays( safeData.getDSysDate(),  (1 / (24*60)) * retASI.waitTime ));
+            ErrNoti.setSendCheckDatetime( DateUtils.addMinutes( safeData.getDSysDate(),  (retASI.waitTime - 1) ));
+            ErrNoti.setSendPlanDatetime( DateUtils.addMinutes( safeData.getDSysDate(),   retASI.waitTime ));
         }
         else if( nstr(sSendTypeDetail).equals("2") ) {
             ErrNoti.setSendCheckDatetime(DateUtils.parseDate( safeData.getNSysDate() + " 080000", new String[]{"yyyyMMdd HHmmss"}));
@@ -2031,11 +2034,12 @@ public class CommonPackImpl implements CommonPack {
                         logger.warn( ">>> 시간내 기기의 휴일 장애 발생 수동처리" );
                         return MsgBrokerConst.AUTO_SEND_FALSE;
                     }
+                    logger.warn("sendTypeDetail = {}", cmSiteCond.getSendTypeDetail());
                     cmSiteCond.setOrgCd( ErrBasic.getOrgCd() );
                     cmSiteCond.setBranchCd( ErrBasic.getBranchCd() );
                     cmSiteCond.setSiteCd( ErrBasic.getSiteCd() );
                     cmSiteCond.setMacNo( ErrBasic.getMacNo() );
-                    cmSiteCond.setCreateDate( String.valueOf(ErrBasic.getCreateDate()) );
+                    cmSiteCond.setCreateDate( ErrBasic.getCreateDate() );
                     cmSiteCond.setCreateTime( ErrBasic.getCreateTime() );
                     cmSiteCond.setWaitTime(errQryRec.getWaitTime1());
 

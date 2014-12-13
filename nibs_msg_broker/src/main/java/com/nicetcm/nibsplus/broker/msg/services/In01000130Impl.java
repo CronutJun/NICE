@@ -78,7 +78,8 @@ public class In01000130Impl extends InMsgHandlerImpl {
             /**
              * SMS 전송
              */
-            splMap.SendSMSMacInfo( macInfo );
+            if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.SHATMS_CODE) )
+                splMap.SendSMSMacInfo( macInfo );
             throw new MsgBrokerException( String.format("[01003100] 기기정보 검색 실패 기관[%s] 지점[%s] 기번[%s]",
                                             macInfo.getOrgCd(), macInfo.getBranchCd(), macInfo.getMacNo()), -7 );
         }
@@ -105,11 +106,14 @@ public class In01000130Impl extends InMsgHandlerImpl {
         errBasic.setTransDate( parsed.getString("trans1_date") );
         errBasic.setOrgMsg( parsed.getString("memo") );
 
-        errMngMadeCom.setMadeComCd( parsed.getString("mac_model_com_cd") );
+        BeanUtils.copyProperties( errMngMadeCom, errBasic );
+
+        errMngMadeCom.setMadeComCd( macInfo.getMadeComCd() );
         errMngMadeCom.setMacModel( parsed.getString("mac_model") );
         errMngMadeCom.setCallClass( parsed.getString("call_class") );
         errMngMadeCom.setCallType( parsed.getString("call_type") );
         errMngMadeCom.setCallCntType( parsed.getString("call_cnt_type") );
+        errMngMadeCom.setAsAcptDate( safeData.getSysDate() );
 
         errBasic.setGroupErrorCd( parsed.getString("group_error_cd") );
         errBasic.setMidErrorCd( parsed.getString("mid_error_cd") );
@@ -119,6 +123,8 @@ public class In01000130Impl extends InMsgHandlerImpl {
 
         errMngMadeCom.setOrgCallCnt( parsed.getShort("org_call_cnt") );
         errMngMadeCom.setMtcCd( errBasic.getCrtNo() );
+        errMngMadeCom.setUpdateDate( safeData.getDSysDate() );
+        errMngMadeCom.setUpdateUid  ( "ERRmng" );
 
         /**
          * 2일전 전문은 취소요청 응답 전송.

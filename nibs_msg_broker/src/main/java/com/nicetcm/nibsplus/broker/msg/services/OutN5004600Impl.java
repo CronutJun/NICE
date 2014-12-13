@@ -1,7 +1,5 @@
 package com.nicetcm.nibsplus.broker.msg.services;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 
 import org.slf4j.Logger;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
 
 @Service("outN5004600")
@@ -48,29 +47,8 @@ public class OutN5004600Impl extends OutMsgHandlerImpl {
          * Command 실행
          */
         if( command.length() > 0 ) {
-            Process p = Runtime.getRuntime().exec( command );
-
-            BufferedReader stdInput = new BufferedReader(new
-                 InputStreamReader(p.getInputStream()));
-
-            BufferedReader stdError = new BufferedReader(new
-                 InputStreamReader(p.getErrorStream()));
-
-            String ln = null;
-            // read the output from the command
-            logger.warn("Here is the standard output of the command");
-            while ((ln = stdInput.readLine()) != null) {
-                logger.warn(ln);
-            }
-
-            // read any errors from the attempted command
-            boolean sErr = false;
-            logger.warn("Here is the standard error of the command (if any):\n");
-            while ((ln = stdError.readLine()) != null) {
-                logger.warn(ln);
-                sErr = true;
-            }
-            if( sErr ) throw new Exception("Error is occured by shell script.");
+            if( !MsgBrokerLib.execUnixCommand( command ) )
+                throw new Exception(String.format("명령 [%s] 실행 오류", command));
         }
 
         /**
