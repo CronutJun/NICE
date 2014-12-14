@@ -2220,7 +2220,7 @@ public class FileSendServiceImpl implements FileSendService {
 			hSpace = rowValues[12] != null ? rowValues[12].toString() : "";
 
 			// fprintf( fileWriter, "ATM00122%07ld%2s03 %s%s%06d%s%*s%s%s%.*s%*s%*s%s%0*d%0*d%*s%s%s%s%s\n", ncount+1, szOrgCd, hWorkType, hDataType, nDataCnt + 1, hDealDate, 6 , " ", hAtmDealNo, hInsetOrgCd, 22, hAccountNo, 4 , " ", 4 , " ", hDealAmt, 6 , Integer.parseInt(hCustFee), 6 , Integer.parseInt(hBankFee), 30 , " ", hOrgRespCd, hDealNo, hDealStatus, hSpace);
-			fileWriter.write(String.format("ATM00122%07d%2s03 %s%s%06d%s%6s%s%s%22s%4s%4s%s%06d%06d%30s%s%s%s%s\n", ncount+1, szOrgCd, hWorkType, hDataType, nDataCnt + 1, hDealDate , " ", hAtmDealNo, hInsetOrgCd, hAccountNo.trim() , " " , " ", hDealAmt , Integer.parseInt(hCustFee) , Integer.parseInt(hBankFee) , " ", hOrgRespCd, hDealNo, hDealStatus, hSpace));
+			fileWriter.write(String.format("ATM00122%07d%2s03 %s%s%06d%s%6s%s%s%-22s%4s%4s%s%06d%06d%30s%s%s%s%s\n", ncount+1, szOrgCd, hWorkType, hDataType, nDataCnt + 1, hDealDate , " ", hAtmDealNo, hInsetOrgCd, hAccountNo.trim() , " " , " ", hDealAmt , Integer.parseInt(hCustFee) , Integer.parseInt(hBankFee) , " ", hOrgRespCd, hDealNo, hDealStatus, hSpace));
 
 			/* 승인건수, 금액 */
 			if("0".equals(hDealStatus)) {
@@ -2250,7 +2250,7 @@ public class FileSendServiceImpl implements FileSendService {
 
 		/* 영업외 Data부 Header */
 		// fprintf( fileWriter, "ATM00122%07ld%2s03 012300110096%4s%6s%6s%6s%*s\n",
-		fileWriter.write(String.format("ATM00122%07d%2s03 012300110096%4s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
+		fileWriter.write(String.format("ATM00122%07d%2s03 01230011009600%2s%6s%6s%6s%116s\n", ncount + 1, szOrgCd, szOrgCd, pTransDate.substring(2), hPreActDate.substring(2), hPreDate.substring(2), " " ));
 		ncount++;
 
 		nDataCnt = 0;

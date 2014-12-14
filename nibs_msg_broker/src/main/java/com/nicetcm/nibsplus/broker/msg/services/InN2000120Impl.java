@@ -254,6 +254,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                  ||  substr(parsed.getString("atm_monitor"), EnumNM.IDX_MON_OPEN_DOOR.ordinal(), EnumNM.IDX_MON_OPEN_DOOR.ordinal()+1).equals(MsgBrokerConst.NICE_NO_SET) ) {
                      comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                              errNoti, errCall, errTxn, macInfo, retErrState );
+                     errTxn.setRepairDate(null);
+                     errTxn.setRepairTime(null);
                  }
                  else {
                      comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
@@ -278,6 +280,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_LINE_ERROR );
             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                     errNoti, errCall, errTxn, macInfo, retErrState );
+            errTxn.setRepairDate(null);
+            errTxn.setRepairTime(null);
 
             /*
              * 310(AC전원차단) 301(장애), 001(개국) 이 발생하면
@@ -286,6 +290,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_AC_ERROR );
             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                     errNoti, errCall, errTxn, macInfo, retErrState );
+            errTxn.setRepairDate(null);
+            errTxn.setRepairTime(null);
             nRtn = 0;
         }
         /*
@@ -312,6 +318,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             errBasic.setErrorCd( MsgBrokerConst.NICE_STATE_LINE_CLEAR );
             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                     errNoti, errCall, errTxn, macInfo, retErrState );
+            errTxn.setRepairDate(null);
+            errTxn.setRepairTime(null);
             nRtn = 0;
         }
         /*
@@ -367,9 +375,11 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     default :
                         break;
                 }
-                if( errBasic.getErrorCd().length() > 0 ) {
+                if( nstr(errBasic.getErrorCd()).length() > 0 ) {
                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                             errNoti, errCall, errTxn, macInfo, retErrState );
+                    errTxn.setRepairDate(null);
+                    errTxn.setRepairTime(null);
                 }
                 for( EnumNHME enumNHME: EnumNHME.values() ) {
                    if( enumNHME.name().equals("IDX_HW_CASH_OUT" )           /* 1 지폐방출기 */
@@ -396,6 +406,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                            errBasic.setErrorCd( saNiceErrState[enumNHME.ordinal()] );
                            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                                    errNoti, errCall, errTxn, macInfo, retErrState );
+                           errTxn.setRepairDate(null);
+                           errTxn.setRepairTime(null);
                        }
 
                     }
@@ -473,6 +485,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                             else {
                                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                                         errNoti, errCall, errTxn, macInfo, retErrState );
+                                errTxn.setRepairDate(null);
+                                errTxn.setRepairTime(null);
                             }
 
                             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N15 );
@@ -514,6 +528,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_LINE_ERROR );
             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                     errNoti, errCall, errTxn, macInfo, retErrState );
+            errTxn.setRepairDate(null);
+            errTxn.setRepairTime(null);
             /*
              * 310(AC전원차단) 301(장애), 001(개국) 이 발생하면
              * AC전원차단 복구 시킨다.
@@ -521,6 +537,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_AC_ERROR );
             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                     errNoti, errCall, errTxn, macInfo, retErrState );
+            errTxn.setRepairDate(null);
+            errTxn.setRepairTime(null);
             /*
              * 지폐함 및 용지상태
              * 지폐함 1, 2, 3, 4 상태 검사
@@ -552,6 +570,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_CASHBOX_EMPTY );
                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                             errNoti, errCall, errTxn, macInfo, retErrState );
+                    errTxn.setRepairDate(null);
+                    errTxn.setRepairTime(null);
                 }
                 else {
                    /*
@@ -602,6 +622,9 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_CASHBOX_EMPTY );
                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                             errNoti, errCall, errTxn, macInfo, retErrState );
+                    errTxn.setRepairDate(null);
+                    errTxn.setRepairTime(null);
+
                 }
                 else {
                     /*
@@ -637,6 +660,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                  */
                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                         errNoti, errCall, errTxn, macInfo, retErrState );
+                errTxn.setRepairDate(null);
+                errTxn.setRepairTime(null);
             }
 
             /*
@@ -657,6 +682,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                  */
                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                         errNoti, errCall, errTxn, macInfo, retErrState );
+                errTxn.setRepairDate(null);
+                errTxn.setRepairTime(null);
             }
 
             /*
@@ -681,6 +708,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                  */
                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                         errNoti, errCall, errTxn, macInfo, retErrState );
+                errTxn.setRepairDate(null);
+                errTxn.setRepairTime(null);
             }
 
             /*
@@ -703,6 +732,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                  */
                 comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                         errNoti, errCall, errTxn, macInfo, retErrState );
+                errTxn.setRepairDate(null);
+                errTxn.setRepairTime(null);
             }
 
             for( EnumNHME enumNHME: EnumNHME.values() ) {
@@ -753,12 +784,16 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                         if( enumNHME.name().equals("IDX_HW_DVR_ERR") ) {
                             comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                                     errNoti, errCall, errTxn, macInfo, retErrState );
+                            errTxn.setRepairDate(null);
+                            errTxn.setRepairTime(null);
                         }
                     }
                     else if( substr(parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())),
                             0,1).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
                         comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                                 errNoti, errCall, errTxn, macInfo, retErrState );
+                        errTxn.setRepairDate(null);
+                        errTxn.setRepairTime(null);
                     }
                 }
                 else
@@ -818,6 +853,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 else {
                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                             errNoti, errCall, errTxn, macInfo, retErrState );
+                    errTxn.setRepairDate(null);
+                    errTxn.setRepairTime(null);
                 }
 
                 if( nNormal != EnumNM.values().length ) {
@@ -837,14 +874,19 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_OPEN_ERROR );
                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                             errNoti, errCall, errTxn, macInfo, retErrState );
+                    errTxn.setRepairDate(null);
+                    errTxn.setRepairTime(null);
 
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_CLOSE_ERROR );
                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                             errNoti, errCall, errTxn, macInfo, retErrState );
-
+                    errTxn.setRepairDate(null);
+                    errTxn.setRepairTime(null);
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                             errNoti, errCall, errTxn, macInfo, retErrState );
+                    errTxn.setRepairDate(null);
+                    errTxn.setRepairTime(null);
                 }
             }
             else {
@@ -875,10 +917,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                             errNoti, errCall, errTxn, macInfo, retErrState );
+                    errTxn.setRepairDate(null);
+                    errTxn.setRepairTime(null);
 
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
                             errNoti, errCall, errTxn, macInfo, retErrState );
+                    errTxn.setRepairDate(null);
+                    errTxn.setRepairTime(null);
                 }
             }
 
@@ -1216,6 +1262,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         comPack.insertUpdateMacOpen( safeData,  macInfo, errBasic );
         comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ONE_CLEAR,
                 errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, curErrList );
+        errTxn.setRepairDate(null);
+        errTxn.setRepairTime(null);
 
         /*
          * 20110719 브랜드제휴기관 정보 저장

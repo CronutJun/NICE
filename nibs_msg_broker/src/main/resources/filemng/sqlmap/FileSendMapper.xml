@@ -1409,13 +1409,14 @@
 		    RPAD(DEAL_NO, 12, ' ') DEAL_NO,
 		    DEAL_STATUS
 		FROM
-		    OP.T_FN_NICE_TRAN		WHERE
+		    OP.T_FN_NICE_TRAN
+	    WHERE
 		    DEAL_DATE = #{szDate}
 		AND DEAL_TYPE = '0'
 		AND DEAL_TIME_TYPE = '2'
 		AND ADMIS_ORG = 'B'
 		AND ORG_CD = '0'||#{szOrgCd}
-		<if test='szOrgCd eq "081"'>
+		<if test='szOrgCd eq "81"'>
 			<![CDATA[ AND	net_org_cd <> '081' ]]>
 		</if>
 	</select>
@@ -1525,7 +1526,7 @@
 		AND DEAL_TIME_TYPE = '1'
 		AND ADMIS_ORG = 'B'
 		AND ORG_CD = '0'||#{szOrgCd}
-		<if test="szOrgCd eq '04'">
+		<if test='szOrgCd eq "04"'>
 			AND net_org_cd = '099'
 		</if>
 	</select>
@@ -1543,12 +1544,12 @@
 		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
 		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
 		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
-			<if test="szOrgCd == '004'">
+			<if test="szOrgCd == '04'">
 				LPAD(DEAL_NO, 13, 0),
 				DEAL_STATUS,
 				''
 			</if>
-			<if test="szOrgCd != '004'">
+			<if test="szOrgCd != '04'">
 				LPAD(DEAL_NO, 12, 0),
 				DEAL_STATUS,
 				' '
@@ -1561,7 +1562,7 @@
 		AND DEAL_TIME_TYPE = '2'
 		AND ADMIS_ORG = 'B'
 		AND ORG_CD = '0'||#{szOrgCd}
-		<if test="szOrgCd == '004'">
+		<if test="szOrgCd == '04'">
 			AND	net_org_cd = '099'
 		</if>
 	</select>

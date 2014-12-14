@@ -1080,15 +1080,15 @@ public class CommonPackImpl implements CommonPack {
                         TCtErrorBasic updErrBasic = new TCtErrorBasic();
                         TCtErrorNoti updErrNoti = new TCtErrorNoti();
                         TCtErrorTxn updErrTxn = new TCtErrorTxn();
-                        if( errBasicJoin.getRepairDate() == null )
+                        if( nstr(errBasicJoin.getRepairDate()).length() == 0 )
                             updErrTxn.setRepairDate( ErrTxn.getRepairDate() );
                         if( nstr(errBasicJoin.getRepairTime()).equals("999999") )
                             updErrTxn.setRepairTime( ErrTxn.getRepairTime() );
-                        if( errBasicJoin.getFinishDate() == null )
+                        if( nstr(errBasicJoin.getFinishDate()).length() == 0 )
                             updErrTxn.setFinishDate( ErrTxn.getRepairDate() );
-                        if( errBasicJoin.getFinishTime() == null )
+                        if( nstr(errBasicJoin.getFinishTime()).length() == 0 )
                             updErrTxn.setFinishTime( ErrTxn.getRepairTime() );
-                        if( errBasicJoin.getFinishUid() == null )
+                        if( nstr(errBasicJoin.getFinishUid()).length() == 0 )
                             errBasicJoin.setFinishUid("online");
                         if( nstr(errBasicJoin.getSendStatus()).equals("0") )
                             updErrNoti.setSendStatus("1");
@@ -1224,15 +1224,15 @@ public class CommonPackImpl implements CommonPack {
                     TCtErrorBasic updErrBasic = new TCtErrorBasic();
                     TCtErrorNoti updErrNoti = new TCtErrorNoti();
                     TCtErrorTxn updErrTxn = new TCtErrorTxn();
-                    if( errBasicJoin.getRepairDate() == null )
+                    if( nstr(errBasicJoin.getRepairDate()).length() == 0 )
                         updErrTxn.setRepairDate( ErrTxn.getRepairDate() );
                     if( nstr(errBasicJoin.getRepairTime()).equals("999999") )
                         updErrTxn.setRepairTime( ErrTxn.getRepairTime() );
-                    if( errBasicJoin.getFinishDate() == null )
+                    if( nstr(errBasicJoin.getFinishDate()).length() == 0 )
                         updErrTxn.setFinishDate( ErrTxn.getRepairDate() );
-                    if( errBasicJoin.getFinishTime() == null )
+                    if( nstr(errBasicJoin.getFinishTime()).length() == 0 )
                         updErrTxn.setFinishTime( ErrTxn.getRepairTime() );
-                    if( errBasicJoin.getFinishUid() == null )
+                    if( nstr(errBasicJoin.getFinishUid()).length() == 0 )
                         errBasicJoin.setFinishUid("online");
                     if( nstr(errBasicJoin.getSendStatus()).equals("0") )
                         updErrNoti.setSendStatus("1");
@@ -1314,15 +1314,15 @@ public class CommonPackImpl implements CommonPack {
                         TCtErrorBasic updErrBasic = new TCtErrorBasic();
                         TCtErrorNoti updErrNoti = new TCtErrorNoti();
                         TCtErrorTxn updErrTxn = new TCtErrorTxn();
-                        if( errBasicJoin.getRepairDate() == null )
+                        if( nstr(errBasicJoin.getRepairDate()).length() == 0 )
                             updErrTxn.setRepairDate( ErrTxn.getRepairDate() );
                         if( nstr(errBasicJoin.getRepairTime()).equals("999999") )
                             updErrTxn.setRepairTime( ErrTxn.getRepairTime() );
-                        if( errBasicJoin.getFinishDate() == null )
+                        if( nstr(errBasicJoin.getFinishDate()).length() == 0 )
                             updErrTxn.setFinishDate( ErrTxn.getRepairDate() );
-                        if( errBasicJoin.getFinishTime() == null )
+                        if( nstr(errBasicJoin.getFinishTime()).length() == 0 )
                             updErrTxn.setFinishTime( ErrTxn.getRepairTime() );
-                        if( errBasicJoin.getFinishUid() == null )
+                        if( nstr(errBasicJoin.getFinishUid()).length() == 0 )
                             errBasicJoin.setFinishUid("online");
                         if( nstr(errBasicJoin.getSendStatus()).equals("0") )
                             updErrNoti.setSendStatus("1");
@@ -1603,7 +1603,7 @@ public class CommonPackImpl implements CommonPack {
             sDayOfWeek = String.valueOf(MsgBrokerLib.currentDayOfWeek());
             if( nstr(cmSite.getPlaceType()).equals("0026")
             ||  nstr(cmSite.getPlaceType()).equals("0086") ) {
-                if( cmSite.getDetailArea1().equals("8602") ) {
+                if( nstr(cmSite.getDetailArea1()).equals("8602") ) {
                     /*
                      * 상세장소구분이 경정일 경우는 수목금토일 외에 장애 발생 안함
                      */
