@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="INMAC_AMT">
+
+<!--
+<entry key="INMAC_AMT"              value="03001133" />     28. 현금인도(장전)통보
+{
+   "name" : "03001133",                    "kname" : "현금인도(장전) 통보",
+   "response" : { "code" : "03001133",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "close_date",             "kname" : "마감년월일",             "type" : "N",   "length"  : 8   },
+      { "name" : "close_time",             "kname" : "마감시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "close_type",             "kname" : "마감전,후 구분",         "type" : "AN",  "length"  : 1   },
+      { "name" : "in_mac_amt",             "kname" : "장전금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "cash_out_amt",           "kname" : "현금지급액",             "type" : "N",   "length"  : 15  },
+      { "name" : "cash_in_amt",            "kname" : "현금입금액",             "type" : "N",   "length"  : 15  },
+      { "name" : "cash_rem_amt",           "kname" : "현금잔액",               "type" : "N",   "length"  : 15  },
+      { "name" : "cancel",                 "kname" : "장전취소여부",           "type" : "AN",  "length"  : 1   },
+      { "name" : "site_cd",                "kname" : "코너코드",               "type" : "AN",  "length"  : 8   },
+      { "name" : "cash_std_date",          "kname" : "현송기준일",             "type" : "N",   "length"  : 8   },
+      { "name" : "cash_in_50000",          "kname" : "장전금액(5만)",          "type" : "N",   "length"  : 15  },
+      { "name" : "cash_in_10000",          "kname" : "장전금액(1만)",          "type" : "N",   "length"  : 15  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 280 }
+   ]
+}
+ -->
+    <select id="select031" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT  SND.BRANCH_CD brch_cd,
+                SND.MAC_NO mac_no,
+                SND.SEND_DATE close_date,
+                SND.SEND_TIME close_time,
+                CASE WHEN (SELECT COUNT(1)
+                           FROM   T_FN_SEND WHERE ORG_CD = SND.ORG_CD
+                           AND    BRANCH_CD = SND.BRANCH_CD
+                           AND    MAC_NO    = SND.MAC_NO
+                           AND    SEND_TYPE = '2'
+                           AND    SEND_DATE = TO_CHAR(SYSDATE,'YYYYMMDD')) > 0
+                           AND   (SELECT COUNT(1)
+                                  FROM   T_CM_CASH
+                                  WHERE ORG_CD    = SND.ORG_CD
+                                  AND   BRANCH_CD = SND.BRANCH_CD
+                                  AND   MAC_NO    = SND.MAC_NO
+                                  AND   CASH_TYPE = '2') = 0 THEN
+                    '0'
+                ELSE
+                    '1'
+                END close_type,
+                SND.SEND_AMT in_mac_amt,
+                '',
+                '',
+                '',
+                '0' cancel,
+               (SELECT SITE_CD
+                FROM   T_CM_MAC
+                WHERE  ORG_CD    = SND.ORG_CD
+                AND    BRANCH_CD = SND.BRANCH_CD
+                AND    MAC_NO    = SND.MAC_NO) site_cd,
+                CASE WHEN (SELECT COUNT(1)
+                           FROM   T_FN_SEND
+                           WHERE  ORG_CD    = SND.ORG_CD
+                           AND    BRANCH_CD = SND.BRANCH_CD
+                           AND    MAC_NO    = SND.MAC_NO
+                           AND    SEND_TYPE = '2'
+                           AND    SEND_DATE = TO_CHAR(SYSDATE,'YYYYMMDD')) > 0
+                           AND   (SELECT COUNT(1)
+                                  FROM   T_CM_CASH
+                                  WHERE  ORG_CD    = SND.ORG_CD
+                                  AND    BRANCH_CD = SND.BRANCH_CD
+                                  AND    MAC_NO    = SND.MAC_NO
+                                  AND    CASH_TYPE = '2') = 0 THEN
+                    SND.SEND_DATE
+                ELSE
+                    OP.pkg_fn_common.sf_getPostActDate(SND.SEND_DATE)
+                END cash_std_date,
+                CASE WHEN SND.SEND_CW54_AMT IS NULL THEN
+                   (SELECT SEND_CW54_AMT
+                    FROM T_FN_SEND
+                    WHERE SEND_DATE = SND.SEND_DATE
+                    AND   ORG_CD    = SND.ORG_CD
+                    AND   BRANCH_CD = SND.BRANCH_CD
+                    AND   MAC_NO    = SND.MAC_NO
+                    AND   SEND_TIME = SND.SEND_TIME)
+                ELSE
+                    NVL(SND.SEND_CW54_AMT,0)
+                END cash_in_50000,
+                CASE WHEN SND.SEND_CW14_AMT IS NULL THEN
+                   (SELECT SEND_CW14_AMT
+                    FROM T_FN_SEND
+                    WHERE SEND_DATE = SND.SEND_DATE
+                    AND ORG_CD      = SND.ORG_CD
+                    AND BRANCH_CD   = SND.BRANCH_CD
+                    AND MAC_NO      = SND.MAC_NO
+                    AND SEND_TIME   = SND.SEND_TIME)
+                ELSE
+                    NVL(SND.SEND_CW14_AMT,0)
+                END cash_in_10000,
+                '',
+                '',
+                '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM    T_FN_SEND_BUSAN SND
+        WHERE   SND.SEND_DATE          = TO_CHAR( SYSDATE, 'YYYYMMDD' )
+        AND     NVL(SND.TRANS_YN, '0') = '0'
+        AND     SND.ORG_CD             = '031'
+    ]]>
+    </select>
+    <!-- for 032 and others -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT  BRANCH_CD brch_cd,
+                MAC_NO mac_no,
+                SEND_DATE close_date,
+                SEND_TIME close_time,
+                '1' close_type,
+                SEND_AMT in_mac_amt,
+                '',
+                '',
+                '',
+                '0' cancel,
+                '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM    T_FN_SEND_BUSAN
+        WHERE   SEND_DATE          = TO_CHAR( SYSDATE, 'YYYYMMDD' )
+        AND     NVL(TRANS_YN, '0') = '0'
+        AND     ORG_CD             = '032'
+    ]]>
+    </select>
+</mapper>

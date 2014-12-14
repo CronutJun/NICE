@@ -1,0 +1,2227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nicetcm.nibsplus.filemng.dao.FileSendMapper">
+
+	<insert id="insertPutOrgTranFile" parameterType="map">
+		INSERT
+		INTO
+		    OP.T_CM_BATCH_RESULT		    (
+		        JOB_DATE ,
+		        PGM_ID ,
+		        PGM_RESULT ,
+		        INSERT_DATE ,
+		        INSERT_UID
+		    )
+		    VALUES
+		    (
+		        TO_CHAR(SYSDATE, 'YYYYMMDD') ,
+		        'FILESend_'||#{szFileName} ,
+		        DECODE(#{ftpsuccess},0,'OK','ERROR') ,
+		        SYSDATE ,
+		        'FILESnd'
+		    )
+	</insert>
+
+	<update id="updatePutOrgTranFile">
+		UPDATE
+		    OP.T_CM_BATCH_RESULT		SET
+		    PGM_RESULT = DECODE(#{ftpsuccess},0,'OK','ERROR') ,
+		    INSERT_DATE = sysdate ,
+		    INSERT_UID = 'FILESnd'
+		WHERE
+		    JOB_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD')
+		AND PGM_ID = 'FILESend_'||#{szFileName}
+	</update>
+
+	<select id="pickupGetCNTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{preDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetCNTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    '2' AS DATA_TYPE,
+		    DEAL_DATE,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC                                          AS DEAL_TIME,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    MAC_NO,
+		    LPAD(DEAL_AMT, 10, '0') AS DEAL_AMT,
+		    DEAL_STATUS,
+		    DEAL_NO
+		FROM
+		    OP.T_FN_NICE_TRAN
+	    WHERE
+		    DEAL_DATE = #{preDate}
+		AND ORG_CD = '0CN'
+		AND DEAL_TYPE = '0'
+		AND DEAL_CLSS = '1300'
+		AND ADMIS_ORG = 'B'
+		AND DEAL_STATUS = '0'
+	</select>
+
+	<select id="pickupGetCNMacData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{transDate}
+	</select>
+
+	<select id="pickupGetCNMacDataPrev" parameterType="string" resultType="string">
+		SELECT
+		    OP.pkg_fn_common.sf_getPreActDate(OP.pkg_fn_common.sf_getPreActDate(std_date))
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{transDate}
+	</select>
+
+	<select id="selectGetCNMacData" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    CASE
+		        WHEN NVL(MAC.OPEN_DATE, '0') >= #{hPreActDate}
+		        THEN '01'
+		        WHEN MAC.CLOSE_DATE IS NOT NULL
+		        AND MAC.CLOSE_DATE < #{hPreActDate}
+		        THEN '03'
+		        ELSE '02'
+		    END                      AS SET_YN,
+		    RPAD(MAC.MAC_NO, 8, ' ') AS MAC_NO,
+		    MAC.SET_DATE,
+		    MAC.OPEN_DATE,
+		    TO_CHAR(MAC.UPDATE_DATE, 'YYYYMMDD') AS UPDATE_DATE,
+		    RPAD(MAC.CLOSE_DATE, 8, '0')         AS CLOSE_DATE,
+		    SITE.ZIP_NO,
+		    SUBSTR2(SITE.SET_ADDR, 1, 28) AS SET_PLACE,
+		    SUBSTR2(SITE.SET_ADDR, 1, 13) AS SET_ADDR,
+		    SITE.INTERPHONE_NO,
+		    DECODE(NVL(SITE.PIC_YN, 0), 0, 'N', 'Y')                                         AS PIC_YN,
+		    DECODE(MAC.MAC_MODEL, '1300', '01', DECODE(MAC.MAC_MODEL, '1400', '01', '02' ) ) AS MAC_MODEL
+		FROM
+		    OP.T_CM_MAC MAC,
+		    OP.T_CM_SITE SITE,
+		    OP.T_CT_NICE_MAC NMAC
+		WHERE
+		    MAC.ORG_CD = '096'
+		AND MAC.BRANCH_CD = '9600'
+		AND MAC.ORG_CD = SITE.ORG_CD
+		AND MAC.BRANCH_CD = SITE.BRANCH_CD
+		AND MAC.SITE_CD = SITE.SITE_CD
+		AND MAC.MAC_NO = NMAC.MAC_NO
+		AND TO_CHAR(MAC.UPDATE_DATE, 'YYYYMMDD') > #{hPrePreActDate}
+		]]>
+	</select>
+
+	<select id="pickupGetBCTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{transDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetBCTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    '2' AS DATA_TYPE,
+		    DEAL_DATE,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC                                          AS DEAL_TIME,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    MAC_NO,
+		    LPAD(DEAL_AMT/10000, 7, '0') AS DEAL_AMT,
+		    LPAD(DEAL_AMT/10000, 7, '0') AS NICE_DEAL_AMT,
+		    '0'                          AS DEAL_STATUS,
+		    DEAL_NO
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{dealDate}
+		AND ORG_CD = '0BC'
+		AND DEAL_TYPE = '0'
+		AND DEAL_CLSS = '1300'
+		AND ADMIS_ORG = 'B'
+		AND DEAL_STATUS = '0'
+	</select>
+
+	<select id="selectGetBCMacData" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    RPAD(MAC.MAC_NO, 16, ' ') AS MAC_NO,
+		    SUBSTR2(MAC.MAC_NM, 1, 50),
+		    MAC.OPEN_DATE,
+		    SITE.ZIP_NO,
+		    SUBSTR2(SITE.SET_ADDR, 1, 100)
+		FROM
+		    OP.T_CM_MAC MAC,
+		    OP.T_CM_SITE SITE,
+		    OP.T_CT_NICE_MAC NMAC
+		WHERE
+		    MAC.ORG_CD = '096'
+		AND MAC.BRANCH_CD = '9600'
+		AND MAC.OPEN_DATE <= #{pTransDate}
+		AND
+		    (
+		        MAC.CLOSE_DATE IS NULL
+		     OR MAC.CLOSE_DATE >= #{pTransDate}
+		    )
+		AND MAC.ORG_CD = SITE.ORG_CD
+		AND MAC.BRANCH_CD = SITE.BRANCH_CD
+		AND MAC.SITE_CD = SITE.SITE_CD
+		AND MAC.MAC_NO < 'A000'
+		AND MAC.MAC_NO = NMAC.MAC_NO
+		]]>
+	</select>
+	
+	<select id="pickupGetSHTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+	
+	<select id="selectGetSHTranData" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    '22' AS DATA_TYPE,
+		    T.DEAL_DATE,
+		    T.DEAL_HOUR||T.DEAL_MI||T.DEAL_SEC AS DEAL_TIME,
+		    T.MAC_NO,
+		    LPAD(T.DEAL_AMT, 12, '0'),
+		    T.DEAL_STATUS,
+		    DECODE( #{pDealType}, '0', '00'||SUBSTR2(T.DEAL_NO, 3, 10),'000000'||SUBSTR2(T.DEAL_NO, 7, 6)),
+		    T.DEAL_TYPE,
+		    ' ',
+		    ' ',
+		    ' ',
+		    ' '
+		FROM
+		    OP.T_FN_NICE_TRAN T
+		WHERE
+		    T.DEAL_DATE = #{hPreDate}
+		AND T.DEAL_STATUS = '0'
+		<if test='pDealType eq "0"'>
+			AND T.DEAL_TYPE = '0'
+			AND T.ORG_CD IN ('088', '026', '021', '0')
+			AND T.NET_ORG_CD in ('088', '099')
+			AND	T.BRAND_ORG_CD IS NULL
+		</if>
+		<if test='pDealType eq "4"'>
+			AND T.DEAL_TYPE in ('1', '4')
+			AND T.NET_ORG_CD = '088'
+			AND	T.BRAND_ORG_CD IS NULL
+		</if>
+		<if test='pDealType eq "B"'>
+			AND	T.DEAL_TYPE in ('0', '1', '4')
+			AND	T.NET_ORG_CD = '088'
+			AND	T.BRAND_ORG_CD = '088'
+		</if>
+	</select>
+	
+	<select id="pickupGetSCTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+	
+	<select id="selectGetSCTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DEAL_DATE,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC                                          AS DEAL_TIME,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 18, '0'),
+		    DEAL_NO
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{hPreDate}
+		AND ORG_CD = '0SC'
+		AND DEAL_TYPE = '0'
+		AND DEAL_STATUS = '0'
+	</select>
+	
+	<select id="pickupGetHNetTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+	
+	<select id="selectGetHNetTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    'HB0001' AS WORK_TYPE,
+		    '22'     AS DATA_TYPE,
+		    CASE
+		        WHEN DEAL_TYPE||DEAL_CLSS = '01000' <!-- /* 예금인출 */ -->
+		        THEN
+		            CASE
+		                WHEN DEAL_TIME_TYPE = '1' <!-- /* 예금인출-시간내 */ -->
+		                THEN '012200'
+		                WHEN DEAL_TIME_TYPE = '2' <!-- /* 예금인출-시간외 */ -->
+		                THEN '012300'
+		                ELSE DEAL_TYPE||DEAL_CLSS||TRACK_NO
+		            END
+	            <!-- /* 계좌이체 */ -->
+		        WHEN DEAL_TYPE||DEAL_CLSS = '40000'
+		        THEN
+		            <!-- /* 계좌이체 - 자행 */ -->
+		            CASE
+		                WHEN TRANS_ORG_CD = '0081'
+		                THEN
+		                    <!-- /* 계좌이체 - 자행이체 - 시간내 */ -->
+		                    CASE
+		                        WHEN DEAL_TIME_TYPE = '1'
+		                        THEN '400000'
+	                            <!-- /* 계좌이체 - 자행이체 - 시간외 */ -->
+		                        WHEN DEAL_TIME_TYPE = '2'
+		                        THEN '400001'
+		                        ELSE DEAL_TYPE||DEAL_CLSS||TRACK_NO
+		                    END
+		                ELSE
+		                    /* 계좌이체 - 타행이체 - 시간내 */
+		                    CASE
+		                        WHEN DEAL_TIME_TYPE = '1'
+		                        THEN '400020'
+	                            <!-- /* 계좌이체  - 타행이체 - 시간외 */ -->
+		                        WHEN DEAL_TIME_TYPE = '2'
+		                        THEN '400021'
+		                        ELSE DEAL_TYPE||DEAL_CLSS||TRACK_NO
+		                    END
+		            END
+		        ELSE DEAL_TYPE||DEAL_CLSS||TRACK_NO
+		    END                                                         AS DEAL_TYPE,
+		    '9A' || MAC_NO || 'N' || LPAD( ATM_DEAL_NO, 5, '0' )        AS DEAL_NO,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC                                AS DEAL_TIME,
+		    LPAD( DEAL_AMT, 12, '0' )                                   AS DEAL_AMT,
+		    DECODE(DEAL_STATUS, '0', '0', '1', '1', '2', '3', '3', '2') AS DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{hPreDate}
+		AND NET_ORG_CD = '081'
+		AND ADMIS_ORG = 'B'
+		AND
+		    (
+		        DEAL_TYPE = '0'
+		     OR DEAL_TYPE = '4'
+		    )	
+	</select>
+	
+	<select id="pickupGetHNetNewTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+	
+	<select id="selectGetHNetNewTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    'HB0001' AS WORK_TYPE,
+		    '22'     AS DATA_TYPE,
+		    CASE
+		        WHEN DEAL_TYPE||DEAL_CLSS = '01000' -- 예금인출
+		        THEN
+		            CASE
+		                WHEN DEAL_TIME_TYPE = '1' -- 예금인출-시간내
+		                THEN '012200'
+		                WHEN DEAL_TIME_TYPE = '2' -- 예금인출-시간외
+		                THEN '012300'
+		                ELSE DEAL_TYPE||DEAL_CLSS||TRACK_NO
+		            END
+	            -- 계좌이체
+		        WHEN DEAL_TYPE||DEAL_CLSS = '40000'
+		        THEN
+		        	-- 계좌이체 - 자행
+		            CASE
+		                WHEN TRANS_ORG_CD = '0081'
+		                THEN 
+		                	-- 계좌이체 - 자행이체 - 시간내
+		                    CASE
+		                        WHEN DEAL_TIME_TYPE = '1'
+		                        THEN '400000'-- 계좌이체 - 자행이체 - 시간외
+		                        WHEN DEAL_TIME_TYPE = '2'
+		                        THEN '400001'
+		                        ELSE DEAL_TYPE||DEAL_CLSS||TRACK_NO
+		                    END
+		                ELSE
+		                	-- 계좌이체 - 타행이체 - 시간내
+		                    CASE
+		                        WHEN DEAL_TIME_TYPE = '1'
+		                        THEN '400020'-- 계좌이체  - 타행이체 - 시간외
+		                        WHEN DEAL_TIME_TYPE = '2'
+		                        THEN '400021'
+		                        ELSE DEAL_TYPE||DEAL_CLSS||TRACK_NO
+		                    END
+		            END
+		        ELSE DEAL_TYPE||DEAL_CLSS||TRACK_NO
+		    END AS DEAL_TYPE,
+		    DECODE( NET_ORG_CD, '081', 'J96' || MAC_NO || 'N' || LPAD( ATM_DEAL_NO, 5, '0' ),'0'|| DEAL_NO
+		    )                                                           AS DEAL_NO,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC                                AS DEAL_TIME,
+		    LPAD( DEAL_AMT, 12, '0' )                                   AS DEAL_AMT,
+		    DECODE(DEAL_STATUS, '0', '0', '1', '1', '2', '3', '3', '2') AS DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{hPreDate}
+		AND ORG_CD = '081'
+		AND ADMIS_ORG = 'B'
+		AND
+		    (
+		        DEAL_TYPE = '0'
+		     OR DEAL_TYPE = '4'
+		    )
+		AND NET_ORG_CD <> '020'
+		]]>
+	</select>
+
+	<select id="pickupGetCUTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetCUTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    'D'                                                                   AS DATA_TYPE,
+		    SUBSTR2(DEAL_DATE, 3, 6)                                               AS DEAL_DATE,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC                                          AS DEAL_TIME,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    MAC_NO,
+		    LPAD(DEAL_AMT/10000, 7, '0') AS DEAL_AMT,
+		    LPAD(DEAL_AMT/10000, 6, '0') AS DEAL2_AMT,
+		    DEAL_STATUS,
+		    '6',
+		    SUBSTR2(DEAL_YEAR, 4, 1) || LPAD(TRUNC(TO_DATE(DEAL_DATE, 'YYYYMMDD')) - TO_DATE(DEAL_YEAR ||
+		    '0101', 'YYYYMMDD') + 1, 3, 0) || SUBSTR2(DEAL_NO, 5, 8) AS CU_DEAL_NO,
+		    DEAL_DATE                                               AS DEAL_DATE2
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{hPreDate}
+		AND (ORG_CD = '0CU' OR ORG_CD = '0BM' OR ORG_CD = '0BV')
+		AND DEAL_TYPE = '0'
+		AND DEAL_CLSS = '1410'
+		AND ADMIS_ORG = 'B'
+		AND DEAL_STATUS = '0'
+	</select>
+	
+	<select id="selectGetBJTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    'D'                                                                   AS DATA_TYPE,
+		    SUBSTR(DEAL_DATE, 3, 6)                                               AS DEAL_DATE,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC                                          AS DEAL_TIME,
+		    FC_FN_SECURITY(INST_BRANCH_CD, '2') || FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    MAC_NO,
+		    LPAD(DEAL_AMT/10000, 7, '0') AS DEAL_AMT,
+		    LPAD(DEAL_AMT/10000, 6, '0') AS DEAL2_AMT,
+		    DEAL_STATUS,
+		    '4',
+		    SUBSTR(DEAL_YEAR, 4, 1) || LPAD(TRUNC(TO_DATE(DEAL_DATE, 'YYYYMMDD')) - TO_DATE(DEAL_YEAR ||
+		    '0101', 'YYYYMMDD') + 1, 3, 0) || SUBSTR(DEAL_NO, 5, 8) AS BJ_DEAL_NO,
+		    DEAL_DATE                                               AS DEAL_DATE2
+		FROM
+		    T_FN_NICE_TRAN
+		WHERE
+		    DEAL_DATE = #{hPreDate}
+		AND ORG_CD = '0BJ'
+		AND DEAL_TYPE = '0'
+		AND DEAL_CLSS = '1410'
+		AND ADMIS_ORG = 'B'
+		AND DEAL_STATUS = '0'
+	</select>
+
+	<select id="pickupGetCityTranData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="pickupGetCityTranData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetCityTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    '2' AS DATA_TYPE,
+		    DEAL_DATE,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC                                          AS DEAL_TIME,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    MAC_NO,
+		    LPAD(DEAL_AMT/10000, 7, '0') AS DEAL_AMT,
+		    LPAD(DEAL_AMT/10000, 7, '0') AS DEAL2_AMT,
+		    DEAL_STATUS,
+		    DEAL_NO
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND ORG_CD = '0HM'
+		AND DEAL_TYPE = '0'
+		AND DEAL_CLSS = '1300'
+		AND ADMIS_ORG = 'B'
+		AND DEAL_STATUS = '0'
+	</select>
+
+	<select id="pickupGetCityTranData3" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetLGTranData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="pickupGetLGTranData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetLGTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    'D' AS DATA_TYPE,
+		    '01',
+		    DEAL_DATE,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC AS DEAL_TIME,
+		    '89'||SUBSTR2(DEAL_NO, 3, LENGTH(DEAL_NO)-2),
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 7, '0')                                                AS DEAL_AMT,
+		    MAC_NO
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND ORG_CD = '0LG'
+		AND DEAL_TYPE = '0'
+		AND DEAL_CLSS = '1300'
+		AND ADMIS_ORG = 'B'
+		AND DEAL_STATUS = '0'
+	</select>
+
+	<select id="pickupGetLGTranData3" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetLCTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetLCTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    'BD' AS DATA_TYPE,
+		    '89'||SUBSTR2(DEAL_NO, 3, LENGTH(DEAL_NO)-2),
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    DEAL_DATE,
+		    DEAL_HOUR||DEAL_MI||DEAL_SEC AS DEAL_TIME,
+		    LPAD(DEAL_AMT, 13, '0')      AS DEAL_AMT,
+		    DECODE(DEAL_TYPE, '0', '1', '4', '2', '3' ),
+		    SUBSTR2(TRANS_ORG_CD, 3, 2),
+		    OP.FC_FN_SECURITY(TRANS_BRANCH_CD, '2') || OP.FC_FN_SECURITY(TRANS_ACCOUNT_NO, '2') AS ACCOUNT_NO2,
+		    DECODE( DEAL_STATUS, '0', 'N', 'Y' )
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND ORG_CD = '0LC'
+		AND DEAL_TYPE IN ('0', '4', '5')
+		AND DEAL_CLSS = '4010'
+		AND DEAL_STATUS IN ( '0', '1', '2' )
+	</select>
+
+	<select id="pickupGetNongHTranData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="pickupGetNongHTranData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetNongHTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    T.DEAL_DATE,
+		    T.DEAL_HOUR||T.DEAL_MI||T.DEAL_SEC AS DEAL_TIME,
+		    T.DEAL_NO,
+		    DECODE(M.JOIN_CD, '011', '0', '1')              AS JOIN_CD,
+		    '0' || LPAD(NVL(M.JOIN_MOJUM_CD, '0'), 4 , '0') AS JOIN_MOJUM_CD,
+		    '96',
+		    T.MAC_NO,
+		    CASE
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31000' -- 잔액조회
+		        THEN '312400'
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '01000' -- 예금인출
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TIME_TYPE = '1'
+		                    예금인출-시간내
+		                THEN '012200'
+		                WHEN T.DEAL_TIME_TYPE = '2'
+		                    예금인출-시간외
+		                THEN '012300'
+		                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		            END
+		            <!-- 수취조회 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31002'
+		        THEN
+		            <!-- 수취조회-자행이체 -->
+		            CASE
+		                WHEN
+		                    (
+		                        T.TRANS_ORG_CD = '0011'
+		                     OR T.TRANS_ORG_CD = '0012'
+		                    )
+		                THEN
+		                    <!-- 수취조회 - 자행이체 - 시간내 -->
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '312490'
+		                            수취조회 - 자행이체 - 시간외
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '312590'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		                ELSE
+		                    <!-- 수취조회 - 타행이체 - 시간내 -->
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '312491'
+		                            <!-- 수취조회 - 타행이체 - 시간외 -->
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '312591'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		            END
+	            <!-- 계죄이체 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '40000'
+		        THEN
+		            <!-- 계좌이체 - 자행 -->
+		            CASE
+		                WHEN
+		                    (
+		                        T.TRANS_ORG_CD = '0011'
+		                     OR T.TRANS_ORG_CD = '0012'
+		                    )
+		                THEN
+		                    <!-- 계좌이체 - 자행이체 - 시간내 -->
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '012290'
+		                            <!-- 계좌이체 - 자행이체 - 시간외 -->
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '012390'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		                ELSE
+		                    <!-- 계좌이체 - 타행이체 - 시간내 -->
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '012291'
+		                            <!-- 계좌이체  - 타행이체 - 시간외 -->
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '012391'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		            END
+	            <!-- 통장정리조회 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31003'
+		        THEN '312440'
+	            <!-- 통장정리 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31004'
+		        THEN '012240'
+	            <!-- 공과금납부조회 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '30001'
+		        THEN
+		            <!-- MS 거래 -->
+		            CASE
+		                WHEN T.TRACK_NO = '3'
+		                THEN '312470'
+	                    <!-- IC 거래 -->
+		                WHEN T.TRACK_NO = '4'
+		                THEN '312460'
+		                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		            END
+	            <!-- 공과금납부 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '50001'
+		        THEN
+		            <!-- MS 거래 -->
+		            CASE
+		                WHEN T.TRACK_NO = '3'
+		                THEN '012270'
+	                    <!-- IC 거래 -->
+		                WHEN T.TRACK_NO = '4'
+		                THEN '012260'
+		                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		            END
+		        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		    END AS TRADE_TYPE,
+		    CASE
+		        WHEN T.DEAL_STATUS = '0'
+		        THEN '0210'
+		        WHEN T.DEAL_STATUS = '1'
+		        THEN '0430'
+		        WHEN T.DEAL_STATUS = '2'
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TYPE = '0'
+		                THEN
+		                    CASE
+		                        WHEN T.ORG_RESPONSE_CD = '11'
+		                        THEN '0430'
+		                        ELSE '0200'
+		                    END
+		                WHEN
+		                    (
+		                        T.DEAL_TYPE = '3'
+		                     OR T.DEAL_TYPE = '4'
+		                     OR T.DEAL_TYPE = '5'
+		                    )
+		                THEN'0200'
+		            END
+		        WHEN T.DEAL_STATUS = '3'
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TYPE = '0'
+		                THEN
+		                    CASE
+		                        WHEN T.REFUSE_CD = '608'
+		                        THEN '0430'
+		                        ELSE
+		                            CASE
+		                                WHEN T.ORG_RESPONSE_CD <> '11'
+		                                THEN '0210'
+		                                ELSE '0200'
+		                            END
+		                    END
+		                WHEN
+		                    (
+		                        T.DEAL_TYPE = '3'
+		                     OR T.DEAL_TYPE = '4'
+		                     OR T.DEAL_TYPE = '5'
+		                    )
+		                THEN'0210'
+		            END
+		    END AS LAST_TYPE,
+		    CASE
+		        WHEN T.ORG_CD <> '011'
+		        AND T.ORG_CD <> '012'
+		        THEN DECODE( T.DEAL_STATUS, '0', '00', RPAD(RTRIM(T.ORG_RESPONSE_CD), 2, '9'))
+		        ELSE RPAD(RTRIM(T.ORG_RESPONSE_CD), 2, '9')
+		    END AS ORG_RESPONSE_CD,
+		    CASE
+		        WHEN
+		        	LENGTH(TRIM(TRANSLATE(T.ORG_CD, '1234567890', ' '))) = 0
+		        THEN SUBSTR2(T.ORG_CD, 2,2)
+		        ELSE '96'
+		    END                                                                       AS ORG_CD,
+		    OP.FC_FN_SECURITY(T.INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(T.ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    LPAD(T.DEAL_AMT, 12, '0')                                                 AS DEAL_AMT,
+		    CASE
+		        WHEN
+		            T.DEAL_TYPE = '0' OR T.DEAL_TYPE = '4'*/
+		            T.DEAL_TYPE = '0'
+		        AND T.ORG_CD <> '011'
+		        AND T.ORG_CD <> '012'
+		        AND T.DEAL_STATUS = '0'
+		        THEN LPAD( '810', 5, '0')
+		        WHEN T.DEAL_TYPE <> '3'
+		        THEN LPAD(DECODE(T.DEAL_STATUS, '0', T.CUST_FEE + T.BANK_FEE, 0), 5, '0')
+		        ELSE LPAD('0', 5, '0')
+		    END AS FEE,
+		    SUBSTR2(T.TRANS_ORG_CD, 3, 2),
+		    OP.FC_FN_SECURITY(T.TRANS_BRANCH_CD, '2') || OP.FC_FN_SECURITY(T.TRANS_ACCOUNT_NO, '2') AS TRANS_ACCOUNT_NO,
+		    CASE
+		        WHEN C.MAC_MODEL = '1300'
+		        THEN '01'
+		        WHEN C.MAC_MODEL = '1200'
+		        THEN '03'
+		        ELSE'02'
+		    END AS ATM_TYPE
+		FROM
+		    OP.T_FN_NICE_TRAN T,
+		    OP.T_CT_NICE_MAC M,
+		    OP.T_CM_MAC C
+		WHERE
+		    T.MAC_NO = M.MAC_NO
+		AND T.DEAL_DATE = #{szDate}
+		AND T.ADMIS_ORG = 'B'
+		AND M.JOIN_CD IN ('011', '012')
+		AND C.MAC_NO = T.MAC_NO
+		AND C.BRANCH_CD = '9600'
+		AND C.ORG_CD = '096'
+		]]>
+	</select>
+
+	<select id="pickupGetNongHTranData3" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetNongHTranData_dasi" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="pickupGetNongHTranData_dasi2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetNongHTranData_dasi" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    T.DEAL_DATE,
+		    T.DEAL_HOUR||T.DEAL_MI||T.DEAL_SEC AS DEAL_TIME,
+		    T.DEAL_NO,
+		    DECODE(M.JOIN_CD, '011', '0', '1')              AS JOIN_CD,
+		    '0' || LPAD(NVL(M.JOIN_MOJUM_CD, '0'), 4 , '0') AS JOIN_MOJUM_CD,
+		    '96',
+		    T.MAC_NO,
+		    CASE
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31000' -- 잔액조회
+		        THEN '312400'
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '01000' -- 예금인출
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TIME_TYPE = '1' -- 예금인출-시간내
+		                THEN '012200'
+		                WHEN T.DEAL_TIME_TYPE = '2' -- 예금인출-시간외
+		                THEN '012300'
+		                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		            END
+	            <!-- 수취조회 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31002'
+		        THEN
+		            <!-- 수취조회-자행이체 -->
+		            CASE
+		                WHEN
+		                    (
+		                        T.TRANS_ORG_CD = '0011'
+		                     OR T.TRANS_ORG_CD = '0012'
+		                    )
+		                THEN
+		                    <!-- 수취조회 - 자행이체 - 시간내 -->
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '312490'
+	                            <!-- 수취조회 - 자행이체 - 시간외 -->
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '312590'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		                ELSE
+		                    <!-- 수취조회 - 타행이체 - 시간내 -->
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '312491'
+	                            <!-- 수취조회 - 타행이체 - 시간외 -->
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '312591'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		            END
+	            <!-- 계죄이체 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '40000'
+		        THEN
+		            <!-- 계좌이체 - 자행 -->
+		            CASE
+		                WHEN
+		                    (
+		                        T.TRANS_ORG_CD = '0011'
+		                     OR T.TRANS_ORG_CD = '0012'
+		                    )
+		                THEN
+		                    <!-- 계좌이체 - 자행이체 - 시간내 -->
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '012290'
+	                            <!-- 계좌이체 - 자행이체 - 시간외 -->
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '012390'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		                ELSE
+		                    계좌이체 - 타행이체 - 시간내
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '012291'
+                            	<!-- 계좌이체  - 타행이체 - 시간외 -->
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '012391'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		            END
+	            <!-- 통장정리조회 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31003'
+		        THEN '312440'
+	            <!-- 통장정리 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31004'
+		        THEN '012240'
+	            <!-- 공과금납부조회 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '30001'
+		        THEN
+		            <!-- MS 거래 -->
+		            CASE
+		                WHEN T.TRACK_NO = '3'
+		                THEN '312470'
+	                    <!-- IC 거래 -->
+		                WHEN T.TRACK_NO = '4'
+		                THEN '312460'
+		                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		            END
+		            <!-- 공과금납부 -->
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '50001'
+		        THEN
+		            <!-- MS 거래 -->
+		            CASE
+		                WHEN T.TRACK_NO = '3'
+		                THEN '012270'
+		                    IC 거래
+		                WHEN T.TRACK_NO = '4'
+		                THEN '012260'
+		                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		            END
+		        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		    END AS TRADE_TYPE,
+		    CASE
+		        WHEN T.DEAL_STATUS = '0'
+		        THEN '0210'
+		        WHEN T.DEAL_STATUS = '1'
+		        THEN '0430'
+		        WHEN T.DEAL_STATUS = '2'
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TYPE = '0'
+		                THEN
+		                    CASE
+		                        WHEN T.ORG_RESPONSE_CD = '11'
+		                        THEN '0430'
+		                        ELSE '0200'
+		                    END
+		                WHEN
+		                    (
+		                        T.DEAL_TYPE = '3'
+		                     OR T.DEAL_TYPE = '4'
+		                     OR T.DEAL_TYPE = '5'
+		                    )
+		                THEN'0200'
+		            END
+		        WHEN T.DEAL_STATUS = '3'
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TYPE = '0'
+		                THEN
+		                    CASE
+		                        WHEN T.REFUSE_CD = '608'
+		                        THEN '0430'
+		                        ELSE
+		                            CASE
+		                                WHEN T.ORG_RESPONSE_CD <> '11'
+		                                THEN '0210'
+		                                ELSE '0200'
+		                            END
+		                    END
+		                WHEN
+		                    (
+		                        T.DEAL_TYPE = '3'
+		                     OR T.DEAL_TYPE = '4'
+		                     OR T.DEAL_TYPE = '5'
+		                    )
+		                THEN'0210'
+		            END
+		    END AS LAST_TYPE,
+		    RPAD(RTRIM(T.ORG_RESPONSE_CD), 2, '9'),
+		    CASE
+		        WHEN LENGTH(TRIM(TRANSLATE(T.ORG_CD, '1234567890', ' '))) = 0
+		        THEN SUBSTR2(T.ORG_CD, 2,2)
+		        ELSE '96'
+		    END                                                                       AS ORG_CD,
+		    OP.FC_FN_SECURITY(T.INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(T.ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    LPAD(T.DEAL_AMT, 12, '0')                                                 AS DEAL_AMT,
+		    CASE
+		        WHEN
+		            T.DEAL_TYPE = '0' OR T.DEAL_TYPE = '4'*/
+		            T.DEAL_TYPE <> '3'
+		        THEN LPAD(DECODE(T.DEAL_STATUS, '0', T.CUST_FEE + T.BANK_FEE, 0), 5, '0')
+		        ELSE LPAD('0', 5, '0')
+		    END AS FEE,
+		    SUBSTR2(T.TRANS_ORG_CD, 3, 2),
+		    OP.FC_FN_SECURITY(T.TRANS_BRANCH_CD, '2') || OP.FC_FN_SECURITY(T.TRANS_ACCOUNT_NO, '2') AS TRANS_ACCOUNT_NO,
+		    CASE
+		        WHEN C.MAC_MODEL = '1300'
+		        THEN '01'
+		        WHEN C.MAC_MODEL = '1200'
+		        THEN '03'
+		        ELSE'02'
+		    END AS ATM_TYPE
+		FROM
+		    OP.T_FN_NICE_TRAN T,
+		    OP.T_CT_NICE_MAC M,
+		    OP.T_CM_MAC C
+		WHERE
+		    T.MAC_NO = M.MAC_NO
+		AND T.DEAL_DATE = #{szDate}
+		AND T.ADMIS_ORG = 'B'
+		AND M.JOIN_CD IN ('011', '012')
+		AND C.MAC_NO = T.MAC_NO
+		AND C.BRANCH_CD = '9600'
+		AND C.ORG_CD = '096'
+		]]>
+	</select>
+
+	<select id="pickupGetNongHTranData_dasi3" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetNongHTranData_NEW" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="pickupGetNongHTranData_NEW2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetNongHTranData_NEW" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    T.DEAL_DATE,
+		    T.DEAL_HOUR||T.DEAL_MI||T.DEAL_SEC                                    AS DEAL_TIME,
+		    'NC'||DECODE(M.JOIN_CD, '0MS', 'B', 'I') || SUBSTR2( T.DEAL_NO, 3, 10) AS DEAL_NO,
+		    LPAD(NVL(M.JOIN_MOJUM_CD, '0'), 6 , '0')                              AS JOIN_MOJUM_CD,
+		    'NC'||DECODE(M.JOIN_CD, '0MS', 'B', 'I')                              AS JOIN_ORG_CD,
+		    T.MAC_NO,
+		    CASE
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31000' -- 잔액조회 -->
+		        THEN '312400'
+		        WHEN
+		            (
+		                T.DEAL_TYPE||T.DEAL_CLSS = '01000' -- 예금인출
+		             OR T.DEAL_TYPE||T.DEAL_CLSS = '01300' -- 현금서비스
+		             )
+	            THEN
+	                CASE
+	                    WHEN T.DEAL_TIME_TYPE = '1' -- 예금인출-시간내
+	                    THEN '012200'
+	                    WHEN T.DEAL_TIME_TYPE = '2' -- 예금인출-시간외
+	                    THEN '012300'
+	                    ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+	                END -- 수취조회 -->
+	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31002'
+	            THEN -- 수취조회-자행이체 -->
+	                CASE
+	                    WHEN
+	                        (
+	                            T.TRANS_ORG_CD = '0011'
+	                         OR T.TRANS_ORG_CD = '0012'
+	                        )
+	                    THEN -- 수취조회 - 자행이체 - 시간내 -->
+	                        CASE
+	                            WHEN T.DEAL_TIME_TYPE = '1'
+	                            THEN '312490'-- 수취조회 - 자행이체 - 시간외 -->
+	                            WHEN T.DEAL_TIME_TYPE = '2'
+	                            THEN '312590'
+	                            ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+	                        END
+	                    ELSE -- 수취조회 - 타행이체 - 시간내 -->
+	                        CASE
+	                            WHEN T.DEAL_TIME_TYPE = '1'
+	                            THEN '312491'-- 수취조회 - 타행이체 - 시간외 -->
+	                            WHEN T.DEAL_TIME_TYPE = '2'
+	                            THEN '312591'
+	                            ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+	                        END
+	                END -- 계죄이체 -->
+	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '40000'
+	            THEN -- 계좌이체 - 자행 -->
+	                CASE
+	                    WHEN
+	                        (
+	                            T.TRANS_ORG_CD = '0011'
+	                         OR T.TRANS_ORG_CD = '0012'
+	                        )
+	                    THEN -- 계좌이체 - 자행이체 - 시간내 -->
+	                        CASE
+	                            WHEN T.DEAL_TIME_TYPE = '1'
+	                            THEN '012290'-- 계좌이체 - 자행이체 - 시간외 -->
+	                            WHEN T.DEAL_TIME_TYPE = '2'
+	                            THEN '012390'
+	                            ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+	                        END
+	                    ELSE -- 계좌이체 - 타행이체 - 시간내 -->
+	                        CASE
+	                            WHEN T.DEAL_TIME_TYPE = '1'
+	                            THEN '012291'-- 계좌이체  - 타행이체 - 시간외 -->
+	                            WHEN T.DEAL_TIME_TYPE = '2'
+	                            THEN '012391'
+	                            ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+	                        END
+	                END
+                -- 통장정리조회 -->
+	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31003'
+	            THEN '312440'
+            	-- 통장정리 -->
+	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '31004'
+	            THEN '012240'
+	            -- 공과금납부조회 -->
+	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '30001'
+	            THEN -- MS 거래 -->
+	                CASE
+	                    WHEN T.TRACK_NO = '3'
+	                    THEN '312470'
+	                    -- IC 거래 -->
+	                    WHEN T.TRACK_NO = '4'
+	                    THEN '312460'
+	                    ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+	                END 
+                -- 공과금납부 -->
+	            WHEN T.DEAL_TYPE||T.DEAL_CLSS = '50001'
+	            THEN -- MS 거래 -->
+	                CASE
+	                    WHEN T.TRACK_NO = '3'
+	                    THEN '012270'
+	                    -- IC 거래 -->
+	                    WHEN T.TRACK_NO = '4'
+	                    THEN '012260'
+	                    ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+	                END
+                -- 해외거래 지급일경우 국내 지급(시간내)와 같이 취급 2012.06.15 농협요청 -->
+	            WHEN (
+	                    T.DEAL_TYPE||T.DEAL_CLSS = '01110' -- 해외예금지급 -->
+	                 OR T.DEAL_TYPE||T.DEAL_CLSS = '01010' -- 해외당좌지급 -->
+	                 OR T.DEAL_TYPE||T.DEAL_CLSS = '01310' -- 해외현금서비스 -->
+	                 )
+	                THEN '012200'
+	                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+            END AS TRADE_TYPE,
+            CASE
+                WHEN T.DEAL_STATUS = '0'
+                THEN '0210'
+                WHEN T.DEAL_STATUS = '1'
+                THEN '0430'
+                WHEN T.DEAL_STATUS = '2'
+                THEN
+                    CASE
+                        WHEN T.DEAL_TYPE = '0'
+                        THEN
+                            CASE
+                                WHEN T.ORG_RESPONSE_CD = '11'
+                                THEN '0430'
+                                ELSE '0200'
+                            END
+                        WHEN
+                            (
+                                T.DEAL_TYPE = '3'
+                             OR T.DEAL_TYPE = '4'
+                             OR T.DEAL_TYPE = '5'
+                            )
+                        THEN'0200'
+                    END
+                WHEN T.DEAL_STATUS = '3'
+                THEN
+                    CASE
+                        WHEN T.DEAL_TYPE = '0'
+                        THEN
+                            CASE
+                                WHEN T.REFUSE_CD = '608'
+                                THEN '0430'
+                                ELSE
+                                    CASE
+                                        WHEN T.ORG_RESPONSE_CD <> '11'
+                                        THEN '0210'
+                                        ELSE '0200'
+                                    END
+                            END
+                        WHEN
+                            (
+                                T.DEAL_TYPE = '3'
+                             OR T.DEAL_TYPE = '4'
+                             OR T.DEAL_TYPE = '5'
+                            )
+                        THEN'0210'
+                    END
+            END AS LAST_TYPE,
+            CASE
+                WHEN T.ORG_CD <> '011'
+                AND T.ORG_CD <> '012'
+                THEN DECODE( T.DEAL_STATUS, '0', '00', RPAD(RTRIM(T.ORG_RESPONSE_CD), 2, '9'))
+                ELSE RPAD(RTRIM(T.ORG_RESPONSE_CD), 2, '9')
+            END AS ORG_RESPONSE_CD,
+            CASE
+                WHEN NVL(LENGTH(TRIM(TRANSLATE(SUBSTR2(T.ORG_CD, 2, 2), '1234567890', ' '))), 0) = 0
+                THEN SUBSTR2(T.ORG_CD, 1, 3)
+                ELSE '096'
+            END AS ORG_CD,
+            OP.FC_FN_SECURITY(T.INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(T.ACCOUNT_NO, '2')   AS ACCOUNT_NO,
+            LPAD(T.DEAL_AMT, 12, '0') AS DEAL_AMT,
+            CASE
+                WHEN
+                    T.DEAL_TYPE = '0'
+                AND T.ORG_CD <> '011'
+                AND T.ORG_CD <> '012'
+                AND T.DEAL_STATUS = '0'
+                THEN LPAD( '810', 5, '0')
+                WHEN T.DEAL_TYPE <> '3'
+                THEN LPAD(DECODE(T.DEAL_STATUS, '0', T.CUST_FEE + T.BANK_FEE, 0), 5, '0')
+                ELSE LPAD('0', 5, '0')
+            END                                             AS FEE,
+            SUBSTR2(NVL(T.TRANS_ORG_CD, '0000'), 2, 3),
+            OP.FC_FN_SECURITY(T.TRANS_BRANCH_CD, '2') || OP.FC_FN_SECURITY(T.TRANS_ACCOUNT_NO, '2') AS TRANS_ACCOUNT_NO,
+            CASE
+                WHEN C.MAC_MODEL = '1300'
+                THEN '01'
+                ELSE'02'
+            END AS ATM_TYPE
+        FROM
+            OP.T_FN_NICE_TRAN T, OP.T_CT_NICE_MAC M, OP.T_CM_MAC C
+        WHERE
+            T.MAC_NO = M.MAC_NO
+        AND T.DEAL_DATE = #{szDate}
+        AND T.ADMIS_ORG = 'B'
+        AND M.JOIN_CD IN ('011', '012') -- MS삭제*/
+        AND C.MAC_NO = T.MAC_NO
+        AND C.BRANCH_CD = '9600'
+        AND C.ORG_CD = '096'
+       ]]>
+	</select>
+
+	<select id="pickupGetNongHTranData_NEW3" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetNongHMacData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', std_date,
+		    OP.pkg_fn_common.sf_getPostActDate( std_date)), OP.pkg_fn_common.sf_getPostActDate(std_date))
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = SUBSTR2(#{pTransDate}, 1, 6) || '01'
+	</select>
+
+	<select id="selectGetNongHMacData" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    DECODE(NMAC.JOIN_CD, '0MS', 'NCB', '011', 'NCI', '012', 'NCI', 'NCJ'),
+		    MAC.MAC_NO,
+		    SUBSTR2(SITE.SITE_NM, 1, 13),
+		    SUBSTR2(SITE.SET_ADDR, 1, 48),
+		    '0800228252',
+		    SITE.ZIP_NO,
+		    LPAD(NVL(NMAC.JOIN_MOJUM_CD, '0'), 6 , '0') AS JOIN_MOJUM_CD
+		FROM
+		    OP.T_CM_MAC MAC,
+		    OP.T_CM_SITE SITE,
+		    OP.T_CT_NICE_MAC NMAC
+		WHERE
+		    MAC.ORG_CD = '096'
+		AND MAC.BRANCH_CD = '9600'
+		AND MAC.ORG_CD = SITE.ORG_CD
+		AND MAC.BRANCH_CD = SITE.BRANCH_CD
+		AND MAC.SITE_CD = SITE.SITE_CD
+		AND MAC.MAC_NO = NMAC.MAC_NO
+		AND MAC.OPEN_DATE <= #{pTransDate}
+		AND
+		    (
+		        MAC.CLOSE_DATE IS NULL
+		     OR MAC.CLOSE_DATE >= #{pTransDate}
+		    )
+		UNION ALL
+		SELECT
+		    '096' AS ORG_CD_AAA,
+		    MAC.MAC_NO,
+		    SUBSTR2(SITE.SITE_NM, 1, 13),
+		    SUBSTR2(SITE.SET_ADDR, 1, 48),
+		    '0800228252',
+		    SITE.ZIP_NO,
+		    LPAD(NVL(NMAC.JOIN_MOJUM_CD, '0'), 6 , '0') AS JOIN_MOJUM_CD
+		FROM
+		    OP.T_CM_MAC MAC,
+		    OP.T_CM_SITE SITE,
+		    OP.T_CT_NICE_MAC NMAC
+		WHERE
+		    MAC.ORG_CD = '096'
+		AND MAC.BRANCH_CD = '9600'
+		AND MAC.ORG_CD = SITE.ORG_CD
+		AND MAC.BRANCH_CD = SITE.BRANCH_CD
+		AND MAC.SITE_CD = SITE.SITE_CD
+		AND MAC.MAC_NO = NMAC.MAC_NO
+		AND NVL(NMAC.JOIN_CD, '0') NOT IN ('011', '012', '0MS')
+		AND MAC.OPEN_DATE <= #{pTransDate}
+		AND
+		    (
+		        MAC.CLOSE_DATE IS NULL
+		     OR MAC.CLOSE_DATE >= #{pTransDate}
+		    )
+	    ]]>
+	</select>
+
+	<select id="pickupGetNongHBrandMacData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', std_date,
+		    OP.pkg_fn_common.sf_getPostActDate( std_date)), OP.pkg_fn_common.sf_getPostActDate(std_date))
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = SUBSTR2( #{pTransDate}, 1, 6) || '01'
+	</select>
+	
+	<select id="pickupGetNongHBrandMacData2" parameterType="string" resultType="string">
+		SELECT
+		    OP.pkg_fn_common.sf_getPreActDate(std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="selectGetNongHBrandMacData" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    MAC.MAC_NO,
+		    DECODE(CO1.CD_NM5, 'CD', '1', 'CDP', '2', '3' ),
+		    MAC.OPEN_DATE
+		FROM
+		    OP.T_CM_MAC MAC,
+		    OP.T_CM_SITE SITE,
+		    OP.T_CT_NICE_MAC NMAC,
+		    OP.T_CM_COMMON CO1
+		WHERE
+		    MAC.ORG_CD = '096'
+		AND MAC.BRANCH_CD = '9600'
+		AND MAC.ORG_CD = SITE.ORG_CD
+		AND MAC.BRANCH_CD = SITE.BRANCH_CD
+		AND MAC.SITE_CD = SITE.SITE_CD
+		AND CO1.LARGE_CD = '2110'
+		AND CO1.SMALL_CD = MAC.MAC_MODEL
+		AND MAC.MAC_NO = NMAC.MAC_NO
+		AND NMAC.JOIN_CD IN ('011', '012')
+		AND MAC.OPEN_DATE <= #{hPreActDate}
+		AND
+		    (
+		        MAC.CLOSE_DATE IS NULL
+		     OR MAC.CLOSE_DATE >= #{hPreActDate}
+		    )
+	    ]]>
+	</select>
+
+	<select id="pickupGetCommonTranData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="pickupGetCommonTranData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetCommonTranData" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ) AS WORK_TYPE,
+		    '22'                                             AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC          AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ')                                        AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0')                                              AS INST_ORG_CD,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
+		    RPAD(DEAL_NO, 12, ' ')                                                 AS DEAL_NO,
+		    DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN
+    	WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE = '0'
+		AND DEAL_TIME_TYPE = '1'
+		AND ADMIS_ORG = 'B'
+		AND ORG_CD = '0'||#{szOrgCd}
+		<if test='szOrgCd eq "81"'>
+			<![CDATA[ AND	net_org_cd <> '081' ]]>
+		</if>
+	</select>
+
+	<select id="selectGetCommonTranData2" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ) AS WORK_TYPE,
+		    '22'                                             AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC          AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ')                                        AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0')                                              AS INST_ORG_CD,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
+		    RPAD(DEAL_NO, 12, ' ') DEAL_NO,
+		    DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE = '0'
+		AND DEAL_TIME_TYPE = '2'
+		AND ADMIS_ORG = 'B'
+		AND ORG_CD = '0'||#{szOrgCd}
+		<if test='szOrgCd eq "081"'>
+			<![CDATA[ AND	net_org_cd <> '081' ]]>
+		</if>
+	</select>
+	
+	<select id="pickupGetCommonTranData3" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetKiupTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetKiupTranData" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE( DEAL_TYPE, '0', DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ), '500000' ) AS WORK_TYPE,
+		    '22'                                    AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ')                                        AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0')                                              AS INST_ORG_CD,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
+		    RPAD(DEAL_NO, 12, ' ')                                                 AS DEAL_NO,
+		    DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN	
+	    WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE IN ('0', '1')
+		AND DEAL_TIME_TYPE = '1'
+		AND ORG_CD = '0'||#{szOrgCd}
+		<if test='szOrgCd eq "81"'>
+			<![CDATA[ AND	net_org_cd <> '081' ]]>
+		</if>
+	</select>
+
+	<select id="selectGetKiupTranData2" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE( DEAL_TYPE, '0', DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ), '500000' ) AS WORK_TYPE,
+		    '22'                                    AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ')                                        AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0')                                              AS INST_ORG_CD,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
+		    RPAD(DEAL_NO, 12, ' ')                                                 AS DEAL_NO,
+		    DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE IN ('0', '1')
+		AND DEAL_TIME_TYPE = '2'
+		AND ORG_CD = '0'||#{szOrgCd}
+		<if test='szOrgCd eq "081"'>
+			<![CDATA[ AND	net_org_cd <> '081' ]]>
+		</if>
+	</select>
+
+	<select id="pickupGetKBSTTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetKBSTTranData" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ) AS WORK_TYPE,
+		    '22'                                             AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC          AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ')                                        AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0')                                              AS INST_ORG_CD,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
+			<if test='szOrgCd eq "04"'>
+			    LPAD(DEAL_NO, 13, 0),
+			    DEAL_STATUS,
+			    ''
+		    </if>
+			<if test='szOrgCd neq "04"'>
+			    RPAD(DEAL_NO, 12, ' '),
+			    DEAL_STATUS,
+			    ' '
+		    </if>
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE = '0'
+		AND DEAL_STATUS = '0'
+		AND DEAL_TIME_TYPE = '1'
+		AND ADMIS_ORG = 'B'
+		AND ORG_CD = '0'||#{szOrgCd}
+		<if test="szOrgCd eq '04'">
+			AND net_org_cd = '099'
+		</if>
+	</select>
+
+	<select id="selectGetKBSTTranData2" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ) AS WORK_TYPE,
+		    '22'                                             AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC          AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ')                                        AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0')                                              AS INST_ORG_CD,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
+			<if test="szOrgCd == '004'">
+				LPAD(DEAL_NO, 13, 0),
+				DEAL_STATUS,
+				''
+			</if>
+			<if test="szOrgCd != '004'">
+				LPAD(DEAL_NO, 12, 0),
+				DEAL_STATUS,
+				' '
+			</if>
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE = '0'
+		AND DEAL_STATUS = '0'
+		AND DEAL_TIME_TYPE = '2'
+		AND ADMIS_ORG = 'B'
+		AND ORG_CD = '0'||#{szOrgCd}
+		<if test="szOrgCd == '004'">
+			AND	net_org_cd = '099'
+		</if>
+	</select>
+
+	<select id="pickupGetCommonImsiData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetCommonImsiData" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ) AS WORK_TYPE,
+		    '22'                                             AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC          AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ')                                        AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0')                                              AS INST_ORG_CD,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
+		    RPAD(DEAL_NO, 12, ' ')                                                 AS DEAL_NO,
+		    DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE = '0'
+		AND DEAL_TIME_TYPE = '1'
+		AND ADMIS_ORG = 'B'
+		AND ORG_CD = '0'||#{szOrgCd}
+		<if test='szOrgCd eq "081"'>
+			<![CDATA[ AND net_org_cd <> '081' ]]>
+		</if>
+	</select>
+
+	<select id="selectGetCommonImsiData2" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ) AS WORK_TYPE,
+		    '22'                                             AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC          AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ')                                        AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0')                                              AS INST_ORG_CD,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
+		    RPAD(DEAL_NO, 12, ' ')                                                 AS DEAL_NO,
+		    DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE = '0'
+		AND DEAL_TIME_TYPE = '2'
+		AND ADMIS_ORG = 'B'
+		AND ORG_CD = '0'||#{szOrgCd}
+		<if test='szOrgCd eq "081"'>
+			<![CDATA[ AND	net_org_cd <> '081' ]]>
+		</if>
+	</select>
+
+	<select id="pickupGetCommonImsiData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetKETranData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="pickupGetKETranData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetKETranData" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ) AS WORK_TYPE,
+		    '22'                                             AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC          AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ')                                        AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0')                                              AS INST_ORG_CD,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9')                                   AS ORG_RESPONSE_CD,
+		    RPAD(DEAL_NO, 12, ' ')                                                 AS DEAL_NO,
+		    DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE = '0'
+		AND DEAL_TIME_TYPE = '1'
+		AND ADMIS_ORG = 'B'
+		AND ORG_CD = '0'||#{szOrgCd}
+	</select>
+
+	<select id="selectGetKETranData2" parameterType="map" resultType="java.util.LinkedHashMap">
+		SELECT
+		    DECODE(DEAL_TIME_TYPE, '1', '012200', '012300' ) AS WORK_TYPE,
+		    '22'                                             AS DATA_TYPE,
+		    DEAL_MMDD||DEAL_HOUR||DEAL_MI||DEAL_SEC          AS DEAL_DATE,
+		    RPAD(DECODE(ORG_CD, '044', '96'||MAC_NO||LPAD(ATM_DEAL_NO, 6, '0'), '96'||MAC_NO||MAC_NO||LPAD(
+		    ATM_DEAL_NO, 5, '0')), 16, ' ') AS ATM_DEAL_NO,
+		    LPAD(INST_ORG_CD, 4, '0'),
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2')  AS ACCOUNT_NO,
+		    LPAD(DEAL_AMT, 12, '0')                                                AS DEAL_AMT,
+		    DECODE(ORG_CD, '044', DECODE(DEAL_STATUS, '0', CUST_FEE, 0), CUST_FEE) AS CUST_FEE,
+		    DECODE(ORG_CD, '044', 0, BANK_FEE)                                     AS BANK_FEE,
+		    RPAD(RTRIM(ORG_RESPONSE_CD), 2, '9'),
+		    RPAD(DEAL_NO, 12, ' '),
+		    DEAL_STATUS
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND DEAL_TYPE = '0'
+		AND DEAL_TIME_TYPE = '2'
+		AND ADMIS_ORG = 'B'
+		AND ORG_CD = '0'||#{szOrgCd}
+	</select>
+
+	<select id="pickupGetKETranData3" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetSmartTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetSmartTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    'MD'                                                                  AS DATA_TYPE,
+		    'D'                                                                   AS RECORD_TYPE,
+		    '01'                                                                  AS ORG_CD,
+		    '0' || DEAL_DATE || '0' || SUBSTR2(DEAL_NO, 7, 6)                      AS SMDEAL_NO,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    '0000'                                                                AS STATUS_CD,
+		    DEAL_DATE || DEAL_HOUR||DEAL_MI||DEAL_SEC                             AS DEAL_TIME1,
+		    DEAL_DATE || DEAL_HOUR||DEAL_MI||DEAL_SEC                             AS DEAL_TIME2,
+		    DECODE(DEAL_STATUS, '0', '5', '6') DEAL_STATUS,
+		    LPAD(DEAL_AMT, 10, '0'),
+		    LPAD(CUST_FEE, 10, '0'),
+		    LPAD(MAC_NO, 10, '0'),
+		    DEAL_NO
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND ORG_CD = '0KS'
+		AND DEAL_TYPE = '8'
+		AND ADMIS_ORG = 'B'
+		AND DEAL_CLSS = '3300'
+	</select>
+
+	<select id="pickupGetSmartImsiTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetSmartImsiTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    'MD'                                                                  AS DATA_TYPE,
+		    'D'                                                                   AS RECORD_TYPE,
+		    '01'                                                                  AS ORG_CD,
+		    '0' || DEAL_DATE || '0' || SUBSTR2(DEAL_NO, 7, 6)                      AS SMDEAL_NO,
+		    OP.FC_FN_SECURITY(INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    '0000'                                                                AS STATUS_CD,
+		    DEAL_DATE || DEAL_HOUR||DEAL_MI||DEAL_SEC                             AS DEAL_TIME1,
+		    DEAL_DATE || DEAL_HOUR||DEAL_MI||DEAL_SEC                             AS DEAL_TIME2,
+		    DECODE(DEAL_STATUS, '0', '5', '6') DEAL_STATUS,
+		    LPAD(DEAL_AMT, 10, '0'),
+		    LPAD(CUST_FEE, 10, '0'),
+		    LPAD(MAC_NO, 10, '0'),
+		    DEAL_NO
+		FROM
+		    OP.T_FN_NICE_TRAN		WHERE
+		    DEAL_DATE = #{szDate}
+		AND ORG_CD = '0KS'
+		AND DEAL_TYPE = '8'
+		AND ADMIS_ORG = 'B'
+		AND DEAL_CLSS = '3300'
+	</select>
+	
+	<select id="pickupGetSmartImsiTranData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetHITranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+	
+	<select id="selectGetHITranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    'V01HPS'                                                                        AS WORK_TYPE,
+		    '22'                                                                            AS DATA_TYPE,
+		    OP.FC_FN_SECURITY(tran.INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(tran.ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    tran.DEAL_DATE,
+		    tran.MAC_NO AS BRANCH_CD,
+		    tran.MAC_NO,
+		    '96' || tran.MAC_NO || tran.MAC_NO || LPAD( tran.ATM_DEAL_NO, 6, '0' ) AS DEAL_NO,
+		    LPAD( tran.DEAL_AMT, 13, '0' )                                         AS DEAL_AMT,
+		    SUBSTR2(MAC.MAC_NM, 1, 4)                                               AS MAC_NM, <!-- 한글이 1BYTE로 인식되므로*/ -->
+		    DECODE(tran.DEAL_STATUS, '0', '1', '1', '3', '2', '2', '3', '2')            AS DEAL_STATUS,
+		    DECODE(tran.DEAL_STATUS, '0', LPAD(tran.CUST_FEE, 9, 0), '000000000')       AS CUST_FEE,
+		    OP.FC_FN_SECURITY(T2.INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(T2.ACCOUNT_NO, '2') AS ACCOUNT_NO_2,
+		    T2.JOIN_ORG_DEAL_NO
+		FROM
+		    OP.T_FN_NICE_TRAN TRAN,
+		    OP.T_FN_NICE_TRAN T2,
+		    OP.T_CM_MAC mac
+		WHERE
+		    tran.DEAL_DATE = #{hPreDate}
+		AND tran.ORG_CD = '0HI'
+		AND mac.ORG_CD = '096'
+		AND mac.BRANCH_CD = '9600'
+		AND tran.MAC_NO = mac.MAC_NO
+		AND T2.ORG_CD = '0NI'
+		AND T2.DEAL_DATE = TRAN.DEAL_DATE
+		AND T2.MAC_NO = TRAN.MAC_NO
+		AND T2.ATM_DEAL_NO = LPAD(TO_NUMBER(TRAN.ATM_DEAL_NO) - 1, 5, '0')
+	</select>
+
+	<select id="pickupGetCHTranData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="pickupGetCHTranData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetCHTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+			SELECT
+			    DECODE( T.DEAL_STATUS, '0', '0210', '0430' )                              AS TRADE_TYPE,
+			    OP.FC_FN_SECURITY(T.INST_BRANCH_CD, '2') || OP.FC_FN_SECURITY(T.ACCOUNT_NO, '2') AS ACCOUNT_NO,
+			    LPAD(T.DEAL_AMT, 11, '0')                                                 AS DEAL_AMT,
+			    T.DEAL_NO,
+			    SUBSTR2( T.DEAL_NO, 7, 6 ) AS DEAL_NO2,
+			    T.DEAL_DATE,
+			    T.DEAL_HOUR||T.DEAL_MI||T.DEAL_SEC AS DEAL_TIME,
+			    T.ORG_RESPONSE_CD,
+			    RPAD(T.MAC_NO,16, ' ') AS MAC_NO,
+			    T.DEAL_STATUS
+			FROM
+			    OP.T_FN_NICE_TRAN T
+			WHERE
+			    T.DEAL_DATE = #{szDate}
+			AND T.ORG_CD = '0CH'
+			AND T.DEAL_TYPE = '0'
+			AND T.DEAL_CLSS = '1300'
+			AND T.DEAL_STATUS IN ( '0', '1' )
+	</select>
+
+	<select id="pickupGetSuHTranData" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetSuHTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    T.DEAL_DATE,
+		    T.DEAL_HOUR||T.DEAL_MI||T.DEAL_SEC AS DEAL_TIME,
+		    '0' || T.DEAL_NO                   AS DEAL_NO,
+		    '096',
+		    T.MAC_NO,
+		    CASE
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO = '010003' -- MS 예금인출
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TIME_TYPE = '1' -- 예금인출-시간내
+		                THEN '012200'
+		                WHEN T.DEAL_TIME_TYPE = '2' -- 예금인출-시간외
+		                THEN '012300'
+		                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		            END
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO = '010004' -- IC 예금인출
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TIME_TYPE = '1' -- 예금인출-시간내
+		                THEN '012201'
+		                WHEN T.DEAL_TIME_TYPE = '2' -- 예금인출-시간외
+		                THEN '012301'
+		                ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		            END -- MS 계좌이체
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '400003'
+		        THEN -- 계좌이체 - 자행
+		            CASE
+		                WHEN
+		                    (
+		                        T.TRANS_ORG_CD = '0007'
+		                    )
+		                THEN -- 계좌이체 - 자행이체 - 시간내
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '400000' -- 계좌이체 - 자행이체 - 시간외
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '400001'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		                ELSE -- 계좌이체 - 타행이체 - 시간내
+		                    CASE
+		                        WHEN T.DEAL_TIME_TYPE = '1'
+		                        THEN '400020' -- 계좌이체  - 타행이체 - 시간외
+		                        WHEN T.DEAL_TIME_TYPE = '2'
+		                        THEN '400021'
+		                        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		                    END
+		            END -- IC 계좌이체
+		        WHEN T.DEAL_TYPE||T.DEAL_CLSS = '400004'
+		        THEN -- 계좌이체 - 자행
+		            CASE
+		                WHEN
+		                    (
+		                        T.TRANS_ORG_CD = '0007'
+		                    )
+		                THEN '400100'
+		                ELSE '400120'
+		            END
+		        ELSE T.DEAL_TYPE||T.DEAL_CLSS||T.TRACK_NO
+		    END AS TRADE_TYPE,
+		    CASE
+		        WHEN T.DEAL_STATUS = '0'
+		        THEN '0200'
+		        WHEN T.DEAL_STATUS = '1'
+		        THEN '0420'
+		        WHEN T.DEAL_STATUS = '2'
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TYPE = '0'
+		                THEN
+		                    CASE
+		                        WHEN T.ORG_RESPONSE_CD = '11'
+		                        THEN '0420'
+		                        ELSE '0200'
+		                    END
+		                WHEN T.DEAL_TYPE = '4'
+		                THEN '0200'
+		                ELSE '0200'
+		            END
+		        WHEN T.DEAL_STATUS = '3'
+		        THEN
+		            CASE
+		                WHEN T.DEAL_TYPE = '0'
+		                THEN
+		                    CASE
+		                        WHEN T.REFUSE_CD = '608'
+		                        THEN '0420'
+		                        ELSE
+		                            CASE
+		                                WHEN T.ORG_RESPONSE_CD <> '11'
+		                                THEN '0200'
+		                                ELSE '0200'
+		                            END
+		                    END
+		                WHEN T.DEAL_TYPE = '4'
+		                THEN '0200'
+		                ELSE '0200'
+		            END
+		        ELSE '0200'
+		    END AS LAST_TYPE,
+		    ORG_RESPONSE_CD,
+		    CASE
+		        WHEN LENGTH(TRIM(TRANSLATE(T.ORG_CD, '1234567890', ' '))) = 0
+		        THEN SUBSTR2(T.ORG_CD, 1, 3)
+		        ELSE '096'
+		    END                                    AS ORG_CD,
+		    OP.FC_FN_SECURITY(T.REAL_ACCOUNT_NO, '2') AS ACCOUNT_NO,
+		    LPAD(T.DEAL_AMT, 12, '0')              AS DEAL_AMT,
+		    LPAD(T.CUST_FEE, 5, '0')               AS FEE,
+		    SUBSTR2(NVL(T.TRANS_ORG_CD, '0000'), 2, 3),
+		    OP.FC_FN_SECURITY(T.TRANS_BRANCH_CD, '2') || OP.FC_FN_SECURITY(T.TRANS_ACCOUNT_NO, '2') AS TRANS_ACCOUNT_NO
+		FROM
+		    OP.T_FN_NICE_TRAN T,
+		    OP.T_CT_NICE_MAC M,
+		    OP.T_CM_MAC C
+		WHERE
+		    T.MAC_NO = M.MAC_NO
+		AND T.DEAL_DATE = #{szDate}
+		AND C.MAC_NO = T.MAC_NO
+		AND C.BRANCH_CD = '9600'
+		AND T.ORG_CD = '007'
+		AND T.DEAL_STATUS = '0'
+		AND T.DEAL_TYPE IN ('0', '4')
+		AND C.ORG_CD = '096'
+		]]>
+	</select>
+
+	<select id="pickupGetSuHTranData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetSuHMacData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', std_date,
+		    OP.pkg_fn_common.sf_getPostActDate( std_date)), OP.pkg_fn_common.sf_getPostActDate(std_date))
+		FROM
+		    OP.T_FN_CALENDAR
+		WHERE
+		    std_date = SUBSTR2( #{pTransDate}, 1, 6) || '01'
+	</select>
+
+	<select id="selectGetSuHMacData" parameterType="string" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		SELECT
+		    MAC.MAC_NO,
+		    'J',
+		    SUBSTR2(SITE.SITE_NM, 1, 13),
+		    SUBSTR2(SITE.SET_ADDR, 1, 48),
+		    '1577-4655',
+		    SITE.ZIP_NO
+		FROM
+		    OP.T_CM_MAC MAC,
+		    OP.T_CM_SITE SITE,
+		    OP.T_CT_NICE_MAC NMAC
+		WHERE
+		    MAC.ORG_CD = '096'
+		AND MAC.BRANCH_CD = '9600'
+		AND MAC.ORG_CD = SITE.ORG_CD
+		AND MAC.BRANCH_CD = SITE.BRANCH_CD
+		AND MAC.SITE_CD = SITE.SITE_CD
+		AND MAC.MAC_NO = NMAC.MAC_NO
+		AND MAC.MAC_NO < 'A000'
+		AND
+		    (
+		        MAC.CLOSE_DATE IS NULL
+		     OR MAC.CLOSE_DATE >= #{pTransDate}
+		    )
+		]]>
+	</select>
+
+	<select id="pickupGetKFTCTranData" parameterType="string" resultType="string">
+		SELECT
+		    DECODE(holiday_yn, '1', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date)
+		FROM
+		    OP.t_fn_calendar
+		WHERE
+		    std_date = #{pTransDate}
+	</select>
+
+	<select id="pickupGetKFTCTranData2" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(TO_DATE(#{pTransDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="selectGetKFTCTranData" parameterType="string" resultType="java.util.LinkedHashMap">
+		SELECT
+		    orgCode,
+		    DECODE(orgCode,'004', 'C',DECODE(SIGN(demandAmt), -1, 'C','D')) orgType,
+		    LPAD(TO_CHAR(ABS(demandAmt)), 15, '0') demandAmt
+		FROM
+		    (
+		        SELECT
+		            NVL(org.org_cd, '004') orgCode,
+		            NVL(SUM(demand_amt), 0) demandAmt
+		        FROM
+		            (
+		                SELECT
+		                    org_cd
+		                FROM
+		                    OP.t_cm_org		                WHERE
+		                    tran_yn = '0'
+		                AND org_cd NOT IN ('004','0MS')
+		                AND nice_org_yn IN ('0', '1', '2')
+		            )
+		            org,
+		            (
+		                SELECT
+		                    org2.kftc_org_cd org_cd,
+		                    dmd.demand_amt
+		                FROM
+		                    (
+		                        SELECT
+		                            org_cd,
+		                            demand_amt
+		                        FROM
+		                            t_fn_nice_demand
+		                        WHERE
+		                            demand_date =#{pTransDate}
+		                        UNION ALL
+		                        SELECT
+		                            org_cd,
+		                            DECODE(org_cd,'071',0,'007',0,'011',0,'012',0,'032',0,'031',0,
+		                            demand_amt)
+		                        FROM
+		                            t_fn_pack_demand
+		                        WHERE
+		                            demand_date =#{pTransDate}
+		                        UNION ALL
+		                        SELECT
+		                            '088',
+		                            cash_amt * (-1)
+		                        FROM
+		                            t_fn_carry
+		                        WHERE
+		                            carry_date = #{pTransDate}
+		                        AND carry_group_cd ='04'
+		                        AND carry_org_cd='1030401'
+		                    )
+		                    dmd,
+		                    OP.t_cm_org org2
+		                WHERE
+		                    org2.org_cd = dmd.org_cd
+		            )
+		            opr
+		        WHERE
+		            org.org_cd = opr.org_cd (+)
+		        GROUP BY
+		            ROLLUP(org.org_cd)
+		    )
+		ORDER BY
+		    orgCode
+	</select>
+
+	<select id="pickupGetKFTCTranData3" parameterType="string" resultType="string">
+		SELECT
+		    TO_CHAR(to_date(#{szDate}, 'YYYYMMDD') - 1, 'YYYYMMDD')
+		FROM
+		    DUAL
+	</select>
+
+	<select id="pickupGetGiftCardInfoData" resultType="string">
+		SELECT
+		    TO_CHAR(sysdate + 1, 'YYMMDD')
+		FROM
+		    DUAL
+	</select>
+	
+	<select id="selectGetGiftCardInfoData" resultType="java.util.LinkedHashMap">
+		SELECT
+		    GIFT_INFO.COL_1,
+		    GIFT_INFO.COL_2,	
+		    GIFT_INFO.COL_3,
+		    GIFT_INFO.COL_4,
+		    GIFT_INFO.COL_5,
+		    GIFT_INFO.COL_6,
+		    GIFT_INFO.COL_7,
+		    GIFT_INFO.COL_8,
+		    GIFT_INFO.COL_9,
+		    DECODE(LENGTH(GIFT_INFO.COL_10), 1, GIFT_INFO.COL_10, SUBSTR2(GIFT_INFO.COL_10, 2, 1)) AS COL_10
+		FROM
+		    (
+		        SELECT
+		            '0' AS COL_1, <!-- 대_소구분     -->
+		            NVL(MAIN.USE_YN, '0') AS COL_2, <!-- 사용여부      -->
+		            MAIN.GIFT_INITIAL AS COL_3, <!-- 발급사이니셜  -->
+		            MAIN.GIFT_JUM_CD AS COL_4, <!-- 점포코드    -->
+		            MAIN.ISSUE_COM_CD AS COL_5, <!-- 발급사코드    -->
+		            MAIN.GIFT_NM AS COL_6, <!-- 발급사명      -->
+		            MAIN.MSG AS COL_7, <!-- 안내멘트      -->
+		            ''                       AS COL_8,
+		            ''                       AS COL_9,
+		            TO_CHAR(MAIN.DISP_ORDER) AS COL_10 <!-- 버튼순서      -->
+		        FROM
+		            OP.T_CM_GIFT main
+		        WHERE
+		            NVL(MAIN.USE_YN, '0') = '1'
+		        UNION ALL
+		        SELECT
+		            '1' AS COL_1, <!-- 대_소구분    -->
+		            SUB.GIFT_INITIAL AS COL_2, <!-- 발급사이니셜 -->
+		            SUB.GIFT_JUM_CD AS COL_3, <!-- 점포코드   -->
+		            NVL(SUB.USE_YN, '0') AS COL_4, <!-- 사용여부     -->
+		            SUB.GIFT_SUB_CD AS COL_5, <!-- 세분류코드   -->
+		            SUB.GIFT_SUB_NM AS COL_6, <!-- 세분류명     -->
+		            TO_CHAR(NVL(SUB.GIFT_SAIL_AMT, 0)) AS COL_7, <!-- 판매금액     -->
+		            TO_CHAR( NVL(SUB.IC_PROFIT_RATE, 0)) AS COL_8, <!-- 현금IC마진율 -->
+		            TO_CHAR(NVL(SUB.CASH_PROFIT_RATE, 0)) AS COL_9, <!-- 현금마진율   -->
+		            TO_CHAR(MAIN.DISP_ORDER)||TO_CHAR(SUB.DISP_ORDER) AS COL_10 <!-- 버튼순서     -->
+		        FROM
+		            OP.T_CM_GIFT MAIN,
+		            OP.T_CM_GIFT_DETAIL SUB
+		        WHERE
+		            NVL(MAIN.USE_YN, '0') = '1'
+		        AND NVL(SUB.USE_YN, '0') = '1'
+		        AND MAIN.GIFT_INITIAL = SUB.GIFT_INITIAL
+		        AND MAIN.GIFT_JUM_CD = SUB.GIFT_JUM_CD
+		    )
+		    GIFT_INFO
+		ORDER BY
+		    GIFT_INFO.col_10
+	</select>
+	
+	<select id="selectGetCNOperData" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+		select date_list.*
+		from
+		    (
+		        select  org_type 		AS 기관구분코드,
+		                deal_date 		AS 일자,
+		                card_type 		AS 카드구분코드,
+		                time_deal_amt 	AS 시간내금액,
+		                ot_deal_amt 	AS 시간외금액,
+		                total_amt 		AS 합계,
+		                plus_type 		AS 부호구분,
+		                demand_amt 	AS 정산금액
+		        from    T_FN_OPERFUND_KB
+		        where   trans_date = #{pTransDate}
+		        AND     length(DEAL_DATE) = 8
+		        order by card_type asc , deal_date asc
+		    ) date_list
+		union  all
+		select card_list.*
+		from
+		    (
+		        select  org_type 		AS 기관구분코드,
+		                deal_date 		AS 일자,
+		                card_type 		AS 카드구분코드,
+		                time_deal_amt 	AS 시간내금액,
+		                ot_deal_amt 	AS 시간외금액,
+		                total_amt 		AS 합계,
+		                plus_type 		AS 부호구분,
+		                demand_amt 	AS 정산금액
+		        from    T_FN_OPERFUND_KB
+		        where   trans_date = #{pTransDate}
+		        AND     length(DEAL_DATE) < 8
+		        order by card_type asc,  deal_date desc
+		    )card_list
+	    ]]>
+	</select>
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SET_ENV">
+
+<!--
+<entry key="SET_ENV"                value="02001240" />     39. 우리은행환경관리
+{
+   "name" : "02001240",                    "kname" : "환경관리업무보고",
+   "response" : { "code" : "02001240",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "단말번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "site_cd",                "kname" : "코너코드",               "type" : "AN",  "length"  : 6   },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 120 },
+      { "name" : "mac_model",              "kname" : "기기모델",               "type" : "AN",  "length"  : 4   },
+      { "name" : "clean_near_yn",          "kname" : "주변청소",               "type" : "AN",  "length"  : 1   },
+      { "name" : "clean_mac",          	   "kname" : "기기내부청소",           "type" : "AN",  "length"  : 1   },
+      { "name" : "clean_big_yn",           "kname" : "대청소",                 "type" : "AN",  "length"  : 1   },
+      { "name" : "onboard",                "kname" : "벽면게시물",             "type" : "AN",  "length"  : 1   },
+      { "name" : "memo",                   "kname" : "조치내용",               "type" : "AN",  "length"  : 300 },
+      { "name" : "mng_date",               "kname" : "관리일자",               "type" : "AN",  "length"  : 8   },
+      { "name" : "check_date",             "kname" : "점검일자",               "type" : "AN",  "length"  : 8   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 12  }
+   ]
+}
+ -->
+    <select id="select003" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT CHK.BRANCH_CD brch_cd,                                            /*  영업점코드       */
+               MAC.MAC_NO,                                              /*  단말번호        */
+               CHK.SITE_CD,                                             /*  코너코드        */
+               SITE.SITE_NM,                                            /*  코너명         */
+               '',
+               DECODE(CHK.ENV_GARBAGE, '0020', '0', '1') clean_near_yn,	/*  주변청소        */
+               DECODE(CHK.ENV_AUTO, '0020', '0', '1') clean_mac,                 /*  대청소         */
+               DECODE(CHK.ENV_UP, '0020', '0', '1') clean_big_yn,		/*  벽면게시물       */
+               DECODE(CHK.ENV_STICKER, '0020', '0', '1') onboard,
+               CHK.REMARK memo,               							/*  조치내용        */
+               check_date,                                              /*  관리일자        */
+               '',
+               '',
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+          from OP.T_CM_SITE_CHECK CHK,
+               OP.T_CM_MAC MAC,
+               OP.T_CM_SITE SITE
+         WHERE  CHK.check_date >= TO_CHAR( SYSDATE-31, 'YYYYMMDD')
+           AND CHK.org_cd = '003'
+          /* AND MAC.OPEN_DATE <= TO_CHAR( SYSDATE, 'YYYYMMDD')
+           AND (MAC.CLOSE_DATE IS NULL OR MAC.CLOSE_DATE >= TO_CHAR( SYSDATE, 'YYYYMMDD') ) */
+           AND CHK.ORG_CD = MAC.ORG_CD
+           AND CHK.BRANCH_CD = MAC.BRANCH_CD
+           AND CHK.SITE_CD = MAC.SITE_CD
+           AND CHK.ORG_CD = SITE.ORG_CD
+           AND CHK.BRANCH_CD = SITE.BRANCH_CD
+           AND CHK.SITE_CD = SITE.SITE_CD
+    ]]>
+    </select>
+
+    <select id="select020" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT CHK.BRANCH_CD brch_cd,
+               MAC.MAC_NO,
+               CHK.SITE_CD,
+               SITE.SITE_NM,
+               '',
+               DECODE(CHK.ENV_GARBAGE, '0020', '0', '1') clean_near_yn,
+               DECODE(CHK.ENV_AUTO, '0020', '0', '1') clean_mac,
+               DECODE(CHK.ENV_UP, '0020', '0', '1') clean_big_yn,
+               DECODE(CHK.ENV_STICKER, '0020', '0', '1') onboard,
+               CHK.remark memo,
+               TO_CHAR( SYSDATE, 'YYYYMMDD') AS mng_date, /* 매일 점검한것으로 보내기위해 양대리 요청 */
+               '',
+               '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+          from OP.T_CM_SITE_CHECK CHK,
+               OP.T_CM_MAC MAC,
+               OP.T_CM_SITE SITE
+         where CHK.check_date >= TO_CHAR( SYSDATE-31, 'YYYYMMDD')
+           and CHK.org_cd = '020'
+           AND MAC.ORG_CD = '020'
+           AND MAC.OPEN_DATE <= TO_CHAR( SYSDATE, 'YYYYMMDD')
+           AND (MAC.CLOSE_DATE IS NULL OR MAC.CLOSE_DATE >= TO_CHAR( SYSDATE, 'YYYYMMDD') )
+           AND CHK.ORG_CD = MAC.ORG_CD
+           AND CHK.BRANCH_CD = MAC.BRANCH_CD
+           AND CHK.SITE_CD = MAC.SITE_CD
+           AND CHK.ORG_CD = SITE.ORG_CD
+           AND CHK.BRANCH_CD = SITE.BRANCH_CD
+           AND CHK.SITE_CD = SITE.SITE_CD
+    ]]>
+    </select>
+</mapper>

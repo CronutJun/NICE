@@ -1,0 +1,12 @@
+{
+   "name" : "04001230",                    "kname" : "관리자 메세지",
+   "response" : { "code" : "04001230",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "message_cl",             "kname" : "정보내용코드",           "type" : "AN",  "length"  : 2   },
+      { "name" : "message",                "kname" : "정보내용",               "type" : "AN",  "length"  : 700 },
+      { "name" : "write_nm",               "kname" : "작성자명",               "type" : "AN",  "length"  : 20  },
+      { "name" : "write_tel_no",           "kname" : "작성자전화번호",         "type" : "AN",  "length"  : 13  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 45  }
+   ]
+}

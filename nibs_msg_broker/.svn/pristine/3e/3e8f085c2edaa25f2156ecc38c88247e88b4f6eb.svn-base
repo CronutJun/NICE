@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+
+use File::Tail::Multi;
+
+$| = 1;  # Enable autoflush
+
+$tail = File::Tail::Multi->new(RemoveDuplicate => 0,
+                               OutputPrefix    => 'f',
+                               Files           => \@ARGV);
+
+while(1) { $tail->read; $tail->print; sleep 2 }

@@ -1,0 +1,10 @@
+jdbc.class=com.ibm.db2.jcc.DB2Driver
+jdbc.url=jdbc:db2://10.62.2.91:24892/operdb:currentSchema=OP;currentFunctionPath=OP;currentPackagePath=OP;
+jdbc.username=jbatch
+jdbc.password=nibsjbatch
+#jdbc.url=jdbc:db2://10.3.28.63:4893/operdb:currentSchema=OP;currentFunctionPath=OP;currentPackagePath=OP;
+#jdbc.username=op
+#jdbc.password=op
+execute.rmi.registry.port=10399
+
+log.path=/share1/nibs_log/batch

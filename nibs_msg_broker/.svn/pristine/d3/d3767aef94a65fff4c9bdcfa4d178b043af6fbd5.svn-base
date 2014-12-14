@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nicetcm.nibsplus.scheduler.dao.SchedulerMapper">
+
+    <select id="selectEnableSchedule" resultType="com.nicetcm.nibsplus.scheduler.model.SchedulerVO" parameterType="string">
+		SELECT
+		    QUARTZ_NODE_NAME ,
+		    JOB_GROUP ,
+		    JOB_NAME ,
+		    JOB_EXPLAIN ,
+		    CRON_EXPRESSION ,
+		    STATUS ,
+		    REAL_TIME_COMMAND ,
+		    T_ARG1 ,
+		    T_ARG2 ,
+		    T_ARG3 ,
+		    T_ARG4 ,
+		    JOB_PRIORITY ,
+		    JOB_CLASS ,
+		    SPRING_CONTEXT_XML ,
+		    JOB_LISTENER_CLASS ,
+		    USE_YN ,
+		    REGMN_ID ,
+		    REG_YMD
+		FROM
+		    op.T_CM_SCHEDULE
+		WHERE
+		    quartz_node_name = #{quartzNodeName}
+		AND use_yn = 'Y'
+    </select>
+
+    <select id="selectScheduleByPk" resultType="com.nicetcm.nibsplus.scheduler.model.SchedulerVO" parameterType="com.nicetcm.nibsplus.scheduler.model.JobVO">
+		SELECT
+		    QUARTZ_NODE_NAME ,
+		    JOB_GROUP ,
+		    JOB_NAME ,
+		    JOB_EXPLAIN ,
+		    CRON_EXPRESSION ,
+		    STATUS ,
+		    <choose>
+		    	<when test='quartzNodeName neq "OrgSend" and param != null and param neq ""'>
+		    		UPPER(#{param}) AS REAL_TIME_COMMAND,
+		    	</when>
+		    	<otherwise>
+		    		REAL_TIME_COMMAND ,
+		    	</otherwise>
+		    </choose>
+		    <choose>
+		    	<when test='quartzNodeName eq "OrgSend" and param != null and param neq ""'>
+		    		UPPER(#{param}) AS T_ARG1,
+		    	</when>
+		    	<otherwise>
+		    		T_ARG1 ,
+		    	</otherwise>
+		    </choose>
+		    T_ARG2 ,
+		    T_ARG3 ,
+		    T_ARG4 ,
+		    JOB_PRIORITY ,
+		    JOB_CLASS ,
+		    SPRING_CONTEXT_XML ,
+		    JOB_LISTENER_CLASS ,
+		    USE_YN ,
+		    REGMN_ID ,
+		    REG_YMD
+		FROM
+		    op.T_CM_SCHEDULE
+		WHERE
+		    quartz_node_name = #{quartzNodeName}
+		AND job_group = #{jobGroup}
+		AND job_name = #{jobName}
+    </select>
+    
+    <select id="selectScheduleJobGroup" resultType="com.nicetcm.nibsplus.scheduler.model.SchedulerVO">
+		select
+		    distinct quartz_node_name, job_group 
+		from op.t_cm_schedule
+    </select>
+</mapper>

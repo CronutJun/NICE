@@ -1,0 +1,16 @@
+{
+   "name" : "03000136",                    "kname" : "실시간 마감 통보 키오스크(홈플러스)",
+   "response" : { "code" : "03000136",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "inq_date",               "kname" : "마감일자",               "type" : "N",   "length" :  16 },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length" :  16 },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
+      { "name" : "close_type",             "kname" : "마감구분",               "type" : "AN",  "length" :   2 },
+      { "name" : "send_type",              "kname" : "현송구분",               "type" : "AN",  "length" :   2 },
+      { "name" : "close_time",             "kname" : "마감시간",               "type" : "N",   "length" :  12 },
+      { "name" : "tot_bill_cnt",           "kname" : "총 권종 개수",           "type" : "N",   "length" :   4 },
+      { "name" : "BI",                     "kname" : "권종별 정보",            "type" : "INC", "include" : "bill_info.json",  "iteration"  : 10 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 168 }
+   ]
+}

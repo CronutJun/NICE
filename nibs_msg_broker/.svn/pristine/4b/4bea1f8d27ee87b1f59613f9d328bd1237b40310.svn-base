@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/tool classpath:/org/springframework/beans/factory/xml/spring-tool-3.2.xsd
+       http://www.springframework.org/schema/aop classpath:/org/springframework/aop/config/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
+       http://www.springframework.org/schema/lang classpath:/org/springframework/scripting/config/spring-lang-3.2.xsd
+       http://www.springframework.org/schema/tx classpath:/org/springframework/transaction/config/spring-tx-3.2.xsd">
+    <bean name="JOB_ARR_EST_004" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
+        <property name="jobClass" value="com.nicetcm.nibsplus.orgsend.service.impl.OrgSendImpl"/>
+        <property name="applicationContextJobDataKey" value="applicationContext" />
+        <property name="group" value="JobGroup"/>
+        <property name="durability" value="true"/>
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="queryName" value="ARR_EST" />           <!-- msg_type -->
+                <entry key="orgCd" value="004" />                   <!-- org_cd -->
+                <entry key="transferType" value-ref="ONLY_SEND" />  <!-- AUTO_SEND / ONLY-SEND -->
+            </map>
+        </property>
+    </bean>
+    <bean id="TR_ARR_EST_004" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="JOB_ARR_EST_004" />
+        <property name="cronExpression" value="* * * * * ?" />
+        <property name="jobDataAsMap">
+            <map>
+                <entry key="transferType" value-ref="AUTO_SEND" />  <!-- AUTO_SEND / ONLY-SEND -->
+            </map>
+        </property>
+    </bean>
+
+</beans>

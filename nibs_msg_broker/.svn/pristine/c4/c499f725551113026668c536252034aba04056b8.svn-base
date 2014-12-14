@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CUR_AMT">
+
+<!--
+<entry key="CUR_AMT"                value="03001110" />     27. 현재시재조회
+{
+   "name" : "03001110",                    "kname" : "현재시재조회",
+   "response" : { "code" : "03001110",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "inq_date",               "kname" : "조회일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "inq_close_yn",           "kname" : "마감조회여부",           "type" : "AN",  "length"  : 1   },
+      { "name" : "inq_time",               "kname" : "조회시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "cash_remain_amt",        "kname" : "현금잔액",               "type" : "N",   "length"  : 15  },
+      { "name" : "total_out_amt",          "kname" : "총지급금액",             "type" : "N",   "length"  : 15  },
+      { "name" : "cash_out_amt",           "kname" : "현금지급금액",           "type" : "N",   "length"  : 15  },
+      { "name" : "cash_in_amt",            "kname" : "현금입금금액",           "type" : "N",   "length"  : 15  },
+      { "name" : "check_amt",              "kname" : "수표잔액",               "type" : "N",   "length"  : 15  },
+      { "name" : "check_out_amt",          "kname" : "수표지급금액",           "type" : "N",   "length"  : 15  },
+      { "name" : "check_in_amt",           "kname" : "수표입금금액",           "type" : "N",   "length"  : 15  },
+      { "name" : "in_mac_amt",             "kname" : "현송금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "out_10000_cnt",          "kname" : "만원권 지급 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "out_5000_cnt",           "kname" : "오천원권 지급 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "out_1000_cnt",           "kname" : "천원권 지급 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "out_500_cnt",            "kname" : "오백원권 지급 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "out_100_cnt",            "kname" : "백원권 지급 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "out_50_cnt",             "kname" : "오십원권 지급 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "out_10_cnt",             "kname" : "십원권 지급 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "in_10000_cnt",           "kname" : "만원권 입금 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "in_5000_cnt",            "kname" : "오천원권 입금 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "in_1000_cnt",            "kname" : "천원권 입금 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "in_500_cnt",             "kname" : "오백원권 입금 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "in_100_cnt",             "kname" : "백원권 입금 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "in_50_cnt",              "kname" : "오십원권 입금 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "in_10_cnt",              "kname" : "십원권 입금 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "rem_10000_cnt",          "kname" : "만원권 잔액 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "rem_5000_cnt",           "kname" : "오천원권 잔액 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "rem_1000_cnt",           "kname" : "천원권 잔액 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "rem_500_cnt",            "kname" : "오백원권 잔액 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "rem_100_cnt",            "kname" : "백원권 잔액 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "rem_50_cnt",             "kname" : "오십원권 잔액 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "rem_10_cnt",             "kname" : "십원권 잔액 매수",       "type" : "N",   "length"  : 5   },
+      { "name" : "check_out_cnt",          "kname" : "수표 출금 매수",         "type" : "N",   "length"  : 5   },
+      { "name" : "check_in_cnt",           "kname" : "수표 입금 매수",         "type" : "N",   "length"  : 5   },
+      { "name" : "rem_50000_cnt",          "kname" : "오만원권 잔액 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "in_50000_cnt",           "kname" : "오만원권 입금 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "out_50000_cnt",          "kname" : "오만원권 지급 매수",     "type" : "N",   "length"  : 5   },
+      { "name" : "inq_source",             "kname" : "조회출처 0:HOST,1:ATMS", "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 136 }
+   ]
+}
+ -->
+    <!-- 031, 0HD, 032, 039, 023, 081, 034, 011, 027, 003, 005, 020 -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+
+        SELECT  BRANCH_CD AS brch_cd,
+            MAC_NO,
+            TO_CHAR(SYSDATE, 'YYYYMMDD') inq_date,
+            '0' inq_close_yn,
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            <choose>
+                <when test='orgCd == "031"'>
+                    '1' inq_source,            /* 시재출처구분   */
+                </when>
+            </choose>
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '','','',''
+    <![CDATA[
+        FROM    OP.T_CM_MAC
+        WHERE   ORG_CD = #{orgCd}
+        AND     OPEN_DATE <= TO_CHAR( SYSDATE, 'YYYYMMDD' )
+        AND   ( CLOSE_DATE IS NULL OR CLOSE_DATE >= TO_CHAR( SYSDATE, 'YYYYMMDD' ) )
+    ]]>
+        <choose>
+            <when test='orgCd == "088"'>
+                /* 18:00 ~ 20:00 사이의 현재시재 배치는 계리마감이 들어와 있는 경우만 송신 하도록
+                   계리마감 수신 여부는 100개 수신을 기준으로 함.
+                */
+                AND   (SELECT (CASE WHEN TO_CHAR(SYSDATE, 'HH24MI') BETWEEN '1800' AND '2000' THEN
+                                     (  SELECT   count(*) as cnt
+                                            FROM     OP.T_CM_CASH
+                                            WHERE     cash_date = to_char(sysdate, 'yyyymmdd')
+                                             AND    org_cd = #{orgCd}
+                                             AND     cash_type = '3'
+                                     )
+                                ELSE 1000
+                                END
+                                ) AS CNT
+                        FROM DUAL ) >= 100
+            </when>
+            <when test='orgCd == "005"'>
+            <![CDATA[
+                AND BRANCH_CD||MAC_NO <> '0437054'
+            ]]>
+            </when>
+        </choose>
+    </select>
+</mapper>

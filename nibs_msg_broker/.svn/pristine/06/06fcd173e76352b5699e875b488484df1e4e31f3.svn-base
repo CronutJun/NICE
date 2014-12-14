@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:batch="http://www.springframework.org/schema/batch"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <bean id="fileRenameTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.CasherFileRenameTasklet" />
+    
+    <bean id="casherFtpTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.CasherFtpTasklet" />
+    
+    <bean id="casherTRVO" class="com.nicetcm.nibsplus.filemng.model.CasherTRVO" scope="prototype" />
+    
+    <bean id="casherTRItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.CasherTRItemWriter"></bean>
+    <batch:job id="casherTRJob">
+        <batch:step id="getFtpTR" next="dbLoadTR">
+            <tasklet ref="casherFtpTasklet" />
+        </batch:step>
+        <batch:step id="dbLoadTR" next="fileRenameTR">
+            <batch:tasklet>
+                <batch:chunk reader="casherTRCvsFileItemReader" writer="casherTRItemWriter" commit-interval="10000"></batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="fileRenameTR">
+            <tasklet ref="fileRenameTasklet" />
+        </batch:step>
+    </batch:job>
+    <bean id="casherTRCvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+        <!-- Read a csv file -->
+        <property name="resource"  value="file:#{jobParameters['casher.file.name']}" />
+        <property name="encoding"  value="euc-kr" />
+        <property name="strict"    value="false"/>
+
+        <property name="linesToSkip" value="1" />
+        
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <!-- split it -->
+                <property name="lineTokenizer">
+                    <bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+                        <property name="delimiter" value="," />
+                        <property name="includedFields" value="0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69" />
+                        <property name="names" value="szBranch_Cd, szDeal_Date, szDeal_No, szDeal_Type, szMac_No, szTenant_Cd, szPos_No, szClose_Date, szCasher_Id, szDeal_Time, szDevicever_Id, szAcudiv, szInmon_Flag, szCash_100000_Cnt, szCash_100000_Amt, szCash_50000_Cnt, szCash_50000_Amt, szCash_10000_Cnt, szCash_10000_Amt, szCash_5000_Cnt, szCash_5000_Amt, szCash_1000_Cnt, szCash_1000_Amt, szCash_500_Cnt, szCash_500_Amt, szCash_100_Cnt, szCash_100_Amt, szCash_50_Cnt, szCash_50_Amt, szCash_10_Cnt, szCash_10_Amt, szCheck_100_Cnt, szCheck_100_Amt, szCheck_50_Cnt, szCheck_50_Amt, szCheck_30_Cnt, szCheck_30_Amt, szCheck_10_Cnt, szCheck_10_Amt, szCheck_Etc_Amt, szBox_Cash_Amt, szBox_Coin_Amt, szBox_Check_Amt, szBox_Incom_Amt, szBox_Outcom_Amt, szBox_Ppcard_Amt, szTick_Own_1000_cnt, szTick_Own_2000_cnt, szTick_Own_3000_cnt, szTick_Own_5000_cnt, szTick_Own_10000_cnt, szTick_Own_30000_cnt, szTick_Own_50000_cnt, szTick_Own_70000_cnt, szTick_Own_100000_cnt, szTick_Own_300000_cnt, szTick_Own_500000_cnt, szTick_Own_1000000_cnt, szTick_Etc_1000_cnt, szTick_Etc_2000_cnt, szTick_Etc_3000_cnt, szTick_Etc_5000_cnt, szTick_Etc_10000_cnt, szTick_Etc_30000_cnt, szTick_Etc_50000_cnt, szTick_Etc_70000_cnt, szTick_Etc_100000_cnt, szTick_Etc_300000_cnt, szTick_Etc_500000_cnt, szTick_Etc_1000000_cnt" />
+                    </bean>
+                </property>
+                <property name="fieldSetMapper">
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+                        <property name="prototypeBeanName" value="casherTRVO" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="casherCKVO" class="com.nicetcm.nibsplus.filemng.model.CasherCKVO" scope="prototype" />
+    <bean id="casherCKItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.CasherCKItemWriter"></bean>
+    <batch:job id="casherCKJob">
+        <batch:step id="getFtpCK" next="dbLoadCK">
+            <tasklet ref="casherFtpTasklet" />
+        </batch:step>
+        <batch:step id="dbLoadCK" next="fileRenameCK">
+            <batch:tasklet>
+                <batch:chunk reader="casherCKCvsFileItemReader" writer="casherCKItemWriter" commit-interval="10000"></batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="fileRenameCK">
+            <tasklet ref="fileRenameTasklet" />
+        </batch:step>
+    </batch:job>
+    <bean id="casherCKCvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+        <!-- Read a csv file -->
+        <property name="resource"  value="file:#{jobParameters['casher.file.name']}" />
+        <property name="encoding"  value="euc-kr" />
+
+        <property name="linesToSkip" value="1" />
+        
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <!-- split it -->
+                <property name="lineTokenizer">
+                    <bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+                        <property name="delimiter" value="," />
+                        <property name="includedFields" value="0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14" />
+                        <property name="names" value="szBranchCd, szDealDate, szDealNo, szDealType, szMacNo, szTenantCd, szPosNo, szCloseDate, szCasherId, szDealTime, szDeviceverId, szAcudiv, szInmonFlag, szCheckType, szCheckNo" />
+                    </bean>
+                </property>
+                <property name="fieldSetMapper">
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+                        <property name="prototypeBeanName" value="casherCKVO" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="casherTKVO" class="com.nicetcm.nibsplus.filemng.model.CasherTKVO" scope="prototype" />
+    <bean id="casherTKItemWriter" class="com.nicetcm.nibsplus.filemng.service.impl.CasherTKItemWriter"></bean>
+    <batch:job id="casherTKJob">
+        <batch:step id="getFtpTK" next="dbLoadTK">
+            <tasklet ref="casherFtpTasklet" />
+        </batch:step>
+        <batch:step id="dbLoadTK" next="fileRenameTK">
+            <batch:tasklet>
+                <batch:chunk reader="casherTKCvsFileItemReader" writer="casherTKItemWriter" commit-interval="10000"></batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="fileRenameTK">
+            <tasklet ref="fileRenameTasklet" />
+        </batch:step>
+    </batch:job>
+    <bean id="casherTKCvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+        <!-- Read a csv file -->
+        <property name="resource"  value="file:#{jobParameters['casher.file.name']}" />
+        <property name="encoding"  value="euc-kr" />
+
+        <property name="linesToSkip" value="1" />
+        
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <!-- split it -->
+                <property name="lineTokenizer">
+                    <bean class="org.springframework.batch.item.file.transform.DelimitedLineTokenizer">
+                        <property name="delimiter" value="," />
+                        <property name="includedFields" value="0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15" />
+                        <property name="names" value="szBranchCd, szDealDate, szDealNo, szDealType, szMacNo, szTenantCd, szPosNo, szCloseDate, szCasherId, szDealTime, szDeviceverId, szAcudiv, szInmonFlag, szPublishCd, szTicketType, szTicketNo" />
+                    </bean>
+                </property>
+                <property name="fieldSetMapper">
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+                        <property name="prototypeBeanName" value="casherTKVO" />
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+</beans>

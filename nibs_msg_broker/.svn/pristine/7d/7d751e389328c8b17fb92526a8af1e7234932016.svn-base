@@ -1,0 +1,10 @@
+{
+   "name" : "03001310",                    "kname" : "시재 미확정 내역",
+   "response" : { "code" : "03001310",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length" :  16 },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" : 180 }
+   ]
+}

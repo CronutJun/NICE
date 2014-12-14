@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:lang="http://www.springframework.org/schema/lang"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/tool classpath:/org/springframework/beans/factory/xml/spring-tool-3.2.xsd
+       http://www.springframework.org/schema/aop classpath:/org/springframework/aop/config/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
+       http://www.springframework.org/schema/lang classpath:/org/springframework/scripting/config/spring-lang-3.2.xsd
+       http://www.springframework.org/schema/tx classpath:/org/springframework/transaction/config/spring-tx-3.2.xsd">
+    <!-- 환경설정파일 로딩 -->
+
+    <!-- 개발자 Local-PC 환경 -->
+    <beans profile="local">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/scheduler/properties/context-scheduler.local.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:scheduler/properties/context-scheduler-log4j.local.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- DEV 환경 -Dspring.profiles.active=dev -->
+    <beans profile="dev">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/scheduler/properties/context-scheduler.dev.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:scheduler/properties/context-scheduler-log4j.dev.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- stage1 환경 -Dspring.profiles.active=stage1 -->
+    <beans profile="stage1">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/scheduler/properties/context-scheduler.stage.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:scheduler/properties/context-scheduler-log4j.stage.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <!-- stage2 환경 -Dspring.profiles.active=stage2 -->
+    <beans profile="stage2">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/scheduler/properties/context-scheduler.stage.properties</value>
+    			</list>
+    		</property>
+    	</bean>
+
+        <!-- Log4j 설정 -->
+        <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+            <property name="targetClass" value="org.springframework.util.Log4jConfigurer"/>
+            <property name="targetMethod" value="initLogging"/>
+            <property name="arguments">
+                <list>
+                    <value>classpath:scheduler/properties/context-scheduler-log4j.stage.xml</value>
+                </list>
+            </property>
+        </bean>
+    </beans>
+
+    <beans>
+    	<bean id="msgLogger" class="com.nicetcm.nibsplus.orgsend.common.MsgLogger">
+    		<property name="logPath"><value>#{config['log.path']}</value></property>
+    	</bean>
+    	
+        <!-- Spring Service Bean 로딩 -->
+        <context:component-scan base-package="com.nicetcm.nibsplus.scheduler">
+            <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+        </context:component-scan>
+
+        <!-- DB Connection Pool 설정 -->
+        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+            <property name="driverClassName"><value>#{config['jdbc.class']}</value></property>
+            <property name="url"><value>#{config['jdbc.url']}</value></property>
+            <property name="username"><value>#{config['jdbc.username']}</value></property>
+            <property name="password"><value>#{config['jdbc.password']}</value></property>
+            <property name="initialSize" value="10"/>
+            <property name="maxActive" value="20"/>
+            <property name="maxIdle" value="20"/>
+            <property name="maxWait" value="600000"/>
+            <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
+            <property name="testOnBorrow" value="true"/>
+            <property name="testOnReturn" value="false"/>
+            <property name="testWhileIdle" value="true"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        </bean>
+
+        <!-- DB Logging -->
+        <bean id="dataSource_OP" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+            <constructor-arg ref="dataSource" />
+            <property name="logFormatter">
+                <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+                    <property name="loggingType" value="MULTI_LINE" />
+                </bean>
+            </property>
+        </bean>
+
+        <bean id="sqlSessionFactory_OP" class="org.mybatis.spring.SqlSessionFactoryBean">
+            <property name="dataSource" ref="dataSource_OP"></property>
+            <property name="configLocation" value="classpath:/scheduler/mybatis/mybatis-config.xml"></property>
+            <property name="mapperLocations" value="classpath:/scheduler/sqlmap/**/*.xml"></property>
+        </bean>
+
+        <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+            <property name="basePackage" value="com.nicetcm.nibsplus.scheduler" />
+            <!-- <property name="annotationClass" value="com.kt.pdfbill.foundation.annotation.DatasourceIM" /> -->
+            <property name="sqlSessionFactory" ref="sqlSessionFactory_OP" />
+        </bean>
+    </beans>
+</beans>

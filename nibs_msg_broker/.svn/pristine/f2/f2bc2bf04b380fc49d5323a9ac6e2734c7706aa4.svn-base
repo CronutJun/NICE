@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CALL_CANL">
+
+<!--
+<entry key=""CALL_CANL""               value="01001153" />
+
+{
+   "name" : "01001153",                    "kname" : "출동요청 통보",
+   "response" : { "code" : "01001153",     "type" : "SELF" },
+   "columns" : [
+   ]
+}
+ -->
+    <select id="select0DM" resultType="hashmap">
+    	<![CDATA[
+		select 	mng.org_cd,
+				CASE WHEN mng.org_cd = '031'
+					 THEN '0'||mng.branch_cd
+				     ELSE mng.branch_cd
+				END as brch_cd,
+				mng.site_cd,		
+				MNG.mac_no,
+				mng.create_date,
+				mng.error_no
+		from    op.t_ct_error_mng mng,
+		        op.T_CT_ERROR  ERR,
+		        op.t_cm_site_01    site
+		where    nvl(mng.close_yn, '0') = '0'
+		AND        mng.ARRIVAL_TIME IS NULL
+		AND        NVL(mng.ERROR_STATUS, '0' ) <> '7000'
+		AND        ( mng.ORG_CUST_RECV_YN = 'Y' OR ERR.ALARM_MON_YN = 'Y')
+		AND     mng.CREATE_DATE > TO_CHAR( SYSDATE-1, 'YYYYMMDD' )
+		and      nvl(site.alarm, '0') = '1' 
+		and        mng.org_cd = site.org_cd
+		and     mng.branch_cd = site.branch_cd
+		and        mng.site_cd = site.site_cd
+		AND     MNG.ORG_CD = ERR.ORG_CD(+)
+		AND     MNG.ERROR_CD = ERR.ERROR_CD(+)
+		]]>
+    </select>
+</mapper>

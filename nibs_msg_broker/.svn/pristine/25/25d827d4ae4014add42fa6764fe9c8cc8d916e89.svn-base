@@ -1,0 +1,28 @@
+{
+   "name" : "03001140",                    "kname" : "회수자금 결과 통보",
+   "response" : { "code" : "03001140",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "org_site_cd",            "kname" : "기관코너번호",           "type" : "AN",  "length"  : 6   },
+      { "name" : "site_type",              "kname" : "점포구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "oper_type",              "kname" : "운영구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "org_site_nm",            "kname" : "장소명",                 "type" : "AN",  "length"  : 120 },
+      { "name" : "close_date",             "kname" : "마감년월일",             "type" : "N",   "length"  : 8   },
+      { "name" : "before_amt",             "kname" : "전일현송액",             "type" : "N",   "length"  : 15  },
+      { "name" : "input_amt",              "kname" : "입금금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "output_amt",             "kname" : "지급금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "close_amt",              "kname" : "마감금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "check_out_amt",          "kname" : "수표발행액",             "type" : "N",   "length"  : 15  },
+      { "name" : "add_amt",                "kname" : "추가현송액",             "type" : "N",   "length"  : 15  },
+      { "name" : "add_date",               "kname" : "추가현송일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "collect_amt",            "kname" : "회수자금",               "type" : "N",   "length"  : 15  },
+      { "name" : "unattended_amt",         "kname" : "미처리금액",             "type" : "N",   "length"  : 15  },
+      { "name" : "unattended_cnt",         "kname" : "미처리건수",             "type" : "N",   "length"  : 2   },
+      { "name" : "report_yn",              "kname" : "미처리보고서 유무'Y/N'", "type" : "AN",  "length"  : 1   },
+      { "name" : "office_nm",              "kname" : "관리사무소",             "type" : "AN",  "length"  : 40  },
+      { "name" : "send_yn",                "kname" : "현송여부",               "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 168 }
+   ]
+}

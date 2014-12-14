@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SITE_CHK">
+
+<!--
+<entry key="SITE_CHK"               value="04001240" />      17. 코너일일점검결과통보
+{
+   "name" : "04001240",                    "kname" : "코너일일점검결과",
+   "response" : { "code" : "04001240",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "check_date",             "kname" : "점검일",                 "type" : "N",   "length"  : 8   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "site_cd",                "kname" : "기관코너코드",           "type" : "AN",  "length"  : 6   },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 40  },
+      { "name" : "mac_in_clean",           "kname" : "기기내부청소",           "type" : "AN",  "length"  : 1   },
+      { "name" : "mac_out_clean",          "kname" : "기기청소",               "type" : "AN",  "length"  : 1   },
+      { "name" : "interphone_clean",       "kname" : "interphone_clean",       "type" : "AN",  "length"  : 1   },
+      { "name" : "ground_clean",           "kname" : "바닥청소",               "type" : "AN",  "length"  : 1   },
+      { "name" : "garbage_clean",          "kname" : "쓰레기통청소",           "type" : "AN",  "length"  : 1   },
+      { "name" : "glass_clean",            "kname" : "유리벽 청결확인",        "type" : "AN",  "length"  : 1   },
+      { "name" : "portfolio_cnt",          "kname" : "명세표용지",             "type" : "AN",  "length"  : 1   },
+      { "name" : "junul_cnt",              "kname" : "저널용지",               "type" : "AN",  "length"  : 1   },
+      { "name" : "ribbon_cnt",             "kname" : "통장리본",               "type" : "AN",  "length"  : 1   },
+      { "name" : "guide_state",            "kname" : "이용안내문",             "type" : "AN",  "length"  : 1   },
+      { "name" : "sticker_state",          "kname" : "기타 부착물",            "type" : "AN",  "length"  : 1   },
+      { "name" : "interphone_state",       "kname" : "인터폰",                 "type" : "AN",  "length"  : 1   },
+      { "name" : "dvr_state",              "kname" : "DVR",                    "type" : "AN",  "length"  : 1   },
+      { "name" : "lamp_state",             "kname" : "형광등",                 "type" : "AN",  "length"  : 1   },
+      { "name" : "aircon_state",           "kname" : "냉방기",                 "type" : "AN",  "length"  : 1   },
+      { "name" : "heater_state",           "kname" : "난방기",                 "type" : "AN",  "length"  : 1   },
+      { "name" : "booth_check",            "kname" : "부스점검",               "type" : "AN",  "length"  : 1   },
+      { "name" : "check_remain",           "kname" : "수표잔량",               "type" : "AN",  "length"  : 1   },
+      { "name" : "collection_check",       "kname" : "회수함",                 "type" : "AN",  "length"  : 1   },
+      { "name" : "sign_lamp_check",        "kname" : "간판조명",               "type" : "AN",  "length"  : 1   },
+      { "name" : "bigo",                   "kname" : "특이사항",               "type" : "AN",  "length"  : 200 },
+      { "name" : "member_nm",              "kname" : "보고담당자",             "type" : "AN",  "length"  : 20  },
+      { "name" : "office_nm",              "kname" : "사무소명",               "type" : "AN",  "length"  : 40  },
+      { "name" : "photo_yn",               "kname" : "사진촬영유무",           "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 67  }
+   ]
+}
+ -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT    DISTINCT
+                  CHK.CHECK_DATE
+                , CHK.BRANCH_CD as brch_cd
+                , CHK.SITE_CD
+                , SITE.SITE_NM
+                , CHK.MAC_IN_CLEAN
+                , CHK.MAC_OUT_CLEAN
+                , CHK.INTERPHONE_CLEAN
+                , CHK.GROUND_CLEAN
+                , CHK.GARBAGE_CLEAN
+                , CHK.GLASS_CLEAN
+                , CHK.PORTFOLIO_CNT
+                , CHK.JUNUL_CNT
+                , CHK.RIBBON_CNT
+                , CHK.GUIDE_STATE
+                , CHK.STICKER_STATE
+                , CHK.INTERPHONE_STATE
+                , CHK.DVR_STATE
+                , CHK.LAMP_STATE
+                , CHK.AIRCON_STATE
+                , CHK.HEATER_STATE
+                , CHK.BOOTH_CHECK
+                , CHK.CHECK_REMAIN
+                , CHK.COLLECTION_CHECK
+                , CHK.SIGN_LAMP_CHECK
+                , CHK.REMARK BIGO
+                , NVL(MBR.MEMBER_NM, '나이스') member_nm
+                , OFC.OFFICE_NM
+                , '0' photo_yn /*CHK.PHOTO_YN*/
+                , ''
+                , '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        FROM     OP.T_CM_SITE_CHECK_DAY    CHK,
+                 OP.T_CM_SITE              SITE,
+                 OP.T_CM_MEMBER            MBR,
+                 OP.T_CM_OFFICE            OFC
+        WHERE   CHK.CHECK_DATE   BETWEEN TO_CHAR( SYSDATE-31, 'YYYYMMDD' ) AND TO_CHAR( SYSDATE, 'YYYYMMDD' )
+        AND     CHK.ORG_CD = '088'
+        AND     NVL(CHK.ORG_SEND_YN, '0') = '0'
+        AND     CHK.ORG_CD        = SITE.ORG_CD
+        AND     CHK.BRANCH_CD    = SITE.BRANCH_CD
+        AND     CHK.SITE_CD        = SITE.SITE_CD
+        AND     SITE.DEPT_CD    = OFC.DEPT_CD
+        AND     SITE.OFFICE_CD    = OFC.OFFICE_CD
+        AND     CHK.MEMBER_ID    = MBR.MEMBER_ID(+)
+    ]]>
+    </select>
+</mapper>

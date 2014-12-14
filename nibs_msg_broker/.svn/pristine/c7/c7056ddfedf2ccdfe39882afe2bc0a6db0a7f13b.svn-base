@@ -1,0 +1,9 @@
+PROC_NUM=`ps -ef|grep "QUARTZ_NODE_NAME=RMIOnly"|grep -v "grep"|wc -l`
+if [ $PROC_NUM -eq 1 ];
+then
+   echo "RMIServer is already running.."
+   exit 0
+fi
+cd $HOME/MsgBroker
+#nohup $JAVA_HOME/bin/java -server -Xms512m -Xmx1024m -cp $HOME/MsgBroker/nibs_msg_broker-0.0.1-SNAPSHOT.jar -Dspring.profiles.active=stage1 -Dfile.encoding=UTF-8 -DQUARTZ_NODE_NAME=RMIOnly com.nicetcm.nibsplus.scheduler.main.NibsQuartzSchedulerMain 2>&1 &
+nohup $JAVA_HOME/bin/java -server -Xms512m -Xmx1024m -cp $HOME/MsgBroker/nibs_msg_broker -Dspring.profiles.active=stage1 -Dfile.encoding=UTF-8 -DQUARTZ_NODE_NAME=RMIOnly com.nicetcm.nibsplus.scheduler.main.NibsQuartzSchedulerMain 2>&1 &

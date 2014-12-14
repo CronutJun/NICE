@@ -1,0 +1,288 @@
+package com.nicetcm.nibsplus.sqlservice.dao;
+
+import java.util.Map;
+
+/**
+ * DB에서 스케쥴정보 조회
+ * <pre>
+ *
+ * </pre>
+ *
+ * @author 박상철
+ * @version 1.0
+ * @see
+ */
+public interface SqlServiceMapper {
+    public void executeProcedure(String procedure);
+    
+    public void sp_cm_fax();
+
+    public void sp_cm_mac_rank();
+
+    public void sp_cm_personnel();
+
+    public void sp_cm_update_plan_focus();
+
+    public void sp_ct_check_0EL_alert();
+
+    public void sp_ct_check_alert_039();
+
+    public void sp_ct_check_alert_nh_file();
+
+    public void sp_ct_check_alert();
+
+    public void sp_ct_delete_day();
+
+    public void sp_ct_report_day_2012_1();
+    public void sp_ct_report_day_2012_2();
+
+    public void sp_fn_bscenter();
+
+    public void sp_fn_cashflow_endamt();
+
+    public void sp_fn_center();
+
+    public void sp_fn_close_send_wc();
+
+    public void sp_fn_ctcenter();
+
+    public void sp_fn_day_close_ktis();
+
+    public void sp_fn_deal_forecast(Map<String, String> param);
+
+    public void sp_fn_dealcount();
+
+    public void sp_fn_dgbcenter();
+
+    public void sp_fn_eland_amt();
+
+    public void sp_fn_err_trade();
+
+    public void sp_fn_etc_msum_1();
+    public void sp_fn_etc_msum_2();
+    public void sp_fn_etc_msum_3();
+
+    public void sp_fn_forcast_addsend_center();
+
+    public void sp_fn_forcast_data_dsum_atm();
+
+    public void sp_fn_forcast_data_dsum();
+
+    public void sp_fn_hncenter();
+
+    public void sp_fn_imsi_jan();
+
+    public void sp_fn_jjcenter();
+
+    public void sp_fn_kbcenter();
+
+    public void sp_fn_kebcenter();
+
+    public void sp_fn_kncenter();
+
+    public void sp_fn_ktiscenter();
+
+    public void sp_fn_kucenter();
+
+    public void sp_fn_largemonth_1();
+    public void sp_fn_largemonth_2();
+
+    public void sp_fn_mac_stock_amt(Map<String, String> param);
+
+    public void sp_fn_maccount();
+
+    public void sp_fn_man_1();
+    public void sp_fn_man_2();
+
+    public void sp_fn_nhcenter();
+
+    public void sp_fn_nice_deal_byday();
+
+    public void sp_fn_nice_deal_byhour_1();
+    public void sp_fn_nice_deal_byhour_2();
+
+    public void sp_fn_nice_dsum_1();
+    public void sp_fn_nice_dsum_2();
+    public void sp_fn_nice_dsum_3();
+    public void sp_fn_nice_dsum_4(Map<String, String> param);
+    public void sp_fn_nice_dsum_5(Map<String, String> param);
+    public void sp_fn_nice_dsum_6(Map<String, String> param);
+    public void sp_fn_nice_dsum_7();
+
+    public void sp_fn_nice_dsum_0bc();
+
+    public void sp_fn_nice_endamt();
+
+    public void sp_fn_nice_every_insert();
+
+    public void sp_fn_nice_ticket_cnt();
+
+    public void sp_fn_nice_tran_gift_dsum();
+
+    public void sp_fn_nice_tran_total();
+
+    public void sp_fn_notclose_cancel();
+
+    public void sp_fn_notend_nice();
+
+    public void sp_fn_officeclose();
+
+    public void sp_fn_onlycashdatamacclose();
+
+    public void sp_fn_operfundssh();
+
+    public void sp_fn_recv_amt_bs();
+
+    public void sp_fn_sendplan_confirm_bs();
+
+    public void sp_fn_sendplan_confirm_sh(Map<String, String> param);
+
+    public void sp_fn_sendplan_confirm(Map<String, String> param);
+
+    public void sp_fn_sendplan_reform();
+
+    public void sp_fn_sendplan_upload_sh(Map<String, String> param);
+
+    public void sp_fn_servicesend();
+
+    public void sp_fn_sh_opcenter();
+
+    public void sp_fn_shcenter();
+
+    public void sp_fn_sitecount();
+
+    public void sp_fn_smcenter();
+
+    public void sp_fn_wccenter();
+
+    public void sp_fn_wr_van_demand();
+
+    public void sp_fn_wrcenter();
+
+    public void sp_if_SendSMSCashLack_1();
+    public void sp_if_SendSMSCashLack_2();
+
+    public void sp_job_nice_short_cash_config();
+
+    public void sp_phs_push_messages();
+
+    public void sp_su_multireport_all_1();
+    public void sp_su_multireport_all_2();
+    public void sp_su_multireport_all_3();
+    public void sp_su_multireport_all_4();
+    public void sp_su_multireport_all_5();
+    public void sp_su_multireport_all_6();
+
+    public void sp_update_site();
+
+    public void sp_fn_nice_ts_insert();
+    
+	public void sp_cm_password_change_1();
+
+	public void sp_cm_password_change_2();
+
+	public void sp_cm_password_change_3();
+
+	public void sp_cm_password_change_4();
+
+	public void sp_cm_password_change_5();
+
+	public void sp_cm_password_change_6();
+
+	public void sp_ct_month_use_status_003_1();
+
+	public void sp_ct_month_use_status_003_2();
+
+    public void t_ct_error_mng_003_brand_temp();
+    
+    // OracleJob 추가
+    public void sp_batch_error_etc_delete();
+
+	public void sp_check_photo_carry();
+
+	public void sp_cm_cash_wc_insert();
+
+	public void sp_cm_elecsign_retire();
+
+	public void sp_cm_pkg_day();
+
+	public void sp_ct_linefault_status();
+
+	public void sp_ct_lock_histoy_backup();
+
+	public void sp_ct_lockserver_verify();
+
+	public void sp_ct_t_ct_trade_confirm_init();
+
+	public void sp_fn_adjustment_carry();
+
+	public void sp_fn_create_notend_member();
+
+	public void sp_fn_emart_ticket();
+
+	public void sp_fn_make_nodeal_result_his();
+
+	public void sp_fn_notend_fee();
+
+	public void sp_fn_onnuri_dsum();
+
+	public void sp_fn_presafe_history();
+
+	public void sp_if_sendsmsktiserror();
+
+	public void sp_job_arrival_est_time();
+
+	public void sp_job_autosend_push();
+
+	public void sp_job_board_list_notice();
+
+	public void sp_job_fn_sendplan_update_0ki();
+
+	public void sp_job_schedule_mng_notice();
+
+	public void sp_job_t_ct_as_unfinish();
+
+	public void sp_job_t_ct_autosend_mac();
+
+	public void sp_job_t_ct_delay_monitoring();
+
+	public void sp_job_t_ct_error_mng();
+
+	public void sp_job_t_ct_error_mng_guard();
+
+	public void sp_job_t_ct_error_open_check();
+
+	public void sp_job_t_cv_position();
+
+	public void sp_job_t_emart_monitoring();
+
+	public void sp_job_t_fn_sendplan_schedule();
+
+	public void sp_job_t_short_cash_mng();
+
+	public void sp_rc_info_delete();
+
+	
+    public void sp_fn_forcast_data_dsum_base_1();
+
+    public void sp_fn_forcast_data_dsum_base_2();
+    
+    public void sp_fn_forcast_inout_center();
+
+    public void sp_ct_check_alert_emartpos();
+
+    public void sp_fn_day_close_kiosk();
+
+    public void sp_fn_kb_van_demand();
+
+    public void sp_fn_voucher_macstock();
+
+    public void sp_fn_voucher_officestock();
+
+    public void sp_insert_nice_lock_time();
+
+    public void sp_job_tb_phs_push_svc_user();
+
+	public String sp_fn_ktis_close(Map<String, Object> paramObj);
+
+}

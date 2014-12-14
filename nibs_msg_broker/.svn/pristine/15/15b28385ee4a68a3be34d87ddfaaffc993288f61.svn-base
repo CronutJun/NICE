@@ -1,0 +1,18 @@
+{
+  "name" : "shatms_msg_header",      "kname" : "신한은행 통전문헤더",
+  "columns" : [
+     { "name" : "length",            "kname" : "LENGTH",            "type" : "N",        "length" : 4  },
+     { "name" : "format_type",       "kname" : "FORMAT TYPE",       "type" : "AN",       "length" : 2  },
+     { "name" : "trans_date",        "kname" : "거래일자",          "type" : "N",        "length" : 8  },
+     { "name" : "trans_time",        "kname" : "거래시각",          "type" : "N",        "length" : 6  },
+     { "name" : "org_msg_seq",       "kname" : "SH 전문일련번호",   "type" : "AN",       "length" : 7  },
+     { "name" : "com_msg_seq",       "kname" : "제휴기관전문SEQ",   "type" : "AN",       "length" : 7  },
+     { "name" : "msg_type",          "kname" : "전문종류",          "type" : "AN",       "length" : 4  },
+     { "name" : "work_type",         "kname" : "업무구분",          "type" : "AN",       "length" : 4  },
+     { "name" : "resp_cd",           "kname" : "응답코드",          "type" : "AN",       "length" : 2  },
+     { "name" : "comp_cd",           "kname" : "제휴기관 번호",     "type" : "AN",       "length" : 2  },
+     { "name" : "msg_gb",            "kname" : "전문구분",          "type" : "AN",       "length" : 1  },
+     { "name" : "send_gb",           "kname" : "송신처 구분",       "type" : "AN",       "length" : 1  },
+     { "name" : "filler",            "kname" : "여유공간",          "type" : "AN",       "length" : 42 }
+  ]
+}

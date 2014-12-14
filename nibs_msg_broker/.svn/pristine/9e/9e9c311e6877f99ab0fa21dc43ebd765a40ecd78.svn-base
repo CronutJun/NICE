@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:batch="http://www.springframework.org/schema/batch"
+    xmlns:task="http://www.springframework.org/schema/task"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/batch
+    http://www.springframework.org/schema/batch/spring-batch-2.2.xsd
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <bean id="dealNoFileRenameTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.DealNoFileRenameTasklet" />
+
+    <bean id="dealNoInitTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.DealNoInitTasklet" />
+    <bean id="dealNoGetFtpTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.DealNoGetFtpTasklet" />
+    <bean id="dealNoPutFtpTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.DealNoPutFtpTasklet" />
+    <bean id="dealNoNotExistTasklet" class="com.nicetcm.nibsplus.filemng.service.impl.DealNoNotExistTasklet" />
+
+    <bean id="tFnDealNoVO" class="com.nicetcm.nibsplus.filemng.model.TFnDealNoVO" scope="prototype" />
+
+    <bean id="dealNoItemProcessor" class="com.nicetcm.nibsplus.filemng.service.impl.DealNoItemProcessor" scope="step">
+        <property name="dealDate" value="#{jobParameters['yyyymmdd']}" />
+    </bean>
+
+    <batch:job id="dealNoJob">
+        <batch:step id="getFtp" next="init">
+            <tasklet ref="dealNoGetFtpTasklet" />
+        </batch:step>
+        <batch:step id="init" next="dbLoad">
+            <tasklet ref="dealNoInitTasklet" />
+        </batch:step>
+        <batch:step id="dbLoad" next="fileRename">
+            <batch:tasklet>
+                <batch:chunk reader="dealnoCvsFileItemReader" processor="dealNoItemProcessor" writer="dealnoDb2ItemWriter" commit-interval="10000">
+                </batch:chunk>
+            </batch:tasklet>
+        </batch:step>
+        <batch:step id="fileRename" next="notExist">
+            <tasklet ref="dealNoFileRenameTasklet" />
+        </batch:step>
+        <batch:step id="notExist" next="putFtp">
+            <tasklet ref="dealNoNotExistTasklet" />
+        </batch:step>
+        <batch:step id="putFtp">
+            <tasklet ref="dealNoPutFtpTasklet" />
+        </batch:step>
+    </batch:job>
+
+    <bean id="dealnoCvsFileItemReader" class="org.springframework.batch.item.file.FlatFileItemReader" scope="step">
+
+        <!-- Read a csv file -->
+        <property name="resource"  value="file:#{jobParameters['dealno.file.name']}" />
+        <property name="encoding"  value="euc-kr" />
+        <property name="strict"    value="false"/>
+
+        <property name="lineMapper">
+            <bean class="org.springframework.batch.item.file.mapping.DefaultLineMapper">
+                <!-- split it -->
+                <property name="lineTokenizer">
+                    <bean class="com.nicetcm.nibsplus.util.NibsFixedByteLengthTokenizer">
+                        <property name="byteEncoding" value="euc-kr"/>
+                        <property name="names" value="dealNo" />
+                        <property name="columns" value="1-12" />
+                    </bean>
+                </property>
+                <property name="fieldSetMapper">
+                    <bean class="org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper">
+                        <property name="prototypeBeanName" value="tFnDealNoVO" />
+                    </bean>
+                </property>
+
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="dealnoDb2ItemWriter" class="org.springframework.batch.item.database.JdbcBatchItemWriter">
+        <property name="dataSource" ref="dataSource_OP" />
+        <property name="sql">
+            <value>
+            <![CDATA[
+                INSERT INTO OP.T_FN_HOST_DEAL_NO(DEAL_DATE, DEAL_NO)
+                VALUES (RTRIM(:dealDate), RTRIM(:dealNo))
+            ]]>
+            </value>
+        </property>
+        <!-- It will take care matching between object property and sql name parameter -->
+        <property name="itemSqlParameterSourceProvider">
+            <bean class="org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider" />
+        </property>
+    </bean>
+</beans>

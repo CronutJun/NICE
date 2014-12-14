@@ -1,0 +1,22 @@
+{
+   "name" : "03001207",                    "kname" : "정산기 미마감내역 외화",
+   "response" : { "code" : "03001207",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "deal_date",              "kname" : "거래일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "deal_time",              "kname" : "거래시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "casher_id",              "kname" : "캐셔  ID",               "type" : "AN",  "length"  : 6   },
+      { "name" : "close_date",             "kname" : "마감일자",               "type" : "N",   "length"  : 8   },      
+      { "name" : "dollar_amt",             "kname" : "달러화금액",             "type" : "N",   "length"  : 9   },      
+      { "name" : "euro_amt",               "kname" : "유로화금액",             "type" : "N",   "length"  : 9   },      
+      { "name" : "yen_amt",                "kname" : "엔화금액",               "type" : "N",   "length"  : 9   },      
+      { "name" : "yuan_amt",               "kname" : "위안화금액",             "type" : "N",   "length"  : 9   },      
+      { "name" : "dollar_bigo",            "kname" : "달러화비고",             "type" : "AN",  "length"  : 80  },      
+      { "name" : "euro_bigo",              "kname" : "유로화비고",             "type" : "AN",  "length"  : 80  },      
+      { "name" : "yen_bigo",               "kname" : "엔화비고",               "type" : "AN",  "length"  : 80  },      
+      { "name" : "yuan_bigo",              "kname" : "위안화비고",             "type" : "AN",  "length"  : 80  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 178 }
+   ]
+}

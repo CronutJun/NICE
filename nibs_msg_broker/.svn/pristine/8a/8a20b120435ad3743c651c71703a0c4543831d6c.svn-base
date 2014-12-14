@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/tool classpath:/org/springframework/beans/factory/xml/spring-tool-3.2.xsd
+       http://www.springframework.org/schema/aop classpath:/org/springframework/aop/config/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
+       http://www.springframework.org/schema/lang classpath:/org/springframework/scripting/config/spring-lang-3.2.xsd
+       http://www.springframework.org/schema/tx classpath:/org/springframework/transaction/config/spring-tx-3.2.xsd">
+<!--
+문법)
+    초 0-59 , - * /
+    분 0-59 , - * /
+    시 0-23 , - * /
+    일 1-31 , - * ? / L W
+    월 1-12 or JAN-DEC , - * /
+    요일 1-7 or SUN-SAT , - * ? / L #
+    년(옵션) 1970-2099 , - * /
+
+    * 모든 값
+    ? 특정 값 없음
+    - 범위 지정에 사용
+    , 여러 값 지정 구분에 사용
+    / 초기값과 증가치 설정에 사용
+    L 지정할 수 있는 범위의 마지막 값
+    W 월~금요일 또는 가장 가까운 월/금요일
+    # 몇 번째 무슨 요일 2#1 => 첫 번째 월요일
+
+주의)
+    요일(Day of Week) 에 명시적인 특정값이 지정되었을 때, 일(Day of Month)의 표현식이 ?나 특정값이 아닌 모든 값(*)으로 설정되었을 때 아래의 Exception이 발생한다.
+    Support for specifying both a day-of-week AND a day-of-month parameter is not implemented
+
+예제)
+Expression Meaning
+    초분시일월주(년)
+    "0 0 12 * * ?" 아무 요일, 매월, 매일 12:00:00
+    "0 15 10 ? * *" 모든 요일, 매월, 아무 날이나 10:15:00
+    "0 15 10 * * ?" 아무 요일, 매월, 매일 10:15:00
+    "0 15 10 * * ? *" 모든 연도, 아무 요일, 매월, 매일 10:15
+    "0 15 10 * * ? 2005" 2005년 아무 요일이나 매월, 매일 10:15
+    "0 * 14 * * ?" 아무 요일, 매월, 매일, 14시 매분 0초
+    "0 0/5 14 * * ?" 아무 요일, 매월, 매일, 14시 매 5분마다 0초
+    "0 0/5 14,18 * * ?" 아무 요일, 매월, 매일, 14시, 18시 매 5분마다 0초
+    "0 0-5 14 * * ?" 아무 요일, 매월, 매일, 14:00 부터 매 14:05까지 매 분 0초
+    "0 10,44 14 ? 3 WED" 3월의 매 주 수요일, 아무 날짜나 14:10:00, 14:44:00
+    "0 15 10 ? * MON-FRI" 월~금, 매월, 아무 날이나 10:15:00
+    "0 15 10 15 * ?" 아무 요일, 매월 15일 10:15:00
+    "0 15 10 L * ?" 아무 요일, 매월 마지막 날 10:15:00
+    "0 15 10 ? * 6L" 매월 마지막 금요일 아무 날이나 10:15:00
+    "0 15 10 ? * 6L 2002-2005"
+    2002년부터 2005년까지 매월 마지막 금요일 아무 날이나 10:15:00
+    "0 15 10 ? * 6#3" 매월 3번째 금요일 아무 날이나 10:15:00
+-->
+
+    <!-- 스케쥴 등록 (CronTriggerBean ID를 등록) -->
+    <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+           <list>
+              <ref bean="TR_ARR_EST_004" />
+              <!-- <ref bean="TR_FIN_RSLT_004" /> -->
+           </list>
+        </property>
+    </bean>
+</beans>

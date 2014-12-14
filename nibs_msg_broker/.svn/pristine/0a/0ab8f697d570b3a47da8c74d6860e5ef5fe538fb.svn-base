@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F.%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="root" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="scheduler_root.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="rootError" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="scheduler_error.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="ivkautosend" class="com.nicetcm.nibsplus.scheduler.logger.SchedulerLogAppender">
+        <param name="file" value="ivkautosend.log"/>
+        <param name="Append" value="true"/>
+        <param name="Encoding" value="EUC-KR" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd"/>
+        <layout class="org.apache.log4j.PatternLayout">
+              <param name="conversionPattern" value="[%d{yyyy-MM-dd HH:mm:ss}][%5p %F>%M]: %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="error">
+        <level value="error" />
+        <appender-ref ref="root"/>
+        <appender-ref ref="rootError"/>
+    </logger>
+
+    <logger name="ivkAutoSend">
+        <level value="info" />
+        <appender-ref ref="ivkautosend"/>
+    </logger>
+    
+    <logger name="com.nicetcm.nibsplus.broker">
+        <level value="error" />
+    </logger>
+    
+    <logger name="com.nicetcm.nibsplus.scheduler">
+        <level value="info" />
+    </logger>
+
+    <logger name="org.springframework">
+        <level value="warn" />
+    </logger>
+
+    <logger name="org.apache.activemq" >
+        <level value="warn" />
+    </logger>
+
+    <logger name="jdbc.resultsettable" additivity="false">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="jdbc.audit" additivity="false">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="jdbc.resultset" additivity="false">
+        <level value="WARN" />
+    </logger>
+    
+    <logger name="jdbc.connection" additivity="false">
+        <level value="WARN" />
+    </logger>
+
+    <logger name="jdbc.sqltiming" additivity="false">
+        <level value="INFO" />
+        <appender-ref ref="root"/>
+        <appender-ref ref="consoleAppender"/>
+    </logger>
+
+    <root>
+        <priority value="warn" />
+        <appender-ref ref="root"/>
+        <appender-ref ref="consoleAppender"/>
+    </root>
+
+</log4j:configuration>

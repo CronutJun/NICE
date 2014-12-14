@@ -1,0 +1,28 @@
+{
+   "name" : "03001206",                    "kname" : "미마감내역",
+   "response" : { "code" : "03001206",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "deal_date",              "kname" : "거래일자",               "type" : "N",   "length" :  16 },
+      { "name" : "deal_time",              "kname" : "거래시간",               "type" : "N",   "length" :  12 },
+      { "name" : "brch_cd",                "kname" : "상대점코드",             "type" : "AN",  "length" :  16 },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length" :  24 },
+      { "name" : "casher_id",              "kname" : "캐셔  ID",               "type" : "AN",  "length" :  12 },
+      { "name" : "close_date",             "kname" : "마감일자",               "type" : "N",   "length" :  16 },
+      { "name" : "check_amt",              "kname" : "수표금액",               "type" : "N",   "length" :  18 },
+      { "name" : "cash_amt",               "kname" : "현금금액",               "type" : "N",   "length" :  18 },
+      { "name" : "self_amt",               "kname" : "자사상품권금액",         "type" : "N",   "length" :  18 },
+      { "name" : "etc_amt",                "kname" : "타사상품권금액",         "type" : "N",   "length" :  18 },
+      { "name" : "cupon_amt",              "kname" : "쿠폰금액",               "type" : "N",   "length" :  18 },
+      { "name" : "cash_cupon_amt",         "kname" : "현금쿠폰금액",           "type" : "N",   "length" :  18 },
+      { "name" : "check_bigo",             "kname" : "수표비고",               "type" : "AN",  "length" :  80 },
+      { "name" : "cash_bigo",              "kname" : "현금비고",               "type" : "AN",  "length" :  80 },
+      { "name" : "self_bigo",              "kname" : "자사상품권비고",         "type" : "AN",  "length" :  80 },
+      { "name" : "etc_bigo",               "kname" : "타사상품권비고",         "type" : "AN",  "length" :  80 },
+      { "name" : "cupon_bigo",             "kname" : "쿠폰비고",               "type" : "AN",  "length" :  80 },
+      { "name" : "cash_cupon_bigo",        "kname" : "현금쿠폰비고",           "type" : "AN",  "length" :  80 },
+      { "name" : "rate_cupon_cnt",         "kname" : "정률할인권매수",         "type" : "N",   "length" :  18 },
+      { "name" : "rate_cupon_bigo",        "kname" : "정률할인권비고",         "type" : "AN",  "length" :  80 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" :  62 }
+   ]
+}

@@ -1,0 +1,12 @@
+{
+   "name" : "M1000200",                    "kname" : "인증번호 조회",
+   "response" : { "code" : "M1000200",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "user_telno",             "kname" : "고객전화번호",           "type" : "AN",  "length"  : 13  },
+      { "name" : "authenti_no",            "kname" : "인증번호",               "type" : "AN",  "length"  : 6   },
+      { "name" : "authenti_org_cd",        "kname" : "인증요청기관",           "type" : "AN",  "length"  : 3   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 388 }
+   ]
+}

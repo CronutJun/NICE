@@ -1,0 +1,85 @@
+#!/usr/bin/env perl
+
+use strict;
+use Encode qw/encode decode/;
+
+my $a = @ARGV;
+if( $a != 3 ) { die "usage: fastconv [rule filename] [source filename] [target filename]\n";}
+
+-e @ARGV[0] || die "rule file does not exist.\n";
+-d @ARGV[0] && die "rule filename is directory.\n";
+-e @ARGV[1] || die "source file does not exist.\n";
+-d @ARGV[1] && die "source filename is directory.\n";
+
+if( @ARGV[0] eq @ARGV[1] ) { die "rule filename is equal with source filename.\n";}
+if( @ARGV[1] eq @ARGV[2] ) { die "source filename is equal with target filename.\n";}
+
+my $rulHandle;
+open( $rulHandle, "<@ARGV[0]" );
+
+my @ruleArr=<$rulHandle>;
+my @ruleS;
+my @rulePos;
+my @ruleSrcLen;
+my @ruleTrgLen;
+my $i = 0;
+my $nPos = 0;
+foreach(@ruleArr) {
+   chomp $_;
+   $_ =~ s/^\s+|\s+$//g;
+   if( substr($_, 0, 1) eq "#" ) { 
+      next;
+   }
+   @ruleS = split(/,/, $_);
+   if( $#ruleS != 2 ) { die "ruleInfo is invalid. $_\n"; }
+   $i = 0;
+   foreach(@rulePos) {
+      $nPos = $_ + $ruleSrcLen[$i];
+      if( $nPos >= @ruleS[0] ) { die "Source position is less than previous source position. @ruleS\n"; }
+      $i = $i + 1;
+   }
+   push(@rulePos, @ruleS[0]);
+   push(@ruleSrcLen, @ruleS[1]);
+   push(@ruleTrgLen, @ruleS[2]);
+}
+$i = 0;
+foreach(@rulePos) {
+   printf("Pos = %d, srcLen = %d, trgLen = %d\n", $_, @ruleSrcLen[$i], @ruleTrgLen[$i]);
+   $i = $i + 1;
+}
+close $rulHandle;
+
+my $srcHandle;
+my $trgHandle;
+open( $srcHandle, "<@ARGV[1]" );
+open( $trgHandle, ">@ARGV[2]" );
+while( my $srcLine=<$srcHandle> ) {
+   print "$srcLine";
+   chomp $srcLine;
+   if( length($srcLine) == 0 ) {
+      printf $trgHandle "%-s\n", $srcLine;
+      next;
+   }
+   $i = 0;
+   my $pLen = 0;
+   my $nextPos = 1;
+   foreach(@rulePos) {
+      if( $nextPos < $_ ) {
+         print $trgHandle substr( $srcLine, $nextPos-1, $_-$nextPos );
+      }
+      my $convStr = substr( $srcLine, $_-1, @ruleSrcLen[$i] );
+      Encode::from_to($convStr, "euc-kr", "utf-8");
+      printf $trgHandle "%-*s", @ruleTrgLen[$i], $convStr;
+      $nextPos = $_ + @ruleSrcLen[$i];
+      $i = $i + 1;
+   }
+   if( $nextPos < length($srcLine) ) {
+      $pLen = length($srcLine) - $nextPos;
+      printf $trgHandle "%-*s\n", $pLen, substr( $srcLine, $nextPos-1, $pLen);
+   }
+   elsif( $nextPos == 1 ) {
+      printf $trgHandle "%-s\n", $srcLine;
+   }
+}
+close $trgHandle;
+close $srcHandle;

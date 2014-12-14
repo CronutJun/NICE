@@ -1,0 +1,23 @@
+{
+   "name" : "01000151",                    "kname" : "경비사_현장직원 콜 수신확인",
+   "response" : { "code" : "01000151",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "trans1_date",            "kname" : "출동요청일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "trans1_seq",             "kname" : "장애번호",               "type" : "AN",  "length"  : 7   },
+      { "name" : "confirm_date",           "kname" : "확인일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "confirm_time",           "kname" : "확인시간",               "type" : "N",   "length"  : 6   },
+      { "name" : "org_cd",                 "kname" : "기관코드",               "type" : "AN",  "length"  : 3   },
+      { "name" : "brch_cd",                "kname" : "지점코드",               "type" : "AN",  "length"  : 8   },
+      { "name" : "site_cd",                "kname" : "코너번호",               "type" : "AN",  "length"  : 6   },
+      { "name" : "mac_no",                 "kname" : "기기번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "site_nm",                "kname" : "사이트명",               "type" : "AN",  "length"  : 60  },
+      { "name" : "error_cd",               "kname" : "장애코드",               "type" : "AN",  "length"  : 4   },
+      { "name" : "error_msg",              "kname" : "장애코드명",             "type" : "AN",  "length"  : 120 },
+      { "name" : "recv_user_nm",           "kname" : "업체 수신자명",          "type" : "AN",  "length"  : 20  },
+      { "name" : "recv_tele_no",           "kname" : "업체 수신자 전화번호",   "type" : "AN",  "length"  : 13  },
+      { "name" : "memo",                   "kname" : "메모사항",               "type" : "AN",  "length"  : 200 },
+      { "name" : "recv_user_uid",          "kname" : "출동자사번",             "type" : "AN",  "length"  : 8   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 139 }
+   ]
+}

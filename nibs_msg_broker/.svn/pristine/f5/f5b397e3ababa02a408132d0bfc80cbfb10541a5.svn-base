@@ -1,0 +1,49 @@
+###############################################
+# DEV Properties
+###############################################
+
+### DEFAULT PROPERTIES ####
+schema_path=/msg_schema/
+schema_org_path=/msg_schema_org/
+schema_dbl_path=/msg_schema_dbl/
+read_buf_size=262144
+db_url=jdbc:db2://10.3.28.63:4893/operdb:currentSchema=OP;
+db_lock_timeout=10
+db_user=msgb
+db_pass=nibsmsgb
+db_init_conn=2
+db_max_conn=5
+#consumer.host=tcp://10.3.28.62:61616
+#producer.host=tcp://10.3.28.61:61616
+consumer.host=tcp://localhost:61616
+consumer.prefetch.size=10
+producer.host=tcp://localhost:61616
+
+hotswap.path=C:/Users/KDJ/git/NICE/nibs_msg_broker/target/classes
+
+### BIZ PROPERTIES ####
+file.dir.casher=C:/infoap/NICEShare/nibs_ftp/casher_file
+file.dir.dealno=C:/infoap/NICEShare/nibs_ftp/dealno_file
+file.name.lost=LOST.log
+
+### MANAGING RMI PROPERTIES ####
+# FOR SERVER
+rmi.port=10199
+rmi.response.timeout=60
+# FOR SCANNIG HA SERVERS
+rmi.availability=false
+rmi.availability.servers=10.3.28.180
+# FOR CLIENT
+msgbroker.server.ip=10.3.28.62
+msgbroker.server.port=10199
+msgbroker.lookup.name=MsgBrokerRMI
+# FOR CLIENT of FileSend, FileMng, OrgAutoSend
+sender.server.ip=10.3.28.62
+sender.server.port=10399
+sender.lookup.name=NibsRmiScheduleExecuter
+
+### MANAGING MQ PROPERTIES ###
+jmx.consumer.host=localhost
+jmx.consumer.port=1099
+jmx.producer.host=10.3.28.61
+jmx.producer.port=1099

@@ -1,0 +1,25 @@
+{
+   "name" : "02000161",                    "kname" : "변경기기",
+   "response" : { "code" : "02000161",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length" :  16 },
+      { "name" : "place_type",             "kname" : "장소구분코드",           "type" : "AN",  "length" :   8 },
+      { "name" : "req_date",               "kname" : "설치요청일",             "type" : "N",   "length" :  16 },
+      { "name" : "site_cd",                "kname" : "코너코드",               "type" : "AN",  "length" :  16 },
+      { "name" : "mng_nm",                 "kname" : "영업점담당자성명",       "type" : "AN",  "length" :  20 },
+      { "name" : "mng_tel",                "kname" : "영업점담당자전화",       "type" : "AN",  "length" :  40 },
+      { "name" : "work_date",              "kname" : "업무희망일",             "type" : "N",   "length" :  16 },
+      { "name" : "set_place",              "kname" : "신청장소명",             "type" : "AN",  "length" :  80 },
+      { "name" : "set_addr",               "kname" : "신청장소주소",           "type" : "AN",  "length" :  80 },
+      { "name" : "booth_type",             "kname" : "부스형태",               "type" : "AN",  "length" :   8 },
+      { "name" : "mng_com_cd",             "kname" : "관리업체",               "type" : "AN",  "length" :   8 },
+      { "name" : "new_set_place",          "kname" : "변경장소명",             "type" : "AN",  "length" :  80 },
+      { "name" : "new_set_addr",           "kname" : "변경주소",               "type" : "AN",  "length" :  80 },
+      { "name" : "req_code",               "kname" : "신청구분코드",           "type" : "AN",  "length" :   4 },
+      { "name" : "detail",                 "kname" : "상세내역",               "type" : "AN",  "length" : 160 },
+      { "name" : "memo",                   "kname" : "신청의견",               "type" : "AN",  "length" : 160 },
+      { "name" : "next_brch_cd",           "kname" : "전입관리점코드",         "type" : "AN",  "length" :  16 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length" :  36 }
+   ]
+}

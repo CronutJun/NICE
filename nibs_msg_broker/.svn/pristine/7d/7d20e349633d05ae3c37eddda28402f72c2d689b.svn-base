@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="COLLECT">
+
+<!--
+<entry key="COLLECT"                value="03001140" />     07. 회수자금
+{
+   "name" : "03001140",                    "kname" : "회수자금 결과 통보",
+   "response" : { "code" : "03001140",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "org_site_cd",            "kname" : "기관코너번호",           "type" : "AN",  "length"  : 6   },
+      { "name" : "site_type",              "kname" : "점포구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "oper_type",              "kname" : "운영구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "org_site_nm",            "kname" : "장소명",                 "type" : "AN",  "length"  : 120 },
+      { "name" : "close_date",             "kname" : "마감년월일",             "type" : "N",   "length"  : 8   },
+      { "name" : "before_amt",             "kname" : "전일현송액",             "type" : "N",   "length"  : 15  },
+      { "name" : "input_amt",              "kname" : "입금금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "output_amt",             "kname" : "지급금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "close_amt",              "kname" : "마감금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "check_out_amt",          "kname" : "수표발행액",             "type" : "N",   "length"  : 15  },
+      { "name" : "add_amt",                "kname" : "추가현송액",             "type" : "N",   "length"  : 15  },
+      { "name" : "add_date",               "kname" : "추가현송일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "collect_amt",            "kname" : "회수자금",               "type" : "N",   "length"  : 15  },
+      { "name" : "unattended_amt",         "kname" : "미처리금액",             "type" : "N",   "length"  : 15  },
+      { "name" : "unattended_cnt",         "kname" : "미처리건수",             "type" : "N",   "length"  : 2   },
+      { "name" : "report_yn",              "kname" : "미처리보고서 유무'Y/N'", "type" : "AN",  "length"  : 1   },
+      { "name" : "office_nm",              "kname" : "관리사무소",             "type" : "AN",  "length"  : 40  },
+      { "name" : "send_yn",                "kname" : "현송여부",               "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 168 }
+   ]
+} -->
+
+    <select id="select088" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT branch_cd ,
+             mac_no,
+             '',
+             '',
+             '',
+             '',
+             close_date,
+             before_cash_amt before_amt,
+             in_amt input_amt,
+             out_amt output_amt,
+             close_amt,
+             check_out_amt,
+             add_cash_amt add_amt,
+             add_cash_date add_date,
+             collect_amt,
+             unattended_amt,
+             unattended_cnt,
+             report_yn,
+             office_nm,
+             '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM OP.T_FN_ATMS_COLLECT
+        WHERE CLOSE_DATE >= TO_CHAR( SYSDATE - 10, 'YYYYMMDD')
+        AND   org_send_yn = '0'
+        AND   org_cd = '088'
+    ]]>
+    </select>
+
+    <select id="select039" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT OP.FC_GET_MAP_BRANCH_CD(0, ORG_CD, BRANCH_CD, MAC_NO) brch_cd,
+             OP.FC_GET_MAP_MAC_NO(0, ORG_CD, BRANCH_CD, MAC_NO) mac_no,
+             '',
+             '',
+             '',
+             '',
+             close_date,
+             before_cash_amt before_amt,
+             in_amt input_amt,
+             out_amt output_amt,
+             close_amt,
+             '',
+             '',
+             '',
+             collect_amt,
+             '',
+             '',
+             report_yn,
+             office_nm,
+             '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM OP.T_FN_ATMS_COLLECT
+        WHERE CLOSE_DATE >= TO_CHAR( SYSDATE - 10, 'YYYYMMDD')
+        AND   org_send_yn = '0'
+        AND   org_cd = '039'
+         AND OP.FC_GET_MAP_MAC_NO(0, ORG_CD, BRANCH_CD, MAC_NO) IS NOT NULL
+    ]]>
+    </select>
+
+    <select id="select020" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT branch_cd,
+             MAC_NO,
+             '',
+             '',
+             '',
+             '',
+             close_date,
+             before_cash_amt before_amt,
+             in_amt input_amt,
+             out_amt output_amt,
+             close_amt,
+             '',
+             '',
+             '',
+             collect_amt,
+             '',
+             '',
+             report_yn,
+             office_nm,
+             nvl(send_yn, '1') send_yn,
+             '','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM OP.T_FN_ATMS_COLLECT
+        WHERE CLOSE_DATE >= TO_CHAR( SYSDATE - 10, 'YYYYMMDD')
+        AND   org_send_yn = '0'
+        AND   org_cd = '020'
+         AND MAC_NO IS NOT NULL
+    ]]>
+    </select>
+
+    <select id="select035" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT branch_cd as brch_cd,
+             mac_no,
+             '',
+             '',
+             '',
+             '',
+             close_date,
+             before_cash_amt before_amt,
+             in_amt input_amt,
+             out_amt output_amt,
+             close_amt,
+             '',
+             '',
+             '',
+             collect_amt,
+             '',
+             '',
+             DECODE(report_yn, '1', 'Y', '0', 'N', report_yn ) report_yn,
+             '',
+             '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM OP.T_FN_ATMS_COLLECT
+        WHERE org_send_yn = '0'
+         AND org_cd = '035'
+    ]]>
+    </select>
+
+    <select id="select011" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT branch_cd as brch_cd,
+             mac_no,
+             '',
+             '',
+             '',
+             '',
+             close_date,
+             before_cash_amt before_amt,
+             in_amt input_amt,
+             out_amt output_amt,
+             close_amt,
+             '',
+             '',
+             '',
+             collect_amt,
+             '',
+             '',
+             report_yn,
+             office_nm,
+             '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM OP.T_FN_ATMS_COLLECT
+        WHERE org_send_yn = '0'
+         and close_date = op.pkg_fn_common.sf_getPreActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
+         AND org_cd = '011'
+    ]]>
+    </select>
+
+    <!-- 003, 004, 005, 081, 0WC -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT branch_cd as brch_cd,
+             mac_no,
+             '',
+             '',
+             '',
+             '',
+             close_date,
+             before_cash_amt before_amt,
+             in_amt input_amt,
+             out_amt output_amt,
+             close_amt,
+             check_out_amt,
+             add_cash_amt add_amt,
+             add_cash_date add_date,
+             collect_amt,
+             unattended_amt,
+             unattended_cnt,
+             report_yn,
+             office_nm,
+             '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM OP.T_FN_ATMS_COLLECT
+        WHERE  org_send_yn = '0'
+          AND close_date >= to_char(sysdate -30, 'YYYYMMDD')
+          AND org_cd = #{orgCd}
+    ]]>
+    </select>
+</mapper>

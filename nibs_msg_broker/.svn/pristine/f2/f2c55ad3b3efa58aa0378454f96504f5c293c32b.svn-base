@@ -1,0 +1,31 @@
+{
+   "name" : "04001270",                    "kname" : "코너환경관리사진정보",
+   "response" : { "code" : "04001270",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "check_date",             "kname" : "점검일",                 "type" : "N",   "length"  : 8   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "site_cd",                "kname" : "기관코너코드",           "type" : "AN",  "length"  : 6   },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 80  },
+      { "name" : "photo_url",              "kname" : "사진경로",               "type" : "AN",  "length"  : 100 },
+      { "name" : "mac_front_glass_photo",  "kname" : "기기전면유리",           "type" : "AN",  "length"  : 10  },
+      { "name" : "mac_front_photo",        "kname" : "기기전면부",             "type" : "AN",  "length"  : 10  },
+      { "name" : "mac_gap_photo",          "kname" : "기기틈새",               "type" : "AN",  "length"  : 10  },
+      { "name" : "monitor_photo",          "kname" : "모니터",                 "type" : "AN",  "length"  : 10  },
+      { "name" : "bankbook_gap_photo",     "kname" : "통장부입구 틈새",        "type" : "AN",  "length"  : 10  },
+      { "name" : "card_gap_photo",         "kname" : "카드부입구 틈새",        "type" : "AN",  "length"  : 10  },
+      { "name" : "interphone_photo",       "kname" : "인터폰",                 "type" : "AN",  "length"  : 10  },
+      { "name" : "fix_photo",              "kname" : "게시물 거치대",          "type" : "AN",  "length"  : 10  },
+      { "name" : "floor_photo",            "kname" : "점포바닥",               "type" : "AN",  "length"  : 10  },
+      { "name" : "in_wall_photo",          "kname" : "내부벽면",               "type" : "AN",  "length"  : 10  },
+      { "name" : "out_wall_photo",         "kname" : "외부벽면",               "type" : "AN",  "length"  : 10  },
+      { "name" : "booth_glass_photo",      "kname" : "부스/점포유리",          "type" : "AN",  "length"  : 10  },
+      { "name" : "up_photo",               "kname" : "천정",                   "type" : "AN",  "length"  : 10  },
+      { "name" : "lamp_photo",             "kname" : "형광등/조명기구",        "type" : "AN",  "length"  : 10  },
+      { "name" : "sticker_photo",          "kname" : "부착간판",               "type" : "AN",  "length"  : 10  },
+      { "name" : "gabage_photo",           "kname" : "쓰레기통",               "type" : "AN",  "length"  : 10  },
+      { "name" : "outdoor_heater_photo",   "kname" : "냉/난방기(실외기)",      "type" : "AN",  "length"  : 10  },
+      { "name" : "site_arroud_photo",      "kname" : "점포주위",               "type" : "AN",  "length"  : 10  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 80  }
+   ]
+}

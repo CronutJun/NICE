@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SAP_DETAIL">
+
+<!--
+<entry key="SAP_DETAIL"             value="04001301" />     38. 이랜드SAPDETAIL
+{
+   "name" : "04001301",                    "kname" : "이랜드 정산기 SAP File Detail 정보",
+   "response" : { "code" : "04001301",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "info_cl",                "kname" : "정보구분",               "type" : "AN",  "length"  : 1   },
+      { "name" : "deal_date",              "kname" : "거래일",                 "type" : "N",   "length"  : 8   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "brch_nm",                "kname" : "영업점명",               "type" : "AN",  "length"  : 20  },
+      { "name" : "member_id",              "kname" : "회원ID",                 "type" : "AN",  "length"  : 15  },
+      { "name" : "cupon_cd",               "kname" : "쿠폰코드",               "type" : "AN",  "length"  : 4   },
+      { "name" : "cupon_nm",               "kname" : "쿠폰명",                 "type" : "AN",  "length"  : 20  },
+      { "name" : "cupon_type",             "kname" : "쿠폰구분",               "type" : "AN",  "length"  : 3   },
+      { "name" : "cupon_amt",              "kname" : "쿠폰금액",               "type" : "N",   "length"  : 15  },
+      { "name" : "update_uid",             "kname" : "update_uid",             "type" : "AN",  "length"  : 15  },
+      { "name" : "tot_cnt",                "kname" : "총갯수",                 "type" : "N",   "length"  : 5   },
+      { "name" : "seqno",                  "kname" : "일련번호",               "type" : "N",   "length"  : 5   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 303 }
+   ]
+}
+ -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        SELECT   '1' info_cl /* 1:upload */
+                ,D.DEAL_DATE
+                ,D.BRANCH_CD as brch_cd
+                ,''
+                ,D.MEMBER_ID
+                ,D.CUPON_CD
+                ,D.CUPON_NM
+                ,D.CUPON_TYPE
+                ,D.CUPON_AMT
+                ,D.UPDATE_UID
+                ,''
+                ,''
+                ,''
+                ,'','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
+        FROM  OP.T_FN_SAP_DETAIL D,
+              OP.T_FN_SAP_MASTER M
+        WHERE D.DEAL_DATE >= TO_CHAR( SYSDATE -14, 'YYYYMMDD' )
+        AND   M.office_confirm = '1'
+        and   nvl(M.org_send_yn , '0') = '1'
+        and   nvl(D.org_send_yn , '0') = '0'
+        and   M.deal_date = D.deal_date
+        and   M.BRANCH_CD = D.BRANCH_CD
+        and   M.member_id = D.member_id
+    ]]>
+    </select>
+</mapper>

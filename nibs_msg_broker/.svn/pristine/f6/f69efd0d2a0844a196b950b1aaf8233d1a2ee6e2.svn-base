@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SET_FAC">
+
+<!--
+<entry key="SET_FAC"                value="02001230" />     40. 우리은행시설물관리
+{
+   "name" : "02001230",                    "kname" : "시설물관리업무보고",
+   "response" : { "code" : "02001230",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "chk_date",               "kname" : "관리점검일",             "type" : "N",   "length"  : 8   },
+      { "name" : "chk_time",               "kname" : "관리점검시간",           "type" : "N",   "length"  : 6   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mng_brch_cd",            "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "단말번호",               "type" : "AN",  "length"  : 12  },
+      { "name" : "site_cd",                "kname" : "코너코드",               "type" : "AN",  "length"  : 6   },
+      { "name" : "site_nm",                "kname" : "코너명",                 "type" : "AN",  "length"  : 60  },
+      { "name" : "oper_time",              "kname" : "운영시간",               "type" : "AN",  "length"  : 4   },
+      { "name" : "oper_type",              "kname" : "운영구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "place_type",             "kname" : "점포구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "mac_model",              "kname" : "기기모델",               "type" : "AN",  "length"  : 4   },
+      { "name" : "error_date",             "kname" : "이상발생일자",           "type" : "N",   "length"  : 8   },
+      { "name" : "item_no",                "kname" : "물품번호",               "type" : "AN",  "length"  : 4   },
+      { "name" : "cctv_yn",                "kname" : "CCTV유무",               "type" : "AN",  "length"  : 1   },
+      { "name" : "cctv_state",             "kname" : "CCTV상태",               "type" : "AN",  "length"  : 1   },
+      { "name" : "etc_yn",                 "kname" : "기기외시설물",           "type" : "AN",  "length"  : 1   },
+      { "name" : "oper_yn",                "kname" : "중단유무",               "type" : "AN",  "length"  : 1   },
+      { "name" : "use_time_yn",            "kname" : "이용시간",               "type" : "AN",  "length"  : 1   },
+      { "name" : "std_notice_yn",          "kname" : "표준게시물",             "type" : "N",   "length"  : 1   },
+      { "name" : "entry_log_yn",           "kname" : "출입자관리기록여부",     "type" : "AN",  "length"  : 1   },
+      { "name" : "memo",                   "kname" : "특이사항",               "type" : "AN",  "length"  : 80  },
+      { "name" : "proc_reason_cd",         "kname" : "처리사유코드",           "type" : "AN",  "length"  : 4   },
+      { "name" : "proc_memo",              "kname" : "조치사항",               "type" : "AN",  "length"  : 300 },
+      { "name" : "user_nm",                "kname" : "보고담당자",             "type" : "AN",  "length"  : 20  },
+      { "name" : "user_tel",               "kname" : "담당자연락처",           "type" : "AN",  "length"  : 20  },
+      { "name" : "office_nm",              "kname" : "사무소명",               "type" : "AN",  "length"  : 40  },
+      { "name" : "picture_date",           "kname" : "사진촬영일",             "type" : "N",   "length"  : 8   }
+   ]
+}
+ -->
+
+    <select id="select020" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select CHK.CHECK_DATE chk_date,
+               '',
+               CHK.BRANCH_CD brch_cd,
+               '',
+               '',
+               CHK.SITE_CD,
+               SITE.SITE_NM,
+               '',
+               '',
+               '',
+               '',
+               '',
+               '',
+               DECODE(CHK.PIC_DEVICE, '0050', '0', '1') cctv_yn,
+               DECODE(CHK.PIC_STATUS, '0030', '0', '1') cctv_state,
+               '',
+               '',
+               '',
+               '',
+               '',
+               CHK.remark memo,
+               '',
+               '',
+               MBR.MEMBER_NM user_nm,
+               '',
+               OFC.OFFICE_NM,
+               CHK.CHECK_DATE picture_date,
+               '','','','','','','','','','','','','','','','','','','','','','',''
+        from OP.T_CM_SITE_CCTV CHK,
+             OP.T_CM_SITE      SITE,
+             OP.T_CM_MEMBER    MBR,
+             OP.T_CM_OFFICE    OFC
+        WHERE SITE.ORG_CD = '020'
+        AND   CHK.ORG_CD = '020'
+        AND   CHK.CHECK_DATE >= TO_CHAR( SYSDATE-31, 'YYYYMMDD')
+        AND   CHK.ORG_CD = SITE.ORG_CD
+        AND   CHK.BRANCH_CD = SITE.BRANCH_CD
+        AND   CHK.SITE_CD = SITE.SITE_CD
+        AND   SITE.MNG_MEMBER_UID = MBR.MEMBER_ID
+        AND   SITE.DEPT_CD = OFC.DEPT_CD
+        AND   SITE.OFFICE_CD = OFC.OFFICE_CD
+    ]]>
+    </select>
+
+    <select id="select003" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    <![CDATA[
+        select CHK.CHECK_DATE chk_date,                                          /*  관리점검일       */
+               '',
+               CHK.BRANCH_CD brch_cd,                                            /*  영업점코드       */
+               '',                                                      /*  관리점코드       */
+               '',
+               CHK.SITE_CD site_cd,                                             /*  코너코드        */
+               SITE.SITE_NM,                                            /*  코너명         */
+               DECODE(COM.SMALL_CD, '1100' , '1',                       /*  운영시간구분코드        */
+                                    '1200' , '2',                       /*  1:영업시간, 2:365, 3:24/365, Z:기타 */
+                                    '1500' , '3', 'Z') oper_time,
+               '',
+               DECODE(SITE.OUT_TYPE,'0', '1',                            /* 장소구분코드  1:점내, 2:점외, 3:무인, Z:기타  */
+                                    '1', '2',
+                                    '2', '3', 'Z' ) place_type,
+               '',
+               '',
+               '',
+               DECODE(CHK.PIC_DEVICE, '0050', '0', '1') cctv_yn,                 /* CCTV유무      */
+               DECODE(CHK.PIC_STATUS, '0030', '0', '1') cctv_state,                /*  CCTV상태      */
+               '',
+               '',
+               '',
+               '',
+               '',
+               '',                                                     /*   특이사항        */
+               '',
+               CHK.REMARK proc_memo,                                                /*  조치사항        */
+               MBR.MEMBER_NM user_nm,                                           /*  보고담당자       */
+               '',
+               OFC.OFFICE_NM,                                           /*  사무소명        */
+               CHK.CHECK_DATE picture_date,                                          /*  사진촬영일       */
+               '','','','','','','','','','','','','','','','','','','','','','',''
+        from OP.T_CM_SITE_CCTV CHK,
+             OP.T_CM_SITE      SITE,
+             OP.T_CM_MEMBER    MBR,
+             OP.T_CM_OFFICE    OFC,
+             OP.T_CM_COMMON    COM
+        WHERE CHK.ORG_CD = '003'
+        AND   CHK.CHECK_DATE >= TO_CHAR( SYSDATE-31, 'YYYYMMDD')
+        AND   CHK.ORG_CD = SITE.ORG_CD
+        AND   CHK.BRANCH_CD = SITE.BRANCH_CD
+        AND   CHK.SITE_CD = SITE.SITE_CD
+        AND   SITE.MNG_MEMBER_UID = MBR.MEMBER_ID
+        AND   SITE.DEPT_CD = OFC.DEPT_CD
+        AND   SITE.OFFICE_CD = OFC.OFFICE_CD
+        AND   COM.LARGE_CD = '1520'
+        AND   SITE.OPER_TYPE = COM.SMALL_CD
+    ]]>
+    </select>
+</mapper>

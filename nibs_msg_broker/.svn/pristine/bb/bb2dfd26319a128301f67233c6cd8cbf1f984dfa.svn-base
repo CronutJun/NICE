@@ -1,0 +1,16 @@
+{
+   "name" : "04001210",                    "kname" : "정산기 캐셔정보",
+   "response" : { "code" : "04001210",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "tot_cnt",                "kname" : "총캐셔명수",             "type" : "N",   "length"  : 5   },
+      { "name" : "seq_no",                 "kname" : "Seq No",                 "type" : "N",   "length"  : 5   },
+      { "name" : "brch_cd",                "kname" : "영업점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "casher_id",              "kname" : "사번",                   "type" : "AN",  "length"  : 10  },
+      { "name" : "casher_nm",              "kname" : "사원명",                 "type" : "AN",  "length"  : 60  },
+      { "name" : "use_yn",                 "kname" : "사용여부",               "type" : "AN",  "length"  : 1   },
+      { "name" : "casher_type",            "kname" : "캐셔구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "message",                "kname" : "메모",                   "type" : "AN",  "length"  : 200 },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 259 }
+   ]
+}
