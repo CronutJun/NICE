@@ -82,7 +82,7 @@
         from   OP.t_ct_error_mng_made_com mng,
                OP.t_cm_site            site,
                OP.t_cm_branch           jij
-        where  mng.org_send_yn = '0'
+        where  nvl(mng.org_send_yn, '0') = '0'
         AND    mng.as_acpt_date > to_char( sysdate - 5, 'yyyymmdd' )
         and    mng.org_cd   = site.org_cd(+)
         and    mng.BRANCH_CD = site.BRANCH_CD(+)
@@ -127,7 +127,7 @@
         from   OP.t_ct_error_mng_made_com mng,
                OP.t_cm_site            site,
                OP.t_cm_branch           jij
-        where  mng.org_send_yn = '0'
+        where  nvl(mng.org_send_yn, '0') = '0'
         AND    mng.as_acpt_date > to_char( sysdate - 5, 'yyyymmdd' )
         and    mng.org_cd   = site.org_cd(+)
         and    mng.BRANCH_CD = site.BRANCH_CD(+)
@@ -172,7 +172,7 @@
         from   OP.t_ct_error_mng_made_com mng,
                OP.t_cm_site            site,
                OP.t_cm_branch           jij
-        where  mng.org_send_yn = '0'
+        where  nvl(mng.org_send_yn, '0') = '0'
         AND    mng.as_acpt_date > to_char( sysdate - 5, 'yyyymmdd' )
         and    mng.org_cd   = site.org_cd(+)
         and    mng.BRANCH_CD = site.BRANCH_CD(+)

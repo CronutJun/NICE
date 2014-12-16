@@ -21,6 +21,8 @@
  -->
     <select id="select0EM" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
+
+/*
         SELECT  A.gw_DATE req_date,
                 A.TRANS_SEQ_NO req_seq,
                 '',
@@ -51,11 +53,156 @@
                 AND     TRANS_TYPE = 'QR'
             ) A
         ORDER BY A.GW_DATE||A.TRANS_SEQ_NO
+*/
+/*
+select aa.trans_date req_date,
+        LPAD(aa.trans_seq_no, 7, '0')  req_seq,
+        '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '','','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+from (        
+ select  TO_CHAR(SYSDATE-1, 'YYYYMMDD') AS trans_date,
+            chk.trans_seq_no - 1000000 as trans_seq_no
+    from  (
+                select  MOD(MAX(trans_seq_no)+1, 999999) AS min_seq, 
+                        MOD(MAX(trans_seq_no) + 10000, 999999) as max_seq
+                from    op.t_if_data_log 
+                where   org_cd = '0EM' 
+                AND     TRANS_DATE = TO_CHAR(SYSDATE-2, 'YYYYMMDD') 
+                and     trans_type = 'PS'
+                AND ORG_CD = '0EM' AND SUBSTR(TRANS_DATA, 50, 2) = 'CM'
+                AND TRANS_SEQ_NO > 7000000
+          ) bound,
+          OP.T_IF_MISSNO_CHK chk
+    where   chk.trans_seq_no >= (case when bound.min_seq > bound.max_seq 
+                                  then 1
+                                  else bound.min_seq
+                                  end) + 1000000
+    and     chk.trans_seq_no < bound.max_seq + 1000000
+    union all
+    select  TO_CHAR(SYSDATE-1, 'YYYYMMDD') AS trans_date,
+            chk.trans_seq_no - 1000000 as trans_seq_no
+    from  (
+                select  MOD(MAX(trans_seq_no)+1, 999999) AS min_seq, 
+                        MOD(MAX(trans_seq_no) + 10000, 999999) as max_seq
+                from    op.t_if_data_log 
+                where   org_cd = '0EM' 
+                AND     TRANS_DATE = TO_CHAR(SYSDATE-2, 'YYYYMMDD') 
+                and     trans_type = 'PS'
+                AND ORG_CD = '0EM' AND SUBSTR(TRANS_DATA, 50, 2) = 'CM'
+                AND TRANS_SEQ_NO > 7000000
+          ) bound,
+          OP.T_IF_MISSNO_CHK chk
+    where   chk.trans_seq_no >= bound.min_seq + 1000000
+    and     chk.trans_seq_no < (case when bound.min_seq > bound.max_seq 
+                                  then 999999
+                                  else bound.max_seq
+                                  end) + 1000000
+)aa
+
+MINUS
+
+
+select  aa.trans_date req_date,
+         LPAD(aa.trans_seq_no, 7, '0')  req_seq,
+        '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '','','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+from (        
+select  tr.trans_date,
+        tr.trans_seq_no
+from (
+        select  MOD(MAX(trans_seq_no)+1, 999999) AS min_seq, 
+                MOD(MAX(trans_seq_no) + 10000, 999999) as max_seq
+        from    op.t_if_data_log 
+        where   org_cd = '0EM' 
+        AND     TRANS_DATE = TO_CHAR(SYSDATE-2, 'YYYYMMDD') 
+        and     trans_type = 'PS'
+        AND ORG_CD = '0EM' AND SUBSTR(TRANS_DATA, 50, 2) = 'CM'
+        AND TRANS_SEQ_NO > 7000000
+     ) bound,
+        op.t_if_data_log tr
+where   tr.trans_date = TO_CHAR(SYSDATE-1, 'YYYYMMDD') 
+and     tr.trans_seq_no >= (case when bound.min_seq > bound.max_seq 
+                              then 1
+                              else bound.min_seq
+                              end)
+and     tr.trans_seq_no < bound.max_seq 
+union all
+select  tr.trans_date,
+        tr.trans_seq_no
+from (
+        select  MOD(MAX(trans_seq_no)+1, 999999) AS min_seq, 
+                MOD(MAX(trans_seq_no) + 10000, 999999) as max_seq
+        from    op.t_if_data_log 
+        where   org_cd = '0EM' 
+        AND     TRANS_DATE = TO_CHAR(SYSDATE-2, 'YYYYMMDD') 
+        and     trans_type = 'PS'
+        AND ORG_CD = '0EM' AND SUBSTR(TRANS_DATA, 50, 2) = 'CM'
+        AND TRANS_SEQ_NO > 7000000 
+     ) bound,
+        op.t_if_data_log tr
+where   tr.trans_date = TO_CHAR(SYSDATE-1, 'YYYYMMDD') 
+and     tr.trans_seq_no >= bound.min_seq
+and     tr.trans_seq_no < (case when bound.min_seq > bound.max_seq 
+                              then 999999
+                              else bound.max_seq
+                              end)
+) aa
+*/
+		select  trans_date req_date, 
+				trans_seq_no req_seq,
+				'',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '','','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '' 
+		from    op.t_if_lost_no
+		where   org_cd = '0EM'
+		and     trans_date >= TO_CHAR(SYSDATE-2, 'YYYYMMDD') 
+		minus
+		select  trans_date req_date, 
+				trans_seq_no req_seq,
+				'',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '','','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '' 
+		from    op.t_if_data_log 
+		where   org_cd = '0EM' 
+		AND     TRANS_DATE >= TO_CHAR(SYSDATE-2, 'YYYYMMDD') 
+		and     trans_type = 'PS'
+		AND     SUBSTR(TRANS_DATA, 50, 2) = 'CM'                                
     ]]>
     </select>
 
     <select id="select0EL" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
     <![CDATA[
+/*
         SELECT  A.gw_DATE req_date,
                 A.TRANS_SEQ_NO req_seq,
                 '',
@@ -86,6 +233,41 @@
                 AND     TRANS_TYPE = 'QR'
             ) A
         ORDER BY A.GW_DATE||A.TRANS_SEQ_NO
+*/
+		select  trans_date req_date, 
+				trans_seq_no req_seq,
+				'',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '','','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '' 
+		from    op.t_if_lost_no
+		where   org_cd = '0EL'
+		and     trans_date >= TO_CHAR(SYSDATE-2, 'YYYYMMDD') 
+		minus
+		select  trans_date req_date, 
+				trans_seq_no req_seq,
+				'',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '','','','','','','','','','','','','','', '', '', '','','', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '' 
+		from    op.t_if_data_log 
+		where   org_cd = '0EL' 
+		AND     TRANS_DATE >= TO_CHAR(SYSDATE-2, 'YYYYMMDD') 
+		and     trans_type = 'PS'
+		AND     SUBSTR(TRANS_DATA, 50, 2) = 'CM' 
+        
     ]]>
     </select>
     <select id="select0TR" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">

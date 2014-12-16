@@ -98,7 +98,6 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 logger.warn("sendSMS call error {}", e.getLocalizedMessage() );
                 throw e;
             }
-            return;
         }
         /*
          * 20120116 온누리 상품건 관련 거래는 별도의 테이블에 저장후 TRAN 데이터 처리

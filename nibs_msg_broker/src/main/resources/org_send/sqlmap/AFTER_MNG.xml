@@ -84,8 +84,8 @@
             AND send_time IS NOT NULL
             */
             /*AND arrival_est_time IS NOT NULL */
-            AND (   (   MNG.org_send_yn = '0' AND MNG.arrival_est_time IS NOT NULL )
-                 OR (   MNG.org_send_yn = '0' AND MNG.arrival_est_time IS  NULL AND MNG.FINISH_TIME IS NOT NULL )
+            AND (   (   nvl(MNG.org_send_yn, '0') = '0' AND MNG.arrival_est_time IS NOT NULL )
+                 OR (   nvl(MNG.org_send_yn, '0') = '0' AND MNG.arrival_est_time IS  NULL AND MNG.FINISH_TIME IS NOT NULL )
                  OR (   MNG.org_send_yn = '1' AND MNG.FINISH_TIME IS NOT NULL )
                 )
             AND MNG.ERROR_CD = 'AFTMNG'

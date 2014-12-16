@@ -73,7 +73,7 @@
           WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 1), 'YYYYMMDD'))
             AND MNG.org_cd = '031'
             AND MNG.send_time IS NOT NULL
-            AND ( MNG.org_send_yn IS NULL or mng.org_send_yn = '0')
+            AND ( MNG.org_send_yn IS NULL or nvl(mng.org_send_yn, '0') = '0')
             AND  MNG.ORG_MSG_NO IS NULL             /* 괄호장애 등록 시                                */
             AND  SUBSTR(MNG.ERROR_CD, 1, 3) = 'ERR'
             /*  OR MNG.ERROR_CD = 'USR01' )   괄호장애만 전송한다        */

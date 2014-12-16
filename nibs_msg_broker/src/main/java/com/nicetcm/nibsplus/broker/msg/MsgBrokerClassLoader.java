@@ -29,7 +29,7 @@ public class MsgBrokerClassLoader extends ClassLoader {
         // First, check if the class has already been loaded
         Class c = findLoadedClass(name);
         if( c == null ) {
-            if( name.equals(classNm) ) {
+            if( name.equals(classNm) || name.startsWith( classNm) ) {
                 logger.warn("Same class name");
                 c = findClass(name);
             }
@@ -45,7 +45,8 @@ public class MsgBrokerClassLoader extends ClassLoader {
 
     protected Class findClass(String name) throws ClassNotFoundException {
 
-        if( name.equals(classNm) ) {
+        logger.warn("findClass : name = {}", name );
+        if( name.equals(classNm) || name.startsWith(classNm) ) {
             byte[] buffer = null;
             String path = name.replace('.', '/').concat(".class");
             String filePath = url.getPath() + File.separatorChar + path;

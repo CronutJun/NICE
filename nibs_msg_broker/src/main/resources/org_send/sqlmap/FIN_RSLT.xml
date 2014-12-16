@@ -178,7 +178,7 @@
            AND (    MNG.org_send_yn = '2'
                     OR (    MNG.arrival_est_time IS NULL
                         AND MNG.arrival_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     OR (    MNG.arrival_est_time IS NOT NULL
                         AND MNG.arrival_time IS NULL
@@ -277,7 +277,7 @@
            AND (    MNG.org_send_yn = '2'
                     OR (    MNG.arrival_est_time IS NULL
                         AND MNG.arrival_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     OR (    MNG.arrival_est_time IS NOT NULL
                         AND MNG.arrival_time IS NULL
@@ -574,7 +574,7 @@
                  ) OR
                  (
                    (/* 도착예정과 도착이 모두 누락된 경우 */
-                     MNG.org_send_yn = '0' AND
+                     nvl(MNG.org_send_yn, '0') = '0' AND
                      MNG.arrival_est_time IS NULL AND
                      MNG.arrival_time IS NULL
                    ) OR
@@ -667,7 +667,7 @@
            AND (    MNG.org_send_yn = '2'
                     OR (    MNG.arrival_est_time IS NULL
                         AND MNG.arrival_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     OR (    MNG.arrival_est_time IS NOT NULL
                         AND MNG.arrival_time IS NULL
@@ -820,7 +820,7 @@
            AND (    MNG.org_send_yn = '2'
                     OR (    MNG.arrival_est_time IS NULL
                         AND MNG.arrival_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     OR (    MNG.arrival_est_time IS NOT NULL
                         AND MNG.arrival_time IS NULL
@@ -930,7 +930,7 @@
                           )OR
                           (
                             (/* 도착예정과 도착이 모두 누락된 경우 */
-                              E.org_send_yn = '0' AND
+                              nvl(E.org_send_yn, '0') = '0' AND
                               E.arrival_est_time IS NULL AND
                               E.arrival_time IS NULL
                             ) OR
@@ -966,7 +966,7 @@
                  ) OR
                  (
                    (/* 도착예정과 도착이 모두 누락된 경우 */
-                     MNG.org_send_yn = '0' AND
+                     nvl(MNG.org_send_yn, '0') = '0' AND
                      MNG.arrival_est_time IS NULL AND
                      MNG.arrival_time IS NULL
                    ) OR
@@ -1124,7 +1124,7 @@
            AND (    MNG.org_send_yn = '2'
                     OR (    MNG.arrival_est_time IS NULL
                         AND MNG.arrival_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     OR (    MNG.arrival_est_time IS NOT NULL
                         AND MNG.arrival_time IS NULL

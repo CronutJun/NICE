@@ -87,7 +87,7 @@
           AND mac.site_cd = site.site_cd(+)
           AND nmc.join_cd = '003'
           and env.check_date >= to_char( sysdate-15, 'yyyymmdd')
-          and env.org_send_yn = '0'
+          and nvl(env.org_send_yn, '0') = '0'
     ]]>
     </select>
 </mapper>

@@ -119,7 +119,7 @@
             /*AND (MNG.format_type = '21' OR MNG.format_type = '31')*/
             /* sec : 출동요청구분 + 사유로 구성 */
             AND MNG.sec IS NOT NULL
-            AND MNG.org_send_yn = '0'
+            AND nvl(MNG.org_send_yn, '0') = '0'
             /* 2차출동요청에대한 키지원일경우 제외 */
             AND substr(MNG.sec, 3, 1) || MNG.ERROR_CD <> '2WR903'
 
@@ -165,7 +165,7 @@
             /*AND (MNG.format_type = '21' OR MNG.format_type = '31')*/
             /* sec : 출동요청구분 + 사유로 구성 */
             AND MNG.sec IS NOT NULL
-            AND MNG.org_send_yn = '0'
+            AND nvl(MNG.org_send_yn, '0') = '0'
             /* 2차출동요청에대한 키지원일경우 제외 */
             AND substr(MNG.sec, 3, 1) || MNG.ERROR_CD <> '2WR903'
     ]]>
@@ -264,7 +264,7 @@
             (
                 (
                     SUBSTR(MNG.error_cd, 1, 3) = 'ERR'
-                    AND MNG.org_send_yn = '0'
+                    AND nvl(MNG.org_send_yn, '0') = '0'
                 )
                 OR  (SUBSTR(MNG.error_cd, 1, 2) <> 'NE'
                         AND NVL(MNG.org_send_yn, '0') = '0')
@@ -324,7 +324,7 @@
             /*AND (MNG.format_type = '21' OR MNG.format_type = '31')*/
             /* sec : 출동요청구분 + 사유로 구성 */
             AND MNG.sec IS NOT NULL
-            AND MNG.org_send_yn = '0'
+            AND nvl(MNG.org_send_yn, '0') = '0'
             /* 2차출동요청에대한 키지원일경우 제외 */
             AND substr(MNG.sec, 3, 1) || MNG.ERROR_CD <> '2SH903'
         union all
@@ -403,7 +403,7 @@
             /*AND (MNG.format_type = '21' OR MNG.format_type = '31')*/
             /* sec : 출동요청구분 + 사유로 구성 */
             AND MNG.sec IS NOT NULL
-            AND MNG.org_send_yn = '0'
+            AND nvl(MNG.org_send_yn, '0') = '0'
             AND MNG.error_cd <> 'AFTMNG'
             and LENGTH(mng.mac_no) = 3
             and MNG.org_msg_no is not null

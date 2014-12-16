@@ -36,6 +36,10 @@
       { "name" : "cash_amt",               "kname" : "당일현송금액(현금)",     "type" : "AN",  "length"  : 15  },
       { "name" : "pre_check_cnt",          "kname" : "전영업일 현송수표매수",  "type" : "AN",  "length"  : 5   },
       { "name" : "check_cnt",              "kname" : "현송수표매수",           "type" : "AN",  "length"  : 5   },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 83  }
+      { "name" : "remain_amt",             "kname" : "당일현송후잔액",         "type" : "AN",  "length"  : 15  },
+      { "name" : "pre_not_send_amt1",      "kname" : "전일미장전금액",         "type" : "AN",  "length"  : 15  },
+      { "name" : "oper_funds_after_amt",   "kname" : "운영자금수령후보유금액", "type" : "AN",  "length"  : 15  },
+      { "name" : "sat_close",              "kname" : "토요마감분",             "type" : "AN",  "length"  : 15  },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 23  }
    ]
 }

@@ -145,7 +145,7 @@ public class FtpTransfer {
                 throw new FileMngException(ExceptionType.NETWORK, "ftp 서버에 로그인하지 못했습니다.");
             }
 
-            ftp.setFileType(FTP.BINARY_FILE_TYPE);
+            ftp.setFileType(FTP.ASCII_FILE_TYPE);
             ftp.enterLocalPassiveMode();
 
             ftp.setKeepAlive(true);

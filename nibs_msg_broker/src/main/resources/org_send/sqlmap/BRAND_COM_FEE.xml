@@ -45,7 +45,7 @@
                 '',
                 '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_BRAND_COMMISSION_FEE CMS
-        WHERE CMS.ORG_SEND_YN = '0'
+        WHERE nvl(CMS.ORG_SEND_YN, '0') = '0'
         AND CMS.DOC_NO IS NOT NULL
         AND CMS.UPDATE_UID IS NOT NULL
     ]]>

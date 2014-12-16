@@ -20,7 +20,7 @@ public class CasherTRItemWriter implements ItemWriter<CasherTRVO>
     public void write(List<? extends CasherTRVO> items) throws Exception {
         for(CasherTRVO vo : items) {
         	if (vo.getSzDeal_Date().length() == 8) {
-    	    	if ("20022".equals(vo.getSzDevicever_Id())) {
+    	    	if (Integer.parseInt(vo.getSzDevicever_Id()) >= Integer.parseInt("20022")) {
     	        	/* 상품권이 추가된 신 버전 */
     	    		casherMapper.deleteCasherTranDataNew(vo);
     	    		casherMapper.insertCasherTranDataNew(vo);

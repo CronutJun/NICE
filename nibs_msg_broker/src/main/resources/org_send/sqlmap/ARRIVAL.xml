@@ -69,7 +69,7 @@
                AND MNG.send_time IS NOT NULL
                AND (    MNG.org_send_yn = '1'
                     OR (    MNG.arrival_est_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     )
             /*   AND (MNG.format_type = '21' OR MNG.format_type = '31') */
@@ -114,7 +114,7 @@
                /* AND MNG.send_time IS NOT NULL */
                AND (    MNG.org_send_yn = '1'
                     OR (    MNG.arrival_est_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */
                     OR MNG.org_send_yn = 'a'
@@ -164,7 +164,7 @@
                /* AND MNG.send_time IS NOT NULL */
                AND (    MNG.org_send_yn = '1'
                     OR (    MNG.arrival_est_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */
                     OR MNG.org_send_yn = 'a'
@@ -348,7 +348,7 @@
                /* AND MNG.send_time IS NOT NULL */
                AND (    MNG.org_send_yn = '1'
                     OR (    MNG.arrival_est_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */
                     OR MNG.org_send_yn = 'a'
@@ -427,7 +427,7 @@
                /* AND MNG.send_time IS NOT NULL */
                AND (    MNG.org_send_yn = '1'
                     OR (    MNG.arrival_est_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     /* 도착예정이 은행에서 99 오류로 준것도 도착을 보내도록 한다. */
                     OR MNG.org_send_yn = 'a'
@@ -516,7 +516,7 @@
              WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
                AND MNG.org_cd = '005'
                AND MNG.send_time IS NOT NULL
-               AND (   (   MNG.org_send_yn = '0'
+               AND (   (   nvl(MNG.org_send_yn, '0') = '0'
                        AND MNG.arrival_time is NOT NULL
                        AND MNG.arrival_est_time IS NULL
                        )
@@ -567,7 +567,7 @@
                AND MNG.send_time IS NOT NULL
                AND (    MNG.org_send_yn = '1'
                     OR (    MNG.arrival_est_time IS NULL
-                        AND MNG.org_send_yn = '0'
+                        AND nvl(MNG.org_send_yn, '0') = '0'
                        )
                     )
                AND (MNG.format_type = '21' OR MNG.format_type = '31')

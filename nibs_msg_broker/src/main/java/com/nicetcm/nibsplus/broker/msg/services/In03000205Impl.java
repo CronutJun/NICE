@@ -134,22 +134,22 @@ public class In03000205Impl extends InMsgHandlerImpl {
 
         /** 비정액권 수표 Insert */
         if(parsed.getInt("check_cnt_nonfixed") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0003", null, null, parsed.getInt("check_cnt_nonfixed"), parsed.getLong("check_amt_nonfixed"));
+            insertTFnBoxOrg(parsed, safeData, "0003", null, "9999", parsed.getInt("check_cnt_nonfixed"), parsed.getLong("check_amt_nonfixed"));
         }
 
         /** 쿠폰 Insert */
         if(parsed.getInt("cupon_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0005", null, null, parsed.getInt("cupon_cnt"), parsed.getLong("cupon_amt"));
+            insertTFnBoxOrg(parsed, safeData, "0005", null, "9999", parsed.getInt("cupon_cnt"), parsed.getLong("cupon_amt"));
         }
 
         /** 현금쿠폰 Insert */
         if(parsed.getInt("cash_cupon_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0007", null, null, parsed.getInt("cash_cupon_cnt"), parsed.getLong("cash_cupon_amt"));
+            insertTFnBoxOrg(parsed, safeData, "0007", null, "9999", parsed.getInt("cash_cupon_cnt"), parsed.getLong("cash_cupon_amt"));
         }
 
         /** 정률할인권 Insert */
         if(parsed.getInt("rate_cupon_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0009", null, null, parsed.getInt("rate_cupon_cnt"), 0); /* 정률할인권은 매수만 받음 */
+            insertTFnBoxOrg(parsed, safeData, "0009", null, "9999", parsed.getInt("rate_cupon_cnt"), 0); /* 정률할인권은 매수만 받음 */
         }
 
         /** 외화 Insert */
@@ -162,19 +162,19 @@ public class In03000205Impl extends InMsgHandlerImpl {
             strcpy( szAryBoxGb2[3], "04" );  위엔
         */
         if(parsed.getInt("dollar_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0010", "01", null, parsed.getInt("dollar_cnt"), parsed.getInt("dollar_amt"));
+            insertTFnBoxOrg(parsed, safeData, "0010", "01", "9999", parsed.getInt("dollar_cnt"), parsed.getInt("dollar_amt"));
         }
 
         if(parsed.getInt("euro_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0010", "02", null, parsed.getInt("euro_cnt"), parsed.getInt("euro_amt"));
+            insertTFnBoxOrg(parsed, safeData, "0010", "02", "9999", parsed.getInt("euro_cnt"), parsed.getInt("euro_amt"));
         }
 
         if(parsed.getInt("yen_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0010", "03", null, parsed.getInt("yen_cnt"), parsed.getInt("yen_amt"));
+            insertTFnBoxOrg(parsed, safeData, "0010", "03", "9999", parsed.getInt("yen_cnt"), parsed.getInt("yen_amt"));
         }
 
         if(parsed.getInt("yuan_cnt") > 0) {
-            insertTFnBoxOrg(parsed, safeData, "0010", "04", null, parsed.getInt("yuan_cnt"), parsed.getInt("yuan_amt"));
+            insertTFnBoxOrg(parsed, safeData, "0010", "04", "9999", parsed.getInt("yuan_cnt"), parsed.getInt("yuan_amt"));
         }
 
     }//end method

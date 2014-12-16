@@ -123,6 +123,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
 
         errMngMadeCom.setOrgCallCnt( parsed.getShort("org_call_cnt") );
         errMngMadeCom.setMtcCd( errBasic.getCrtNo() );
+        errMngMadeCom.setOrgSendYn("0");
         errMngMadeCom.setUpdateDate( safeData.getDSysDate() );
         errMngMadeCom.setUpdateUid  ( "ERRmng" );
 

@@ -55,7 +55,7 @@
                 '',
                 '','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_BRAND_SVC_FEE SVC, OP.T_CM_SITE_STATE SST
-        WHERE SVC.ORG_SEND_YN = '0'
+        WHERE nvl(SVC.ORG_SEND_YN, '0') = '0'
         AND SVC.DOC_NO IS NOT NULL
         AND SVC.UPDATE_UID IS NOT NULL
         AND SVC.ORG_CD = SST.ORG_CD

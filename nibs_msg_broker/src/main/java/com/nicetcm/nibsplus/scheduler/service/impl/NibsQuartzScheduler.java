@@ -88,8 +88,7 @@ public class NibsQuartzScheduler implements ScheduleExecuter
 
     @SuppressWarnings("unchecked")
     @Override
-    public void startSchedule() throws SchduleException
-    {
+    public void startSchedule() throws SchduleException {
         List<SchedulerVO> scheduleList = scheduleInfoProvider.selectEnableSchedule(System.getProperty("QUARTZ_NODE_NAME") == null ? "OrgSend" :  System.getProperty("QUARTZ_NODE_NAME"));
         
         if(scheduleList.size() == 0) {
@@ -118,17 +117,10 @@ public class NibsQuartzScheduler implements ScheduleExecuter
 
         //스케쥴리스트 반복
         for(SchedulerVO schedulerVO : scheduleList) {
-        	// if (!schedulerVO.getJobGroup().equals("NICE_ACPT")) continue;
-        	
-            Class<Job> jobClass = null;
-
-            try
-            {
-                jobClass = (Class<Job>)Class.forName(schedulerVO.getJobClass());
-
+            try {
                 JobKey jobKey = new JobKey(schedulerVO.getJobName(), schedulerVO.getJobGroup());
 
-                JobDetail jobA = JobBuilder.newJob(jobClass)
+                JobDetail jobA = JobBuilder.newJob((Class<Job>)Class.forName(schedulerVO.getJobClass()))
                                 .withIdentity(jobKey)
                                 .usingJobData(createJobDataMap(schedulerVO))
                                 .build();
@@ -144,26 +136,19 @@ public class NibsQuartzScheduler implements ScheduleExecuter
 
                 logger.info("[" + createCnt + "]" + schedulerVO.toPrettyString() + " ==> Fired");
                 createCnt++;
-
-                /*if(createCnt == 150) {
-                    break;
-                }*/
             } catch (Exception e) {
             	errorLogger.error(schedulerVO.toPrettyString() + " ==> MisFired !!!!!!!!!!!!!!!!!!!!!!!!", e.getCause());
                 throw new SchduleException(ExceptionType.VM_STOP, "MisFired Schedule");
             }
         }//end for
 
-        try
-        {
-
+        try {
             TriggerListener orgSendAllTriggerListener = new OrgSendAllTriggerListener(msgLogger, OrgSendAllTriggerListener.class.getSimpleName());
             
         	scheduler.getListenerManager().addTriggerListener(orgSendAllTriggerListener);
         	scheduler.start();
 
             logger.info(String.format("총 실행대상 스케쥴: %d개중 %d개 start", scheduleList.size(), createCnt-1));
-
         } catch (SchedulerException e) {
         	errorLogger.error(e.getMessage(), e.getCause());
         }

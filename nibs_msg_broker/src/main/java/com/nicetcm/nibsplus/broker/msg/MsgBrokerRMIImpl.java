@@ -31,6 +31,7 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
 
     public byte[] callBrokerSync(byte[] msg, int timeout) throws Exception {
 
+        Thread.currentThread().setName("main-" + Thread.currentThread().getId());
         byte[] respMsg = null;
         int defTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout"));
         DataSourceTransactionManager msgTX;
@@ -94,9 +95,9 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                 }
 
                 if( !msgThrdSafeData.isNoOutData() ) {
-                    rmiSyncAns.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), waitQ);
-                    rmiOrigMsg.putIfAbsent(msgPsr.getString("CM.trans_seq_no"), msg);
-                    MsgBrokerManageRMIImpl.putRMIOrigMsgAvailability(msgPsr.getString("CM.trans_seq_no"), msg);
+                    rmiSyncAns.putIfAbsent(String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), waitQ);
+                    rmiOrigMsg.putIfAbsent(String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), msg);
+                    MsgBrokerManageRMIImpl.putRMIOrigMsgAvailability(String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), msg);
                     try {
                         MsgBrokerProducer.putDataToPrd(msgPsr);
 
@@ -109,6 +110,7 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                         respMsg = waitQ.poll(defTimeout, TimeUnit.SECONDS);
                         if( respMsg == null )
                             throw new MsgBrokerTimeoutException(String.format("Timeout [%d]", timeout));
+                        logger.warn("Got Answer.[{}] [{}]", String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), new String(respMsg));
                      }
                      catch (InterruptedException ie ) {
                          logger.debug("Interrupted..");
@@ -131,9 +133,9 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
             }
         }
         finally {
-            MsgBrokerManageRMIImpl.removeRMIOrigMsgAvailability(msgPsr.getString("CM.trans_seq_no"));
-            rmiOrigMsg.remove(msgPsr.getString("CM.trans_seq_no"));
-            rmiSyncAns.remove(msgPsr.getString("CM.trans_seq_no"));
+            MsgBrokerManageRMIImpl.removeRMIOrigMsgAvailability(String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")));
+            rmiOrigMsg.remove(String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")));
+            rmiSyncAns.remove(String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")));
             msgPsr.clearMessage();
             logger.debug("remove element of rmiSyncAns");
         }

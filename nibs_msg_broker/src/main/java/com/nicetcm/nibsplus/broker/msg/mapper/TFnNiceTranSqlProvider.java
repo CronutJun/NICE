@@ -574,13 +574,13 @@ public class TFnNiceTranSqlProvider {
         if (record.getInstOrgCd() != null) {
             SET("INST_ORG_CD = #{instOrgCd,jdbcType=VARCHAR}");
         }
-        if (record.getInstBranchCd() != null) {
+        if (record.getInstBranchCd() != null && record.getInstBranchCd().trim().length() > 0) {
             SET("INST_BRANCH_CD = OP.FC_FN_SECURITY(#{instBranchCd,jdbcType=VARCHAR}, '1')");
         }
-        if (record.getAccountNo() != null) {
+        if (record.getAccountNo() != null && record.getAccountNo().trim().length() > 0) {
             SET("ACCOUNT_NO = OP.FC_FN_SECURITY(#{accountNo,jdbcType=VARCHAR}, '1')");
         }
-        if (record.getRealAccountNo() != null) {
+        if (record.getRealAccountNo() != null && record.getRealAccountNo().trim().length() > 0) {
             SET("REAL_ACCOUNT_NO = OP.FC_FN_SECURITY(#{realAccountNo,jdbcType=VARCHAR}, '1')");
         }
         if (record.getDealAmt() != null) {
@@ -595,10 +595,10 @@ public class TFnNiceTranSqlProvider {
         if (record.getTransOrgCd() != null) {
             SET("TRANS_ORG_CD = #{transOrgCd,jdbcType=VARCHAR}");
         }
-        if (record.getTransBranchCd() != null) {
+        if (record.getTransBranchCd() != null && record.getTransBranchCd().trim().length() > 0) {
             SET("TRANS_BRANCH_CD = OP.FC_FN_SECURITY(#{transBranchCd,jdbcType=VARCHAR}, '1')");
         }
-        if (record.getTransAccountNo() != null) {
+        if (record.getTransAccountNo() != null && record.getTransAccountNo().trim().length() > 0) {
             SET("TRANS_ACCOUNT_NO = OP.FC_FN_SECURITY(#{transAccountNo,jdbcType=VARCHAR}, '1')");
         }
         if (record.getTransDepositor() != null) {
@@ -688,7 +688,7 @@ public class TFnNiceTranSqlProvider {
         if (record.getBrandOrgCd() != null) {
             SET("BRAND_ORG_CD = #{brandOrgCd,jdbcType=VARCHAR}");
         }
-        if (record.getUserTelNo() != null) {
+        if (record.getUserTelNo() != null && record.getUserTelNo().trim().length() > 0) {
             SET("USER_TEL_NO = OP.FC_FN_SECURITY(#{userTelNo,jdbcType=VARCHAR}, '1')");
         }
         if (record.getGiftInitial() != null) {

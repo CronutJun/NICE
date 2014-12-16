@@ -138,9 +138,9 @@ public class In01001170Impl extends InMsgHandlerImpl {
                 throw new MsgBrokerException(-2);
             }
 
-            String hmsg = null;
+            String hmsg = tCtErrorMngMadeCom.getOrgMsg();
             if(parsed.getString("memo").length() > 0) {
-                hmsg = "[기-" + parsed.getString("memo") + "]";
+                hmsg = nstr(hmsg) + "[기-" + parsed.getString("memo") + "]";
             }
 
             parsed.setString("finish_tel_no", parsed.getString("finish_tel_no").replaceAll("-", ""));

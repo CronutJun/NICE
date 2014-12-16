@@ -1,9 +1,8 @@
 package com.nicetcm.nibsplus.broker.msg;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.HashMap;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.concurrent.BlockingQueue;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +14,6 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
 
     public static final Logger logger = LoggerFactory.getLogger(MsgBrokerManageRMIImpl.class);
 
-    private static final HashMap<String, MsgBrokerManageRMI> manageRMIs = new HashMap<String, MsgBrokerManageRMI>();
-
     public static void ansRMIAvailability( String transSeqNo, byte[] msg ) {
 
         try {
@@ -24,14 +21,11 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
             if( Boolean.parseBoolean(MsgCommon.msgProps.getProperty("rmi.availability", "false")) ) {
                 logger.debug("availability is true");
                 for( String svrIp: MsgCommon.msgProps.getProperty("rmi.availability.servers").split(",") ) {
-                    logger.debug("svrIp = {}", svrIp );
+                    logger.warn("svrIp = {}", svrIp );
                     if( svrIp.trim().length() > 0 ) {
-                        MsgBrokerManageRMI remoteObj = manageRMIs.get(svrIp);
-                        if( remoteObj == null ) {
-                            Registry registry = LocateRegistry.getRegistry(svrIp.trim(), Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port", "10199")));
-                            remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
-                            manageRMIs.put(svrIp.trim(), remoteObj);
-                        }
+                        Registry registry = LocateRegistry.getRegistry(svrIp.trim(), Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port", "10199")));
+                        MsgBrokerManageRMI remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
+                        logger.warn("Going to find remote waiter {}. [{}]", transSeqNo );
                         remoteObj.putRMIAns( transSeqNo, msg );
                     }
                 }
@@ -53,12 +47,8 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
                 for( String svrIp: MsgCommon.msgProps.getProperty("rmi.availability.servers").split(",") ) {
                     logger.debug("svrIp = {}", svrIp );
                     if( svrIp.trim().length() > 0 ) {
-                        MsgBrokerManageRMI remoteObj = manageRMIs.get(svrIp);
-                        if( remoteObj == null ) {
-                            Registry registry = LocateRegistry.getRegistry(svrIp.trim(), Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port", "10199")));
-                            remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
-                            manageRMIs.put(svrIp.trim(), remoteObj);
-                        }
+                        Registry registry = LocateRegistry.getRegistry(svrIp.trim(), Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port", "10199")));
+                        MsgBrokerManageRMI remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
                         remoteObj.putRMIOrigMsg( transSeqNo, msg );
                     }
                 }
@@ -80,12 +70,8 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
                 for( String svrIp: MsgCommon.msgProps.getProperty("rmi.availability.servers").split(",") ) {
                     logger.debug("svrIp = {}", svrIp );
                     if( svrIp.trim().length() > 0 ) {
-                        MsgBrokerManageRMI remoteObj = manageRMIs.get(svrIp);
-                        if( remoteObj == null ) {
-                            Registry registry = LocateRegistry.getRegistry(svrIp.trim(), Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port", "10199")));
-                            remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
-                            manageRMIs.put(svrIp.trim(), remoteObj);
-                        }
+                        Registry registry = LocateRegistry.getRegistry(svrIp.trim(), Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port", "10199")));
+                        MsgBrokerManageRMI remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
                         remoteObj.removeRMIOrigMsg( transSeqNo );
                     }
                 }
@@ -101,8 +87,10 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
     @Override
     public void putRMIAns(String transSeqNo, byte[] msg) throws Exception {
 
+        logger.warn("Going to find remote waiter [{}]", transSeqNo );
         BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(transSeqNo);
         if( waitQ != null ) {
+            logger.warn("Findout remote waiter {}. [{}]", waitQ, transSeqNo );
             waitQ.put( msg );
         }
     }

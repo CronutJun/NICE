@@ -129,7 +129,7 @@
 		AND MON.MAC_NO = SST.MAC_NO(+)
 		AND MON.BRANCH_CD = SVC.SERVICE_CD(+)
 		AND SVC.ORG_CD(+) = '003'
-		and MON.ORG_SEND_YN = '0'	
+		and nvl(MON.ORG_SEND_YN, '0') = '0'	
 		 --( MON.ORG_SEND_YN = '1' AND PNT.ORG_SEND_YN = '2' )		/* 20일(2차) 전송 조건 - 초기전송완료 && 최종페널티수신완료		*/
     ]]>
     </select>

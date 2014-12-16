@@ -32,7 +32,7 @@ public class MsgLogger {
 	private Map<String, File> logFiles = new HashMap<String, File>();
 
 	private Logger logger = Logger.getLogger(this.getClass());
-	private Logger errorLogger = Logger.getLogger("OrgSendERROR");
+	private Logger errorLogger = Logger.getLogger("rootError");
 	
 	public synchronized void info(String job, String org, String msg) {
 		logger.info(msg);

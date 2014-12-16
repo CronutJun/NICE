@@ -149,12 +149,14 @@ public class MsgBrokerWork {
                      * 존재하면 응답처리 한다.
                      */
                     else {
-                        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(msgPsr.getString("CM.trans_seq_no"));
+                        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")));
+                        logger.warn("Going to find waiter {}. - Normal [{}]", String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), waitQ );
                         if( waitQ != null && !msgThrdSafeData.isSkipAnswer() ) {
+                            logger.warn("Findout {}.", String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")) );
                             waitQ.put( msg );
                         }
                         else if( !msgThrdSafeData.isSkipAnswer() ) {
-                            MsgBrokerManageRMIImpl.ansRMIAvailability( msgPsr.getString("CM.trans_seq_no"), msg );
+                            MsgBrokerManageRMIImpl.ansRMIAvailability( String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), msg );
                         }
                     }
                 }
@@ -186,12 +188,19 @@ public class MsgBrokerWork {
                      * 존재하면 응답처리 한다.
                      */
                     else {
-                        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(msgPsr.getString("CM.trans_seq_no"));
+                        msgPsr.setString("CM.ret_cd_src", "S" );
+                        msgPsr.setString("CM.ret_cd",     "99");
+                        ByteBuffer buf = msgPsr.getMessage();
+                        byte[] retMsg = new byte[buf.limit()];
+                        buf.get( retMsg );
+                        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")));
+                        logger.warn("Going to find waiter {}. - ME [{}]", String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), waitQ );
                         if( waitQ != null && !msgThrdSafeData.isSkipAnswer() ) {
-                            waitQ.put( msg );
+                            logger.warn("Findout {}.", String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")) );
+                            waitQ.put( retMsg );
                         }
                         else if( !msgThrdSafeData.isSkipAnswer() ) {
-                            MsgBrokerManageRMIImpl.ansRMIAvailability( msgPsr.getString("CM.trans_seq_no"), msg );
+                            MsgBrokerManageRMIImpl.ansRMIAvailability( String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), msg );
                         }
                     }
                 }
@@ -221,12 +230,19 @@ public class MsgBrokerWork {
                      * 존재하면 응답처리 한다.
                      */
                     else {
-                        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(msgPsr.getString("CM.trans_seq_no"));
+                        msgPsr.setString("CM.ret_cd_src", "S" );
+                        msgPsr.setString("CM.ret_cd",     "99");
+                        ByteBuffer buf = msgPsr.getMessage();
+                        byte[] retMsg = new byte[buf.limit()];
+                        buf.get( retMsg );
+                        BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")));
+                        logger.warn("Going to find waiter {}. - E [{}]", String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), waitQ );
                         if( waitQ != null && !msgThrdSafeData.isSkipAnswer() ) {
-                            waitQ.put( msg );
+                            logger.warn("Findout {}.", String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")) );
+                            waitQ.put( retMsg );
                         }
                         else if( !msgThrdSafeData.isSkipAnswer() ) {
-                            MsgBrokerManageRMIImpl.ansRMIAvailability( msgPsr.getString("CM.trans_seq_no"), msg );
+                            MsgBrokerManageRMIImpl.ansRMIAvailability( String.format("%s:%s", msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_seq_no")), msg );
                         }
                     }
                     throw e;

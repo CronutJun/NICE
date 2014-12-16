@@ -96,7 +96,7 @@
         FROM OP.T_CT_SERVICE_FEE_MONTHLY       MON
             ,OP.T_CM_ACCOUNT                   ACC
         WHERE  MON.ORG_CD = '003'
-            AND MON.ORG_SEND_YN = '0'
+            AND nvl(MON.ORG_SEND_YN, '0') = '0'
             AND MON.ORG_CD = ACC.ORG_CD
             AND ACC.SERVICE_GB = '0'            /* 서비스구분    (0:일괄용역)    */
             AND ACC.USE_TYPE = '0'              /* 사용유형     (0:용역료계좌)   */

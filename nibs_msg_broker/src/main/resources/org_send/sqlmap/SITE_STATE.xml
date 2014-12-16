@@ -92,7 +92,7 @@
                 AND SST.BRANCH_CD = '9600'
                 AND MAC.MAC_MODEL = COM.SMALL_CD
                 AND COM.LARGE_CD = '2110'
-                AND sst.org_send_yn = '0'
+                AND nvl(sst.org_send_yn, '0') = '0'
     ]]>
     </select>
 </mapper>
