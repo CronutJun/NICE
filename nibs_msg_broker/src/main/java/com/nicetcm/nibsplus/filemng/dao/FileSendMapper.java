@@ -115,4 +115,8 @@ public interface FileSendMapper {
 	public List<LinkedHashMap<String, Object>> selectGetKFTCTranData(String pTransDate);
 	public List<LinkedHashMap<String, Object>> selectGetGiftCardInfoData();
 	public List<LinkedHashMap<String, Object>> selectGetCNOperData(String pTransDate);
+	public List<LinkedHashMap<String, Object>> selectShb230511(String pTransDate);
+	public List<LinkedHashMap<String, Object>> selectShb230521(String pTransDate);
+	public List<LinkedHashMap<String, Object>> selectShb230571(String pTransDate);
+	public List<LinkedHashMap<String, Object>> selectShb2305F1(String pTransDate);
 }

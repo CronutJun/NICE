@@ -222,7 +222,7 @@ public class In01001170Impl extends InMsgHandlerImpl {
             }
 
             /* 이미 완료된 건은 update 하지 않도록 한다. */
-            if(nstr(tCtErrorMng.getErrorStatus()).equals("0")) {
+            if(nstr(tCtErrorMng.getErrorStatus()).equals("7000")) {
                 logger.warn(String.format("[SaveErrArrSchdule] 완료장애에 대한 처리결과 수신 AS_ACPT_date[%s], ORG_CD[%s], JIJUM_CD[%s], MAC_NO[%s], ORG_CALL_CNT[%s]",
                                 parsed.getString("trans1_date"), parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), parsed.getString("org_call_cnt")));
                 throw new MsgBrokerException(-2);

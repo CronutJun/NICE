@@ -52,6 +52,15 @@ public class In05000110Impl extends InMsgHandlerImpl {
         TCtErrorCall errCall = new TCtErrorCall();
         TCtErrorTxn  errTxn  = new TCtErrorTxn();
 
+        /**
+         * 2014.12.17
+         * CM.msg_id = 'sSERVER'이면 응답처리 하지 않는다.
+         * KDJ
+         */
+        if( parsed.getString("CM.msg_id").equals("sSERVER") ) {
+            safeData.setNoResponse( true );
+        }
+
         macInfo.setOrgCd( parsed.getString("CM.org_cd") );
         macInfo.setBranchCd( parsed.getString("brch_cd") );
         macInfo.setMacNo( parsed.getString("mac_no") );

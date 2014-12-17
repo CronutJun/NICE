@@ -42,6 +42,7 @@ public class MsgBrokerWork {
             msgThrdSafeData = new MsgBrokerData();
             msgThrdSafeData.setKeepResData(true);
             msgThrdSafeData.setSkipAnswer(false);
+            msgThrdSafeData.setNoResponse(noResp);
             msgThrdSafeData.setSysDate(MsgBrokerLib.SysDate());
 
             MsgBrokerLib.BufferAndQName ret = MsgBrokerLib.allocAndFindSchemaName(msg, "I", true);
@@ -59,7 +60,8 @@ public class MsgBrokerWork {
                     RespAckNakHandler resp = (RespAckNakHandler)MsgBrokerSpringMain
                             .sprCtx.getBean("respAckNak");
                     resp.procAckNak( msgThrdSafeData, msgPsr, 0 );
-                    MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
+                    if( !msgPsr.getString("CM.msg_id").equals("sSERVER") )
+                        MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                     msgPsr.setString( "CM.msg_type",   msgPsr.getString("CM.msg_type").substring(0, 2) + MsgBrokerConst.REQ_CODE );
                     /*
                      * Redirection
@@ -140,8 +142,10 @@ public class MsgBrokerWork {
                             keepBuf.position(MsgBrokerConst.HEADER_LEN);
                             keepBuf.put(keepMsg);
                         }
-                        if( !this.forceResp && !this.noResp )
+                        if( !this.forceResp && !this.noResp && !msgThrdSafeData.isNoResponse() )
                             MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
+                        else
+                            logger.error("N-MSG : [{}]", msg.length);
                     }
                     /*
                      * nibsplus 또는 기타 AP요청의 응답인지
@@ -178,8 +182,10 @@ public class MsgBrokerWork {
                                 keepBuf.position(MsgBrokerConst.HEADER_LEN);
                                 keepBuf.put(keepMsg);
                             }
-                            if( !this.forceResp && !this.noResp )
+                            if( !this.forceResp && !this.noResp && !msgThrdSafeData.isNoResponse() )
                                 MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
+                            else
+                                logger.error("N-MSG : [{}]", msg.length);
                         }
                     }
                     /*
@@ -221,8 +227,10 @@ public class MsgBrokerWork {
                             keepBuf.position(MsgBrokerConst.HEADER_LEN);
                             keepBuf.put(keepMsg);
                         }
-                        if( !this.forceResp && !this.noResp )
+                        if( !this.forceResp && !this.noResp && !msgThrdSafeData.isNoResponse() )
                             MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
+                        else
+                            logger.error("N-MSG : [{}]", msg.length);
                     }
                     /*
                      * nibsplus 또는 기타 AP요청의 응답인지

@@ -92,6 +92,7 @@ public class MsgRmiTransfer implements MsgTransferService {
                 agent.callBrokerAync();
             }
         } catch (Exception e) {
+        	msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), String.format("Error %s", e.getMessage()));
         	errorLogger.error(String.format("%s %s\n%s", Thread.currentThread().getName(), e.getMessage(), msgBodyMap.toString()), e.getCause());
         }
     }//end method

@@ -987,4 +987,8 @@
 		{ call sp_job_tb_phs_push_svc_user }
 	</select>
 	
+	<select id="sp_if_get_lost_no" statementType="CALLABLE">
+		{ call sp_if_get_lost_no }
+	</select>
+	
 </mapper>

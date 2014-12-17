@@ -1251,4 +1251,9 @@ public class SqlServiceImpl implements SqlService {
 		}
 	}
 
+	@Override
+	public void SP_IF_GET_LOST_NO(Logger logger) {
+		sqlServiceMapper.sp_if_get_lost_no();
+	}
+
 }

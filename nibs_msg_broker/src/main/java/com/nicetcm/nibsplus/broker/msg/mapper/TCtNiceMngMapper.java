@@ -378,7 +378,7 @@ public interface TCtNiceMngMapper {
      * @since  Tue Jul 22 20:13:01 KST 2014
      */
     @Select({
-        "SELECT A.NET_S                                      ",
+        "SELECT A.NET_S AS NET_S                             ",
         "FROM   T_CT_NICE_MNG A,                             ",
         "       ( SELECT MAX(J_TIME) AS MAXTIME              ",
         "         FROM   T_CT_NICE_MNG                       ",
@@ -388,6 +388,9 @@ public interface TCtNiceMngMapper {
         "WHERE  A.J_TIME = B.MAXTIME                         ",
         "AND    A.J_DATE = #{jDate, jdbcType=VARCHAR}        ",
         "AND    A.MAC_NO = #{macNo, jdbcType=VARCHAR}        "
+    })
+    @Results({
+        @Result(column="NET_S", property="netS", jdbcType=JdbcType.VARCHAR)
     })
     TCtNiceMng selectByCond1( TCtNiceMng cond);
 }

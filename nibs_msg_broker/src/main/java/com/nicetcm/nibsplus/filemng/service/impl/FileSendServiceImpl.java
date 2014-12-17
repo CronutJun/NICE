@@ -78,12 +78,16 @@ public class FileSendServiceImpl implements FileSendService {
 			"088",
 			"488",
 			"B88",
-			"0SC",
+			// "0SC", // 20141217 담당자 요청으로 제거
 			"A07",
 			"007",
 			"000",
 			"0GV",
-			"2CN"
+			"2CN",
+			"23_0511",
+			"23_0521",
+			"23_0571",
+			"23_05F1"
 		};
 		int MAX_ORG_CNT = szaryOrg.length;
 
@@ -114,21 +118,21 @@ public class FileSendServiceImpl implements FileSendService {
 				// 금융결제원(KFTC)의 경우, 전체실행 시간인 01:30에 데이터가 없으므로, 제외한다. 
 				if ("000".equals(szOrgCd)) {
 					continue;
+				} else if ("2CN".equals(szOrgCd)) { // 7:50 분 별도로 스케쥴 지정
+					continue;
 				}
 
 				try {
 					putFtp(PutOrgTranFile(szTransDate, szOrgCd));
-				} catch(RuntimeException e) {
-					System.out.println(e.getMessage());
 				} catch(Exception e) {
-					e.printStackTrace();
+					System.err.println(e.getMessage());
 				}
 			}
 		} else {
 			try {
 				putFtp(PutOrgTranFile(szTransDate, szOrgCd));
 			} catch(Exception e) {
-				e.printStackTrace();
+				System.err.println(e.getMessage());
 			}
 		}
 		
@@ -237,6 +241,22 @@ public class FileSendServiceImpl implements FileSendService {
 			nRtn = GetGiftCardInfoData(pDate, szFilePath);
 		} else if( pOrgCd.equals("2CN") ) { /* 금융결제원(KFTC) */
 			nRtn = GetCNOperData(pDate, szFilePath);
+		} else if( pOrgCd.equals("23_0511") ) {
+			szFilePath = String.format("%s/%s", szSrcPath, String.format("%s_%s", pDate.substring(0, 6), pOrgCd));
+			
+			nRtn = shb230511(pDate, szFilePath);
+		} else if( pOrgCd.equals("23_0521") ) {
+			szFilePath = String.format("%s/%s", szSrcPath, String.format("%s_%s", pDate.substring(0, 6), pOrgCd));
+			
+			nRtn = shb230521(pDate, szFilePath);
+		} else if( pOrgCd.equals("23_0571") ) {
+			szFilePath = String.format("%s/%s", szSrcPath, String.format("%s_%s", pDate.substring(0, 6), pOrgCd));
+			
+			nRtn = shb230571(pDate, szFilePath);
+		} else if( pOrgCd.equals("23_05F1") ) {
+			szFilePath = String.format("%s/%s", szSrcPath, String.format("%s_%s", pDate.substring(0, 6), pOrgCd));
+			
+			nRtn = shb2305F1(pDate, szFilePath);
 		} else {
 			throw new RuntimeException(String.format("해당 기관없음 [%s]\n", pOrgCd));
 		}
@@ -269,7 +289,7 @@ public class FileSendServiceImpl implements FileSendService {
 		
 		hPreDate = fileSendMapper.pickupGetCNTranData(pTransDate);
 
-		List<LinkedHashMap<String, Object>> list = fileSendMapper.selectGetCNTranData(pTransDate);
+		List<LinkedHashMap<String, Object>> list = fileSendMapper.selectGetCNTranData(hPreDate);
 		Object[] rowValues;
 		
 		// fprintf( pfTran, "1%sKMC%*s\n", hPreDate, 58, " " );
@@ -289,7 +309,7 @@ public class FileSendServiceImpl implements FileSendService {
 			hDealNo = rowValues[7] != null ? rowValues[7].toString() : "";
 
 			// fprintf( fileWriter, "%.*s%.*s%.*s%.*s%.*s%.*s%.*s%.*s%*s\n", 1, hDataType, 8, hDealDate, 6, hDealTime, 16, hAccountNo, 8, hMacNo, 10, hDealAmt, 1, hDealStatus, 12, hDealNo, 8, " ");
-			fileWriter.write(String.format("%1s%8s%6s%16s%-8s%10s%1s%12s%8s", hDataType, hDealDate, hDealTime, hAccountNo.trim(), hMacNo, hDealAmt, hDealStatus, hDealNo, " "));
+			fileWriter.write(String.format("%1s%8s%6s%-16s%-8s%10s%1s%12s%8s", hDataType, hDealDate, hDealTime, hAccountNo.trim(), hMacNo, hDealAmt, hDealStatus, hDealNo, " "));
 			// fileWriter.newLine();
 
 			lnTotalAmt += Long.parseLong(hDealAmt);
@@ -636,9 +656,11 @@ public class FileSendServiceImpl implements FileSendService {
 			hAccountNo = rowValues[2] != null ? rowValues[2].toString() : "";
 			hDealAmt = rowValues[3] != null ? rowValues[3].toString() : "";
 			hDealNo = rowValues[4] != null ? rowValues[4].toString() : "";
+			
+			if (hAccountNo.length() > 19) hAccountNo = hAccountNo.substring(0, 19);
 
 			// fprintf( fileWriter, "%.*s%.*s%.*s%.*s%.*s\n", 8, hDealDate, 6, hDealTime, 19, hAccountNo, 18, hDealAmt, 12, hDealNo);
-			fileWriter.write(String.format("%8s%6s%-19s%18s%12s", hDealDate, hDealTime, hAccountNo.trim(), hDealAmt, hDealNo));
+			fileWriter.write(String.format("%8s%6s%-19s%18s%12s%17s", hDealDate, hDealTime, hAccountNo.trim(), hDealAmt, hDealNo, " "));
 			// fileWriter.newLine();
 	
 			lnTotalAmt = lnTotalAmt + Long.parseLong(hDealAmt);
@@ -1081,7 +1103,7 @@ public class FileSendServiceImpl implements FileSendService {
 				hMacNo = rowValues[7] != null ? rowValues[7].toString() : "";
 
 				// fprintf( fileWriter, "%.*s%.*s%.*s%.*s%.*s%.*s%.*s%.*s%*s\n", 1, hDataType, 2, hTradeType, 8, hDealDate, 6, hDealTime, 12, hDealNo, 16, hAccountNo, 7, hDealAmt, 4, hMacNo, 14, " ");
-				fileWriter.write(String.format("%1s%2s%8s%6s%12s%16s%7s%4s%14s", hDataType, hTradeType, hDealDate, hDealTime, hDealNo, hAccountNo.trim(), hDealAmt, hMacNo, " "));
+				fileWriter.write(String.format("%1s%2s%8s%6s%12s%-16s%7s%4s%14s", hDataType, hTradeType, hDealDate, hDealTime, hDealNo, hAccountNo.trim(), hDealAmt, hMacNo, " "));
 				// fileWriter.newLine();
 
 				lnTotalAmt = lnTotalAmt + Long.parseLong(hDealAmt);
@@ -1176,9 +1198,12 @@ public class FileSendServiceImpl implements FileSendService {
 			hTransOrgCd = rowValues[7] != null ? rowValues[7].toString() : "";
 			hTransAccountNo = rowValues[8] != null ? rowValues[8].toString() : "";
 			hDealStatus = rowValues[9] != null ? rowValues[9].toString() : "";
+			
+			if (hAccountNo.length() > 16) hAccountNo = hAccountNo.substring(0, 16);
+			if (hTransAccountNo.length() > 20) hTransAccountNo = hTransAccountNo.substring(0, 20);
 
 			// fprintf( fileWriter, "%.*s89%.*s%.*s%.*s%.*s%.*s%.*s00  %.*s%.*s%.*s%.*s%*s\n", 2, hDataType, 12, hDealNo, 16, hAccountNo, 8, hDealDate, 6, hDealTime, 13, hDealAmt, 1, hTradeType, 6, hDealTime, 2, hTransOrgCd, 20, hTransAccountNo, 1, hDealStatus, 107, " ");
-			fileWriter.write(String.format("%2s89%12s%16s%8s%6s%13s%1s00  %6s%2s%20s%1s%107s", hDataType, hDealNo, hAccountNo.trim(), hDealDate, hDealTime, hDealAmt, hTradeType, hDealTime, hTransOrgCd, hTransAccountNo, hDealStatus, " "));
+			fileWriter.write(String.format("%2s89%12s%-16s%8s%6s%13s%1s00  %6s%2s%-20s%1s%107s", hDataType, hDealNo, hAccountNo.trim(), hDealDate, hDealTime, hDealAmt, hTradeType, hDealTime, hTransOrgCd, hTransAccountNo, hDealStatus, " "));
 			// fileWriter.newLine();
 
 			lnTotalAmt = lnTotalAmt + Long.parseLong(hDealAmt);
@@ -3742,6 +3767,98 @@ public class FileSendServiceImpl implements FileSendService {
 
 		fileWriter.close();
 
+		return 0;
+	}
+
+	private int shb230511(String pTransDate, String pFileName) throws IOException {
+		new File(pFileName).createNewFile();
+		BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pFileName), "KSC5601"));
+
+		if( !"01".equals(pTransDate.substring(6)) ) {
+			throw new RuntimeException("매월 01일에만 전송 하도록 함.\n" );
+		}
+
+		List<LinkedHashMap<String, Object>> list = fileSendMapper.selectShb230511(pTransDate.substring(0, 6));
+		Object[] rowValues;
+
+		for (LinkedHashMap<String, Object> obj : list) {
+			rowValues = obj.values().toArray(new Object[obj.size()]);
+			
+			fileWriter.write((String)rowValues[0]);
+			fileWriter.newLine();
+	    }
+
+		fileWriter.close();
+		
+		return 0;
+	}
+
+	private int shb230521(String pTransDate, String pFileName) throws IOException {
+		new File(pFileName).createNewFile();
+		BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pFileName), "KSC5601"));
+
+		if( !"01".equals(pTransDate.substring(6)) ) {
+			throw new RuntimeException("매월 01일에만 전송 하도록 함.\n" );
+		}
+
+		List<LinkedHashMap<String, Object>> list = fileSendMapper.selectShb230521(pTransDate.substring(0, 6));
+		Object[] rowValues;
+
+		for (LinkedHashMap<String, Object> obj : list) {
+			rowValues = obj.values().toArray(new Object[obj.size()]);
+			
+			fileWriter.write((String)rowValues[0]);
+			fileWriter.newLine();
+	    }
+
+		fileWriter.close();
+		
+		return 0;
+	}
+
+	private int shb230571(String pTransDate, String pFileName) throws IOException {
+		new File(pFileName).createNewFile();
+		BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pFileName), "KSC5601"));
+
+		if( !"01".equals(pTransDate.substring(6)) ) {
+			throw new RuntimeException("매월 01일에만 전송 하도록 함.\n" );
+		}
+
+		List<LinkedHashMap<String, Object>> list = fileSendMapper.selectShb230571(pTransDate.substring(0, 6));
+		Object[] rowValues;
+
+		for (LinkedHashMap<String, Object> obj : list) {
+			rowValues = obj.values().toArray(new Object[obj.size()]);
+			
+			fileWriter.write((String)rowValues[0]);
+			fileWriter.newLine();
+	    }
+
+		fileWriter.close();
+		
+		return 0;
+	}
+
+	private int shb2305F1(String pTransDate, String pFileName) throws IOException {
+		new File(pFileName).createNewFile();
+		BufferedWriter fileWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pFileName), "KSC5601"));
+
+		if( !"01".equals(pTransDate.substring(6)) ) {
+			throw new RuntimeException("매월 01일에만 전송 하도록 함.\n" );
+		}
+
+		List<LinkedHashMap<String, Object>> list = fileSendMapper.selectShb2305F1(pTransDate.substring(0, 6));
+		Object[] rowValues;
+
+		for (LinkedHashMap<String, Object> obj : list) {
+			rowValues = obj.values().toArray(new Object[obj.size()]);
+			
+			fileWriter.write((String)rowValues[0]);
+			fileWriter.newLine();
+	    }
+
+		fileWriter.close();
+		
 		return 0;
 	}
 	

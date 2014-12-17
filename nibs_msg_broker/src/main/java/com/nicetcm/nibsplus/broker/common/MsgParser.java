@@ -503,7 +503,7 @@ public class MsgParser {
                 else {
                     for( int i = 0; i < fData.adata.size(); i++ ) {
                         aName = String.format("%s[%d]", fName, i);
-                        if( fData.refFmt.schema != null ) {
+                        if( fData.refFmt != null && fData.refFmt.schema != null ) {
                             getAllFields(aName, fData.adata.get(i), trg);
                         }
                         else {
@@ -524,15 +524,24 @@ public class MsgParser {
 
     }
 
-    public void printMsgData() throws Exception {
+    public void printMsgData(String type) throws Exception {
+
         Map<String, MsgData> datas = getAllFields();
-        Entry<String, MsgData> e = null;
-        logger.warn("===============================================================================================");;
-        while( datas.entrySet().iterator().hasNext() ) {
-            e = datas.entrySet().iterator().next();
-            logger.warn(String.format("FieldName : [%-30s], FieldValue = [%s]", e.getKey(), new String(e.getValue().getBytes())));
+
+        if( type != null && type.equals("S") )
+            System.out.println("===============================================================================================");
+        else
+            logger.warn("===============================================================================================");
+        for( Entry<String, MsgData> e : datas.entrySet() ) {
+            if( type != null && type.equals("S") )
+                System.out.println(String.format("FieldName : [%-30s], FieldValue = [%s]", e.getKey(), new String(e.getValue().getBytes())));
+            else
+                logger.warn(String.format("FieldName : [%-30s], FieldValue = [%s]", e.getKey(), new String(e.getValue().getBytes())));
         }
-        logger.warn("===============================================================================================");;
+        if( type != null && type.equals("S") )
+            System.out.println("===============================================================================================");
+        else
+            logger.warn("===============================================================================================");
     }
 
 

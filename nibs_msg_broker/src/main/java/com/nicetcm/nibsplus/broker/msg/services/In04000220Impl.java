@@ -623,7 +623,7 @@ public class In04000220Impl extends InMsgHandlerImpl {
             }
 
             logger.warn( String.format("[T_CT_PENALTY_LIST] Update Complete ORG_CD[%s] JIJUM_CD[%s] MAC_NO[%s] CREATE_DATE[%s] CREATE_TIME[%s]",
-                            parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("create_date"), parsed.getString("create_time"))  );
+                            parsed.getString("CM.org_cd"), parsed.getString("brch_cd"), parsed.getString("mac_no"), parsed.getString("create_date"), parsed.getString("create_time"))  );
         }//endof 나이스에서 송신한 요청에 대한 응답일경우
     }//end method
 }

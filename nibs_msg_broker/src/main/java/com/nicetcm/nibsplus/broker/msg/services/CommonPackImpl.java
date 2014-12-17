@@ -600,7 +600,7 @@ public class CommonPackImpl implements CommonPack {
                  */
                 if( nstr(ErrBasic.getErrorCd()).equals("NI912") && retASI.waitTime >= 24*60 ) {
                     ErrNoti.setSendType( "9" );
-                    ErrBasic.setOrgMsg(ErrBasic.getOrgMsg().trim() + "==>등급관리 기기로 24시간 이후 통보예정 ");
+                    ErrBasic.setOrgMsg(nstr(ErrBasic.getOrgMsg()).trim() + "==>등급관리 기기로 24시간 이후 통보예정 ");
                 }
                 else {
                     /*

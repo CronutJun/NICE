@@ -285,4 +285,6 @@ public interface SqlServiceMapper {
 
 	public String sp_fn_ktis_close(Map<String, Object> paramObj);
 
+	public void sp_if_get_lost_no();
+
 }

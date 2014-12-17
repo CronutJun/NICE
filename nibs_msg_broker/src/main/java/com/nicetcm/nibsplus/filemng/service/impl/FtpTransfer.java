@@ -23,9 +23,9 @@ public class FtpTransfer {
 		vo.setAvailableServerPort(21);
 		vo.setUserId("master");
 		vo.setPassword("master");
-		vo.setRemotePath("/aa");
-		vo.setFileName("20140430.txt");
-		vo.setLocalPath("/");
+		vo.setRemotePath("/");
+		vo.setFileName("S20141215007");
+		vo.setLocalPath("C:/Users/Administrator/Desktop/패키지/ftp_sample/host_file/tobe/");
 		//vo.setFileName("test.txt");
 		
 		FtpTransfer.putFile(vo);
@@ -145,7 +145,7 @@ public class FtpTransfer {
                 throw new FileMngException(ExceptionType.NETWORK, "ftp 서버에 로그인하지 못했습니다.");
             }
 
-            ftp.setFileType(FTP.ASCII_FILE_TYPE);
+            ftp.setFileType(FTP.BINARY_FILE_TYPE);
             ftp.enterLocalPassiveMode();
 
             ftp.setKeepAlive(true);

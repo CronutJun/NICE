@@ -24,6 +24,7 @@ import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
 import com.nicetcm.nibsplus.broker.msg.rmi.MsgBrokerCallBack;
 import com.nicetcm.nibsplus.filemng.dao.ERRMonMapper;
 import com.nicetcm.nibsplus.filemng.rmi.MsgBrokerCallAgent;
+import com.nicetcm.nibsplus.orgsend.common.MsgLogger;
 
 /**
  * 여기에 클래스(한글)명.
@@ -43,6 +44,7 @@ public class ERRMonJob implements Job {
 	private static final String hBranchCd = "9600";
 	
 	private ERRMonMapper errMonMapper;
+	private MsgLogger msgLogger;
 
 	@Override
 	public void execute(JobExecutionContext context) {
@@ -51,7 +53,8 @@ public class ERRMonJob implements Job {
         if (MsgBrokerCallAgent.msgBrokerConfig == null) {
         	MsgBrokerCallAgent.msgBrokerConfig = (Properties)applicationContext.getBean("msgBrokerConfig");
         }
-        
+
+        msgLogger = applicationContext.getBean("msgLogger", MsgLogger.class);
 		errMonMapper = applicationContext.getBean("ERRMonMapper", ERRMonMapper.class);
 		errMonMapper.mainWhileDelete1();
 		errMonMapper.mainWhileDelete2();
@@ -224,6 +227,8 @@ public class ERRMonJob implements Job {
 		}
 		
 		List<HashMap<String, Object>> list = errMonMapper.selectNiceTranICNotranErrorProc();
+
+		msgLogger.info("ERRMON", "SH", String.format("selectNiceTranICNotranErrorProc : %d 건", list.size()));
 		
 		for (HashMap<String, Object> obj : list) {
 			try {
@@ -247,6 +252,8 @@ public class ERRMonJob implements Job {
 	 */
 	private int niceEemptySensorRepairProc() {
 		List<HashMap<String, Object>> list = errMonMapper.selectNiceEemptySensorRepairProc();
+
+		msgLogger.info("ERRMON", "SH", String.format("selectNiceEemptySensorRepairProc : %d 건", list.size()));
 		
 		for (HashMap<String, Object> obj : list) {
 			errMonMapper.updateNiceEemptySensorRepairProc(obj);
@@ -266,6 +273,8 @@ public class ERRMonJob implements Job {
 	private int niceCashLackRepairProc() {
 		List<HashMap<String, Object>> list = errMonMapper.selectNiceCashLackRepairProc();
 
+		msgLogger.info("ERRMON", "SH", String.format("selectNiceCashLackRepairProc : %d 건", list.size()));
+
 		for (HashMap<String, Object> obj : list) {
 			errMonMapper.updateNiceCashLackRepairProc(obj);
 			errMonMapper.updateNiceCashLackRepairProc2(obj);
@@ -283,6 +292,8 @@ public class ERRMonJob implements Job {
 	 */
 	private int niceDoorCheckErrorProc() {
 		List<String> list = errMonMapper.selectNiceDoorCheckErrorProc();
+		
+		msgLogger.info("ERRMON", "SH", String.format("selectNiceDoorCheckErrorProc : %d 건", list.size()));
 		
 		for (String mapNo : list) {
 			try {
@@ -319,6 +330,8 @@ public class ERRMonJob implements Job {
 		{
 			list = errMonMapper.selectSHCashLackErrorProc();
 			
+			msgLogger.info("ERRMON", "SH", String.format("selectSHCashLackErrorProc : %d 건", list.size()));
+			
 			for (HashMap<String, Object> obj : list) {
 				orgCd = obj.get("ORG_CD").toString();
 				branchCd = obj.get("BRANCH_CD").toString();
@@ -338,6 +351,8 @@ public class ERRMonJob implements Job {
 			1000만원 이상의 기기목록을 구하여 장애복구전문을 만든다.	*/
 		{
 			list = errMonMapper.selectSHCashLackErrorProc2();
+
+			msgLogger.info("ERRMON", "SH", String.format("selectSHCashLackErrorProc2 : %d 건", list.size()));
 			
 			for (HashMap<String, Object> obj : list) {
 				orgCd = obj.get("ORG_CD").toString();
@@ -376,6 +391,8 @@ public class ERRMonJob implements Job {
 		List<HashMap<String, Object>> list = errMonMapper.selectNiceInqRemAmtErrorProc(hOrgCd, hBranchCd);
 		String prevMacNo = null, n05Str = null, atmDealNo = null, outAtmAtmDealNo = null;
 		String macNo, dealType;
+
+		msgLogger.info("ERRMON", "SH", String.format("selectNiceInqRemAmtErrorProc : %d 건", list.size()));
 		
 		for (HashMap<String, Object> obj : list) {
 			macNo = obj.get("MAC_NO").toString();
@@ -423,8 +440,8 @@ public class ERRMonJob implements Job {
 		}
 		
 		if (prevMacNo != null) {
-			if (outAtmAtmDealNo.length() > 0) {
-				if (n05Str.length() >= 7) {
+			if (outAtmAtmDealNo != null && outAtmAtmDealNo.length() > 0) {
+				if (n05Str != null && n05Str.length() >= 7) {
 					try {
 						niceTranErrorSendProc( 5, prevMacNo );
 					} catch(Exception e) {
@@ -468,6 +485,8 @@ public class ERRMonJob implements Job {
 		List<HashMap<String, Object>> list = errMonMapper.selectNiceCashLackErrorProc();
 		String macNo;
 		int shortCashStatus;
+
+		msgLogger.info("ERRMON", "SH", String.format("selectNiceCashLackErrorProc : %d 건", list.size()));
 		
 		for (HashMap<String, Object> obj : list) {
 			macNo = obj.get("MAC_NO").toString();
@@ -514,6 +533,8 @@ public class ERRMonJob implements Job {
 		List<HashMap<String, Object>> list = errMonMapper.selectNiceTranRepairErrorProc(hOrgCd, hBranchCd, "NI906");
 		String prevMacNo = null, prevAtmDealNo = null;
 		String macNo, dealType, atmDealNo;
+
+		msgLogger.info("ERRMON", "SH", String.format("selectNiceTranRepairErrorProc : %d 건", list.size()));
 		
 		for(HashMap<String, Object> obj : list) {
 			macNo = obj.get("mac_no").toString();
@@ -521,7 +542,7 @@ public class ERRMonJob implements Job {
 			atmDealNo = obj.get("atm_deal_no").toString();
 			
 			if (prevMacNo != null && prevMacNo.equals(macNo)) {
-				if (dealType.length() >= 3) {
+				if (dealType != null && dealType.length() >= 3) {
 					try {
 						niceTranRepairErrorUpdateProc( prevMacNo, prevAtmDealNo);
 					} catch(Exception e) {
@@ -568,6 +589,8 @@ public class ERRMonJob implements Job {
 		int toDayWeek, totNoTrade, oneOperTime, noTradeBase;
 		int nIdx;
 		int isSkip = 0;
+
+		msgLogger.info("ERRMON", "SH", String.format("selectNiceTranNotranErrorProc : %d 건", list.size()));
 		
 		for (HashMap<String, Object> obj : list) {
 			macNo = obj.get("MAC_NO").toString();
@@ -645,6 +668,8 @@ public class ERRMonJob implements Job {
 		StringBuilder strN02 = new StringBuilder();
 		StringBuilder strN03 = new StringBuilder();
 		StringBuilder strDealStatus = new StringBuilder();
+
+		msgLogger.info("ERRMON", "SH", String.format("selectNiceTranPickErrorProc : %d 건", list.size()));
 		
 		for (HashMap<String, Object> obj : list) {
 			macNo = obj.get("MAC_NO").toString();
@@ -656,7 +681,7 @@ public class ERRMonJob implements Job {
 				logger( ">>>>mac_no[%s][%s] deal_no[%s][%s] deal_status[%s]\n",
 				hMAC_NO, prev_mac_no, hATM_DEAL_NO, prev_atm_deal_no, deal_status );
 				*/
-				if ( strDealStatus.length() >= 3 ) {
+				if ( strDealStatus != null && strDealStatus.length() >= 3 ) {
 					try {
 						niceTranErrorUpdateProc( prevMacNo, prevAtmDealNo);
 					} catch(Exception e) {
@@ -748,6 +773,8 @@ public class ERRMonJob implements Job {
 	private int dgNotOpenErrorProc(String orgCd) {
 		List<HashMap<String, Object>> list = errMonMapper.selectDGNotOpenErrorProc(orgCd);
 		String hOrgCd, hBranchCd, hMacNo;
+
+		msgLogger.info("ERRMON", "SH", String.format("selectDGNotOpenErrorProc : %d 건", list.size()));
 		
 		for (HashMap<String, Object> obj : list) {
 			hOrgCd = obj.get("org_cd").toString();
@@ -893,7 +920,7 @@ public class ERRMonJob implements Job {
                 parsed.setString("atm_state", "0" );
                 parsed.setString("atm_cash", "000000000" );
                 parsed.setString("atm_dummy", "00000000000000000000" );
-                parsed.setString("user_made_err", String.valueOf(errNo));
+                parsed.setString("user_made_err", Integer.toHexString(errNo));
                 
                 for(int i=0; i<29; i++ ) {
                       parsed.setString("atm_hw_error[" + i + "]", "000" );

@@ -85,7 +85,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
          * 러시앤캐시 서비스 종료.
          * 웰컴저축은행인 경우 문자 전송
          */
-        if( parsed.getString("deal_type").equals("36000") && parsed.getString("CM.org_cd").equals("0WJ") ) {
+        if( parsed.getString("deal_type").equals("36000") && parsed.getString("inst_org_cd").equals("0WJ") ) {
             String sMsg = String.format("[웰컴저축은행]상담신청이 완료되어 빠른시간내에 연락드리겠습니다.");
 
             TMisc arg = new TMisc();

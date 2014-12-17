@@ -16,6 +16,10 @@ public class MsgBrokerData {
      */
     private boolean keepResData = false;
     /**
+     * Inbound 요청전문 응답여부
+     */
+    private boolean noResponse = false;
+    /**
      * Outbound Queue에 write여부 (요청여부), WEB(AP)에서 요청을 바로 기관에 전달하지 않고 통신서버가 응답하는 경우가 있음.
      */
     private boolean noOutData = false;
@@ -74,6 +78,14 @@ public class MsgBrokerData {
 
     public void setKeepResData(boolean keepResData) {
         this.keepResData = keepResData;
+    }
+
+    public boolean isNoResponse() {
+        return noResponse;
+    }
+
+    public void setNoResponse(boolean noResponse) {
+        this.noResponse = noResponse;
     }
 
     public boolean isNoOutData() {

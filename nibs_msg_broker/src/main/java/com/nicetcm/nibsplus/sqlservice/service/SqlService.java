@@ -144,4 +144,6 @@ public interface SqlService {
 	
 	// 추가
 	public String SP_FN_KTIS_CLOSE(Logger logger, String param);
+	
+	public void SP_IF_GET_LOST_NO(Logger logger);
 }

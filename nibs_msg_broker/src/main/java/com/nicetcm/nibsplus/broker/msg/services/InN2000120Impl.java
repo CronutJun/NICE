@@ -158,6 +158,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         TCtErrorCall errCall = new TCtErrorCall();
         TCtErrorTxn  errTxn  = new TCtErrorTxn();
 
+        /**
+         * 2014.12.17
+         * CM.msg_id = 'sSERVER'이면 응답처리 하지 않는다.
+         * KDJ
+         */
+        if( parsed.getString("CM.msg_id").equals("sSERVER") ) {
+            safeData.setNoResponse( true );
+        }
         /*
          * NICE ATM H/W 장애
          */
@@ -519,8 +527,11 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                 /*
                  * 유저정의 장애는 응답송신하지 않는다.
+                 * 2014/12/17 는 막는다 'sSERVER'로 응답 송신하지않고 MsgBrokerException처리하면 Rollback 하기때문.. KDJ
                  */
+                /*
                 throw new MsgBrokerException("유저정의 장애는 응답송신하지 않는다", -99);
+                */
             }
             /*
              * 608(회선장애) 발생후 302(회선복구) 발생하지않고 301(장애), 001(개국) 이 발생하면
@@ -988,7 +999,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     List<TCmMac> rslt = cmMacMap.selectBySpec( cmMacSpec );
                     if( rslt.size() == 1 ) {
                         TCmMac cmMac = rslt.get(0);
-                        msgPsr.setString( "DES_board_yn", cmMac.getDesYn() );       // DES보드가능구분
+                        msgPsr.setString( "des_board_yn", cmMac.getDesYn() );       // DES보드가능구분
                         if( cmMac.getBillUseType().equals("6") )
                             msgPsr.setString( "cash_50000_yn", "2" );               // 현금5만원권가능구분
                         else
@@ -1023,9 +1034,9 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 catch ( Exception e ) {
                     // No handling
                 }
-                msgPsr.setString( "EMV_yn",        "0" )                           // EMV가능구분
-                      .setString( "IR_yn",         "0" )                           // IR가능구분
-                      .setString( "RF_yn",         "0" )                           // RF가능구분
+                msgPsr.setString( "emv_yn",        "0" )                           // EMV가능구분
+                      .setString( "ir_yn",         "0" )                           // IR가능구분
+                      .setString( "rf_yn",         "0" )                           // RF가능구분
                       .setString( "thumb_print_yn","0" );                          // 지문인식가능구분
                 /*
                  * 개국전문 - 개국 or 장애복구

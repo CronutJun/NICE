@@ -73,6 +73,7 @@
 		                <entry key="SET_FAC"                value="02001230" />     <!-- 40. 우리은행시설물관리-->
 		                <entry key="SET_ENV"                value="02001240" />     <!-- 39. 우리은행환경관리-->
 		                <entry key="SITE_STATE"             value="02001340" />     <!-- 49. 코너(기기)현황-->
+		                <entry key="SET_FAC_RSLT"           value="02001360" />     <!-- -->
 
 		                <!-- CM -->
 		                <entry key="DAY_CLOSE"              value="03000320" />     <!-- 59. 일마감-->

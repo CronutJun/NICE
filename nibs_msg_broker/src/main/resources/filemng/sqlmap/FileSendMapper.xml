@@ -2225,4 +2225,126 @@
 		    )card_list
 	    ]]>
 	</select>
+	
+	<select id="selectShb230511" resultType="java.util.LinkedHashMap">
+		select  substr(nvl(branch_cd||mac_no , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(create_date       , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(create_time       , '-'), 1, 10 )  ||'|'||
+		        substr(nvl(org_call_cnt      , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(out_type          , '-'), 1, 1  )  ||'|'||
+		        substr(nvl(branch_cd         , '-'), 1, 4  )  ||'|'||
+		        substr(nvl(branch_nm         , '-'), 1, 100)  ||'|'||
+		        substr(nvl(site_cd           , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(site_nm           , '-'), 1, 40 )  ||'|'||
+		        substr(nvl(mac_no            , '-'), 1, 4  )  ||'|'||
+		        substr(nvl(recv_place_cd     , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(error_msg         , '-'), 1, 400)  ||'|'||
+		        substr(nvl(call_date         , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(call_time         , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(arrival_date      , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(arrival_time      , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(arrival_span_sec  , 0), 1, 8  )  ||'|'||
+		        substr(nvl(result_msg        , '-'), 1, 800)  ||'|'||
+		        substr(nvl(accept_yn         , '-'), 1, 1  )  ||'|'||
+		        substr(nvl(reason            , '-'), 1, 400) as data
+		from op.T_CT_PENALTY_LIST_SH
+		where substr(create_date, 0, 6) = #{pTransDate}
+		and cont_type = '1'
+	</select>
+	
+	<select id="selectShb230521" resultType="java.util.LinkedHashMap">
+		select  substr(nvl(branch_cd||mac_no , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(create_date       , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(create_time       , '-'), 1, 10 )  ||'|'||
+		        substr(nvl(recv_place_cd     , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(branch_cd         , '-'), 1, 4  )  ||'|'||
+		        substr(nvl(branch_nm         , '-'), 1, 100)  ||'|'||
+		        substr(nvl(site_cd           , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(site_nm           , '-'), 1, 40 )  ||'|'||
+		        substr(nvl(mac_no            , '-'), 1, 4  )  ||'|'||
+		        substr(nvl(repair_date       , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(repair_time       , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(repair_span_time  , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(repair_span_sec   , '-'), 1, 8  )  ||'|'||        
+		        substr(nvl(error_msg         , '-'), 1, 40 )  ||'|'||
+		        substr(nvl(mac_model_nm      , '-'), 1, 40 )  ||'|'||
+		        substr(nvl(accept_yn         , '-'), 1, 1  )  ||'|'||
+		        substr(nvl(reason            , '-'), 1, 400) as data
+		from op.T_CT_PENALTY_LIST_SH
+		where substr(create_date, 0, 6) = #{pTransDate}
+		and cont_type = '2'
+	</select>
+	
+	<select id="selectShb230571" resultType="java.util.LinkedHashMap">
+		select  substr(nvl(branch_cd||mac_no , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(create_date       , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(create_time       , '-'), 1, 10 )  ||'|'||
+		        substr(nvl(org_call_cnt      , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(cust_yn           , '-'), 1, 1  )  ||'|'||
+		        substr(nvl(except_check      , '-'), 1, 10 )  ||'|'||
+		        substr(nvl(recv_place_cd     , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(call_type         , '-'), 1, 10 )  ||'|'||
+		        substr(nvl(branch_cd         , '-'), 1, 4  )  ||'|'||
+		        substr(nvl(branch_nm         , '-'), 1, 100)  ||'|'||
+		        substr(nvl(site_cd           , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(site_nm           , '-'), 1, 50 )  ||'|'||
+		        substr(nvl(place_type        , '-'), 1, 20 )  ||'|'||
+		        substr(nvl(region_type       , '-'), 1, 10 )  ||'|'||
+		        substr(nvl(mac_no            , '-'), 1, 4  )  ||'|'||
+		        substr(nvl(out_type_nm       , '-'), 1, 10 )  ||'|'||        
+		        substr(nvl(call_date         , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(call_time         , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(arr_est_date      , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(arr_est_time      , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(arrival_date      , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(arrival_time      , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(arrival_type      , '-'), 1, 20 )  ||'|'||
+		        substr(nvl(arrival_span_time ,   0), 1, 8  )  ||'|'||
+		        substr(nvl(arrival_span_sec  ,   0), 1, 8  )  ||'|'||
+		        substr(nvl(arrival_obey_time ,   0), 1, 8  )  ||'|'||
+		        substr(nvl(arrival_obey_sec  ,   0), 1, 8  )  ||'|'||
+		        substr(nvl(report_est_date   , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(report_est_time   , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(result_msg        , '-'), 1, 40)  ||'|'||
+		        substr(nvl(mac_model_nm      , '-'), 1, 40 )  ||'|'||
+		        substr(nvl(accept_yn         , '-'), 1, 1  )  ||'|'||
+		        substr(nvl(reason            , '-'), 1, 400) as data        
+		from op.T_CT_PENALTY_LIST_SH
+		where substr(create_date, 0, 6) = #{pTransDate}
+		and cont_type = '3'
+	</select>
+	
+	<select id="selectShb2305F1" resultType="java.util.LinkedHashMap">
+		select  substr(nvl(branch_cd||mac_no , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(create_date       , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(create_time       , '-'), 1, 10 )  ||'|'||
+		        substr(nvl(org_call_cnt      , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(recv_place_cd     , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(branch_cd         , '-'), 1, 4  )  ||'|'||
+		        substr(nvl(branch_nm         , '-'), 1, 100)  ||'|'||
+		        substr(nvl(site_cd           , '-'), 1, 2  )  ||'|'||
+		        substr(nvl(site_nm           , '-'), 1, 50 )  ||'|'||
+		        substr(nvl(place_type        , '-'), 1, 20 )  ||'|'||
+		        substr(nvl(region_type       , '-'), 1, 10 )  ||'|'||
+		        substr(nvl(mac_no            , '-'), 1, 4  )  ||'|'||
+		        substr(nvl(out_type_nm       , '-'), 1, 20 )  ||'|'||
+		        substr(nvl(result_msg        , '-'), 1, 20 )  ||'|'||        
+		        substr(nvl(call_date         , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(call_time         , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(arrival_date      , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(arrival_time      , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(finish_date       , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(finish_time       , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(repair_date       , '-'), 1, 8  )  ||'|'||
+		        substr(nvl(repair_time       , '-'), 1, 6  )  ||'|'||
+		        substr(nvl(repair_span_time  ,   0), 1, 8  )  ||'|'||
+		        substr(nvl(repair_span_sec   ,   0), 1, 8  )  ||'|'||
+		        substr(nvl(error_msg         , '-'), 1, 40  ) ||'|'||
+		        substr(nvl(mac_model_nm      , '-'), 1, 40 )  ||'|'||
+		        substr(nvl(accept_yn         , '-'), 1, 1  )  ||'|'||
+		        substr(nvl(reason            , '-'), 1, 400) as data        
+		from op.T_CT_PENALTY_LIST_SH
+		where substr(create_date, 0, 6) = #{pTransDate}
+		and cont_type = '4'
+	</select>
 </mapper>

@@ -68,6 +68,10 @@
     </beans>
 
     <beans>
+    	<bean id="msgLogger" class="com.nicetcm.nibsplus.orgsend.common.MsgLogger">
+    		<property name="logPath"><value>#{config['log.path']}</value></property>
+    	</bean>
+    	
         <!-- Spring Service Bean 로딩 -->
         <context:component-scan base-package="com.nicetcm.nibsplus.filemng">
             <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
