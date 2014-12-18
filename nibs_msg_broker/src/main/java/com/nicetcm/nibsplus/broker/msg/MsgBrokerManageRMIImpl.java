@@ -25,7 +25,7 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
                     if( svrIp.trim().length() > 0 ) {
                         Registry registry = LocateRegistry.getRegistry(svrIp.trim(), Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port", "10199")));
                         MsgBrokerManageRMI remoteObj = (MsgBrokerManageRMI)registry.lookup("MsgBrokerManageRMI");
-                        logger.warn("Going to find remote waiter {}. [{}]", transSeqNo );
+                        logger.warn("Going to find remote awaiter {}. [{}]", transSeqNo );
                         remoteObj.putRMIAns( transSeqNo, msg );
                     }
                 }
@@ -87,10 +87,10 @@ public class MsgBrokerManageRMIImpl implements MsgBrokerManageRMI {
     @Override
     public void putRMIAns(String transSeqNo, byte[] msg) throws Exception {
 
-        logger.warn("Going to find remote waiter [{}]", transSeqNo );
+        logger.warn("Going to find remote awaiter [{}]", transSeqNo );
         BlockingQueue<byte[]> waitQ = MsgBrokerRMIImpl.rmiSyncAns.get(transSeqNo);
         if( waitQ != null ) {
-            logger.warn("Findout remote waiter {}. [{}]", waitQ, transSeqNo );
+            logger.warn("Find out remote awaiter {}. [{}]", waitQ, transSeqNo );
             waitQ.put( msg );
         }
     }

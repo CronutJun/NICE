@@ -529,19 +529,19 @@ public class MsgParser {
         Map<String, MsgData> datas = getAllFields();
 
         if( type != null && type.equals("S") )
-            System.out.println("===============================================================================================");
+            System.out.println("-----------------------------------------------------------------------------------------------");
         else
-            logger.warn("===============================================================================================");
+            logger.warn("-----------------------------------------------------------------------------------------------");
         for( Entry<String, MsgData> e : datas.entrySet() ) {
             if( type != null && type.equals("S") )
-                System.out.println(String.format("FieldName : [%-30s], FieldValue = [%s]", e.getKey(), new String(e.getValue().getBytes())));
+                System.out.println(String.format("FieldName : [%-30s], pos = [%5d], FieldValue = [%s]", e.getKey(), e.getValue().pos, new String(e.getValue().getBytes())));
             else
-                logger.warn(String.format("FieldName : [%-30s], FieldValue = [%s]", e.getKey(), new String(e.getValue().getBytes())));
+                logger.warn(String.format("FieldName : [%-30s], pos = [%5d], FieldValue = [%s]", e.getKey(), e.getValue().pos, new String(e.getValue().getBytes())));
         }
         if( type != null && type.equals("S") )
-            System.out.println("===============================================================================================");
+            System.out.println("End.");
         else
-            logger.warn("===============================================================================================");
+            logger.warn("End.");
     }
 
 

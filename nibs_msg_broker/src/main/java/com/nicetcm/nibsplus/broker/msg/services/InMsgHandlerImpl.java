@@ -9,6 +9,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerTransaction;
 
@@ -44,6 +45,15 @@ public abstract class InMsgHandlerImpl implements InMsgHandler {
 
             inMsgBizProc( safeData, parsed );
             msgTX.commit(safeData.getTXS());
+        }
+        catch( MsgBrokerException me ) {
+            if( me.getErrorCode() == -99 ) {
+                msgTX.commit(safeData.getTXS());
+            }
+            else {
+                msgTX.rollback(safeData.getTXS());
+                throw me;
+            }
         }
         catch( Exception e ) {
             msgTX.rollback(safeData.getTXS());

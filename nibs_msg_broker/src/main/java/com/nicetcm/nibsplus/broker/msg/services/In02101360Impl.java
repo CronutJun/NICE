@@ -37,6 +37,7 @@ public class In02101360Impl extends InMsgHandlerImpl {
         cmSetFacInfo.setWorkSeq  ( parsed.getString("work_seq")  );
         cmSetFacInfo.setWorkClass( parsed.getString("set_type")  );
         cmSetFacInfo.setFacSeqNo ( parsed.getString("fac_seq_no"));
+        cmSetFacInfo.setOrgSendYn( "1" );
         try {
             cmSetFacInfoMap.updateByPrimaryKeySelective( cmSetFacInfo );
         }

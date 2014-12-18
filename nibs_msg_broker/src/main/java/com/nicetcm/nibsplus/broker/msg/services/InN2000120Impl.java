@@ -527,11 +527,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
                 /*
                  * 유저정의 장애는 응답송신하지 않는다.
-                 * 2014/12/17 는 막는다 'sSERVER'로 응답 송신하지않고 MsgBrokerException처리하면 Rollback 하기때문.. KDJ
                  */
-                /*
                 throw new MsgBrokerException("유저정의 장애는 응답송신하지 않는다", -99);
-                */
             }
             /*
              * 608(회선장애) 발생후 302(회선복구) 발생하지않고 301(장애), 001(개국) 이 발생하면

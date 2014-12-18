@@ -31,6 +31,10 @@ public class MsgBrokerMsgDisplay {
 
     private BufferedReader rdr;
 
+    public MsgBrokerMsgDisplay() {
+
+    }
+
     public MsgBrokerMsgDisplay(String fileName) {
         srcFile = new File(fileName);
         if( !srcFile.exists() ) {
@@ -40,35 +44,13 @@ public class MsgBrokerMsgDisplay {
 
     public void displayMessages() {
         String line    = null;
-        ByteBuffer buf = null;
-        byte[] bMsgType = new byte[4];
-        byte[] bWrkType = new byte[4];
 
         try {
             if( !srcFile.exists() ) return;
 
             rdr = new BufferedReader(new InputStreamReader(new FileInputStream(srcFile)));
             while((line = rdr.readLine()) != null) {
-                byte[] lineBytes = line.getBytes();
-                buf = ByteBuffer.allocateDirect(lineBytes.length);
-                buf.put(lineBytes);
-                buf.position(MsgBrokerConst.MSG_TYPE_OFS);
-                buf.get(bMsgType);
-                buf.get(bWrkType);
-                buf.position(0);
-
-                bMsgType[2] = '0';
-                System.out.println("***********************************************************************************************");
-                String qName = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType).trim() + new String(bWrkType).trim() + ".json";
-                System.out.println(qName);
-                MsgParser msgPsr = MsgParser.getInstance(qName).parseMessage(buf);
-                System.out.println("parse OK");
-                try {
-                    msgPsr.printMsgData("S");
-                }
-                finally {
-                    msgPsr.clearMessage();
-                }
+                displayOneMessage(line);
             }
             rdr.close();
         }
@@ -77,9 +59,45 @@ public class MsgBrokerMsgDisplay {
         }
     }
 
+    public void displayOneMessage(String msg) {
+        ByteBuffer buf = null;
+        byte[] bMsgType = new byte[4];
+        byte[] bWrkType = new byte[4];
+
+        try {
+            byte[] msgBytes = msg.getBytes();
+            buf = ByteBuffer.allocateDirect(msgBytes.length);
+            buf.put(msgBytes);
+            buf.position(MsgBrokerConst.MSG_TYPE_OFS);
+            buf.get(bMsgType);
+            buf.get(bWrkType);
+            buf.position(0);
+
+            bMsgType[2] = '0';
+            System.out.println("===============================================================================================");
+            String qName = MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType).trim() + new String(bWrkType).trim() + ".json";
+            System.out.println(qName);
+            MsgParser msgPsr = MsgParser.getInstance(qName).parseMessage(buf);
+            System.out.println("parse OK");
+            try {
+                msgPsr.printMsgData("S");
+            }
+            finally {
+                msgPsr.clearMessage();
+            }
+        }
+        catch( Exception e ) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
-        if( args.length != 1) {
+        if( args.length < 1 && args.length > 2 ) {
             System.out.println("Usage: java MsgBrokerMsgDisplay [FileName]");
+            return;
+        }
+        if( args.length == 2 && !args[0].equals("-t") ) {
+            System.out.println("Usage: java MsgBrokerMsgDisplay -t [Messaeg text]");
             return;
         }
         try {
@@ -88,7 +106,10 @@ public class MsgBrokerMsgDisplay {
             InputStream is = MsgBrokerMain.class.getResourceAsStream(
                     String.format("/%s/msg.properties", MsgBrokerConst.SVR_TYPE));
             MsgCommon.msgProps.load(is);
-            new MsgBrokerMsgDisplay(args[0]).displayMessages();
+            if( args.length == 1 )
+                new MsgBrokerMsgDisplay(args[0]).displayMessages();
+            else
+                new MsgBrokerMsgDisplay().displayOneMessage(args[1]);
         }
         catch( Exception e ) {
             e.printStackTrace();
