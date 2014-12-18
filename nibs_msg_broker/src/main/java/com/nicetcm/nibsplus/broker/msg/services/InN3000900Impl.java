@@ -52,7 +52,7 @@ public class InN3000900Impl extends InMsgHandlerImpl {
         fnHostTranCnt.setNiceDealCnt( parsed.getInt   ("deal_no_cnt") );
 
         try {
-            fnHostTranCntMap.insert( fnHostTranCnt );
+            fnHostTranCntMap.insertSelective( fnHostTranCnt );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

@@ -70,7 +70,7 @@ public class In02000310Impl extends InMsgHandlerImpl {
             cmCSInfo.setCleanComCd    ( parsed.getString("clean_com_cd"     ) );
             cmCSInfo.setSetDate       ( parsed.getString("set_date"         ) );
             try {
-                cmChangeSiteInfoMap.insert( cmCSInfo );
+                cmChangeSiteInfoMap.insertSelective( cmCSInfo );
             }
             catch( Exception e ) {
                 logger.warn( "[T_CM_CHANGE_SITE_INFO] Save Error [{}]", e.getLocalizedMessage() );
@@ -115,7 +115,7 @@ public class In02000310Impl extends InMsgHandlerImpl {
             cmSSInfo.setSetDate       ( parsed.getString("set_date"         ) );
 
             try {
-                cmSetSiteInfoMap.insert( cmSSInfo );
+                cmSetSiteInfoMap.insertSelective( cmSSInfo );
             }
             catch( org.springframework.dao.DataIntegrityViolationException de ) {
                 try {

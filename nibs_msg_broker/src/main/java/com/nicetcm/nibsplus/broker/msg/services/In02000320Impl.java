@@ -64,7 +64,7 @@ public class In02000320Impl extends InMsgHandlerImpl {
         cmSetMacInfo.setCloseMacRentYn  ( parsed.getString("close_mac_rent_yn") );
 
         try {
-            cmSetMacInfoMap.insert( cmSetMacInfo );
+            cmSetMacInfoMap.insertSelective( cmSetMacInfo );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

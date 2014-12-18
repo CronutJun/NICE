@@ -1298,7 +1298,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         fnBrandSetState.setUpdateDate( safeData.getDSysDate() );
 
         try {
-            fnBrandSetStateMap.insert( fnBrandSetState );
+            fnBrandSetStateMap.insertSelective( fnBrandSetState );
         }
         catch (org.springframework.dao.DataIntegrityViolationException de ) {
             try {
@@ -1326,7 +1326,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         fnRcCnt.setType4Cnt( parsed.getInt("rc_type4_cnt") );
 
         try {
-            fnRcCntMap.insert( fnRcCnt );
+            fnRcCntMap.insertSelective( fnRcCnt );
         }
         catch (org.springframework.dao.DataIntegrityViolationException de ) {
             try {

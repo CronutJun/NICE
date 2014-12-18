@@ -125,7 +125,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
             fnNCG.setUpdateDate( safeData.getDSysDate()         );
             fnNCG.setUpdateUid ( "online"                       );
             try {
-                fnNiceCloseGiftMap.insert( fnNCG );
+                fnNiceCloseGiftMap.insertSelective( fnNCG );
             }
             catch( org.springframework.dao.DataIntegrityViolationException de ) {
                 logger.warn("]T_FN_NICE_CLOSE_GIFT] dup Error!!!");
@@ -186,7 +186,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         fnNCO.setCheckOutAmt         (  parsed.getLong  ("check_out_amt"         ) );
         fnNCO.setTrackUseType        (  parsed.getString("track_use_type"        ) );
         try {
-            fnNiceCloseOrgMap.insert( fnNCO );
+            fnNiceCloseOrgMap.insertSelective( fnNCO );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             logger.warn( "[T_FN_NICE_CLOSE_ORG] Duplication [{}][{}][{}] !!!",
@@ -280,7 +280,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         fnNCT.setTrackUseType        ( parsed.getString("track_use_type"        ) );
 
         try {
-            fnNiceCloseTmpMap.insert( fnNCT );
+            fnNiceCloseTmpMap.insertSelective( fnNCT );
         }
         catch( Exception e ) {
             logger.warn( "[T_FN_NICE_CLOSE_TMP] Insert Error.. {}", e.getLocalizedMessage() );
@@ -396,7 +396,7 @@ public class InN3000100Impl extends InMsgHandlerImpl {
         fnNiceClose.setInsertDate( safeData.getDSysDate() );
         fnNiceClose.setInsertUid( parsed.getString("CM.msg_id") );
         try {
-            fnNiceCloseMap.insert( fnNiceClose );
+            fnNiceCloseMap.insertSelective( fnNiceClose );
         }
         catch( Exception e ) {
             logger.warn( "[T_FN_NICE_CLOSE] Insert Error.. {}", e.getLocalizedMessage() );

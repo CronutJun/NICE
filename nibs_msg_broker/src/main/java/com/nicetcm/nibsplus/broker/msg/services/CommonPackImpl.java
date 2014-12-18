@@ -348,7 +348,7 @@ public class CommonPackImpl implements CommonPack {
             macNo.setBranchCd( MacInfo.getBranchCd() );
             macNo.setMacNo("9999");
             try {
-                cmMacNoMap.insert(macNo);
+                cmMacNoMap.insertSelective(macNo);
             }
             catch( org.springframework.dao.DataIntegrityViolationException e ) {
                 logger.debug("ViolateException : {}", e.getLocalizedMessage());
@@ -420,7 +420,7 @@ public class CommonPackImpl implements CommonPack {
             macNo.setBranchCd(MacInfo.getBranchCd());
             macNo.setMacNo(MacInfo.getMacNo());
             try {
-                cmMacNoMap.insert(macNo);
+                cmMacNoMap.insertSelective(macNo);
             }
             catch( org.springframework.dao.DataIntegrityViolationException e ) {
                 logger.debug("ViolateException : {}", e.getLocalizedMessage());
@@ -2416,7 +2416,7 @@ public class CommonPackImpl implements CommonPack {
         if( WorkType == MsgBrokerConst.DB_WORK_INSERT ) {
             MacSetMng.setUpdateDate( safeData.getDSysDate() );
             try {
-                macSetMngMap.insert( MacSetMng );
+                macSetMngMap.insertSelective( MacSetMng );
             }
             catch( org.springframework.dao.DataIntegrityViolationException de ) {
                 logger.warn("...중복요청건...");
@@ -2476,7 +2476,7 @@ public class CommonPackImpl implements CommonPack {
      */
     public void insertOrgSigeChnage( MsgBrokerData safeData, TCtOrgSiteChange OrgSiteChange ) throws Exception {
         try {
-            orgSiteChangeMap.insert( OrgSiteChange );
+            orgSiteChangeMap.insertSelective( OrgSiteChange );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             logger.warn("[T_CT_ORG_SITE_CHANGE]...중복요청건...");
@@ -3138,7 +3138,7 @@ public class CommonPackImpl implements CommonPack {
         tIfDataLog.setUpdateDate( safeData.getDSysDate() );
 
         try {
-            ifDataLogMap.insert( tIfDataLog );
+            ifDataLogMap.insertSelective( tIfDataLog );
         }
         catch( Exception e) {
             logger.warn("T_IF_DATA_LOG Insert Error [{}]", e.getLocalizedMessage() );

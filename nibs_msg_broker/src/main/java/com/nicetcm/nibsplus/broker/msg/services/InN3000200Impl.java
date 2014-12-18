@@ -4,12 +4,12 @@ package com.nicetcm.nibsplus.broker.msg.services;
  * Copyright 2014 The NIBS+ Project
  *
  * MSG Broker 집계처리 ROUTINE을 CALL
- * 
+ *
  * <pre>
  * MngNC_NiceTicketClose
  * </pre>
- * 
- *           2014. 07. 31    K.D.J. 
+ *
+ *           2014. 07. 31    K.D.J.
  */
 
 
@@ -37,12 +37,12 @@ import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 public class InN3000200Impl extends InMsgHandlerImpl {
 
     private static final Logger logger = LoggerFactory.getLogger(InN3000200Impl.class);
-    
+
     @Autowired private StoredProcMapper splMap;
     @Autowired private TFnTicketMacCloseOrgMapper fnTicketMacCloseOrgMap;
     @Autowired private TFnTicketMacCloseTmpMapper fnTicketMacCloseTmpMap;
     @Autowired private TFnTicketMacCloseMapper fnTicketMacCloseMap;
-    
+
     @Override
     public void inMsgBizProc(MsgBrokerData safeData, MsgParser parsed) throws Exception {
         try {
@@ -86,10 +86,10 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             }
         }
     }
-    
+
     private void insertNiceCloseOrgTicket( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
         TFnTicketMacCloseOrg fnTMCO = new TFnTicketMacCloseOrg();
-        
+
         fnTMCO.setMacNo             ( parsed.getString("mac_no"               ) );
         fnTMCO.setCloseDate         ( parsed.getString("close_date"           ) );
         fnTMCO.setCloseTime         ( parsed.getString("close_time"           ) );
@@ -103,7 +103,7 @@ public class InN3000200Impl extends InMsgHandlerImpl {
         fnTMCO.setInsertUid         ( parsed.getString("CM.msg_id"            ) );
 
         try {
-            fnTicketMacCloseOrgMap.insert( fnTMCO );
+            fnTicketMacCloseOrgMap.insertSelective( fnTMCO );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             logger.warn( "[T_FN_TICKET_MAC_CLOSE_ORG] Duplication [{}][{}][{}] !!!",
@@ -115,11 +115,11 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             throw e;
         }
     }
-    
+
     private int compCloseDateTicket( MsgParser parsed ) {
         try {
             TFnTicketMacCloseTmp fnTMCTCond = new TFnTicketMacCloseTmp();
-            
+
             fnTMCTCond.setCloseDate( parsed.getString("close_date") );
             fnTMCTCond.setOrgCd( "096" );
             fnTMCTCond.setBranchCd( "9600" );
@@ -154,44 +154,44 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             return -1;
         }
     }
-    
+
     private void insertNiceCloseTicketTmp( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
         TFnTicketMacCloseTmp fnTMCT = new TFnTicketMacCloseTmp();
-        
-        fnTMCT.setCloseDate     ( parsed.getString("close_date")            );           
-        fnTMCT.setOrgCd         ( "096"                                     );          
-        fnTMCT.setBranchCd      ( "9600"                                    );          
-        fnTMCT.setMacNo         ( parsed.getString("mac_no"               ) );           
-        fnTMCT.setTicketCd      ( parsed.getString("ticket1_emit_comp"    ) );           
-        fnTMCT.setTicketGubunCd ( parsed.getString("ticket1_emit_gubun_cd") );           
+
+        fnTMCT.setCloseDate     ( parsed.getString("close_date")            );
+        fnTMCT.setOrgCd         ( "096"                                     );
+        fnTMCT.setBranchCd      ( "9600"                                    );
+        fnTMCT.setMacNo         ( parsed.getString("mac_no"               ) );
+        fnTMCT.setTicketCd      ( parsed.getString("ticket1_emit_comp"    ) );
+        fnTMCT.setTicketGubunCd ( parsed.getString("ticket1_emit_gubun_cd") );
         fnTMCT.setDealType      ( "0"                                       );  /* 방출 */
-        fnTMCT.setCloseTime     ( parsed.getString("close_time")            );            
-        fnTMCT.setTicket1EmitCnt( parsed.getInt   ("ticket1_emit_cnt")      );            
-        fnTMCT.setInsertDate    ( safeData.getDSysDate()                    );           
-        fnTMCT.setInsertUid     ( parsed.getString("CM.msg_id")             );            
+        fnTMCT.setCloseTime     ( parsed.getString("close_time")            );
+        fnTMCT.setTicket1EmitCnt( parsed.getInt   ("ticket1_emit_cnt")      );
+        fnTMCT.setInsertDate    ( safeData.getDSysDate()                    );
+        fnTMCT.setInsertUid     ( parsed.getString("CM.msg_id")             );
 
         try {
-            fnTicketMacCloseTmpMap.insert( fnTMCT );
+            fnTicketMacCloseTmpMap.insertSelective( fnTMCT );
         }
         catch( Exception e ) {
             logger.warn( "[T_FN_TICKET_MAC_CLOSE_TMP] Insert Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
     }
-    
+
     private void insertNiceCloseTicketSum( MsgBrokerData safeData, MsgParser parsed ) throws Exception {
         TFnTicketMacCloseTmp fnTMCTCond = new TFnTicketMacCloseTmp();
-        
-        fnTMCTCond.setCloseDate     ( parsed.getString("close_date")            );           
-        fnTMCTCond.setOrgCd         ( "096"                                     );          
-        fnTMCTCond.setBranchCd      ( "9600"                                    );          
-        fnTMCTCond.setMacNo         ( parsed.getString("mac_no"               ) );           
-        fnTMCTCond.setTicketCd      ( parsed.getString("ticket1_emit_comp"    ) );           
-        fnTMCTCond.setTicketGubunCd ( parsed.getString("ticket1_emit_gubun_cd") );           
+
+        fnTMCTCond.setCloseDate     ( parsed.getString("close_date")            );
+        fnTMCTCond.setOrgCd         ( "096"                                     );
+        fnTMCTCond.setBranchCd      ( "9600"                                    );
+        fnTMCTCond.setMacNo         ( parsed.getString("mac_no"               ) );
+        fnTMCTCond.setTicketCd      ( parsed.getString("ticket1_emit_comp"    ) );
+        fnTMCTCond.setTicketGubunCd ( parsed.getString("ticket1_emit_gubun_cd") );
         fnTMCTCond.setDealType      ( "0"                                       );  /* 방출 */
-        fnTMCTCond.setCloseTime     ( parsed.getString("close_time")            );            
+        fnTMCTCond.setCloseTime     ( parsed.getString("close_time")            );
         fnTMCTCond.setTicket1EmitCnt( parsed.getInt   ("ticket1_emit_cnt")      );
-        
+
         TFnTicketMacCloseTmp sum = null;
         try {
             sum = fnTicketMacCloseTmpMap.selectBySum1( fnTMCTCond );
@@ -204,20 +204,20 @@ public class InN3000200Impl extends InMsgHandlerImpl {
             logger.warn( "[T_FN_TICKET_MAC_CLOSE_TMP] Select Sum Error..{}", e.getLocalizedMessage() );
             throw e;
         }
-        
+
         TFnTicketMacClose fnTicketMacClose = new TFnTicketMacClose();
-        
+
         BeanUtils.copyProperties( fnTicketMacClose, sum );
-        
-        fnTicketMacClose.setCloseDate     ( parsed.getString("close_date")            );           
-        fnTicketMacClose.setOrgCd         ( "096"                                     );          
-        fnTicketMacClose.setBranchCd      ( "9600"                                    );          
-        fnTicketMacClose.setMacNo         ( parsed.getString("mac_no"               ) );           
-        fnTicketMacClose.setTicketCd      ( parsed.getString("ticket1_emit_comp"    ) );           
-        fnTicketMacClose.setTicketGubunCd ( parsed.getString("ticket1_emit_gubun_cd") );           
+
+        fnTicketMacClose.setCloseDate     ( parsed.getString("close_date")            );
+        fnTicketMacClose.setOrgCd         ( "096"                                     );
+        fnTicketMacClose.setBranchCd      ( "9600"                                    );
+        fnTicketMacClose.setMacNo         ( parsed.getString("mac_no"               ) );
+        fnTicketMacClose.setTicketCd      ( parsed.getString("ticket1_emit_comp"    ) );
+        fnTicketMacClose.setTicketGubunCd ( parsed.getString("ticket1_emit_gubun_cd") );
         fnTicketMacClose.setDealType      ( "0"                                       );  /* 방출 */
-        fnTicketMacClose.setCloseTime     ( parsed.getString("close_time")            );            
-        
+        fnTicketMacClose.setCloseTime     ( parsed.getString("close_time")            );
+
         TMisc miscCond = new TMisc();
         TMisc rsltMisc = null;
         miscCond.setArgType( "FD" );
@@ -246,18 +246,18 @@ public class InN3000200Impl extends InMsgHandlerImpl {
         catch( Exception e ) {
             logger.warn( "FC_GET_ORNZ_CD_BY_MACNO Call Error {}", e.getLocalizedMessage() );
         }
-        
+
         fnTicketMacClose.setInsertDate( safeData.getDSysDate() );
         fnTicketMacClose.setInsertUid( parsed.getString("CM.msg_id") );
-        
+
         try {
-            fnTicketMacCloseMap.insert( fnTicketMacClose );
+            fnTicketMacCloseMap.insertSelective( fnTicketMacClose );
         }
         catch( Exception e ) {
             logger.warn( "[T_FN_TICKET_MAC_CLOSE] Insert Error.. {}", e.getLocalizedMessage() );
             throw e;
         }
-        
+
         TFnTicketMacCloseTmpSpec fnTMCTSpec = new TFnTicketMacCloseTmpSpec();
         fnTMCTSpec.createCriteria().andCloseDateLessThan( parsed.getString("close_date") )
                                    .andOrgCdEqualTo( "096" )

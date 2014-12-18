@@ -66,7 +66,7 @@ public class In02000161Impl extends InMsgHandlerImpl {
         macInfoMod.setUpdateUid    ( "online"                          );
 
         try {
-            macInfoModMap.insert( macInfoMod );
+            macInfoModMap.insertSelective( macInfoMod );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             TCtMacInfoModSpec spec = new TCtMacInfoModSpec();

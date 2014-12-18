@@ -47,7 +47,7 @@ public class In02000410Impl extends InMsgHandlerImpl {
         cmWorkEtc.setWorkCont  		( parsed.getString("work_cont"		) );
 
         try {
-        	cmSetWorkEtcMap.insert( cmWorkEtc );
+        	cmSetWorkEtcMap.insertSelective( cmWorkEtc );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

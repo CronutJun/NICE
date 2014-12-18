@@ -46,7 +46,7 @@ public class InN5104600Impl extends InMsgHandlerImpl {
         cmBatchResult.setInsertDate( safeData.getDSysDate() );
         cmBatchResult.setInsertUid( "DataMng" );
         try {
-            cmBatchResultMap.insert( cmBatchResult );
+            cmBatchResultMap.insertSelective( cmBatchResult );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

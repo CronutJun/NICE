@@ -53,7 +53,7 @@ public class InN3000310Impl extends InMsgHandlerImpl {
         ctStkprCashFault.setUpdateUid  ( "DataMng"                         );
 
         try {
-            ctStorekeeperCashFaultMap.insert( ctStkprCashFault );
+            ctStorekeeperCashFaultMap.insertSelective( ctStkprCashFault );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

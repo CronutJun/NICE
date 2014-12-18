@@ -215,7 +215,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnRcInfoRec.setInsertDate( safeData.getDSysDate() );
         fnRcInfoRec.setUpdateDate( safeData.getDSysDate() );
         try {
-            fnRCInfoMap.insert( fnRcInfoRec );
+            fnRCInfoMap.insertSelective( fnRcInfoRec );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {
@@ -278,7 +278,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNTCRec.setDealOutAmtCw11( parsed.getLong("out_cnt_10") );
         fnNTCRec.setInsertDate( safeData.getDSysDate() );
         try {
-            fnNiceTranCuponMap.insert( fnNTCRec );
+            fnNiceTranCuponMap.insertSelective( fnNTCRec );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {
@@ -347,7 +347,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNTGRec.setOriginDealNo( parsed.getString("origin_deal_no") );
 
         try {
-            fnNiceTranGiftMap.insert( fnNTGRec );
+            fnNiceTranGiftMap.insertSelective( fnNTGRec );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {
@@ -395,8 +395,8 @@ public class InN1000100Impl extends InMsgHandlerImpl {
         fnNiceTranRec.setCustFee( parsed.getInt("cust_fee") );
         fnNiceTranRec.setBankFee( parsed.getInt("bank_fee") );
         fnNiceTranRec.setTransOrgCd( parsed.getString("trans_org_cd") );
-        fnNiceTranRec.setTransBranchCd( MsgBrokerLib.rpad(substr(parsed.getString("account_no"),0, 4), 4, " ") );
-        fnNiceTranRec.setTransAccountNo( MsgBrokerLib.rpad(substr(parsed.getString("account_no"),4), 20, " ") );
+        fnNiceTranRec.setTransBranchCd( MsgBrokerLib.rpad(substr(parsed.getString("trans_account_no"),0, 4), 4, " ") );
+        fnNiceTranRec.setTransAccountNo( MsgBrokerLib.rpad(substr(parsed.getString("trans_account_no"),4), 20, " ") );
         fnNiceTranRec.setTransDepositor( parsed.getString("trans_depositor") );
         fnNiceTranRec.setResponseCd( parsed.getString("response_cd") );
         fnNiceTranRec.setRefuseCd( parsed.getString("refuse_cd") );

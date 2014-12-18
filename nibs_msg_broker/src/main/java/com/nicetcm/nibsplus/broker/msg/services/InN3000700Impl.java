@@ -62,7 +62,7 @@ public class InN3000700Impl extends InMsgHandlerImpl {
         cmNiceEnvCheck.setUpdateUid       ( "online"                               );
 
         try {
-            cmNiceEnvCheckMap.insert( cmNiceEnvCheck );
+            cmNiceEnvCheckMap.insertSelective( cmNiceEnvCheck );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

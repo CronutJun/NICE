@@ -54,7 +54,7 @@ public class In02000370Impl extends InMsgHandlerImpl {
             cmSetFacItem.setUpdateDate( safeData.getDSysDate()           );
             cmSetFacItem.setUpdateUid ( "ETCIn"                          );
             try {
-                cmSetFacItemMap.insert( cmSetFacItem );
+                cmSetFacItemMap.insertSelective( cmSetFacItem );
             }
             catch( org.springframework.dao.DataIntegrityViolationException de ) {
                 cmSetFacItem.setUpdateUid ( "ETCUp" );

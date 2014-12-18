@@ -59,7 +59,7 @@ public class In02000311Impl extends InMsgHandlerImpl {
         cmCSState.setInsertUid      ( "MngIn" );
 
         try {
-            cmSetChangeSiteStateMap.insert( cmCSState );
+            cmSetChangeSiteStateMap.insertSelective( cmCSState );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

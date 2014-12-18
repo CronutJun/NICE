@@ -53,7 +53,7 @@ public class InN3000300Impl extends InMsgHandlerImpl {
         fnStkprDayClose.setUpdateUid  ( "DataMng"                         );
 
         try {
-            fnStorekeeperDayCloseMap.insert( fnStkprDayClose );
+            fnStorekeeperDayCloseMap.insertSelective( fnStkprDayClose );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

@@ -64,7 +64,7 @@ public class In02000111Impl extends InMsgHandlerImpl {
         macInfoNew.setUpdateUid    ( "online"                            );
 
         try {
-            macInfoNewMap.insert( macInfoNew );
+            macInfoNewMap.insertSelective( macInfoNew );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             try {

@@ -270,7 +270,7 @@ public class In01000130Impl extends InMsgHandlerImpl {
         }
 
         try {
-            errMngMadeComMap.insert( errMngMadeCom );
+            errMngMadeComMap.insertSelective( errMngMadeCom );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             logger.warn(">>> [DBInsertErrMngMadeCom] T_CT_ERROR_MNG_MADE_COM 같은요청전문 수신");

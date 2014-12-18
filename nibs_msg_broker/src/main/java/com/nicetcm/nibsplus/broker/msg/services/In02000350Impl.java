@@ -67,7 +67,7 @@ public class In02000350Impl extends InMsgHandlerImpl {
          * 변경신규 모두 insert 시도 후 데이터 중복 시 insert 하도록
          */
         try {
-            cmSetFacInfoMap.insert( cmSetFacInfo );
+            cmSetFacInfoMap.insertSelective( cmSetFacInfo );
         }
         catch( org.springframework.dao.DataIntegrityViolationException de ) {
             cmSetFacInfo.setUpdateUid       ( "ETCUp" );
