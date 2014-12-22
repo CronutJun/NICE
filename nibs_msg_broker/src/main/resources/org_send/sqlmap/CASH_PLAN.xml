@@ -40,39 +40,47 @@
 }
  -->
 
+	<sql id="SQL_select088">
+	    <![CDATA[
+	        SELECT BRANCH_CD AS brch_cd,
+	             mac_no,
+	             '',
+	             '',
+	             '',
+	             '',
+	             cash_date,
+	             cash_time,
+	             '2' cash_type,
+	             confirm_cash_amt cash_amt,
+	             check_amt,
+	             hw15_cnt check_10_cnt,
+	             hw35_cnt check_30_cnt,
+	             hw55_cnt check_50_cnt,
+	             hw16_cnt check_100_cnt,
+	             office_nm,
+	             '',
+	             '',
+	             '',
+	             '',
+	             '',
+	             '',
+	             '',
+	             '',
+	             '',
+	             '','','','','','','','','','','','','','','','','','','','','','','','',''
+	        FROM OP.T_FN_ATMS_CASH_PLAN
+	        WHERE org_send_confirm_yn = '2'
+	         AND CASH_DATE >= OP.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
+	         AND org_cd = '088'
+	    ]]>
+	</sql>
+	
     <select id="select088" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
-    <![CDATA[
-        SELECT BRANCH_CD AS brch_cd,
-             mac_no,
-             '',
-             '',
-             '',
-             '',
-             cash_date,
-             cash_time,
-             '2' cash_type,
-             confirm_cash_amt cash_amt,
-             check_amt,
-             hw15_cnt check_10_cnt,
-             hw35_cnt check_30_cnt,
-             hw55_cnt check_50_cnt,
-             hw16_cnt check_100_cnt,
-             office_nm,
-             '',
-             '',
-             '',
-             '',
-             '',
-             '',
-             '',
-             '',
-             '',
-             '','','','','','','','','','','','','','','','','','','','','','','','',''
-        FROM OP.T_FN_ATMS_CASH_PLAN
-        WHERE org_send_confirm_yn = '2'
-         AND CASH_DATE >= OP.pkg_fn_common.sf_getPostActDate(TO_CHAR(SYSDATE-5, 'YYYYMMDD'))
-         AND org_cd = '088'
-    ]]>
+    	<include refid="SQL_select088"/>
+    </select>
+    
+    <select id="select088_count" resultType="int" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+    	select count(1) from (<include refid="SQL_select088"/>)
     </select>
 
     <select id="select031" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
@@ -106,7 +114,7 @@
              '','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_CASH_PLAN
         WHERE org_send_confirm_yn = '0'
-         AND CASH_DATE = OP.pkg_fn_common.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
+         AND CASH_DATE = OP.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
          AND org_cd = '031'
     ]]>
     </select>
@@ -141,7 +149,7 @@
              '','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_CASH_PLAN
         WHERE org_send_confirm_yn = '2'
-         AND  cash_date = OP.pkg_fn_common.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
+         AND  cash_date = OP.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
          AND org_cd = '0WC'
     ]]>
     </select>
@@ -283,7 +291,7 @@
              '','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_CASH_PLAN
         WHERE org_send_confirm_yn = '0'
-         AND  cash_date = OP.pkg_fn_common.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
+         AND  cash_date = OP.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
          AND org_cd = '035'
     ]]>
     </select>
@@ -319,7 +327,7 @@
              '','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_CASH_PLAN
         WHERE org_send_confirm_yn = '0'
-         AND CASH_DATE = OP.pkg_fn_common.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
+         AND CASH_DATE = OP.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
          AND org_cd = '011'
     ]]>
     </select>
@@ -354,7 +362,7 @@
              '','','','','','','','','','','','','','','','','','','','','','','','',''
         FROM OP.T_FN_ATMS_CASH_PLAN
         WHERE org_send_confirm_yn = '2'
-         AND  cash_date = OP.pkg_fn_common.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
+         AND  cash_date = OP.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD'))
          AND org_cd = '003'
     ]]>
     </select>

@@ -52,7 +52,7 @@ public class OrgSendAllTriggerListener implements TriggerListener
     public void triggerMisfired(Trigger trigger) {
     	// JobKey jobKey = trigger.getJobKey();
     	// msgLogger.info(jobKey.getGroup(), jobKey.getName(), String.format("%-20s%s", "triggerMisfired", getInfo(trigger)));
-    	errorLogger.error(String.format("%-20s%s", getInfo("triggerMisfired", trigger, null)));
+    	errorLogger.error(getInfo("triggerMisfired", trigger, null));
     }
 
     @Override

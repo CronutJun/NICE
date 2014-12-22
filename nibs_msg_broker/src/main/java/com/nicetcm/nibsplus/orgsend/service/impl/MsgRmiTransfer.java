@@ -83,12 +83,12 @@ public class MsgRmiTransfer implements MsgTransferService {
         try {
             if(orgSendExternalVO.getTransferType().equals(TransferType.AUTO_SEND)) {
                 //동기식 전문호출(Timeout설정)
-            	msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), String.format("Sync Call - %s", msgBodyMap.toString()));
+            	msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), String.format("[%s] Sync Call - %s", Thread.currentThread().getName(), msgBodyMap.toString()));
                 agent.callBrokerSync(10); //타임아웃 10초 설정
                 msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), "Sync End");
             } else {
                 //비동기식 전문호출
-            	msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), String.format("Async Call - %s", msgBodyMap.toString()));
+            	msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), String.format("[%s] Async Call - %s", Thread.currentThread().getName(), msgBodyMap.toString()));
                 agent.callBrokerAync();
             }
         } catch (Exception e) {

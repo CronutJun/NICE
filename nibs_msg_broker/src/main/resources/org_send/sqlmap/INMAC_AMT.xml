@@ -74,7 +74,7 @@
                                   AND    CASH_TYPE = '2') = 0 THEN
                     SND.SEND_DATE
                 ELSE
-                    OP.pkg_fn_common.sf_getPostActDate(SND.SEND_DATE)
+                    OP.sf_getPostActDate(SND.SEND_DATE)
                 END cash_std_date,
                 CASE WHEN SND.SEND_CW54_AMT IS NULL THEN
                    (SELECT SEND_CW54_AMT

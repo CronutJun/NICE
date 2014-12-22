@@ -68,7 +68,7 @@
          AND    org_cd = '088'
          AND    req_type = '1'
          AND   (    ( REQ_DATE = TO_CHAR(SYSDATE, 'YYYYMMDD') AND BRANCH_CD = '0080' )
-                 OR ( REQ_DATE = OP.pkg_fn_common.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD')) AND BRANCH_CD <> '0080' )
+                 OR ( REQ_DATE = OP.sf_getPostActDate(TO_CHAR(SYSDATE, 'YYYYMMDD')) AND BRANCH_CD <> '0080' )
                )
     ]]>
     </select>

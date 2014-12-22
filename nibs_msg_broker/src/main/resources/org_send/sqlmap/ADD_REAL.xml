@@ -58,7 +58,7 @@
 			 serial_no,  
 			 add_date,  
 			 add_time,  
-			 OP.pkg_fn_common.sf_getPostActDate(add_date) as demand_date,  
+			 OP.sf_getPostActDate(add_date) as demand_date,  
 			 add_cash_amt as add_amt,  
 			 '',  
 			 '',  

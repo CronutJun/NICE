@@ -1236,7 +1236,7 @@
 	<select id="pickupGetNongHMacData" parameterType="string" resultType="string">
 		SELECT
 		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', std_date,
-		    OP.pkg_fn_common.sf_getPostActDate( std_date)), OP.pkg_fn_common.sf_getPostActDate(std_date))
+		    OP.sf_getPostActDate( std_date)), OP.sf_getPostActDate(std_date))
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -1303,7 +1303,7 @@
 	<select id="pickupGetNongHBrandMacData" parameterType="string" resultType="string">
 		SELECT
 		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', std_date,
-		    OP.pkg_fn_common.sf_getPostActDate( std_date)), OP.pkg_fn_common.sf_getPostActDate(std_date))
+		    OP.sf_getPostActDate( std_date)), OP.sf_getPostActDate(std_date))
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -1998,7 +1998,7 @@
 	<select id="pickupGetSuHMacData" parameterType="string" resultType="string">
 		SELECT
 		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', std_date,
-		    OP.pkg_fn_common.sf_getPostActDate( std_date)), OP.pkg_fn_common.sf_getPostActDate(std_date))
+		    OP.sf_getPostActDate( std_date)), OP.sf_getPostActDate(std_date))
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE

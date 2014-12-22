@@ -163,7 +163,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
          * CM.msg_id = 'sSERVER'이면 응답처리 하지 않는다.
          * KDJ
          */
-        if( parsed.getString("CM.msg_id").equals("sSERVER") ) {
+        if( parsed.getString("CM.msg_id").equals("sSERVER") || parsed.getString("CM.msg_id").equals("TRANRPR") ) {
             safeData.setNoResponse( true );
         }
         /*
@@ -340,7 +340,8 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              * 유저 정의 에러 일때는 이것만 처리 하고 리턴 한다
              * --> 나머지 장애 관련 데이타는 임의로 만든 데이타 이기 때문에 처리하면 안된다
              */
-            if( !substr(parsed.getString("user_made_err"), 0, 1).equals("0") ) {
+            if( parsed.getString("user_made_err").length() > 0
+            &&  !substr(parsed.getString("user_made_err"), 0, 1).equals("0") ) {
                 switch( parsed.getString("user_made_err").getBytes()[0] ) {
                     case '2' :
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N02 );

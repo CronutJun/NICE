@@ -68,70 +68,70 @@ public class ERRMonJob implements Job {
 	}
 	
 	private void exec3Min() {
-		logger("checkCnt 1 : " + checkCnt + "\n");
+		logger("checkCnt 1 : " + checkCnt + "");
 		
 		if (niceDoorCheckErrorProc() < 0) {
-			logger( "NiceDoorCheckErrorProc Error !!!\n" );
+			logger( "NiceDoorCheckErrorProc Error !!!" );
 			fnCleanup(-1);
 		} else {
-			logger( "NiceDoorCheckErrorProc Ended !!!\n" );
+			logger( "NiceDoorCheckErrorProc Ended !!!" );
 		}
 		
 		if (niceCashLackRepairProc() < 0) {
-			logger( "NiceCashLackRepairProc Error !!!\n" );
+			logger( "NiceCashLackRepairProc Error !!!" );
 			fnCleanup(-1);
 		} else {
-			logger( "NiceDoorCheckErrorProc Ended !!!\n" );
+			logger( "NiceDoorCheckErrorProc Ended !!!" );
 		}
 	}
 
 	private void exec5Min() {
-		logger("checkCnt 2 : " + checkCnt + "\n");
+		logger("checkCnt 2 : " + checkCnt + "");
 		
 		SimpleDateFormat dateFmt = new SimpleDateFormat("HHmmss");
 		int lCurrTime = Integer.parseInt(dateFmt.format(Calendar.getInstance().getTime()));
 		String hRealHolyYn = null;
 
 		if ( niceTranPickErrorProc() < 0 ) {
-			logger( "NiceTranPickErrorProc Error !!!\n" );
+			logger( "NiceTranPickErrorProc Error !!!" );
 			fnCleanup(-1);
 		} else {
-			logger( "NiceTranPickErrorProc Ended !!!\n\n" );
+			logger( "NiceTranPickErrorProc Ended !!!" );
 		}
 		
 		if ( niceTranNotranErrorProc() < 0 ) {
-			logger( 0, "NiceTranNotranErrorProc Error !!!\n" );
+			logger( 0, "NiceTranNotranErrorProc Error !!!" );
 			fnCleanup(-1);
 		} else {
-			logger( "NiceTranNotranErrorProc Ended !!!\n\n" );
+			logger( "NiceTranNotranErrorProc Ended !!!" );
 		}
 
 		if ( niceTranRepairErrorProc() < 0 ) {
-			logger( 0, "NiceTranRepairErrorProc Error !!!\n" );
+			logger( 0, "NiceTranRepairErrorProc Error !!!" );
 			fnCleanup(-1);
 		} else {
-			logger( "NiceTranRepairErrorProc Ended !!!\n\n" );
+			logger( "NiceTranRepairErrorProc Ended !!!" );
 		}
 		
 		if ( niceCashLackErrorProc() < 0 ) {
-			logger( "NiceCashLackErrorProc Error !!!\n" );
+			logger( "NiceCashLackErrorProc Error !!!" );
 			fnCleanup(-1);
 		} else {
-			logger( "NiceCashLackErrorProc Ended !!!\n\n" );
+			logger( "NiceCashLackErrorProc Ended !!!" );
 		}
 		
 		if ( niceInqRemAmtErrorProc() < 0 ) {
-			logger( 0, "NiceInqRemAmtErrorProc Error !!!\n" );
+			logger( 0, "NiceInqRemAmtErrorProc Error !!!" );
 			fnCleanup(-1);
 		} else {
-			logger( "NiceInqRemAmtErrorProc Ended !!!\n\n" );
+			logger( "NiceInqRemAmtErrorProc Ended !!!" );
 		}
 
 		if ( shCashLackErrorProc() < 0 ) {
-			logger( 0, "SHCashLackErrorProc Error !!!\n" );
+			logger( 0, "SHCashLackErrorProc Error !!!" );
 			fnCleanup(-1);
 		} else {
-			logger( "SHCashLackErrorProc Ended !!!\n\n" );
+			logger( "SHCashLackErrorProc Ended !!!" );
 		}
 		
 		if( (lCurrTime >= 11500 && lCurrTime < 12000 ) ||
@@ -149,7 +149,7 @@ public class ERRMonJob implements Job {
 			if (hRealHolyYn != null) {
 				/* 20120103 운총 조규석 요청 농협은 01시~10시까지 미개국 발생 */
 				if ( dgNotOpenErrorProc("011") < 0 ) {
-					logger( 0, "DGNotOpenErrorProc-011 Error !!!\n" );
+					logger( 0, "DGNotOpenErrorProc-011 Error !!!" );
 					fnCleanup(-1);
 				}
 				
@@ -157,7 +157,7 @@ public class ERRMonJob implements Job {
 					/* 6시 시점은 제주 은행만 */
 					if ( dgNotOpenErrorProc("035") < 0 )
 					{
-						logger( 0, "DGNotOpenErrorProc-035 Error !!!\n" );
+						logger( 0, "DGNotOpenErrorProc-035 Error !!!" );
 						fnCleanup(-1);
 					}
 				
@@ -165,25 +165,25 @@ public class ERRMonJob implements Job {
 					{
 						if ( dgNotOpenErrorProc("0DJ") < 0 )
 						{
-							logger( 0, "DGNotOpenErrorProc-0DJ Error !!!\n" );
+							logger( 0, "DGNotOpenErrorProc-0DJ Error !!!" );
 							fnCleanup(-1);
 						}
 						
 						if ( dgNotOpenErrorProc("0HD") < 0 )
 						{
-							logger( 0, "DGNotOpenErrorProc-0HD Error !!!\n" );
+							logger( 0, "DGNotOpenErrorProc-0HD Error !!!" );
 							fnCleanup(-1);
 						}
 						
 						/* 대구은행일 경우 일요일과 공휴일의 경우 7:30분 미개국은 발생시키지 않도록 한다.	*/
 						if( "0".equals(hRealHolyYn) || ("1".equals(hRealHolyYn) && lCurrTime >= 83000 )) {
 							if ( dgNotOpenErrorProc("031") < 0 ) {
-								logger( 0, "DGNotOpenErrorProc-031 Error !!!\n" );
+								logger( 0, "DGNotOpenErrorProc-031 Error !!!" );
 								fnCleanup(-1);
 							}
 						}
 						
-						logger( "DGNotOpenErrorProc Ended !!!\n\n" );
+						logger( "DGNotOpenErrorProc Ended !!!" );
 					}
 				}
 			}
@@ -191,22 +191,22 @@ public class ERRMonJob implements Job {
 		/* 매일 23시경 마사회 경륜 미운영 사이트 엠티센서장애 강제 완료 처리 */
 		else if( (lCurrTime >= 230000 && lCurrTime < 230500 ) ) {
 			if ( niceEemptySensorRepairProc() < 0 ) {
-				logger( "NiceEemptySensorRepairProc Error !!!\n" );
+				logger( "NiceEemptySensorRepairProc Error !!!" );
 				fnCleanup(-1);
 			}
 			
-			logger( "NiceEemptySensorRepairProc Ended !!!\n" );
+			logger( "NiceEemptySensorRepairProc Ended !!!" );
 		}
 		/* 매주 월요일 10시경 전주 CD-VNA 기기의 IC 무거래 기기 장애 통보 */
 		else if( (lCurrTime >= 100000 && lCurrTime < 100500 ) ) {
 			short nRtn = niceTranICNotranErrorProc();
 			/* -9: 월요일이 아님... 정상처리 */
 			if ( nRtn < 0 && nRtn != -9) {
-				logger( "NiceTranICNotranErrorProc Error !!!\n" );
+				logger( "NiceTranICNotranErrorProc Error !!!" );
 				fnCleanup(-1);
 			}
 			
-			logger( "NiceTranICNotranErrorProc Ended !!!\n" );
+			logger( "NiceTranICNotranErrorProc Ended !!!" );
 		}
 	}
 
@@ -222,7 +222,7 @@ public class ERRMonJob implements Job {
 		int hWeek = errMonMapper.pickupWeekDay();
 
 		if( hWeek != 2 ) {
-			logger( ">>> 월요일에만 실행 \n"  );
+			logger( ">>> 월요일에만 실행 "  );
 			return (-9);
 		}
 		
@@ -232,9 +232,10 @@ public class ERRMonJob implements Job {
 		
 		for (HashMap<String, Object> obj : list) {
 			try {
-				niceTranErrorSendProc( 10, (String)obj.get("MAC_NO"));
+				niceTranErrorSendProc( 10, (String)obj.get("MAC_NO"), obj);
 			} catch(Exception e) {
-				logger( "NiceTranICNotranErrorProc Error !!!\n" );
+				logger(e.getMessage());
+				logger( "NiceTranICNotranErrorProc Error !!!" );
 				fnCleanup(-1);
 			}
 		}
@@ -290,16 +291,18 @@ public class ERRMonJob implements Job {
 	 * </pre>
 	 * 
 	 */
+	@SuppressWarnings("serial")
 	private int niceDoorCheckErrorProc() {
 		List<String> list = errMonMapper.selectNiceDoorCheckErrorProc();
 		
 		msgLogger.info("ERRMON", "SH", String.format("selectNiceDoorCheckErrorProc : %d 건", list.size()));
 		
-		for (String mapNo : list) {
+		for (final String mapNo : list) {
 			try {
-				niceTranErrorSendProc( 15, mapNo );
+				niceTranErrorSendProc( 15, mapNo, new HashMap<String, Object>(){{put("mapNo", mapNo);}});
 			} catch(Exception e) {
-				logger( "N05 NiceDoorCheckErrorProc Error !!!\n" );
+				logger(e.getMessage());
+				logger( "N05 NiceDoorCheckErrorProc Error !!!" );
 				fnCleanup(-1);
 			}
 		}
@@ -341,7 +344,8 @@ public class ERRMonJob implements Job {
 				try {
 					atmESErrorSendProc( orgCd, branchCd, macNo, "NE999", szMsg, "1" );
 				} catch(Exception e) {
-					logger( "N05 NiceTranErrorSendProc Error !!!\n" );
+					logger(e.getMessage());
+					logger( "N05 NiceTranErrorSendProc Error !!!" );
 					fnCleanup(-1);
 				}
 			}
@@ -363,7 +367,8 @@ public class ERRMonJob implements Job {
 				try {
 					atmESErrorSendProc( orgCd, branchCd, macNo, "NE999", szMsg, "1" );
 				} catch(Exception e) {
-					logger( "N05 NiceTranErrorSendProc Error !!!\n" );
+					logger(e.getMessage());
+					logger( "N05 NiceTranErrorSendProc Error !!!" );
 					fnCleanup(-1);
 				}
 			}
@@ -390,7 +395,7 @@ public class ERRMonJob implements Job {
 	private int niceInqRemAmtErrorProc() {
 		List<HashMap<String, Object>> list = errMonMapper.selectNiceInqRemAmtErrorProc(hOrgCd, hBranchCd);
 		String prevMacNo = null, n05Str = null, atmDealNo = null, outAtmAtmDealNo = null;
-		String macNo, dealType;
+		String macNo = null, dealType = null;
 
 		msgLogger.info("ERRMON", "SH", String.format("selectNiceInqRemAmtErrorProc : %d 건", list.size()));
 		
@@ -399,15 +404,16 @@ public class ERRMonJob implements Job {
 			dealType = obj.get("DEAL_TYPE").toString();
 			atmDealNo = obj.get("ATM_DEAL_NO").toString();
 			
-			if (prevMacNo != null && prevMacNo.equals(macNo)) {
+			if (prevMacNo != null && !prevMacNo.equals(macNo)) {
 				/* 새로운 기기 list로 넘어가면 이전 기기의 마지막 정상출금 atm_deal_no 혹은	*/
 				/* 장애를 발생시켰던 ATM_DEAL_NO를 테이블에 저장 							*/
 				
 				if (n05Str != null && n05Str.length() >= 7) {
 					try {
-						niceTranErrorSendProc( 5, prevMacNo );
+						niceTranErrorSendProc( 5, prevMacNo, obj );
 					} catch(Exception e) {
-						logger( "N05 NiceTranErrorSendProc Error !!!\n" );
+						logger(e.getMessage());
+						logger( "N05 NiceTranErrorSendProc Error !!!" );
 						fnCleanup(-1);
 					}
 					
@@ -419,7 +425,8 @@ public class ERRMonJob implements Job {
 					try {
 						niceInqRemAmtErrorUpdateProc( prevMacNo, outAtmAtmDealNo );
 					} catch(Exception e) {
-						logger( "NiceInqRemAmtErrorUpdateProc Error !!!\n" );
+						logger(e.getMessage());
+						logger( "NiceInqRemAmtErrorUpdateProc Error !!!" );
 						fnCleanup(-1);
 					}
 				}
@@ -439,13 +446,14 @@ public class ERRMonJob implements Job {
 			prevMacNo = macNo;
 		}
 		
-		if (prevMacNo != null) {
+		if (prevMacNo != null && prevMacNo.equals(macNo)) {
 			if (outAtmAtmDealNo != null && outAtmAtmDealNo.length() > 0) {
 				if (n05Str != null && n05Str.length() >= 7) {
 					try {
-						niceTranErrorSendProc( 5, prevMacNo );
+						niceTranErrorSendProc( 5, prevMacNo, null );
 					} catch(Exception e) {
-						logger( "NiceInqRemAmtErrorUpdateProc Error !!!\n" );
+						logger(e.getMessage());
+						logger( "NiceInqRemAmtErrorUpdateProc Error !!!" );
 						fnCleanup(-1);
 					}
 					
@@ -458,7 +466,8 @@ public class ERRMonJob implements Job {
 				try {
 					niceInqRemAmtErrorUpdateProc(prevMacNo, outAtmAtmDealNo);
 				} catch(Exception e) {
-					logger( "NiceInqRemAmtErrorUpdateProc Error <<!!!\n" );
+					logger(e.getMessage());
+					logger( "NiceInqRemAmtErrorUpdateProc Error <<!!!" );
 					fnCleanup(-1);
 				}
 			}
@@ -495,25 +504,28 @@ public class ERRMonJob implements Job {
 			if ( shortCashStatus == -1 ) {
 				/* 기준금액 없음 장애 발생 */
 				try {
-					niceTranErrorSendProc( 13, macNo );
+					niceTranErrorSendProc( 13, macNo, obj );
 				} catch(Exception e) {
-					logger( "N08 NiceTranErrorSendProc Error !!!\n" );
+					logger(e.getMessage());
+					logger( "N08 NiceTranErrorSendProc Error !!!" );
 					fnCleanup(-1);
 				}
 			} else if ( shortCashStatus == -2 ) {
 				/* 현금부족(기준금액) 장애 발생 */
 				try {
-					niceTranErrorSendProc( 12, macNo );
+					niceTranErrorSendProc( 12, macNo, obj );
 				} catch(Exception e) {
-					logger( "N07 NiceTranErrorSendProc Error !!!\n" );
+					logger(e.getMessage());
+					logger( "N07 NiceTranErrorSendProc Error !!!" );
 					fnCleanup(-1);
 				}
 			} else if ( shortCashStatus == -3 ) {
 				/* 현금부족예보(기준금액) 장애 발생 */
 				try {
-					niceTranErrorSendProc( 14, macNo );
+					niceTranErrorSendProc( 14, macNo, obj );
 				} catch(Exception e) {
-					logger( "N07 NiceTranErrorSendProc Error !!!\n" );
+					logger(e.getMessage());
+					logger( "N07 NiceTranErrorSendProc Error !!!" );
 					fnCleanup(-1);
 				}
 			}
@@ -541,12 +553,13 @@ public class ERRMonJob implements Job {
 			dealType = obj.get("deal_type").toString();
 			atmDealNo = obj.get("atm_deal_no").toString();
 			
-			if (prevMacNo != null && prevMacNo.equals(macNo)) {
+			if (prevMacNo != null && !prevMacNo.equals(macNo)) {
 				if (dealType != null && dealType.length() >= 3) {
 					try {
 						niceTranRepairErrorUpdateProc( prevMacNo, prevAtmDealNo);
 					} catch(Exception e) {
-						logger( "NiceTranRepairErrorUpdateProc Error !!!\n" );
+						logger(e.getMessage());
+						logger( "NiceTranRepairErrorUpdateProc Error !!!" );
 						fnCleanup(-1);
 					}
 				}
@@ -554,9 +567,10 @@ public class ERRMonJob implements Job {
 				// if ( strstr( deal_type, "333" ) )
 				if (dealType.indexOf("333") != -1) {
 					try {
-						niceTranErrorSendProc( 6, prevMacNo );
+						niceTranErrorSendProc( 6, prevMacNo, obj );
 					} catch(Exception e) {
-						logger( "N06 NiceTranErrorSendProc Error !!!\n" );
+						logger(e.getMessage());
+						logger( "N06 NiceTranErrorSendProc Error !!!" );
 						fnCleanup(-1);
 					}
 					
@@ -634,9 +648,10 @@ public class ERRMonJob implements Job {
 			
 			if (isSkip == 0) {
 				try {
-					niceTranErrorSendProc( 4, macNo);
+					niceTranErrorSendProc( 4, macNo, obj);
 				} catch(Exception e) {
-					logger( "NiceTranNotranErrorProc Error !!!\n" );
+					logger(e.getMessage());
+					logger( "NiceTranNotranErrorProc Error !!!" );
 					fnCleanup(-1);
 				}
 			}
@@ -676,16 +691,17 @@ public class ERRMonJob implements Job {
 			dealStatus = obj.get("DEAL_STATUS").toString();
 			atmDealNo = obj.get("ATM_DEAL_NO").toString();
 			
-			if (prevMacNo != null && prevMacNo.equals(macNo)) {
+			if (prevMacNo != null && !prevMacNo.equals(macNo)) {
 				/*
-				logger( ">>>>mac_no[%s][%s] deal_no[%s][%s] deal_status[%s]\n",
+				logger( ">>>>mac_no[%s][%s] deal_no[%s][%s] deal_status[%s]",
 				hMAC_NO, prev_mac_no, hATM_DEAL_NO, prev_atm_deal_no, deal_status );
 				*/
 				if ( strDealStatus != null && strDealStatus.length() >= 3 ) {
 					try {
 						niceTranErrorUpdateProc( prevMacNo, prevAtmDealNo);
 					} catch(Exception e) {
-						logger( "NiceTranErrorProc Error !!!\n" );
+						logger(e.getMessage());
+						logger( "NiceTranErrorProc Error !!!" );
 						fnCleanup(-1);
 					}
 				}
@@ -705,12 +721,12 @@ public class ERRMonJob implements Job {
 				if (strN03.indexOf("1") != -1) strN03.append(dealStatus);
 				
 				// if ( ! strncmp( N02str, "11111", 5 ) ) {
-				if (!strN02.toString().startsWith("11111")) {
+				if (strN02.toString().startsWith("11111")) {
 					try {
-						niceTranErrorSendProc( 2, macNo );
+						niceTranErrorSendProc( 2, macNo, obj );
 					} catch(Exception e) {
-						e.printStackTrace();
-						logger( "N02 NiceTranErrorSendProc Error !!!\n" );
+						logger(e.getMessage());
+						logger( "N02 NiceTranErrorSendProc Error !!!" );
 						fnCleanup(-1);
 					}
 					
@@ -719,11 +735,12 @@ public class ERRMonJob implements Job {
 				}
 
 				// if ( ! strncmp( N03str, "101", 3 ) ) {
-				if (!strN03.toString().startsWith("101")) {
+				if (strN03.toString().startsWith("101")) {
 					try {
-						niceTranErrorSendProc( 3, macNo);
+						niceTranErrorSendProc( 3, macNo, obj );
 					} catch(Exception e) {
-						logger( "N03 NiceTranErrorSendProc Error !!!\n" );
+						logger(e.getMessage());
+						logger( "N03 NiceTranErrorSendProc Error !!!" );
 						fnCleanup(-1);
 					}
 					
@@ -784,7 +801,8 @@ public class ERRMonJob implements Job {
 			try {
 				atmESErrorSendProc(hOrgCd, hBranchCd, hMacNo, "USR01", "", "1");
 			} catch(Exception e) {
-				logger( "USR01 ATM_ESErrorSendProc Error !!!\n" );
+				logger(e.getMessage());
+				logger( "USR01 ATM_ESErrorSendProc Error !!!" );
 				fnCleanup(-1);
 			}
 		}
@@ -867,13 +885,16 @@ public class ERRMonJob implements Job {
 	 * <pre>
 	 * 여기에 메소드의 설명 및 변경 이력을 기술하십시오.
 	 * </pre>
+	 * @param obj 
 	 * 
 	 * @param i
 	 * @param object
 	 * @return
 	 * @throws Exception 
 	 */
-	private void niceTranErrorSendProc(final int errNo, String macNo) throws Exception {
+	private void niceTranErrorSendProc(final int errNo, String macNo, HashMap<String, Object> obj) throws Exception {
+		if (obj != null) msgLogger.info("ERRMON", "SH", obj.toString());
+		
 		// org_cd : 096
 		// format_type : NS
 		// msg_type : N200
@@ -915,12 +936,17 @@ public class ERRMonJob implements Job {
                 parsed.setString("mac_no", params);
                 parsed.setString("network_info", "301" );
                                                       
-                parsed.setString("atm_off_day", "00000000" );
-                parsed.setString("atm_off_time", "000000" );
-                parsed.setString("atm_state", "0" );
-                parsed.setString("atm_cash", "000000000" );
-                parsed.setString("atm_dummy", "00000000000000000000" );
-                parsed.setString("user_made_err", Integer.toHexString(errNo));
+                try {
+	                parsed.setString("atm_off_day", "00000000" );
+	                parsed.setString("atm_off_time", "000000" );
+	                parsed.setString("atm_state", "0" );
+	                parsed.setString("atm_cash", "000000000" );
+	                parsed.setString("atm_dummy", "00000000000000000000" );
+	                parsed.setString("user_made_err", Integer.toHexString(errNo));
+                } catch(Exception e) {
+                	msgLogger.info("ERRMON", "SH", e.getMessage());
+                	throw e;
+                }
                 
                 for(int i=0; i<29; i++ ) {
                       parsed.setString("atm_hw_error[" + i + "]", "000" );
@@ -1001,7 +1027,8 @@ public class ERRMonJob implements Job {
 	 * @param msg
 	 */
 	private void logger(int i, String msg) {
-		System.out.print(msg);
+		msgLogger.info("ERRMON", "SH", i + "_" + msg);
+		System.err.print(i + "_" + msg);
 	}
 
 	/**
@@ -1013,7 +1040,8 @@ public class ERRMonJob implements Job {
 	 * @param msg
 	 */
 	private void logger(String msg) {
-		System.out.print(msg);
+		msgLogger.info("ERRMON", "SH", msg);
+		System.err.println(msg);
 	}
 
 	/**
@@ -1025,7 +1053,7 @@ public class ERRMonJob implements Job {
 	 * @param i
 	 */
 	private void fnCleanup(int Sig) {
-		throw new RuntimeException( "ERRMon Main Process fnCleanup Start...Signal=[" + Sig + "]\n" );
+		throw new RuntimeException( "ERRMon Main Process fnCleanup Start...Signal=[" + Sig + "]" );
 	}
 
 }

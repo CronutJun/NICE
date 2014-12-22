@@ -14,11 +14,13 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.log4j.Logger;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.nicetcm.nibsplus.broker.msg.model.MsgBrokerConf;
+import com.nicetcm.nibsplus.orgsend.common.MsgLogger;
 import com.nicetcm.nibsplus.orgsend.common.OrgSend;
 import com.nicetcm.nibsplus.orgsend.common.OrgSendException;
 import com.nicetcm.nibsplus.orgsend.model.OrgSendExternalVO;
@@ -46,7 +48,7 @@ public class NOrgSendImpl implements NOrgSendService {
 
 	/*@Autowired
 	private MsgLogger msgLogger;*/
-	private Logger errorLogger = Logger.getLogger("OrgSendERROR");
+	private Logger errorLogger = Logger.getLogger(this.getClass());
 
     @Resource(name= "sqlSessionFactory_OP")
     private SqlSessionFactory sqlSessionFactory;
@@ -54,6 +56,8 @@ public class NOrgSendImpl implements NOrgSendService {
     @Resource(name= "orgSend")
     private OrgSend orgSend;
 
+	@Autowired
+	private MsgLogger msgLogger;
 
     @Resource(name= "MsgRmiTransfer")
     //@Resource(name= "MsgLocalTransfer")
@@ -110,6 +114,15 @@ public class NOrgSendImpl implements NOrgSendService {
 	            String perfix = orgSendExternalVO.getQueryName() + ".select";
 	
 	            if(mappedStatementNames.contains(perfix + orgSendExternalVO.getOrgCd())) {
+	            	if(mappedStatementNames.contains(perfix + orgSendExternalVO.getOrgCd() + "_count")) {
+	            		try {
+	            			int count = session.selectOne(perfix + orgSendExternalVO.getOrgCd() + "_count", orgSendQryParamVO);
+	            			msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), String.format("처리대상 %d 건", count));
+	            			
+	            			Thread.currentThread().setName(perfix + orgSendExternalVO.getOrgCd() + "_" + count);
+	            		} catch(Exception e) {}
+	            	}
+	            	
 	                session.select(perfix + orgSendExternalVO.getOrgCd(), orgSendQryParamVO, orgSendResultHandler);
 	            } else {
 	                session.select(perfix + "Default", orgSendQryParamVO, orgSendResultHandler);
@@ -118,7 +131,9 @@ public class NOrgSendImpl implements NOrgSendService {
         		session.close();
         	}
         } catch (Exception e) {
+        	msgLogger.info(orgSendExternalVO.getQueryName(), orgSendExternalVO.getOrgCd(), e.getMessage());
         	errorLogger.error(e.getMessage(), e.getCause());
+        	e.printStackTrace(System.err);
         }
     }
 
@@ -132,8 +147,7 @@ public class NOrgSendImpl implements NOrgSendService {
         }
 
         @Override
-        public void handleResult(ResultContext context)
-        {
+        public void handleResult(ResultContext context) {
             //ResultContext Object에서 Mapper Interface에서 return되는 Object를 얻는다.
 
             @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -156,11 +170,10 @@ public class NOrgSendImpl implements NOrgSendService {
 
                 }
 
-                // logger.debug(msgBodyMap.toString());
-                
                 msgTransferService.send(msgBrokerConf, msgBodyMap, orgSendExternalVO);
             } catch (OrgSendException e) {
             	errorLogger.error(String.format("%s %s\n%s", Thread.currentThread().getName(), e.getMessage(), msgBodyMap.toString()), e.getCause());
+            	e.printStackTrace(System.err);
             }
         }
 

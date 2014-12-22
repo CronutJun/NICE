@@ -36,7 +36,7 @@ import com.nicetcm.nibsplus.orgsend.service.NOrgSendService;
 @DisallowConcurrentExecution
 public class OrgSendJob implements Job {
 
-	private Logger errorLogger = Logger.getLogger("OrgSendERROR");
+	private Logger errorLogger = Logger.getLogger(this.getClass());
 	
     /**
      * Quartz에서 실행시킴
@@ -74,6 +74,7 @@ public class OrgSendJob implements Job {
         } catch (Exception e) {
         	msgLogger.info(queryName, orgCd, String.format("%s", e.getMessage()));
         	errorLogger.error(String.format("%s %s", Thread.currentThread().getName(), e.getMessage()), e.getCause());
+        	e.printStackTrace(System.err);
         }
     }
     

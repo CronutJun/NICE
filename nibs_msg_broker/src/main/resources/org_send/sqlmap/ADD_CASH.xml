@@ -86,7 +86,7 @@
         ,hw55_cnt check_50_cnt
         ,hw16_cnt check_100_cnt
         ,'1' close_yn                  /* 대구은행은 무조건 마감후. 마감전이 없음. */
-        ,OP.pkg_fn_common.sf_getPostActDate(add_date) send_date     /* 현송기준일 : 익영업일 */
+        ,OP.sf_getPostActDate(add_date) send_date     /* 현송기준일 : 익영업일 */
         ,office_nm
         ,add_time insert_time
         ,add_cw14_amt/10000 cash_10000_cnt

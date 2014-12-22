@@ -24,6 +24,7 @@
       { "name" : "arr_com_cd",             "kname" : "도착업체코드",           "type" : "AN",  "length"  : 1   },
       { "name" : "create_time",            "kname" : "출동요청시간",           "type" : "N",   "length"  : 6   },
       { "name" : "arrival_gb",             "kname" : "도착통보구분",           "type" : "AN",  "length"  : 1   },
-      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 104 }
+      { "name" : "brand_yn",               "kname" : "브랜드여부",             "type" : "AN",  "length"  : 1   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 103 }
    ]
 }

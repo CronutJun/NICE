@@ -9,29 +9,39 @@ package com.nicetcm.nibsplus.broker.msg.services;
  *           2014. 07. 08    K.D.J.
  */
 
-import java.nio.ByteBuffer;
-import java.util.Date;
-import java.util.Random;
-
 import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
 import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
+import java.nio.ByteBuffer;
+import java.util.Date;
+
+import org.apache.ibatis.session.SqlSession;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Service;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerConsumer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
-import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
-import com.nicetcm.nibsplus.broker.msg.mapper.*;
-import com.nicetcm.nibsplus.broker.msg.model.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
+import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnMacMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceTranCuponMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceTranGiftMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceTranMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnRcInfoMapper;
+import com.nicetcm.nibsplus.broker.msg.model.TFnMac;
+import com.nicetcm.nibsplus.broker.msg.model.TFnMacKey;
+import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTran;
+import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTranCupon;
+import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTranGift;
+import com.nicetcm.nibsplus.broker.msg.model.TFnRcInfo;
+import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
 @Service("inN1000100")
 public class InN1000100Impl extends InMsgHandlerImpl {
@@ -733,18 +743,18 @@ public class InN1000100Impl extends InMsgHandlerImpl {
             sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "7", null );
             sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "8", null );
 
-            byte[] byteAtmHwError = new byte[HW_MODULE_ERR.values().length * 4];
+            String[] strAtmHwError = new String[HW_MODULE_ERR.values().length];
             /*
              *  카드판독기이상 (NI122), 명세표부이상(NI123) 만 복구
              */
             for( HW_MODULE_ERR enumAtmHwError: HW_MODULE_ERR.values()){
                 if( enumAtmHwError.name().equals("HW_CARD_READ")
                 ||  enumAtmHwError.name().equals("HW_SPECS") )
-                    System.arraycopy( new byte[]{'0','\0','\0','\0'}, 0, byteAtmHwError, enumAtmHwError.ordinal() * 4, 4 );
+                    strAtmHwError[enumAtmHwError.ordinal()] = "0";
                 else
-                    System.arraycopy( new byte[]{'9','\0','\0','\0'}, 0, byteAtmHwError, enumAtmHwError.ordinal() * 4, 4 );
+                    strAtmHwError[enumAtmHwError.ordinal()] = "9";
             }
-            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "", byteAtmHwError );
+            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "", strAtmHwError );
         }
 
         /*
@@ -911,7 +921,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
     }
 
 
-    private void sendNICERepairMsg( MsgBrokerData safeData, String branchCd, String macNo, String userMadeErr, byte[] errState ) {
+    private void sendNICERepairMsg( MsgBrokerData safeData, String branchCd, String macNo, String userMadeErr, String[] errState ) {
 
         /*
          * 거래 금액의 변화가 있을 경우 나이스 발생 장애 복구 시킴
@@ -944,11 +954,14 @@ public class InN1000100Impl extends InMsgHandlerImpl {
 
                 msgPsr.setString("CM.trans_seq_no", comPack.getTransSeqNo(safeData, msgPsr.getString("CM.org_cd"), msgPsr.getString("CM.trans_date")));
 
-                if( errState != null )
-                    msgPsr.setBytes( "atm_hw_error", errState );
+                if( errState != null  ) {
+                    for( int i = 0; i < HW_MODULE_ERR.values().length; i++ )
+                    msgPsr.setString( String.format("atm_hw_error[%d]", i), errState[i] );
+                }
                 msgPsr.syncMessage();
 
-                MsgBrokerProducer.putDataToPrd(msgPsr);
+                MsgBrokerConsumer.putDataToCon( msgPsr, MsgBrokerConst.NS_Q_NAME );
+
             }
             finally {
                 msgPsr.clearMessage();
@@ -956,7 +969,9 @@ public class InN1000100Impl extends InMsgHandlerImpl {
 
         }
         catch ( Exception e ) {
-            logger.debug("[sendNICERepairMsg] Error raised..{}", e.getMessage() );
+            logger.warn("[sendNICERepairMsg] Error raised..{}", e.getMessage() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.warn(se.toString());
         }
     }
 }

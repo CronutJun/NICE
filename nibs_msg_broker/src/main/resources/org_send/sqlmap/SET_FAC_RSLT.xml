@@ -39,6 +39,7 @@
 		        work_msg as memo
 		from op.T_CM_SET_FAC_INFO
 		where  ORG_CD = '088'
+		and 	work_result = '1'
 		and nvl(org_send_yn, 0) = '0'
     </select>
 </mapper>

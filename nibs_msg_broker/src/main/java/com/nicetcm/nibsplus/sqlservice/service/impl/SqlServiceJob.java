@@ -11,6 +11,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.context.ApplicationContext;
 
+import com.nicetcm.nibsplus.orgsend.common.MsgLogger;
 import com.nicetcm.nibsplus.scheduler.model.SchedulerVO;
 import com.nicetcm.nibsplus.sqlservice.service.SqlService;
 
@@ -22,8 +23,8 @@ import com.nicetcm.nibsplus.sqlservice.service.SqlService;
 @DisallowConcurrentExecution
 public class SqlServiceJob implements Job {
 
-	private Logger logger = Logger.getLogger(this.getClass());
-	private Logger errorLogger = Logger.getLogger("SqlServiceERROR");
+	private Logger errorLogger = Logger.getLogger(this.getClass());
+	private MsgLogger msgLogger = null;
     
     /**
      * Quartz에서 실행시킴
@@ -42,32 +43,33 @@ public class SqlServiceJob implements Job {
         try {
             ApplicationContext applicationContext = (ApplicationContext)jobDataMap.get("applicationContext");
             SqlService sqlService = applicationContext.getBean("sqlServiceImpl", SqlServiceImpl.class);
+            msgLogger = applicationContext.getBean("msgLogger", MsgLogger.class);
 
-    		logger.info(String.format("%s %-35s[%s] execute.", Thread.currentThread().getName(), schedulerVO.getJobGroup(), StringUtils.defaultIfEmpty(schedulerVO.getRealTimeCommand(), "")));
-    		
 			Method method = null;
 			try {
-				method = SqlService.class.getDeclaredMethod(schedulerVO.getJobGroup(), Logger.class);
+				method = SqlService.class.getDeclaredMethod(schedulerVO.getJobGroup());
 			} catch (NoSuchMethodException e) {}
 			
 			Method methodWithParam = null;
 			try {
-				methodWithParam = SqlService.class.getDeclaredMethod(schedulerVO.getJobGroup(), Logger.class, String.class);
+				methodWithParam = SqlService.class.getDeclaredMethod(schedulerVO.getJobGroup(), String.class);
 			} catch(NoSuchMethodException e) {}
 			
-			Object retObj = null;
+			// Object retObj = null; // 결과값이 필요한경우
 			
 			if (method != null) {
-				retObj = method.invoke(sqlService, logger);
+				// retObj = method.invoke(sqlService);
+				method.invoke(sqlService);
 			} else if (methodWithParam != null) {
-				retObj = methodWithParam.invoke(sqlService, logger, schedulerVO.getRealTimeCommand());
+				// retObj = methodWithParam.invoke(sqlService, schedulerVO.getRealTimeCommand());
+				methodWithParam.invoke(sqlService, schedulerVO.getRealTimeCommand());
 			} else {
 				throw new RuntimeException("Is not exist batch. " + schedulerVO.getJobGroup());
 			}
-
-			logger.info(String.format("%s %-35s[%s] success. returnValue:%s", Thread.currentThread().getName(), schedulerVO.getJobGroup(), StringUtils.defaultIfEmpty(schedulerVO.getRealTimeCommand(), ""), StringUtils.defaultIfEmpty((String)retObj, "")));
 		} catch (Exception e) {
-			errorLogger.info(String.format("%s %s %s[%s]", Thread.currentThread().getName(), e.getMessage(), schedulerVO.getJobGroup(), StringUtils.defaultIfEmpty(schedulerVO.getRealTimeCommand(), "")));
+			if (msgLogger != null) msgLogger.info(schedulerVO.getJobGroup(), "SH", e.getMessage());
+			errorLogger.error(String.format("%s %s %s[%s]", Thread.currentThread().getName(), e.getMessage(), schedulerVO.getJobGroup(), StringUtils.defaultIfEmpty(schedulerVO.getRealTimeCommand(), "")));
+			e.printStackTrace(System.err);
 		}
     }
 }

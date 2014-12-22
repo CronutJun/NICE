@@ -60,7 +60,8 @@ public class MsgBrokerWork {
                     RespAckNakHandler resp = (RespAckNakHandler)MsgBrokerSpringMain
                             .sprCtx.getBean("respAckNak");
                     resp.procAckNak( msgThrdSafeData, msgPsr, 0 );
-                    if( !msgPsr.getString("CM.msg_id").equals("sSERVER") )
+                    if( !msgPsr.getString("CM.msg_id").equals("sSERVER")
+                    &&  !msgPsr.getString("CM.msg_id").equals("TRANRPR") )
                         MsgBrokerProducer.putDataToPrd(msgPsr, ret.orgCd);
                     msgPsr.setString( "CM.msg_type",   msgPsr.getString("CM.msg_type").substring(0, 2) + MsgBrokerConst.REQ_CODE );
                     /*
