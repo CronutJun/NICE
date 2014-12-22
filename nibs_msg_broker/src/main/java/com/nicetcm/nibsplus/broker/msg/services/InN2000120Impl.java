@@ -18,6 +18,7 @@ package com.nicetcm.nibsplus.broker.msg.services;
 import java.nio.ByteBuffer;
 import java.util.List;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -261,13 +262,33 @@ public class InN2000120Impl extends InMsgHandlerImpl {
 
                  if( substr(parsed.getString("atm_monitor"), EnumNM.IDX_MON_OPEN_DOOR.ordinal(), EnumNM.IDX_MON_OPEN_DOOR.ordinal()+1).equals(MsgBrokerConst.NICE_NORMAL)
                  ||  substr(parsed.getString("atm_monitor"), EnumNM.IDX_MON_OPEN_DOOR.ordinal(), EnumNM.IDX_MON_OPEN_DOOR.ordinal()+1).equals(MsgBrokerConst.NICE_NO_SET) ) {
-                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                             errNoti, errCall, errTxn, macInfo, retErrState );
-                     errTxn.setRepairDate(null);
-                     errTxn.setRepairTime(null);
+                     TCtErrorBasic errBasicL = new TCtErrorBasic();
+                     TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                     TCtErrorNoti errNotiL = new TCtErrorNoti();
+                     TCtErrorCall errCallL = new TCtErrorCall();
+                     TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                     BeanUtils.copyProperties(  errBasicL, errBasic );
+                     BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                     BeanUtils.copyProperties(  errNotiL,  errNoti );
+                     BeanUtils.copyProperties(  errCallL,  errCall );
+                     BeanUtils.copyProperties(  errTxnL,   errTxn );
+                     comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                             errNotiL, errCallL, errTxnL, macInfo, retErrState );
                  }
                  else {
-                     comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                     TCtErrorBasic errBasicL = new TCtErrorBasic();
+                     TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                     TCtErrorNoti errNotiL = new TCtErrorNoti();
+                     TCtErrorCall errCallL = new TCtErrorCall();
+                     TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                     BeanUtils.copyProperties(  errBasicL, errBasic );
+                     BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                     BeanUtils.copyProperties(  errNotiL,  errNoti );
+                     BeanUtils.copyProperties(  errCallL,  errCall );
+                     BeanUtils.copyProperties(  errTxnL,   errTxn );
+                     comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                  }
              }
 
@@ -287,20 +308,33 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              * 회선장애를 복구 시킨다.
              */
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_LINE_ERROR );
-            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                    errNoti, errCall, errTxn, macInfo, retErrState );
-            errTxn.setRepairDate(null);
-            errTxn.setRepairTime(null);
+            TCtErrorBasic errBasicL = new TCtErrorBasic();
+            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+            TCtErrorNoti errNotiL = new TCtErrorNoti();
+            TCtErrorCall errCallL = new TCtErrorCall();
+            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+            BeanUtils.copyProperties(  errBasicL, errBasic );
+            BeanUtils.copyProperties(  errRcptL,  errRcpt );
+            BeanUtils.copyProperties(  errNotiL,  errNoti );
+            BeanUtils.copyProperties(  errCallL,  errCall );
+            BeanUtils.copyProperties(  errTxnL,   errTxn );
+            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                    errNotiL, errCallL, errTxnL, macInfo, retErrState );
 
             /*
              * 310(AC전원차단) 301(장애), 001(개국) 이 발생하면
              * AC전원차단 복구 시킨다.
              */
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_AC_ERROR );
-            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                    errNoti, errCall, errTxn, macInfo, retErrState );
-            errTxn.setRepairDate(null);
-            errTxn.setRepairTime(null);
+
+            BeanUtils.copyProperties(  errBasicL, errBasic );
+            BeanUtils.copyProperties(  errRcptL,  errRcpt );
+            BeanUtils.copyProperties(  errNotiL,  errNoti );
+            BeanUtils.copyProperties(  errCallL,  errCall );
+            BeanUtils.copyProperties(  errTxnL,   errTxn );
+            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                    errNotiL, errCallL, errTxnL, macInfo, retErrState );
             nRtn = 0;
         }
         /*
@@ -308,7 +342,18 @@ public class InN2000120Impl extends InMsgHandlerImpl {
          */
         else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_LINE_ERR) ) {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_LINE_ERROR );
-            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            TCtErrorBasic errBasicL = new TCtErrorBasic();
+            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+            TCtErrorNoti errNotiL = new TCtErrorNoti();
+            TCtErrorCall errCallL = new TCtErrorCall();
+            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+            BeanUtils.copyProperties(  errBasicL, errBasic );
+            BeanUtils.copyProperties(  errRcptL,  errRcpt );
+            BeanUtils.copyProperties(  errNotiL,  errNoti );
+            BeanUtils.copyProperties(  errCallL,  errCall );
+            BeanUtils.copyProperties(  errTxnL,   errTxn );
+            comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
             nRtn = 0;
         }
         /*
@@ -317,7 +362,18 @@ public class InN2000120Impl extends InMsgHandlerImpl {
          */
         else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_AC_ERR) ) {
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_AC_ERROR );
-            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+            TCtErrorBasic errBasicL = new TCtErrorBasic();
+            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+            TCtErrorNoti errNotiL = new TCtErrorNoti();
+            TCtErrorCall errCallL = new TCtErrorCall();
+            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+            BeanUtils.copyProperties(  errBasicL, errBasic );
+            BeanUtils.copyProperties(  errRcptL,  errRcpt );
+            BeanUtils.copyProperties(  errNotiL,  errNoti );
+            BeanUtils.copyProperties(  errCallL,  errCall );
+            BeanUtils.copyProperties(  errTxnL,   errTxn );
+            comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
             nRtn = 0;
         }
         /*
@@ -325,10 +381,19 @@ public class InN2000120Impl extends InMsgHandlerImpl {
          */
         else if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_LINE_CLEAR) ) {
             errBasic.setErrorCd( MsgBrokerConst.NICE_STATE_LINE_CLEAR );
-            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                    errNoti, errCall, errTxn, macInfo, retErrState );
-            errTxn.setRepairDate(null);
-            errTxn.setRepairTime(null);
+            TCtErrorBasic errBasicL = new TCtErrorBasic();
+            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+            TCtErrorNoti errNotiL = new TCtErrorNoti();
+            TCtErrorCall errCallL = new TCtErrorCall();
+            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+            BeanUtils.copyProperties(  errBasicL, errBasic );
+            BeanUtils.copyProperties(  errRcptL,  errRcpt );
+            BeanUtils.copyProperties(  errNotiL,  errNoti );
+            BeanUtils.copyProperties(  errCallL,  errCall );
+            BeanUtils.copyProperties(  errTxnL,   errTxn );
+            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                    errNotiL, errCallL, errTxnL, macInfo, retErrState );
             nRtn = 0;
         }
         /*
@@ -386,10 +451,19 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                         break;
                 }
                 if( nstr(errBasic.getErrorCd()).length() > 0 ) {
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, retErrState );
-                    errTxn.setRepairDate(null);
-                    errTxn.setRepairTime(null);
+                    TCtErrorBasic errBasicL = new TCtErrorBasic();
+                    TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                    TCtErrorNoti errNotiL = new TCtErrorNoti();
+                    TCtErrorCall errCallL = new TCtErrorCall();
+                    TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, retErrState );
                 }
                 for( EnumNHME enumNHME: EnumNHME.values() ) {
                    if( enumNHME.name().equals("IDX_HW_CASH_OUT" )           /* 1 지폐방출기 */
@@ -414,10 +488,19 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     ||  enumNHME.name().equals("IDX_HW_REMAIN_MONEY"    ) ) {/* 20- 지폐잔류           */
                        if( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
                            errBasic.setErrorCd( saNiceErrState[enumNHME.ordinal()] );
-                           comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                   errNoti, errCall, errTxn, macInfo, retErrState );
-                           errTxn.setRepairDate(null);
-                           errTxn.setRepairTime(null);
+                           TCtErrorBasic errBasicL = new TCtErrorBasic();
+                           TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                           TCtErrorNoti errNotiL = new TCtErrorNoti();
+                           TCtErrorCall errCallL = new TCtErrorCall();
+                           TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                           BeanUtils.copyProperties(  errBasicL, errBasic );
+                           BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                           BeanUtils.copyProperties(  errNotiL,  errNoti );
+                           BeanUtils.copyProperties(  errCallL,  errCall );
+                           BeanUtils.copyProperties(  errTxnL,   errTxn );
+                           comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                                   errNotiL, errCallL, errTxnL, macInfo, retErrState );
                        }
 
                     }
@@ -484,7 +567,18 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                              */
                             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
                             if( substr(parsed.getString("atm_monitor"), 0, 1).equals(MsgBrokerConst.NICE_ERROR) ) {
-                                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                                TCtErrorBasic errBasicL = new TCtErrorBasic();
+                                TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                                TCtErrorNoti errNotiL = new TCtErrorNoti();
+                                TCtErrorCall errCallL = new TCtErrorCall();
+                                TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                                BeanUtils.copyProperties(  errBasicL, errBasic );
+                                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                                BeanUtils.copyProperties(  errCallL,  errCall );
+                                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                                comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                                 /*
                                  * Terminal Mode 가 '1' 일 경우 작업 상태 이므로 슈퍼바이저 에러만 발생 시키고
                                  * 금고 침투 장애를 발생 시키지 않는다.
@@ -493,10 +587,19 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                                 throw new MsgBrokerException("유저정의 장애는 응답송신하지 않는다", -99);
                             }
                             else {
-                                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                        errNoti, errCall, errTxn, macInfo, retErrState );
-                                errTxn.setRepairDate(null);
-                                errTxn.setRepairTime(null);
+                                TCtErrorBasic errBasicL = new TCtErrorBasic();
+                                TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                                TCtErrorNoti errNotiL = new TCtErrorNoti();
+                                TCtErrorCall errCallL = new TCtErrorCall();
+                                TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                                BeanUtils.copyProperties(  errBasicL, errBasic );
+                                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                                BeanUtils.copyProperties(  errCallL,  errCall );
+                                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                                        errNotiL, errCallL, errTxnL, macInfo, retErrState );
                             }
 
                             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N15 );
@@ -510,7 +613,18 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                              * 야간 ATM 감시 전문 처리 (금고침투긴급)
                              */
                             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_URGENCY_ERROR );
-                            comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                            TCtErrorBasic errBasicL = new TCtErrorBasic();
+                            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                            TCtErrorNoti errNotiL = new TCtErrorNoti();
+                            TCtErrorCall errCallL = new TCtErrorCall();
+                            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                            BeanUtils.copyProperties(  errBasicL, errBasic );
+                            BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                            BeanUtils.copyProperties(  errNotiL,  errNoti );
+                            BeanUtils.copyProperties(  errCallL,  errCall );
+                            BeanUtils.copyProperties(  errTxnL,   errTxn );
+                            comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                             /*
                              * 유저정의 장애는 응답송신하지 않는다.
                              */
@@ -525,7 +639,18 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     default :
                         break;
                 }
-                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                TCtErrorBasic errBasicL = new TCtErrorBasic();
+                TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+                TCtErrorNoti errNotiL = new TCtErrorNoti();
+                TCtErrorCall errCallL = new TCtErrorCall();
+                TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
+                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                BeanUtils.copyProperties(  errCallL,  errCall );
+                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                 /*
                  * 유저정의 장애는 응답송신하지 않는다.
                  */
@@ -536,19 +661,32 @@ public class InN2000120Impl extends InMsgHandlerImpl {
              * 회선장애를 복구 시킨다.
              */
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_LINE_ERROR );
-            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                    errNoti, errCall, errTxn, macInfo, retErrState );
-            errTxn.setRepairDate(null);
-            errTxn.setRepairTime(null);
+            TCtErrorBasic errBasicL = new TCtErrorBasic();
+            TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+            TCtErrorNoti errNotiL = new TCtErrorNoti();
+            TCtErrorCall errCallL = new TCtErrorCall();
+            TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+            BeanUtils.copyProperties(  errBasicL, errBasic );
+            BeanUtils.copyProperties(  errRcptL,  errRcpt );
+            BeanUtils.copyProperties(  errNotiL,  errNoti );
+            BeanUtils.copyProperties(  errCallL,  errCall );
+            BeanUtils.copyProperties(  errTxnL,   errTxn );
+            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                    errNotiL, errCallL, errTxnL, macInfo, retErrState );
             /*
              * 310(AC전원차단) 301(장애), 001(개국) 이 발생하면
              * AC전원차단 복구 시킨다.
              */
             errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_AC_ERROR );
-            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                    errNoti, errCall, errTxn, macInfo, retErrState );
-            errTxn.setRepairDate(null);
-            errTxn.setRepairTime(null);
+
+            BeanUtils.copyProperties(  errBasicL, errBasic );
+            BeanUtils.copyProperties(  errRcptL,  errRcpt );
+            BeanUtils.copyProperties(  errNotiL,  errNoti );
+            BeanUtils.copyProperties(  errCallL,  errCall );
+            BeanUtils.copyProperties(  errTxnL,   errTxn );
+            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                    errNotiL, errCallL, errTxnL, macInfo, retErrState );
             /*
              * 지폐함 및 용지상태
              * 지폐함 1, 2, 3, 4 상태 검사
@@ -578,10 +716,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     *  지폐함 현금 충분
                     */
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_CASHBOX_EMPTY );
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, retErrState );
-                    errTxn.setRepairDate(null);
-                    errTxn.setRepairTime(null);
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, retErrState );
                 }
                 else {
                    /*
@@ -604,13 +746,25 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                             */
                            if ( i >= CNT_CASH_BOX - 1 ) {
                                errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N09 );
-                               comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                               BeanUtils.copyProperties(  errBasicL, errBasic );
+                               BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                               BeanUtils.copyProperties(  errNotiL,  errNoti );
+                               BeanUtils.copyProperties(  errCallL,  errCall );
+                               BeanUtils.copyProperties(  errTxnL,   errTxn );
+                               comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                            }
                        }
                    }
                    else  {
                        errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_CASHBOX_EMPTY );
-                       comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                       BeanUtils.copyProperties(  errBasicL, errBasic );
+                       BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                       BeanUtils.copyProperties(  errNotiL,  errNoti );
+                       BeanUtils.copyProperties(  errCallL,  errCall );
+                       BeanUtils.copyProperties(  errTxnL,   errTxn );
+                       comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                    }
                 }
             }
@@ -630,10 +784,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                      *  지폐함 현금 충분
                      */
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_CASHBOX_EMPTY );
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, retErrState );
-                    errTxn.setRepairDate(null);
-                    errTxn.setRepairTime(null);
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, retErrState );
 
                 }
                 else {
@@ -642,11 +800,23 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                      */
                     if( getIsCashState( macInfo.getMacNo() ) == -1 ) {
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_USER_N09 );
-                        comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                        BeanUtils.copyProperties(  errBasicL, errBasic );
+                        BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                        BeanUtils.copyProperties(  errNotiL,  errNoti );
+                        BeanUtils.copyProperties(  errCallL,  errCall );
+                        BeanUtils.copyProperties(  errTxnL,   errTxn );
+                        comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                     }
                     else {
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_CASHBOX_EMPTY );
-                        comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                        BeanUtils.copyProperties(  errBasicL, errBasic );
+                        BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                        BeanUtils.copyProperties(  errNotiL,  errNoti );
+                        BeanUtils.copyProperties(  errCallL,  errCall );
+                        BeanUtils.copyProperties(  errTxnL,   errTxn );
+                        comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                     }
 
                 }
@@ -661,17 +831,27 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  *  회수함 부족
                  */
-                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
+                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                BeanUtils.copyProperties(  errCallL,  errCall );
+                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
             }
             else if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal(),
                          EnumNCBS.IDX_STATE_RECOLL_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                 /*
                  *  회수함 충분
                  */
-                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                        errNoti, errCall, errTxn, macInfo, retErrState );
-                errTxn.setRepairDate(null);
-                errTxn.setRepairTime(null);
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
+                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                BeanUtils.copyProperties(  errCallL,  errCall );
+                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                        errNotiL, errCallL, errTxnL, macInfo, retErrState );
             }
 
             /*
@@ -683,17 +863,27 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  *  명세표 부족
                  */
-                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
+                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                BeanUtils.copyProperties(  errCallL,  errCall );
+                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
             }
             else if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_SPECS.ordinal(),
                     EnumNCBS.IDX_STATE_SPECS.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                 /*
                  *  명세표 충분
                  */
-                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                        errNoti, errCall, errTxn, macInfo, retErrState );
-                errTxn.setRepairDate(null);
-                errTxn.setRepairTime(null);
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
+                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                BeanUtils.copyProperties(  errCallL,  errCall );
+                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                        errNotiL, errCallL, errTxnL, macInfo, retErrState );
             }
 
             /*
@@ -709,17 +899,27 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  *  입금함 참
                  */
-                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
+                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                BeanUtils.copyProperties(  errCallL,  errCall );
+                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
             }
             else if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_INPUT_BOX.ordinal(),
                     EnumNCBS.IDX_STATE_INPUT_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                 /*
                  *  입금함 빔
                  */
-                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                        errNoti, errCall, errTxn, macInfo, retErrState );
-                errTxn.setRepairDate(null);
-                errTxn.setRepairTime(null);
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
+                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                BeanUtils.copyProperties(  errCallL,  errCall );
+                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                        errNotiL, errCallL, errTxnL, macInfo, retErrState );
             }
 
             /*
@@ -733,15 +933,27 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 /*
                  *  수표함 빔
                  */
-                comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
+                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                BeanUtils.copyProperties(  errCallL,  errCall );
+                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
             }
             else if( substr(parsed.getString("atm_cash"), EnumNCBS.IDX_STATE_CHECK_BOX.ordinal(),
                     EnumNCBS.IDX_STATE_CHECK_BOX.ordinal() + 1).equals(MsgBrokerConst.NICE_BOX_GOOD) ) {
                 /*
                  *  수표함 충분
                  */
-                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                        errNoti, errCall, errTxn, macInfo, retErrState );
+
+                BeanUtils.copyProperties(  errBasicL, errBasic );
+                BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                BeanUtils.copyProperties(  errNotiL,  errNoti );
+                BeanUtils.copyProperties(  errCallL,  errCall );
+                BeanUtils.copyProperties(  errTxnL,   errTxn );
+                comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                        errNotiL, errCallL, errTxnL, macInfo, retErrState );
                 errTxn.setRepairDate(null);
                 errTxn.setRepairTime(null);
             }
@@ -784,7 +996,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                         }
 
                         errBasic.setMadeErrCd( parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())) );
-                        comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                        BeanUtils.copyProperties(  errBasicL, errBasic );
+                        BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                        BeanUtils.copyProperties(  errNotiL,  errNoti );
+                        BeanUtils.copyProperties(  errCallL,  errCall );
+                        BeanUtils.copyProperties(  errTxnL,   errTxn );
+                        comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
 
                         errBasic.setMadeErrCd(null);
 
@@ -792,18 +1010,26 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                          * 2007.02.23 DVR 장애 관제는 하지 않으나 조건조회에서 조회 가능하도록 발생과 동시에 복구 처리 - 운총요청
                          */
                         if( enumNHME.name().equals("IDX_HW_DVR_ERR") ) {
-                            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                    errNoti, errCall, errTxn, macInfo, retErrState );
-                            errTxn.setRepairDate(null);
-                            errTxn.setRepairTime(null);
+
+                            BeanUtils.copyProperties(  errBasicL, errBasic );
+                            BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                            BeanUtils.copyProperties(  errNotiL,  errNoti );
+                            BeanUtils.copyProperties(  errCallL,  errCall );
+                            BeanUtils.copyProperties(  errTxnL,   errTxn );
+                            comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                                    errNotiL, errCallL, errTxnL, macInfo, retErrState );
                         }
                     }
                     else if( substr(parsed.getString(String.format("atm_hw_error[%d]", enumNHME.ordinal())),
                             0,1).equals(MsgBrokerConst.NICE_HW_GOOD) ) {
-                        comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                                errNoti, errCall, errTxn, macInfo, retErrState );
-                        errTxn.setRepairDate(null);
-                        errTxn.setRepairTime(null);
+
+                        BeanUtils.copyProperties(  errBasicL, errBasic );
+                        BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                        BeanUtils.copyProperties(  errNotiL,  errNoti );
+                        BeanUtils.copyProperties(  errCallL,  errCall );
+                        BeanUtils.copyProperties(  errTxnL,   errTxn );
+                        comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                                errNotiL, errCallL, errTxnL, macInfo, retErrState );
                     }
                 }
                 else
@@ -853,7 +1079,13 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
                 if( parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_TERM_MODE.ordinal(),
                         EnumNM.IDX_MON_TERM_MODE.ordinal()+1).equals(MsgBrokerConst.NICE_ERROR) ) {
-                    comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                     /*
                      * Terminal Mode 가 '1' 일 경우 작업 상태 이므로 슈퍼바이저 에러만 발생 시키고
                      * 금고 침투 장애를 발생 시키지 않는다.
@@ -861,10 +1093,14 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     return;
                 }
                 else {
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, retErrState );
-                    errTxn.setRepairDate(null);
-                    errTxn.setRepairTime(null);
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, retErrState );
                 }
 
                 if( nNormal != EnumNM.values().length ) {
@@ -878,25 +1114,42 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
                     }
 
-                    comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                 }
                 else  {
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_OPEN_ERROR );
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, retErrState );
-                    errTxn.setRepairDate(null);
-                    errTxn.setRepairTime(null);
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, retErrState );
 
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_CLOSE_ERROR );
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, retErrState );
-                    errTxn.setRepairDate(null);
-                    errTxn.setRepairTime(null);
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, retErrState );
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, retErrState );
-                    errTxn.setRepairDate(null);
-                    errTxn.setRepairTime(null);
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, retErrState );
                 }
             }
             else {
@@ -912,12 +1165,24 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     ||  parsed.getString("atm_monitor").substring(EnumNM.IDX_MON_OPNE_SAFE_YN.ordinal(),
                             EnumNM.IDX_MON_OPNE_SAFE_YN.ordinal()+1).equals(MsgBrokerConst.NICE_ERROR) ) {
                         errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_URGENCY_ERROR );
-                        comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                        BeanUtils.copyProperties(  errBasicL, errBasic );
+                        BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                        BeanUtils.copyProperties(  errNotiL,  errNoti );
+                        BeanUtils.copyProperties(  errCallL,  errCall );
+                        BeanUtils.copyProperties(  errTxnL,   errTxn );
+                        comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                         return;
                     }
 
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
-                    comPack.insertErrBasic( safeData, errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, "" );
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.insertErrBasic( safeData, errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, "" );
                 }
                 else {
                     /*
@@ -925,16 +1190,24 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                      * 복구도 처리해야 한다
                      */
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_SUPERVISOR );
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, retErrState );
-                    errTxn.setRepairDate(null);
-                    errTxn.setRepairTime(null);
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, retErrState );
 
                     errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_ERROR );
-                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasic, errRcpt,
-                            errNoti, errCall, errTxn, macInfo, retErrState );
-                    errTxn.setRepairDate(null);
-                    errTxn.setRepairTime(null);
+
+                    BeanUtils.copyProperties(  errBasicL, errBasic );
+                    BeanUtils.copyProperties(  errRcptL,  errRcpt );
+                    BeanUtils.copyProperties(  errNotiL,  errNoti );
+                    BeanUtils.copyProperties(  errCallL,  errCall );
+                    BeanUtils.copyProperties(  errTxnL,   errTxn );
+                    comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, "", errBasicL, errRcptL,
+                            errNotiL, errCallL, errTxnL, macInfo, retErrState );
                 }
             }
 
@@ -1270,10 +1543,20 @@ public class InN2000120Impl extends InMsgHandlerImpl {
         niceMac.setModemRelayYn( parsed.getString("modem_relay_yn") );
         comPack.updateMacInfo( safeData, macInfo, cmMac, niceMac );
         comPack.insertUpdateMacOpen( safeData,  macInfo, errBasic );
+
+        TCtErrorBasic errBasicL = new TCtErrorBasic();
+        TCtErrorRcpt errRcptL = new TCtErrorRcpt();
+        TCtErrorNoti errNotiL = new TCtErrorNoti();
+        TCtErrorCall errCallL = new TCtErrorCall();
+        TCtErrorTxn  errTxnL  = new TCtErrorTxn();
+
+        BeanUtils.copyProperties(  errBasicL, errBasic );
+        BeanUtils.copyProperties(  errRcptL,  errRcpt );
+        BeanUtils.copyProperties(  errNotiL,  errNoti );
+        BeanUtils.copyProperties(  errCallL,  errCall );
+        BeanUtils.copyProperties(  errTxnL,   errTxn );
         comPack.updateErrBasic( safeData, MsgBrokerConst.DB_UPDATE_ERROR_MNG, MsgBrokerConst.MODE_UPDATE_HW_ONE_CLEAR,
-                errBasic, errRcpt, errNoti, errCall, errTxn, macInfo, curErrList );
-        errTxn.setRepairDate(null);
-        errTxn.setRepairTime(null);
+                errBasicL, errRcptL, errNotiL, errCallL, errTxnL, macInfo, curErrList );
 
         /*
          * 20110719 브랜드제휴기관 정보 저장

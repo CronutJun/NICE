@@ -22,6 +22,8 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.mapper.*;
 import com.nicetcm.nibsplus.broker.msg.model.*;
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -146,9 +148,11 @@ public class In01000130Impl extends InMsgHandlerImpl {
           *장애테이블에는 저장 하지 않음.
          */
         if( macInfo.getOrgCd().equals(MsgBrokerConst.SHATMS_CODE)
-        &&  errMngMadeCom.getCallCntType().equals("2")
-        &&  !errMngMadeCom.getCallType().equals("3") ) {
+        &&  substr(errMngMadeCom.getCallCntType(), 1, 2).equals("2")
+        &&  !substr(errMngMadeCom.getCallType(), 1, 2).equals("3") ) {
             insertErrMngMadeCom( errBasic, errMngMadeCom );
+            logger.warn("[MngEM_SaveErrCall] 2차출동요청 테이블 저장 처리");
+            return;
         }
 
         /**

@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
@@ -93,7 +95,7 @@ public class In01101150Impl extends InMsgHandlerImpl {
             도착 예정, 도착 , 조치 결과 전문에 사유 필드가 없음에 따라 2차 출동의 경우 2차 출동 테이블
             비교 후 없는 경우 장애 테이블을 UPDATE 함.
            **********************************************************************************************/
-            if(parsed.getString("call_class").substring(1).equals("2")) {
+            if(substr(parsed.getString("call_class"), 1, 2).equals("2")) {
                 TCtErrorMngMadeCom tCtErrorMngMadeCom = new TCtErrorMngMadeCom();
                 tCtErrorMngMadeCom.setOrgSendYn("2");
                 tCtErrorMngMadeCom.setUpdateDate(safeData.getDSysDate());

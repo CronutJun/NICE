@@ -198,6 +198,11 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
                 }
 
                 if( !msgThrdSafeData.isNoOutData() ) {
+                    /**
+                     * Important!!!! Stratus와 기관의 통신시 통신 버퍼의 크기 제한으로
+                     * ActiveMQ put에 delay를 주는 꼼수를 추가한다. (NICE요청) 0.2초
+                     */
+                    Thread.sleep(200);
                     MsgBrokerProducer.putDataToPrd(msgPsr);
                 }
             }

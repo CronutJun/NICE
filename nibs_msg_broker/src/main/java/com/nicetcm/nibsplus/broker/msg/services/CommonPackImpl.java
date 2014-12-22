@@ -2070,7 +2070,7 @@ public class CommonPackImpl implements CommonPack {
          */
         if( ErrBasic.getOrgCd().equals(MsgBrokerConst.NICE_CODE)
         &&  nstr(ErrBasic.getErrorCd()).equals("NI122") ) {
-            if( nstr(ErrBasic.getMadeErrCd()).equals("400") || nstr(ErrBasic.getMadeErrCd()).equals("420") ) {
+            if( !nstr(ErrBasic.getMadeErrCd()).equals("400") && !nstr(ErrBasic.getMadeErrCd()).equals("420") ) {
                 return MsgBrokerConst.AUTO_SEND_FALSE;
             }
         }
