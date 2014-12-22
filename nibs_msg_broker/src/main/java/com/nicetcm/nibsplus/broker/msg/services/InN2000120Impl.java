@@ -256,6 +256,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
               *  점주모드 suBody.atm_monitor[IDX_MON_TERM_MODE] == '5' 인경우도 상판열림 장애 발생시킴
               */
              if( !parsed.getString("network_info").equals(MsgBrokerConst.NICE_STATE_LINE_ERR)
+             &&  !substr(parsed.getString("atm_monitor"), EnumNM.IDX_MON_TERM_MODE.ordinal(), EnumNM.IDX_MON_TERM_MODE.ordinal()+1).equals("") /* 2014/12/22 BHJ요청 추가 */
              &&  !substr(parsed.getString("atm_monitor"), EnumNM.IDX_MON_TERM_MODE.ordinal(), EnumNM.IDX_MON_TERM_MODE.ordinal()+1).equals("1") ) {
 
                  errBasic.setErrorCd( MsgBrokerConst.NICE_ERROR_ATMWATCH_OPENDOOR_ERROR );
