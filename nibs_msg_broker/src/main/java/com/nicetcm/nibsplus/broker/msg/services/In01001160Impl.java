@@ -186,6 +186,8 @@ public class In01001160Impl extends InMsgHandlerImpl {
 
             int htimeConf = 0;
 
+            if( tCtErrorMng.getSendDate() == null ) tCtErrorMng.setSendDate("00000000");
+            if( tCtErrorMng.getSendTime() == null ) tCtErrorMng.setSendTime("000000");
             if(Long.parseLong(tCtErrorMng.getSendDate() + tCtErrorMng.getSendTime()) > Long.parseLong(parsed.getString("arrival_date") + parsed.getString("arrival_time"))) {
                 htimeConf = 0;
             } else {

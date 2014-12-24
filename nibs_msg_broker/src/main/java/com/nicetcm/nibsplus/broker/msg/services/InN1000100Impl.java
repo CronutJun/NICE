@@ -923,6 +923,9 @@ public class InN1000100Impl extends InMsgHandlerImpl {
 
     private void sendNICERepairMsg( MsgBrokerData safeData, String branchCd, String macNo, String userMadeErr, String[] errState ) {
 
+        if( Integer.parseInt(MsgCommon.msgProps.getProperty("msg.stop.repair", "0")) != 0 ) {
+            return;
+        }
         /*
          * 거래 금액의 변화가 있을 경우 나이스 발생 장애 복구 시킴
          * 트리거에서의 부하로 인해 장애 큐로 넘겨 처리 하도록 수정

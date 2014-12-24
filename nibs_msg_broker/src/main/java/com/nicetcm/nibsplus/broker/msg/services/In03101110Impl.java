@@ -43,6 +43,12 @@ public class In03101110Impl extends InMsgHandlerImpl {
         logger.debug(parsed.getString("CM.work_type"));
 
 
+        /**
+         * 경남은행이면 filler에 오는 데이터를 mac_no에 붙인다. 2014/12/24 BHJ요청
+         */
+        if( parsed.getString("CM.org_cd").equals(MsgBrokerConst.KNATMS_CODE) ) {
+            parsed.setString("mac_no", parsed.getString("mac_no") + parsed.getString("filler"));
+        }
 
         /**************************************************************************************************
          농협atms는 조회일자 조회시간이 전문상에 없으므로 현재 시간을 세팅하도록 한다.

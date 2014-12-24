@@ -47,8 +47,10 @@ public abstract class InMsgHandlerImpl implements InMsgHandler {
             msgTX.commit(safeData.getTXS());
         }
         catch( MsgBrokerException me ) {
-            if( me.getErrorCode() == -99 ) {
+            if( me.getErrorCode() == -99
+            ||  me.getErrorCode() == -12 ) {
                 msgTX.commit(safeData.getTXS());
+                throw me;
             }
             else {
                 msgTX.rollback(safeData.getTXS());

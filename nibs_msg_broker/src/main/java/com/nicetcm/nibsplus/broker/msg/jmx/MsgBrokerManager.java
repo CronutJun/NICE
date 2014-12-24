@@ -273,6 +273,29 @@ public class MsgBrokerManager extends NotificationBroadcasterSupport implements 
     }
 
     @Override
+    public int getStopRepairMsg() {
+
+        return Integer.parseInt(MsgCommon.msgProps.getProperty("msg.stop.repair", "0"));
+    }
+
+    @Override
+    public void setStopRepairMsg(int stopped) {
+        int oldStopped = Integer.parseInt(MsgCommon.msgProps.getProperty("msg.stop.repair", "0"));
+        MsgCommon.msgProps.setProperty("msg.stop.repair", Integer.toString(stopped) );
+
+        Notification n =  new AttributeChangeNotification(this,
+                                                          sequenceNumber++,
+                                                          System.currentTimeMillis(),
+                                                          "Stop NICE repair message",
+                                                          "msg.stop.repair",
+                                                          "int",
+                                                          oldStopped,
+                                                          Integer.parseInt(MsgCommon.msgProps.getProperty("msg.stop.repair", "0")));
+
+        sendNotification(n);
+    }
+
+    @Override
     public MBeanNotificationInfo[] getNotificationInfo() {
 
         String[] types = new String[] {

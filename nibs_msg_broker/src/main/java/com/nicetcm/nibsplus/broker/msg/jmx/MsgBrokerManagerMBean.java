@@ -9,5 +9,7 @@ public interface MsgBrokerManagerMBean {
     public void listBean();
     public int getRMIResTimeout();
     public void setRMIResTimeout(int timeout);
+    public int getStopRepairMsg();
+    public void setStopRepairMsg(int stopped);
     public String reattachConsumer(String consumerName);
 }
