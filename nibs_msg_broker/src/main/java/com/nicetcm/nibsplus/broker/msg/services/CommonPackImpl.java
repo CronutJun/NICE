@@ -802,6 +802,8 @@ public class CommonPackImpl implements CommonPack {
 
         if( nstr(sSendTypeDetail).equals("0") ) {
             ErrNoti.setSendSmsStatus( "6020" );
+            ErrBasic.setSendCount((short)1);
+            ErrBasic.setWorkStatus  ( "6020" );
             if( retASI.guardSite == 1 ) {
                 ErrNoti.setRecvPlace( retASI.outCd.trim() );
                 ErrNoti.setRecvUserUid( "9999999" );
@@ -818,6 +820,8 @@ public class CommonPackImpl implements CommonPack {
         }
         else {
             ErrNoti.setSendSmsStatus( null );
+            ErrBasic.setSendCount( null );
+            ErrBasic.setWorkStatus( null );
             ErrNoti.setRecvPlace( null );
             ErrNoti.setRecvUserUid( null );
             ErrNoti.setRecvUserNm( null );
