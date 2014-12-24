@@ -56,7 +56,11 @@ public class MsgBrokerListener implements MessageListener {
                      byte[] bIdxInfo = new byte[msgParaLen];
                      System.arraycopy(rcv, msgParaPos-1, bIdxInfo, 0, msgParaLen);
 
-                     int iIdxInfo = Integer.parseInt(new String(bIdxInfo));
+                     int iIdxInfo = 0;
+                     for( byte nibble: bIdxInfo ) {
+                         iIdxInfo += nibble;
+                     }
+
                      iIdxInfo = iIdxInfo % parallels;
                      blkWrkGrp.putMsg(iIdxInfo, rcv);
                  }
