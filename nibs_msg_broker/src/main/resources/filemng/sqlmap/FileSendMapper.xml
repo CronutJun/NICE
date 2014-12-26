@@ -63,7 +63,7 @@
 
 	<select id="pickupGetCNMacData" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.sf_getPreActDate(std_date), std_date), std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -72,7 +72,7 @@
 
 	<select id="pickupGetCNMacDataPrev" parameterType="string" resultType="string">
 		SELECT
-		    OP.pkg_fn_common.sf_getPreActDate(OP.pkg_fn_common.sf_getPreActDate(std_date))
+		    OP.sf_getPreActDate(OP.sf_getPreActDate(std_date))
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -431,7 +431,7 @@
 
 	<select id="pickupGetCityTranData" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.sf_getPreActDate(std_date), std_date), std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -475,7 +475,7 @@
 
 	<select id="pickupGetLGTranData" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.sf_getPreActDate(std_date), std_date), std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -546,7 +546,7 @@
 
 	<select id="pickupGetNongHTranData" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.sf_getPreActDate(std_date), std_date), std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -784,7 +784,7 @@
 
 	<select id="pickupGetNongHTranData_dasi" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.sf_getPreActDate(std_date), std_date), std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -1009,7 +1009,7 @@
 
 	<select id="pickupGetNongHTranData_NEW" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.sf_getPreActDate(std_date), std_date), std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -1312,7 +1312,7 @@
 	
 	<select id="pickupGetNongHBrandMacData2" parameterType="string" resultType="string">
 		SELECT
-		    OP.pkg_fn_common.sf_getPreActDate(std_date)
+		    OP.sf_getPreActDate(std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -1351,7 +1351,7 @@
 
 	<select id="pickupGetCommonTranData" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.sf_getPreActDate(std_date), std_date), std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -1637,7 +1637,7 @@
 
 	<select id="pickupGetKETranData" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.sf_getPreActDate(std_date), std_date), std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -1815,7 +1815,7 @@
 
 	<select id="pickupGetCHTranData" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date), std_date)
+		    DECODE(holiday_yn, '0', DECODE(real_holiday_yn, '0', OP.sf_getPreActDate(std_date), std_date), std_date)
 		FROM
 		    OP.T_FN_CALENDAR
 		WHERE
@@ -2036,7 +2036,7 @@
 
 	<select id="pickupGetKFTCTranData" parameterType="string" resultType="string">
 		SELECT
-		    DECODE(holiday_yn, '1', OP.pkg_fn_common.sf_getPreActDate(std_date), std_date)
+		    DECODE(holiday_yn, '1', OP.sf_getPreActDate(std_date), std_date)
 		FROM
 		    OP.t_fn_calendar
 		WHERE

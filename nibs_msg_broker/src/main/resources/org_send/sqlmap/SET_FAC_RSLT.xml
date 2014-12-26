@@ -34,7 +34,7 @@
 		        fac_nm,
 		        asset_seqno,
 		        open_date as set_date,
-		        work_result
+		        work_result,
 		        work_end_date,
 		        work_msg as memo
 		from op.T_CM_SET_FAC_INFO

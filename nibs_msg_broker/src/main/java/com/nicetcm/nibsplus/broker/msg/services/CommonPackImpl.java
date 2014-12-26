@@ -1612,14 +1612,14 @@ public class CommonPackImpl implements CommonPack {
                     /*
                      * 상세장소구분이 경정일 경우는 수목금토일 외에 장애 발생 안함
                      */
-                    if( sDayOfWeek.matches("[1|6|7|4|5]") )
+                    if( !sDayOfWeek.matches("[1|6|7|4|5]") )
                         return MsgBrokerConst.AUTO_NOT_CREATE;
                 }
                 else {
                     /*
                      * 마사회,상세장소구분이 경륜일 경우 장애시 금토일 외에는 장애 발생 안함
                      */
-                    if( sDayOfWeek.matches("[1|6|7]") )
+                    if( !sDayOfWeek.matches("[1|6|7]") )
                         return MsgBrokerConst.AUTO_NOT_CREATE;
                 }
 

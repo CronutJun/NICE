@@ -30,11 +30,13 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerLib;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtUnfinishMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnMacMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceTranCuponMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceTranGiftMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnNiceTranMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnRcInfoMapper;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
 import com.nicetcm.nibsplus.broker.msg.model.TFnMac;
 import com.nicetcm.nibsplus.broker.msg.model.TFnMacKey;
 import com.nicetcm.nibsplus.broker.msg.model.TFnNiceTran;
@@ -59,6 +61,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
     @Autowired private TFnNiceTranCuponMapper fnNiceTranCuponMap;
     @Autowired private TFnNiceTranGiftMapper fnNiceTranGiftMap;
     @Autowired private TFnMacMapper fnMacMap;
+    //@Autowired private TCtUnfinishMapper unfinishMap;
 
     private enum HW_MODULE_ERR {
         HW_LINE_ERR,        /* 0 - 통신장애         */
@@ -739,9 +742,27 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                         fnMacUpd.getLastDealTime(), e.getMessage() );
                 throw e;
             }
-            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "4", null );
-            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "7", null );
-            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "8", null );
+            TCtErrorBasic errBasic = new TCtErrorBasic();
+            errBasic.setOrgCd     ( MsgBrokerConst.NICE_CODE );
+            errBasic.setBranchCd  ( fnMacUpd.getBranchCd() );
+            errBasic.setMacNo     ( fnMacUpd.getMacNo()    );
+            errBasic.setCreateDate( safeData.getSysDate()  );
+            errBasic.setCreateTime( safeData.getSysTime()  );
+            int errCnt = 0;
+            try {
+                //if( Integer.parseInt(MsgCommon.msgProps.getProperty("msg.stop.repair", "0")) == 0 )
+                //    errCnt = unfinishMap.countByCond1( errBasic );
+            }
+            catch( Exception e) {
+                logger.warn("count Exception is fired.#1");
+                errCnt = 0;
+            }
+            //if( errCnt > 0 ) {
+                logger.warn("복구할 장애 있슴. 기번 = {}", fnMacUpd.getMacNo() );
+                sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "4", null );
+                sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "7", null );
+                sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "8", null );
+            //}
 
             String[] strAtmHwError = new String[HW_MODULE_ERR.values().length];
             /*
@@ -754,7 +775,9 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 else
                     strAtmHwError[enumAtmHwError.ordinal()] = "9";
             }
-            sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "", strAtmHwError );
+            //if( errCnt > 0 ) {
+                sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "", strAtmHwError );
+            //}
         }
 
         /*
@@ -888,6 +911,24 @@ public class InN1000100Impl extends InMsgHandlerImpl {
          * 정상거래전문 수신 후 수분 후에 취소전문이 다시 올라옴에 따라
          * 실제 장애가 복구 처리될 수 있다 따라서 복구 시키지 않음 20090330
          */
+        TCtErrorBasic errBasic = new TCtErrorBasic();
+        errBasic.setOrgCd     ( MsgBrokerConst.NICE_CODE );
+        errBasic.setBranchCd  ( fnMacUpd.getBranchCd() );
+        errBasic.setMacNo     ( fnMacUpd.getMacNo()    );
+        errBasic.setCreateDate( safeData.getSysDate()  );
+        errBasic.setCreateTime( safeData.getSysTime()  );
+        int errCnt = 0;
+        try {
+            //if( Integer.parseInt(MsgCommon.msgProps.getProperty("msg.stop.repair", "0")) == 0 )
+            //    errCnt = unfinishMap.countByCond1( errBasic );
+        }
+        catch( Exception e) {
+            logger.warn("count Exception is fired.#2");
+            errCnt = 0;
+        }
+        if( errCnt > 0 ) {
+            logger.warn("복구할 장애 있슴. 기번 = {}", fnMacUpd.getMacNo() );
+        }
         if( lInMacAmt < 0 ) {
             sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "5", null );
             sendNICERepairMsg( safeData, fnMacUpd.getBranchCd(), fnMacUpd.getMacNo(), "6", null );
@@ -963,7 +1004,7 @@ public class InN1000100Impl extends InMsgHandlerImpl {
                 }
                 msgPsr.syncMessage();
 
-                MsgBrokerConsumer.putDataToCon( msgPsr, MsgBrokerConst.NS_Q_NAME );
+                MsgBrokerConsumer.putDataToCon( msgPsr, MsgBrokerConst.NS_Q_REPAIR );
 
             }
             finally {

@@ -62,6 +62,7 @@ public class MsgBrokerListener implements MessageListener {
                      }
 
                      iIdxInfo = iIdxInfo % parallels;
+                     logger.warn("paralles basis = {}, index = {}", new String(bIdxInfo), iIdxInfo);
                      blkWrkGrp.putMsg(iIdxInfo, rcv);
                  }
                  catch( Exception e ) {

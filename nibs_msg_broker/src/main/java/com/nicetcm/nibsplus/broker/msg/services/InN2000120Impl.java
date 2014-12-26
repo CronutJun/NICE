@@ -15,6 +15,9 @@ package com.nicetcm.nibsplus.broker.msg.services;
  */
 
 
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
+import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
+
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -24,9 +27,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.nstr;
-import static com.nicetcm.nibsplus.broker.msg.MsgBrokerLib.substr;
-
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerConst;
@@ -34,42 +34,44 @@ import com.nicetcm.nibsplus.broker.msg.MsgBrokerData;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerException;
 import com.nicetcm.nibsplus.broker.msg.MsgBrokerProducer;
 import com.nicetcm.nibsplus.broker.msg.mapper.StoredProcMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCmMacMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCmSiteMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorBasicMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorCustInfoMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorTxnMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TCtNiceMngMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtRemoteHistoryMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TCtUnfinishMapper;
+import com.nicetcm.nibsplus.broker.msg.mapper.TFnArpcFaultMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnBrandSetStateMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnMacMapper;
 import com.nicetcm.nibsplus.broker.msg.mapper.TFnRcCntMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TCmMacMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorBasicMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorTxnMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TCtRemoteHistoryMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TCtErrorCustInfoMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TCmSiteMapper;
-import com.nicetcm.nibsplus.broker.msg.mapper.TFnArpcFaultMapper;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorRcpt;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxnSpec;
-import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
-import com.nicetcm.nibsplus.broker.msg.model.TCtNiceMng;
-import com.nicetcm.nibsplus.broker.msg.model.TCtNiceMac;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasicSpec;
 import com.nicetcm.nibsplus.broker.msg.model.ErrorState;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMac;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacKey;
 import com.nicetcm.nibsplus.broker.msg.model.TCmMacSpec;
-import com.nicetcm.nibsplus.broker.msg.model.TFnBrandSetState;
-import com.nicetcm.nibsplus.broker.msg.model.TFnRcCnt;
-import com.nicetcm.nibsplus.broker.msg.model.TFnMac;
-import com.nicetcm.nibsplus.broker.msg.model.TFnMacKey;
-import com.nicetcm.nibsplus.broker.msg.model.TCtRemoteHistory;
-import com.nicetcm.nibsplus.broker.msg.model.TCtRemoteHistorySpec;
-import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCustInfo;
-import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 import com.nicetcm.nibsplus.broker.msg.model.TCmSite;
 import com.nicetcm.nibsplus.broker.msg.model.TCmSiteKey;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasic;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorBasicSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCall;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorCustInfo;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorNoti;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorRcpt;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxn;
+import com.nicetcm.nibsplus.broker.msg.model.TCtErrorTxnSpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtNiceMac;
+import com.nicetcm.nibsplus.broker.msg.model.TCtNiceMng;
+import com.nicetcm.nibsplus.broker.msg.model.TCtRemoteHistory;
+import com.nicetcm.nibsplus.broker.msg.model.TCtRemoteHistorySpec;
+import com.nicetcm.nibsplus.broker.msg.model.TCtUnfinish;
 import com.nicetcm.nibsplus.broker.msg.model.TFnArpcFault;
+import com.nicetcm.nibsplus.broker.msg.model.TFnBrandSetState;
+import com.nicetcm.nibsplus.broker.msg.model.TFnMac;
+import com.nicetcm.nibsplus.broker.msg.model.TFnMacKey;
+import com.nicetcm.nibsplus.broker.msg.model.TFnRcCnt;
+import com.nicetcm.nibsplus.broker.msg.model.TMacInfo;
+import com.nicetcm.nibsplus.broker.msg.model.TMisc;
 
 
 @Service("inN2000120")
@@ -85,6 +87,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
     @Autowired private TFnMacMapper fnMacMap;
     @Autowired private TCtErrorBasicMapper errBasicMap;
     @Autowired private TCtErrorTxnMapper errTxnMap;
+    @Autowired private TCtUnfinishMapper unfinishMap;
     @Autowired private TCtRemoteHistoryMapper remoteHistoryMap;
     @Autowired private TCtErrorCustInfoMapper errCustInfoMap;
     @Autowired private TCmSiteMapper cmSiteMap;
@@ -193,6 +196,31 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                 MsgBrokerConst.NICE_ERROR_RPC,              /* "151" RPC 모듈 상태 2014.05.20  */
                 MsgBrokerConst.NICE_ERROR_REMAIN_MONEY      /* "139" 지폐잔류                  */
         };
+
+        /**
+         * 2014/12/26 트란의 복구신호의 경우 기 장애 존재 여부를 먼저 체크한다. (큐 처리 속도문제..)
+         * KDJ
+         */
+        if( parsed.getString("network_info").equals(MsgBrokerConst.NICE_USER_ERR_REPAIR) ) {
+            errBasic.setOrgCd     ( parsed.getString("CM.org_cd") );
+            errBasic.setBranchCd  ( parsed.getString("brch_cd")   );
+            errBasic.setMacNo     ( parsed.getString("mac_no")    );
+            errBasic.setCreateDate( parsed.getString("create_date") );
+            errBasic.setCreateTime( parsed.getString("create_time") );
+            int errCnt = 0;
+            try {
+                errCnt = unfinishMap.countByCond1( errBasic );
+            }
+            catch( Exception e) {
+                logger.warn("count Exception is fired.#2");
+                errCnt = 0;
+            }
+            if( errCnt == 0 ) {
+                logger.warn("장애가 존재하지 않아 복구 전문 skip. MAC_NO = {}", errBasic.getMacNo() );
+                return;
+            }
+        }
+
         macInfo.setOrgCd( parsed.getString("CM.org_cd") );
         macInfo.setBranchCd( parsed.getString("brch_cd") );
         macInfo.setMacNo( parsed.getString("mac_no") );
@@ -451,6 +479,22 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                     default :
                         break;
                 }
+                /**
+                 * 2014/12/26 기 장애 존재 여부를 먼저 체크한다. (큐 처리 속도문제..)
+                 * KDJ
+                 */
+                List<TCtUnfinish> errLst = null;
+                try {
+                    errLst = unfinishMap.selectByCond3( errBasic );
+                    if( errLst == null || errLst.size() == 0 ) {
+                        logger.warn("장애가 존재하지 않아 복구 전문 skip. MAC_NO = {}, ERROR_CD = {}", errBasic.getMacNo(), errBasic.getErrorCd() );
+                        return;
+                    }
+                    else {
+                        logger.warn("장애 존재. 복구 전문 처리. MAC_NO = {}, ERROR_CD = {}", errBasic.getMacNo(), errBasic.getErrorCd() );
+                    }
+                }
+                catch( Exception e ) {}
                 if( nstr(errBasic.getErrorCd()).length() > 0 ) {
                     TCtErrorBasic errBasicL = new TCtErrorBasic();
                     TCtErrorRcpt errRcptL = new TCtErrorRcpt();
@@ -739,7 +783,7 @@ public class InN2000120Impl extends InMsgHandlerImpl {
                         *  지폐함이 EMPTY일 경우에만 장애발생시킴. NEAREND도 패스한다. 20130226 신남철과장
                         */
                        for ( int i = 0 ; i < CNT_CASH_BOX ; i ++ ) {
-                           if( substr(parsed.getString("atm_cash"), i, i+1).equals(MsgBrokerConst.NICE_BOX_EMPTY) ) {
+                           if( !substr(parsed.getString("atm_cash"), i, i+1).equals(MsgBrokerConst.NICE_BOX_EMPTY) ) {
                                break;
                            }
                            /*

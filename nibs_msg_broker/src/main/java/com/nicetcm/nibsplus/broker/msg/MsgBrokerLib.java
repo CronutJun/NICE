@@ -110,7 +110,7 @@ public class MsgBrokerLib {
 
     /**
      * 현재 요일을 정수형으로 구한다
-     * 1 - Sun, 2 - Mon, 3 - Tue, 4 - Wed, 5 - Fri, 6 - Sat
+     * 1 - Sun, 2 - Mon, 3 - Tue, 4 - Wed, 5 - Thr, 6 - Fri, 7 - Sat
      * @return int  현재요일
      */
     public static int currentDayOfWeek() {

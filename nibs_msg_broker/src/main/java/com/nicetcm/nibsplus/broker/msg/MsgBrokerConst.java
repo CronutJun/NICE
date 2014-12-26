@@ -441,8 +441,9 @@ public class MsgBrokerConst {
     /* HOST 기정의 코드 68, H*, 72, NE 는 응답코드로 정의 불가 */
 
 
-    public static final String NS_Q_NAME = "N200.0120";         /* 나이스 상태 Producer Q name       */
-    public static final String ES_Q_NAME = "0500.0110";         /* 신한 통 전문 처리 Producer Q name */
+    public static final String NS_Q_NAME   = "N200.0120";       /* 나이스 상태 Producer Q name       */
+    public static final String NS_Q_REPAIR = "N200.0120.RPAR";  /* 나이스 상태 복구 Consumer Q name  */
+    public static final String ES_Q_NAME   = "0500.0110";       /* 신한 통 전문 처리 Producer Q name */
     public static final String NS_ERR_STATE = "0120";
 
     public static final int    TRAN_UPDATE_STATE      = 0;

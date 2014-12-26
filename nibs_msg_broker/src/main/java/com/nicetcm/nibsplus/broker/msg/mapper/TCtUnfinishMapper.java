@@ -226,6 +226,22 @@ public interface TCtUnfinishMapper {
     int updateByPrimaryKey(TCtUnfinish record);
 
     /**
+     * InN2000120Impl등 장애존재 여부를 기기별로 검증할때 사용
+     *
+     * @author KDJ on Fri Dec 26 15:19:32 KST 2014
+     */
+    @Select({
+        "SELECT  COUNT(*)                                              ",
+        "FROM    OP.T_CT_UNFINISH                                      ",
+        "WHERE   ORG_CD      = #{orgCd, jdbcType=VARCHAR}              ",
+        "AND     BRANCH_CD   = #{branchCd, jdbcType=VARCHAR}           ",
+        "AND     MAC_NO      = #{macNo, jdbcType=VARCHAR}              ",
+        "AND    (ERROR_STATUS IS NULL OR ERROR_STATUS != '7000')       ",
+        "AND     CREATE_DATE > TO_CHAR( SYSDATE - 10, 'YYYYMMDD' )     "
+    })
+    int countByCond1(TCtErrorBasic record);
+
+    /**
      * CommonPack GetDupErrorMng 메소드에서 장애출동 취소가 아닐경우 호출 됨
      *
      * @author KDJ on Tue Jul 01 09:59:32 KST 2014
