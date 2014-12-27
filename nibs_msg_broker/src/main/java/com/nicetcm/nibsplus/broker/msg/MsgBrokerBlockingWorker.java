@@ -12,11 +12,11 @@ public class MsgBrokerBlockingWorker extends Thread {
 
     private BlockingQueue<byte[]> iq;
     private boolean forceResp;
-    private String   redirectTo;
+    private String  redirectTo;
     private boolean noResp;
 
     public MsgBrokerBlockingWorker( boolean forceResp, String redirectTo, boolean noResp ) {
-        iq = new LinkedBlockingQueue<byte[]>(1);
+        iq = new LinkedBlockingQueue<byte[]>(10);
 
         this.forceResp  = forceResp;
         this.redirectTo = redirectTo;
@@ -40,6 +40,12 @@ public class MsgBrokerBlockingWorker extends Thread {
             }
             catch( InterruptedException ie) {
                 logger.warn("Blocking Worker is interrupted");
+                while( !iq.isEmpty() ) {
+                    byte[] msg = iq.poll();
+                    if( msg != null ) {
+                        new MsgBrokerWork( msg, forceResp, redirectTo, noResp ).doWork();
+                    }
+                }
                 break;
             }
         }

@@ -15,9 +15,9 @@ public class MsgBrokerBlockingWorkGroup {
 
     private List<MsgBrokerBlockingWorker> blockThreads = new ArrayList<MsgBrokerBlockingWorker>();
     private boolean forceResp;
-    private String   redirectTo;
+    private String  redirectTo;
     private boolean noResp;
-    private int      blockCount;
+    private int     blockCount;
 
     public MsgBrokerBlockingWorkGroup( boolean forceResp, String redirectTo, boolean noResp, int blockCount ) {
 
