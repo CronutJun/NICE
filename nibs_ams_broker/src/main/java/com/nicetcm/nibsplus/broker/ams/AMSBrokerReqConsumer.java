@@ -38,7 +38,7 @@ public class AMSBrokerReqConsumer extends Thread {
         reqMsg = (ReqMsgHandler)AMSBrokerSpringMain.sprCtx.getBean("reqMsg");
         ansMsg = (AnsMsgHandler)AMSBrokerSpringMain.sprCtx.getBean("ansMsg");
         this.macNo = macNo;
-        this.setName(String.format("ReqConsumer-REQ-%s", this.macNo));
+        this.setName(String.format("<T>%s-C-%s:%s", this.macNo, this.getId(), AMSBrokerMain.serverNo));
     }
 
     public void run()  {

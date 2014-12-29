@@ -1,0 +1,1 @@
+$JAVA_HOME/bin/java -cp "$JDK_HOME/lib/tools.jar:$JDK_HOME/lib/jconsole.jar:$HOME/MsgBroker/nibs_msg_broker" -Dserver.type=stage1 com.nicetcm.nibsplus.broker.msg.util.MsgBrokerMsgDisplay $*

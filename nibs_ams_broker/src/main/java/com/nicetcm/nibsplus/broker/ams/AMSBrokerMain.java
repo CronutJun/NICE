@@ -47,6 +47,8 @@ public class AMSBrokerMain extends Thread {
 
     private String jobName;
 
+    public static String serverNo = "";
+
     public static AMSBrokerRMIServer getRMI() {
         return rmi;
     }
@@ -133,12 +135,19 @@ public class AMSBrokerMain extends Thread {
     public static void main(String[] args) {
 
         try {
-            //FileInputStream file = new FileInputStream( sys_prop_loc + "ams.properties");
-            org.apache.log4j.xml.DOMConfigurator.configure(AMSBrokerMain.class.getResource(
-                    String.format("/%s/log4j.xml", AMSBrokerConst.SVR_TYPE)));
+            Runtime.getRuntime().addShutdownHook( new AMSBrokerShutdown() );
+
             InputStream is = AMSBrokerMain.class.getResourceAsStream(
                     String.format("/%s/ams.properties", AMSBrokerConst.SVR_TYPE));
             MsgCommon.msgProps.load(is);
+            /**
+             * 서버번호 Setting
+             */
+            AMSBrokerMain.serverNo = MsgCommon.msgProps.getProperty("server.number", "0");
+
+            org.apache.log4j.xml.DOMConfigurator.configure(AMSBrokerMain.class.getResource(
+                    String.format("/%s/log4j.xml", AMSBrokerConst.SVR_TYPE)));
+
             MsgCommon.READ_BUF_SIZE = Integer.parseInt(MsgCommon.msgProps.getProperty("read_buf_size"));
             AMSBrokerLib.ROOT_FILE_PATH  = MsgCommon.msgProps.getProperty("root.file.path", "");
             AMSBrokerLib.TEMP_FILE_PATH  = MsgCommon.msgProps.getProperty("temp.file.path", "");

@@ -147,6 +147,11 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
                 logger.debug("Continue set msgPsr length = " + msgPsr.getMessageLength());
             }
 
+            /**
+             * Thread-ID Setting
+             */
+            Thread.currentThread().setName(String.format("<T>%s-S-%s:%s", msgPsr.getString("CM._SSTNo").substring(2), Thread.currentThread().getId(), AMSBrokerMain.serverNo));
+
             rmTrx = new TRmTrx();
             rmMsg = new TRmMsg();
 

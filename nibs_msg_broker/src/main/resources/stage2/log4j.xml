@@ -9,7 +9,7 @@
     </layout>
   </appender>
 
-  <appender name="testAppender" class="com.nicetcm.nibsplus.broker.msg.MsgBrokerTestLogAppender">
+  <appender name="mbAppender" class="com.nicetcm.nibsplus.broker.msg.MsgBrokerLogAppender">
     <param name="File" value="/test.log" />
     <!-- <param name="Encoding" value="UTF-8" /> //-->
     <layout class="org.apache.log4j.PatternLayout">
@@ -39,7 +39,7 @@
 
   <root>
     <priority value="warn" />
-    <appender-ref ref="testAppender"/>
+    <appender-ref ref="mbAppender"/>
   </root>
 
 </log4j:configuration>

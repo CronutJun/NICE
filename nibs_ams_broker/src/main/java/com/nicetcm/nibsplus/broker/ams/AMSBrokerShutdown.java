@@ -25,30 +25,32 @@ public class AMSBrokerShutdown extends Thread {
 
     public void run()  {
         try {
-            logger.debug("Start MAC request listener shutdown.");
-            AMSBrokerReqJob.stopListenerAll();
-            logger.debug("Start schedule shutdown");
-            AMSBrokerSchedWorkGroup.getInstance().shutdownNow();
-            logger.debug("Start scheduler shutdown..");
-            AMSBrokerMain.getScheduler().shutdown();
-            logger.debug("Scheduler stopped.");
-            logger.debug("Start server socket shutdown..");
-            AMSBrokerServer.getServer().close();
-            logger.debug("Server socket stopped.");
-            logger.debug("Start RMI shutdown..");
+            logger.warn("Start RMI shutdown..");
             AMSBrokerMain.getRMI().unbind();
-            logger.debug("RMI stopped.");
+            logger.warn("RMI stopped.");
+            logger.warn("Start listen of requesting to MAC shutdown.");
+            AMSBrokerReqJob.stopListenerAll();
+            logger.warn("listen of requesting to MAC is stopped.");
+            logger.warn("Start thread group of schedule shutdown.");
+            AMSBrokerSchedWorkGroup.getInstance().shutdownNow();
+            logger.warn("Thread group of schedule is stopped.");
+            logger.warn("Start scheduler shutdown.");
+            AMSBrokerMain.getScheduler().shutdown();
+            logger.warn("Scheduler stopped.");
+            logger.warn("Start server socket shutdown.");
+            AMSBrokerServer.getServer().close();
+            logger.warn("Server socket stopped.");
             AMSBrokerMain.stopJMX();
-            logger.debug("JMXAgent is stopped.");
+            logger.warn("JMXAgent is stopped.");
 
-            logger.debug("Thread's count = {}", Thread.activeCount() );
-            //for (Thread t : Thread.getAllStackTraces().keySet()) {
-            //    if (t.getState()==Thread.State.RUNNABLE) {
-            //        logger.debug("Thread id = {},{}", t.getId(), t.getName());
-            //        t.interrupt();
-            //    }
-            //}
-            //System.exit(0);
+            logger.warn("Thread's count = {}", Thread.activeCount() );
+            logger.warn("JMXAgent is stopped.");
+            logger.warn("Shutdown complete.");
+            for( Thread t: Thread.getAllStackTraces().keySet() ) {
+                if( t.isAlive() && this.getId() != t.getId() ) {
+                    t.interrupt();
+                }
+            }
         }
         catch( Exception e ) {
             e.printStackTrace();

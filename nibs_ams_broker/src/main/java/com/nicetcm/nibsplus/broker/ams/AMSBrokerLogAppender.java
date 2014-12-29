@@ -1,15 +1,15 @@
-package com.nicetcm.nibsplus.broker.msg;
+package com.nicetcm.nibsplus.broker.ams;
 
 /**
  * Copyright 2014 The NIBS+ Project
  *
- * MsgBrokerTestLogAppender
+ * AMSBrokerLogAppender
  *
  *  MsgBroker 서버의 테스트를 위해 로그를 Thread단위로 분리
  *
  *
  * @author  K.D.J
- * @since   2014.09.20
+ * @since   2014.12.29
  */
 
 
@@ -25,17 +25,17 @@ import org.apache.log4j.spi.LoggingEvent;
 
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
-public class MsgBrokerTestLogAppender extends FileAppender {
+public class AMSBrokerLogAppender extends FileAppender {
 
-    public MsgBrokerTestLogAppender() {
+    public AMSBrokerLogAppender() {
         super();
     }
 
-    public MsgBrokerTestLogAppender(Layout layout, String filename, boolean append) throws IOException {
+    public AMSBrokerLogAppender(Layout layout, String filename, boolean append) throws IOException {
         super(layout, filename, append);
     }
 
-    public MsgBrokerTestLogAppender(Layout layout, String filename) throws IOException {
+    public AMSBrokerLogAppender(Layout layout, String filename) throws IOException {
         super(layout, filename);
     }
 
@@ -47,12 +47,12 @@ public class MsgBrokerTestLogAppender extends FileAppender {
         String ThrName = Thread.currentThread().getName();
         if( ThrName.indexOf("<T>") >= 0 ) {
             String tkn[] = ThrName.split("-");
-            ThrName = String.format("%s-%s", tkn[0].substring(3), tkn[1]);
+            ThrName = String.format("%s", tkn[0].substring(3, 5));
         }
         else {
-            ThrName = String.format("main-%s", MsgBrokerMain.serverNo);
+            ThrName = String.format("main-%s", AMSBrokerMain.serverNo);
         }
-        String fileName = String.format("%s/%s/%s.log", MsgCommon.msgProps.getProperty("file.dir.log", System.getProperty("user.dir") + "/logs"), MsgBrokerLib.SysDate(), ThrName);
+        String fileName = String.format("%s/%s/%s.log", MsgCommon.msgProps.getProperty("file.dir.log", System.getProperty("user.dir") + "/logs"), AMSBrokerLib.getMsgDate(AMSBrokerLib.getSysDate()), ThrName);
         return fileName;
     }
 

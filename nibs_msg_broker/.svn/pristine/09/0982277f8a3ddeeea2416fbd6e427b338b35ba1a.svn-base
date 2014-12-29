@@ -1,0 +1,34 @@
+if [ $# -lt 1 -o $# -gt 2 ] ; then
+   echo "Usage: lsmsg [-i]  [log file name]"
+   echo "             [-o]  [log file name]"
+   echo "             [-io] [log file name]"
+   exit 0
+elif [ $1 != "-i" -a $1 != "-o" -a $1 != "-io" ] ; then
+   echo "Usage: lsmsg [-i]  [log file name]"
+   echo "             [-o]  [log file name]"
+   echo "             [-io] [log file name]"
+   exit 0
+fi
+if [ $# -eq 1 ] ; then
+  while read line ; do
+    if [ $1 == "-i" ] ; then
+      echo "$line" | grep "I-MSG" | cut -f6 -d"["
+    elif [ $1 == "-o" ] ; then
+      echo "$line" | grep "O-MSG" | cut -f6 -d"["
+    else
+      echo "$line" | grep "[IO]-MSG" | cut -f6 -d"["
+    fi
+  done
+else
+  if [ ! -e $2 ] ; then
+    echo "File $2 does not exist."
+    exit 0
+  fi
+  if [ $1 == "-i" ] ; then
+    grep "I-MSG" $2 | cut -f6 -d"["
+  elif [ $1 == "-o" ] ; then
+    grep "O-MSG" $2 | cut -f6 -d"["
+  else
+    grep "[IO]-MSG" $2 | cut -f6 -d"["
+  fi
+fi

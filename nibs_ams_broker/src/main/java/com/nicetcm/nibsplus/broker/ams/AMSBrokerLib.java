@@ -39,7 +39,7 @@ public class AMSBrokerLib {
      * @return   현재날짜
      * @throws Exception
      */
-    public static Date getSysDate() throws Exception {
+    public static Date getSysDate() {
         return Calendar.getInstance().getTime();
     }
 
@@ -50,7 +50,7 @@ public class AMSBrokerLib {
      * @return
      * @throws Exception
      */
-    public static String getMsgDate(Date dt) throws Exception {
+    public static String getMsgDate(Date dt) {
         FastDateFormat fdt = FastDateFormat.getInstance("yyyyMMdd", Locale.getDefault());
         return  fdt.format(dt);
     }
@@ -85,7 +85,7 @@ public class AMSBrokerLib {
      * @return
      * @throws Exception
      */
-    public static String getMsgTime(Date dt) throws Exception {
+    public static String getMsgTime(Date dt) {
         FastDateFormat fdt = FastDateFormat.getInstance("HHmmss", Locale.getDefault());
         return  fdt.format(dt);
     }

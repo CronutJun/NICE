@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="OPER_FUNDS">
+
+<!--
+<entry key="OPER_FUNDS"             value="03001190" />     09. 운영자금청구서통보
+{
+   "name" : "03001190",                    "kname" : "운영자금청구서",
+   "response" : { "code" : "03001190",     "type" : "SELF" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",               "type" : "INC", "include" : "comm_msg_header.json" },
+      { "name" : "brch_cd",                "kname" : "관리점코드",             "type" : "AN",  "length"  : 8   },
+      { "name" : "mac_no",                 "kname" : "기번",                   "type" : "AN",  "length"  : 12  },
+      { "name" : "org_site_cd",            "kname" : "기관코너번호",           "type" : "AN",  "length"  : 6   },
+      { "name" : "site_type",              "kname" : "점포구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "oper_type",              "kname" : "운영구분",               "type" : "AN",  "length"  : 4   },
+      { "name" : "org_site_nm",            "kname" : "장소명",                 "type" : "AN",  "length"  : 60  },
+      { "name" : "req_date",               "kname" : "요청일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "start_date",             "kname" : "자금소요 시작일",        "type" : "N",   "length"  : 8   },
+      { "name" : "end_date",               "kname" : "자금소요 종료일",        "type" : "N",   "length"  : 8   },
+      { "name" : "requir_term",            "kname" : "자금소요 기간",          "type" : "AN",  "length"  : 2   },
+      { "name" : "oper_funds",             "kname" : "총운영자금",             "type" : "N",   "length"  : 15  },
+      { "name" : "next_cash_amt",          "kname" : "익영업일 현송액",        "type" : "N",   "length"  : 15  },
+      { "name" : "before_add_amt",         "kname" : "전영업일 추가 현송액",   "type" : "N",   "length"  : 15  },
+      { "name" : "before_coll_amt",        "kname" : "전일회수 마감 잔액",     "type" : "N",   "length"  : 15  },
+      { "name" : "over_amt",               "kname" : "과여금 발생액",          "type" : "N",   "length"  : 15  },
+      { "name" : "unset_before_amt",       "kname" : "미정천원전잔",           "type" : "N",   "length"  : 15  },
+      { "name" : "requir_amt",             "kname" : "소요자금",               "type" : "N",   "length"  : 15  },
+      { "name" : "unset_amt",              "kname" : "미정천원잔",             "type" : "N",   "length"  : 15  },
+      { "name" : "stock_amt",              "kname" : "재고액",                 "type" : "N",   "length"  : 15  },
+      { "name" : "ago2_stock_amt",         "kname" : "전전 영업일 재고액",     "type" : "N",   "length"  : 15  },
+      { "name" : "ago1_amt",               "kname" : "전 영업일 수수금액",     "type" : "N",   "length"  : 15  },
+      { "name" : "ago1_over_amt",          "kname" : "전 영업일 과여금액",     "type" : "N",   "length"  : 15  },
+      { "name" : "ago1_out_amt",           "kname" : "전 영업일 지급금액",     "type" : "N",   "length"  : 15  },
+      { "name" : "ago1_in_amt",            "kname" : "전 영업일 입금금액",     "type" : "N",   "length"  : 15  },
+      { "name" : "office_nm",              "kname" : "관리사무소",             "type" : "AN",  "length"  : 20  },
+      { "name" : "close_date",             "kname" : "마감일자",               "type" : "N",   "length"  : 8   },
+      { "name" : "mng_office_cd",          "kname" : "관리지사",               "type" : "AN",  "length"  : 4   },
+      { "name" : "mng_office_nm",          "kname" : "관리지사명",             "type" : "AN",  "length"  : 20  },
+      { "name" : "next_check_cnt",         "kname" : "익영업일 현송수표 매수", "type" : "N",   "length"  : 5   },
+      { "name" : "pre_cash_amt",           "kname" : "전영업일현송금액",       "type" : "N",   "length"  : 15  },
+      { "name" : "cash_amt",               "kname" : "당일현송금액(현금)",     "type" : "N",   "length"  : 15  },
+      { "name" : "pre_check_cnt",          "kname" : "전영업일 현송수표매수",  "type" : "N",   "length"  : 5   },
+      { "name" : "check_cnt",              "kname" : "현송수표매수",           "type" : "N",   "length"  : 5   },
+      { "name" : "filler",                 "kname" : "여유공간",               "type" : "AN",  "length"  : 83  }
+   ]
+}
+ -->
+    <select id="select045" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+        SELECT   BRANCH_CD brch_cd,
+                 mac_no,
+                 '',
+                 '',
+                 '',
+                 '',
+                 demand_date req_date,
+                 requir_start_date start_date,
+                 requir_end_date end_date,
+                 requir_term,
+                 NVL(operfunds_sum, '  ') oper_funds,
+                 post_trans_amt next_cash_amt,
+                 pre_add_trans_amt before_add_amt,
+                 pre_collect_amt before_coll_amt,
+                 differ_amt over_amt,
+                 pre_respect_amt unset_before_amt,
+                 demand_amt requir_amt,
+                 cur_respect_amt unset_amt,
+                 total_stock_amt stock_amt,
+                 '',
+                 '',
+                 '',
+                 pre_out_amt ago1_out_amt,
+                 pre_in_amt ago1_in_amt,
+                 '',
+                 '',
+                 '',
+                 '',
+                 post_check_cnt next_check_cnt,
+                 pre_trans_amt pre_cash_amt,
+                 cur_trans_amt cash_amt,
+                 pre_check_cnt pre_check_cnt,
+                 check_cnt,
+                 '',
+                 '','','','','','','','','','','','','','','',''
+            FROM OP.T_FN_ATMS_DEMAND_mac
+           WHERE org_send_yn = '0'
+             AND org_cd = '045'
+             AND demand_date >= to_char(sysdate-10, 'YYYYMMDD')
+    </select>
+
+    <select id="select039" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+        SELECT  FUNS.BRANCH_CD brch_cd,
+                FUNS.mac_no,
+                '',
+                '',
+                '',
+                '',
+                FUNS.demand_date req_date,
+                 FUNS.requir_start_date start_date,
+                 FUNS.requir_end_date end_date,
+                 FUNS.requir_term requir_term,
+                '',
+                FUNS.post_trans_amt next_cash_amt,
+                FUNS.pre_add_trans_amt before_add_amt,
+                FUNS.pre_collect_amt before_coll_amt,
+                FUNS.differ_amt over_amt,
+                FUNS.pre_respect_amt unset_before_amt,
+                FUNS.demand_amt requir_amt,
+                FUNS.cur_respect_amt unset_amt,
+                FUNS.total_stock_amt stock_amt,
+                '',
+                '',
+                '',
+             FUNS.pre_out_amt ago1_out_amt,
+             FUNS.pre_in_amt ago1_in_amt,
+                '',
+             OP.pkg_fn_common.sf_getPreActDate(FUNS.demand_date) close_date,
+                '',
+                SITE.dept_cd||SITE.office_cd mng_office_cd,
+                OFC.office_nm mng_office_nm,
+                FUNS.pre_add_trans_cnt next_check_cnt,
+                '',
+                '',
+                '',
+                '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+            FROM OP.T_FN_ATMS_DEMAND_MAC FUNS,
+                 OP.T_CM_MAC MAC,
+                 OP.T_CM_SITE SITE,
+                 OP.T_CM_OFFICE OFC
+          WHERE nvl(FUNS.org_send_yn, '0') = '0'
+            AND FUNS.demand_date = to_char( sysdate, 'YYYYMMDD' )
+            AND FUNS.org_cd = '039'
+            AND FUNS.org_cd = MAC.org_cd(+)
+            AND FUNS.BRANCH_CD = MAC.BRANCH_CD(+)
+            AND FUNS.mac_no = MAC.mac_no(+)
+            AND MAC.org_cd = SITE.org_cd(+)
+            AND MAC.BRANCH_CD = SITE.BRANCH_CD(+)
+            AND MAC.site_cd = SITE.site_cd(+)
+            AND SITE.dept_cd = OFC.dept_cd(+)
+            AND SITE.office_cd = OFC.office_cd(+)
+        ORDER BY FUNS.demand_date, FUNS.org_cd, FUNS.BRANCH_CD, mac_no
+    </select>
+
+    <select id="select0TR" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+        SELECT BRANCH_CD brch_cd,                            /* 국코드                              */
+             '',
+             '',
+             '',
+             '',
+             '',
+             req_date,                              /* 요청일자                         */
+             requir_start_date start_date,                     /* 자금소요 시작일                 */
+             requir_end_date end_date,                       /* 자금소요 마지막일                */
+             requir_term,                           /* 자금소요 기간                  */
+             '',
+             next_cash_amt,                         /* 익영업일 현송액                 */
+             before_add_amt,                        /* 전일 추가 현송액                */
+             before_collect_amt before_coll_amt,                    /* 전일회수 마감 잔액               */
+             over_amt,                              /* 전일과여금 발생액                */
+             unset_before_amt,                      /* 미정천원전잔(=>금일회수예상액)   */
+             requir_amt,                            /* 소요자금(=>당일청구액             */
+             unset_amt,                             /* 미정천원잔(=>익일회수예상액)     */
+             stock_amt,                             /* 재고액                          */
+             prepre_stock_amt ago2_stock_amt,                      /* 전전 영업일 재고액               */
+             pre_oper_amt ago1_amt,                          /* 전 영업일 수수금액               */
+             '',
+             pre_out_amt ago1_out_amt,                           /* 전 영업일 지급금액               */
+             pre_in_amt ago1_in_amt,                            /* 전 영업일 입금금액               */
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        FROM OP.T_FN_ATMS_OPERFUNDS_DEMAND
+        WHERE org_send_yn = '0'
+         AND org_cd = '0TR'
+    </select>
+
+    <select id="select0WC" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+        SELECT BRANCH_CD brch_cd,                            /* 국코드                              */
+             '',
+             '',
+             '',
+             '',
+             '',
+             req_date,                              /* 요청일자                         */
+             requir_start_date start_date,                     /* 자금소요 시작일                 */
+             requir_end_date end_date,                       /* 자금소요 마지막일                */
+             requir_term,                           /* 자금소요 기간                  */
+             '',
+             next_cash_amt,                         /* 익영업일 현송액                 */
+             before_add_amt,                        /* 전일 추가 현송액                */
+             before_collect_amt before_coll_amt,                    /* 전일회수 마감 잔액               */
+             over_amt,                              /* 전일과여금 발생액                */
+             unset_before_amt,                      /* 미정천원전잔(=>금일회수예상액)   */
+             requir_amt,                            /* 소요자금(=>당일청구액             */
+             unset_amt,                             /* 미정천원잔(=>익일회수예상액)     */
+             stock_amt,                             /* 재고액                          */
+             prepre_stock_amt ago2_stock_amt,                      /* 전전 영업일 재고액               */
+             pre_oper_amt ago1_amt,                          /* 전 영업일 수수금액               */
+             '',
+             pre_out_amt ago1_out_amt,                           /* 전 영업일 지급금액               */
+             pre_in_amt ago1_in_amt,                            /* 전 영업일 입금금액               */
+             office_nm,                             /* 관리사무소                    */
+             '',
+             '',
+             '',
+             '',
+             pre_cash_amt,                          /* 전영업일현송금액                 */
+             '',
+             '',
+             '',
+             '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
+        FROM OP.T_FN_ATMS_OPERFUNDS_DEMAND
+        WHERE org_send_yn = '0'
+         AND org_cd = '0WC'
+         AND req_date >= to_char(sysdate-10, 'YYYYMMDD')
+    </select>
+
+    <select id="select032" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+        SELECT BRANCH_CD brch_cd,
+             '',
+             '',
+             '',
+             '',
+             '',
+             req_date,
+             requir_start_date start_date,
+             requir_end_date end_date,
+             requir_term,
+             '',
+             next_cash_amt,
+             before_add_amt,
+             before_collect_amt before_coll_amt,
+             over_amt,
+             unset_before_amt,
+             requir_amt,
+             unset_amt,
+             stock_amt,
+             prepre_stock_amt ago2_stock_amt,
+             pre_oper_amt ago1_amt,
+             '',
+             pre_out_amt ago1_out_amt,
+             pre_in_amt ago1_in_amt,
+             '',
+             '',
+             '',
+             '',
+             '',
+             pre_send_amt pre_cash_amt,
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             '',
+             '', '', '', '', '', '', '', '', '', '', '', ''
+        FROM OP.T_FN_ATMS_OPERFUNDS_DEMAND
+        WHERE org_send_yn = '0'
+         AND org_cd = '032'
+         AND req_date >= to_char(sysdate-10, 'YYYYMMDD')
+    </select>
+
+    <!-- 003, 004, 005, 081, 011, 035, 088 -->
+    <select id="selectDefault" resultType="hashmap" parameterType="com.nicetcm.nibsplus.orgsend.model.OrgSendQryParamVO">
+
+        SELECT
+        <choose>
+            <when test='orgCd == "035"'>
+                DECODE(LENGTH(BRANCH_CD), 3, BRANCH_CD, 4, SUBSTR(BRANCH_CD, 2, 3), 2, '0'||BRANCH_CD, BRANCH_CD ) brch_cd,
+            </when>
+            <otherwise>
+                BRANCH_CD brch_cd,
+            </otherwise>
+        </choose>
+        <choose>
+            <when test='orgCd == "004"'>
+                SUBSTR(branch_cd, 1, 1) mac_no,
+                NVL(operfunds_sum, '  ') org_site_nm,
+            </when>
+        </choose>
+
+             req_date,
+             requir_start_date start_date,
+             requir_end_date end_date,
+             requir_term,
+             '',
+             next_cash_amt,
+             before_add_amt,
+             before_collect_amt before_coll_amt,
+             over_amt,
+             unset_before_amt,
+             requir_amt,                /* 소요자금 : (-)금액일 경우, 0으로 보냄.20140106 (-)금액 수신함. 정희성대리 */
+             unset_amt,
+             stock_amt,
+             prepre_stock_amt ago2_stock_amt,
+             pre_oper_amt ago1_amt,
+             pre_differ_amt ago1_over_amt,
+             pre_out_amt ago1_out_amt,
+             pre_in_amt ago1_in_amt,
+             office_nm,
+        <choose>
+            <when test='orgCd == "035"'>
+                close_date,
+            </when>
+        </choose>
+        <choose>
+            <when test='orgCd == "011"'>
+                OP.pkg_fn_common.sf_getPreActDate(REQ_DATE) close_date,
+            </when>
+        </choose>
+        <choose>
+            <when test='orgCd == "020" or orgCd == "031"'>
+                OP.pkg_fn_common.sf_getPreActDate(REQ_DATE) close_date,
+                pre_send_amt,
+                before_cash_amt,
+                out_rate,
+                collect_rate,
+                remain_amt,
+                pre_not_send_amt1,
+                oper_funds_after_amt,
+                SAT_CLOSE,
+            </when>
+        </choose>
+             ''
+
+        FROM OP.T_FN_ATMS_OPERFUNDS_DEMAND
+        WHERE
+
+        <choose>
+            <when test='orgCd == "081"'>
+                req_date = to_char(sysdate, 'YYYYMMDD')
+                AND     org_cd = '081'
+            </when>
+            <when test='orgCd == "011"'>
+                org_send_yn = '0'
+                AND REQ_DATE = TO_CHAR( SYSDATE  , 'YYYYMMDD' )
+                AND org_cd = '011'
+            </when>
+            <otherwise>
+                org_send_yn = '0'
+                AND req_date >= to_char(sysdate-10, 'YYYYMMDD')
+                AND org_cd = #{orgCd}
+            </otherwise>
+        </choose>
+    </select>
+
+
+</mapper>

@@ -2,12 +2,20 @@
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >
 <log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
 
-	<appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
-		<param name="Target" value="System.out" />
-		<layout class="org.apache.log4j.PatternLayout">
+  <appender name="consoleAppender" class="org.apache.log4j.ConsoleAppender">
+    <param name="Target" value="System.out" />
+    <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="[%d{yyyyMMdd HHmmss.SSS}][%t] %-5p:[%-30c{1}] %m [%M(%L)]%n"/>
-		</layout>
-	</appender>
+    </layout>
+  </appender>
+
+  <appender name="abAppender" class="com.nicetcm.nibsplus.broker.ams.AMSBrokerLogAppender">
+    <param name="File" value="/test.log" />
+    <!-- <param name="Encoding" value="UTF-8" /> //-->
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="[%d{yyyyMMdd HHmmss.SSS}][%t] %-5p:[%-30c{1}] %m [%M(%L)]%n"/>
+    </layout>
+  </appender>
 
     <logger name="com.nicetcm.nibsplus">
         <level value="debug" />
@@ -17,21 +25,21 @@
         <level value="debug" />
     </logger>
 
-	<logger name="java.sql">
-		<level value="debug" />
-	</logger>
+  <logger name="java.sql">
+    <level value="debug" />
+  </logger>
 
     <logger name="org.springframework">
         <level value="debug" />
     </logger>
 
-	<logger name="org.apache">
-		<level value="error" />
-	</logger>
+  <logger name="org.apache">
+    <level value="error" />
+  </logger>
 
-	<root>
-		<priority value="info" />
-		<appender-ref ref="consoleAppender"/>
-	</root>
+  <root>
+    <priority value="info" />
+    <appender-ref ref="abAppender"/>
+  </root>
 
 </log4j:configuration>

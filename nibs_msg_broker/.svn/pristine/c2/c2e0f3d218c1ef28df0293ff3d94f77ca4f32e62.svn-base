@@ -1,0 +1,66 @@
+if [ $# -ne 1 -a $# -ne 2 -a $# -ne 4 -a $# -ne 5 ] ; then
+   echo "Usage: lsmsg [-i]  [log file name] [-p] [pos] [pattern]"
+   echo "             [-o]  [log file name] [-p] [pos] [pattern]"
+   echo "             [-io] [log file name] [-p] [pos] [pattern]"
+   exit 0
+elif [ "$1" != "-i" -a "$1" != "-o" -a "$1" != "-io" ] ; then
+   echo "Usage: lsmsg [-i]  [log file name] [-p] [pos] [pattern]"
+   echo "             [-o]  [log file name] [-p] [pos] [pattern]"
+   echo "             [-io] [log file name] [-p] [pos] [pattern]"
+   exit 0
+elif [ "$#" -eq 4 -a "$2" != "-p" ] ; then
+   echo "Usage: lsmsg [-i]  [-p] [pos] [pattern]"
+   echo "             [-o]  [-p] [pos] [pattern]"
+   echo "             [-io] [-p] [pos] [pattern]"
+   exit 0
+elif [ "$#" -eq 5 -a "$3" != "-p" ] ; then
+   echo "Usage: lsmsg [-i]  [log file name] [-p] [pos] [pattern]"
+   echo "             [-o]  [log file name] [-p] [pos] [pattern]"
+   echo "             [-io] [log file name] [-p] [pos] [pattern]"
+   exit 0
+fi
+if [ $# -eq 1 ] ; then
+  while read line ; do
+    if [ $1 == "-i" ] ; then
+      echo "$line" | grep "I-MSG" | cut -f6 -d"["
+    elif [ $1 == "-o" ] ; then
+      echo "$line" | grep "O-MSG" | cut -f6 -d"["
+    else
+      echo "$line" | grep "[IO]-MSG" | cut -f6 -d"["
+    fi
+  done
+elif [ $# -eq 4 ] ; then
+  while read line ; do
+    if [ $1 == "-i" ] ; then
+      echo "$line" | grep "I-MSG" | cut -f6 -d"[" | grep -E "^.{$3}$4"
+    elif [ $1 == "-o" ] ; then
+      echo "$line" | grep "O-MSG" | cut -f6 -d"[" | grep -E "^.{$3}$4"
+    else
+      echo "$line" | grep "[IO]-MSG" | cut -f6 -d"[" | grep -E "^.{$3}$4"
+    fi
+  done
+elif [ $# -eq 2 ] ; then
+  if [ ! -e $2 ] ; then
+    echo "File $2 does not exist."
+    exit 0
+  fi
+  if [ $1 == "-i" ] ; then
+    grep "I-MSG" $2 | cut -f6 -d"["
+  elif [ $1 == "-o" ] ; then
+    grep "O-MSG" $2 | cut -f6 -d"["
+  else
+    grep "[IO]-MSG" $2 | cut -f6 -d"["
+  fi
+elif [ $# -eq 5 ] ; then
+  if [ ! -e $2 ] ; then
+    echo "File $2 does not exist."
+    exit 0
+  fi
+  if [ $1 == "-i" ] ; then
+    grep "I-MSG" $2 | cut -f6 -d"[" | grep -E "^.{$4}$5"
+  elif [ $1 == "-o" ] ; then
+    grep "O-MSG" $2 | cut -f6 -d"[" | grep -E "^.{$4}$5"
+  else
+    grep "[IO]-MSG" $2 | cut -f6 -d"[" | grep -E "^.{$4}$5"
+  fi
+fi

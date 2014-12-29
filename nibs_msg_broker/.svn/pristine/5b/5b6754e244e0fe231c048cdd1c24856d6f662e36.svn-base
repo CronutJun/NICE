@@ -1,0 +1,994 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nicetcm.nibsplus.sqlservice.dao.SqlServiceMapper">
+
+    <select id="executeProcedure" statementType="CALLABLE" parameterType="string">
+        { call ${value} }
+    </select>
+    
+    <select id="sp_cm_fax" statementType="CALLABLE">
+		{ call PKG_CM_FAXMASTER.SP_BATCHPROCESS }
+	</select>
+	
+	<select id="sp_cm_mac_rank" statementType="CALLABLE">
+		{ call SP_CM_MAC_RANK }
+	</select>
+	
+	<select id="sp_cm_personnel" statementType="CALLABLE">
+		{ call sp_cm_personnel }
+	</select>
+	
+	<select id="sp_cm_update_plan_focus" statementType="CALLABLE">
+		{ call SP_CM_UPDATE_PLAN_FOCUS(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_ct_check_0EL_alert" statementType="CALLABLE">
+		{ call sp_ct_check_0EL_alert('0EL') }
+	</select>
+	
+	<select id="sp_ct_check_alert_039" statementType="CALLABLE">
+		{ call sp_ct_check_alert_039 }
+	</select>
+	
+	<select id="sp_ct_check_alert_nh_file" statementType="CALLABLE">
+		{ call sp_ct_check_alert_nh_file }
+	</select>
+	
+	<select id="sp_ct_check_alert" statementType="CALLABLE">
+		{ call sp_ct_check_alert }
+	</select>
+	
+	<select id="sp_ct_delete_day" statementType="CALLABLE">
+		{ call SP_CT_DELETE_DAY }
+	</select>
+	
+	<select id="sp_ct_report_day_2012_1" statementType="CALLABLE">
+		{ call sp_ct_report_day_2012 }
+	</select>
+	
+	<select id="sp_ct_report_day_2012_2" statementType="CALLABLE">
+		{ call sp_ct_reportoper_modify }
+	</select>
+	
+	<select id="sp_fn_bscenter" statementType="CALLABLE">
+		{ call pkg_fn_BsAtms_DemandManager.sp_BsAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_cashflow_endamt" statementType="CALLABLE">
+		{ call sp_fn_cashflow_endamt }
+	</select>
+	
+	<select id="sp_fn_center" statementType="CALLABLE">
+		{ call pkg_fn_DemandManager.sp_batchProcess }
+	</select>
+	
+	<select id="sp_fn_close_send_wc" statementType="CALLABLE">
+		{ call sp_fn_close_send_wc }
+	</select>
+	
+	<select id="sp_fn_ctcenter" statementType="CALLABLE">
+		{ call pkg_fn_CtAtms_DemandManager.sp_CtAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_day_close_ktis" statementType="CALLABLE">
+		{ call SP_FN_DAY_CLOSE_KTIS }
+	</select>
+	
+	<select id="sp_fn_deal_forecast" parameterType="map" statementType="CALLABLE">
+		{ call SP_FN_DEAL_FORECAST(TO_CHAR(SYSDATE,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
+	
+	<select id="sp_fn_dealcount" statementType="CALLABLE">
+		{ call sp_fn_dealCount }
+	</select>
+	
+	<select id="sp_fn_dgbcenter" statementType="CALLABLE">
+		{ call pkg_fn_DGBAtms_DemandManager.sp_DGBAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_eland_amt" statementType="CALLABLE">
+		{ call sp_fn_eland_amt }
+	</select>
+	
+	<select id="sp_fn_err_trade" statementType="CALLABLE">
+		{ call sp_fn_err_trade }
+	</select>
+	
+	<select id="sp_fn_etc_msum_1" statementType="CALLABLE">
+		{ call sp_fn_lease_msum }
+	</select>
+	
+	<select id="sp_fn_etc_msum_2" statementType="CALLABLE">
+		{ call sp_fn_lease_erp }
+	</select>
+	
+	<select id="sp_fn_etc_msum_3" statementType="CALLABLE">
+		{ call sp_fn_cms_close_msum }
+	</select>
+	
+	<select id="sp_fn_forcast_addsend_center" statementType="CALLABLE">
+		{ call sp_fn_forcast_addsend_center }
+	</select>
+	
+	<select id="sp_fn_forcast_data_dsum_atm" statementType="CALLABLE">
+		{ call sp_fn_forcast_data_dsum(TO_CHAR(SYSDATE,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_fn_forcast_data_dsum" statementType="CALLABLE">
+		{ call sp_fn_forcast_data_dsum_atm(TO_CHAR(SYSDATE,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_fn_hncenter" statementType="CALLABLE">
+		{ call pkg_fn_HnAtms_DemandManager.sp_HnAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_imsi_jan" statementType="CALLABLE">
+		{ call SP_FN_IMSI_JAN }
+	</select>
+	
+	<select id="sp_fn_jjcenter" statementType="CALLABLE">
+		{ call pkg_fn_JjAtms_DemandManager.sp_JjAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_kbcenter" statementType="CALLABLE">
+		{ call pkg_fn_KbAtms_DemandManager.sp_KbAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_kebcenter" statementType="CALLABLE">
+		{ call pkg_fn_KebAtms_DemandManager.sp_KebAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_kncenter" statementType="CALLABLE">
+		{ call pkg_fn_KNAtms_DemandManager.sp_KNAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_ktiscenter" statementType="CALLABLE">
+		{ call pkg_fn_KTISAtms_DemandManager.sp_KTISAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_kucenter" statementType="CALLABLE">
+		{ call pkg_fn_KuAtms_DemandManager.sp_KuAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_largemonth_1" statementType="CALLABLE">
+		{ call SP_FN_LARGEMONTH }
+	</select>
+	
+	<select id="sp_fn_largemonth_2" statementType="CALLABLE">
+		{ call sp_fn_risk_month }
+	</select>
+	
+	<select id="sp_fn_mac_stock_amt" parameterType="map" statementType="CALLABLE">
+		{ call SP_FN_MAC_STOCK_AMT(TO_CHAR(SYSDATE - 1,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
+	
+	<select id="sp_fn_maccount" statementType="CALLABLE">
+		{ call SP_FN_MACCOUNT }
+	</select>
+	
+	<select id="sp_fn_man_1" statementType="CALLABLE">
+		{ call SP_FN_MAN }
+	</select>
+	
+	<select id="sp_fn_man_2" statementType="CALLABLE">
+		{ call sp_fn_risk_day }
+	</select>
+	
+	<select id="sp_fn_nhcenter" statementType="CALLABLE">
+		{ call pkg_fn_NhAtms_DemandManager.sp_NhAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_nice_deal_byday" statementType="CALLABLE">
+		{ call sp_fn_nice_deal_byday }
+	</select>
+	
+	<select id="sp_fn_nice_deal_byhour_1" statementType="CALLABLE">
+		{ call sp_fn_nice_deal_byhour }
+	</select>
+	
+	<select id="sp_fn_nice_deal_byhour_2" statementType="CALLABLE">
+		{ call sp_fn_nice_deal_byhour_amt }
+	</select>
+	
+	<select id="sp_fn_nice_dsum_1" statementType="CALLABLE">
+		{ call sp_fn_update_tran_nh(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_fn_nice_dsum_2" statementType="CALLABLE">
+		{ call sp_fn_nice_dsum_demand(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_fn_nice_dsum_3" statementType="CALLABLE">
+		{ call SP_FN_NICE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_fn_nice_dsum_4" parameterType="map" statementType="CALLABLE">
+		{ call SP_FN_MAC_DEALTYPE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
+	
+	<select id="sp_fn_nice_dsum_5" parameterType="map" statementType="CALLABLE">
+		{ call SP_FN_FORECAST_BASE_NICE(TO_CHAR(SYSDATE-1,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
+	
+	<select id="sp_fn_nice_dsum_6" parameterType="map" statementType="CALLABLE">
+		{ call SP_FN_FORECAST_BASE_CLOSE(TO_CHAR(SYSDATE-1,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
+	
+	<select id="sp_fn_nice_dsum_7" statementType="CALLABLE">
+		{ call SP_FN_CARRY_FEE_DSUM(TO_CHAR(SYSDATE-1,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_fn_nice_dsum_0bc" statementType="CALLABLE">
+		{ call sp_fn_nice_dsum_0bc }
+	</select>
+	
+	<select id="sp_fn_nice_endamt" statementType="CALLABLE">
+		{ call SP_FN_NICE_ENDAMT }
+	</select>
+	
+	<select id="sp_fn_nice_every_insert" statementType="CALLABLE">
+		{ call sp_fn_nice_every_insert }
+	</select>
+	
+	<select id="sp_fn_nice_ticket_cnt" statementType="CALLABLE">
+		{ call sp_fn_nice_ticket_cnt }
+	</select>
+	
+	<select id="sp_fn_nice_tran_gift_dsum" statementType="CALLABLE">
+		{ call SP_FN_NICE_TRAN_GIFT_DSUM }
+	</select>
+	
+	<select id="sp_fn_nice_tran_total" statementType="CALLABLE">
+		{ call sp_fn_nice_tran_total }
+	</select>
+	
+	<select id="sp_fn_notclose_cancel" statementType="CALLABLE">
+		{ call sp_fn_notclose_cancel }
+	</select>
+	
+	<select id="sp_fn_notend_nice" statementType="CALLABLE">
+		{ call SP_FN_NOTEND_NICE }
+	</select>
+	
+	<select id="sp_fn_officeclose" statementType="CALLABLE">
+		{ call SP_FN_OFFICECLOSE }
+	</select>
+	
+	<select id="sp_fn_onlycashdatamacclose" statementType="CALLABLE">
+		{ call sp_fn_onlyCashDataMacClose }
+	</select>
+	
+	<select id="sp_fn_operfundssh" statementType="CALLABLE">
+		{ call sp_fn_OperfundsSh }
+	</select>
+	
+	<select id="sp_fn_recv_amt_bs" statementType="CALLABLE">
+		{ call sp_fn_recv_amt_bs }
+	</select>
+	
+	<select id="sp_fn_sendplan_confirm_bs" parameterType="map" statementType="CALLABLE">
+		{ call SP_FN_SENDPLAN_CONFIRM_BS }
+	</select>
+	
+	<select id="sp_fn_sendplan_confirm_sh" statementType="CALLABLE">
+		{ call sp_fn_sendplan_confirm_sh(TO_CHAR(SYSDATE,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
+	
+	<select id="sp_fn_sendplan_confirm" parameterType="map" statementType="CALLABLE">
+		{ call SP_FN_SENDPLAN_CONFIRM(TO_CHAR(SYSDATE,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
+	
+	<select id="sp_fn_sendplan_reform" statementType="CALLABLE">
+		{ call sp_fn_sendplan_reform(TO_CHAR(SYSDATE,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_fn_sendplan_upload_sh" parameterType="map" statementType="CALLABLE">
+		{ call sp_fn_sendplan_upload_sh(TO_CHAR(SYSDATE,'YYYYMMDD'),#{rtnMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
+	
+	<select id="sp_fn_servicesend" statementType="CALLABLE">
+		{ call SP_FN_SERVICESEND }
+	</select>
+	
+	<select id="sp_fn_sh_opcenter" statementType="CALLABLE">
+		{ call pkg_fn_ShAtms_OpDemandManager.sp_ShAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_shcenter" statementType="CALLABLE">
+		{ call pkg_fn_ShAtms_DemandManager.sp_ShAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_sitecount" statementType="CALLABLE">
+		{ call SP_FN_SITECOUNT }
+	</select>
+	
+	<select id="sp_fn_smcenter" statementType="CALLABLE">
+		{ call pkg_fn_SmAtms_DemandManager.sp_SMAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_wccenter" statementType="CALLABLE">
+		{ call pkg_fn_WCAtms_DemandManager.sp_WCAtms_batchProcess }
+	</select>
+	
+	<select id="sp_fn_wr_van_demand" statementType="CALLABLE">
+		{ call sp_fn_wr_van_demand }
+	</select>
+	
+	<select id="sp_fn_wrcenter" statementType="CALLABLE">
+		{ call pkg_fn_WrAtms_DemandManager.sp_WrAtms_batchProcess }
+	</select>
+	
+	<select id="sp_if_SendSMSCashLack_1" statementType="CALLABLE">
+		{ call sp_if_SendSMSCashLack('088') }
+	</select>
+	
+	<select id="sp_if_SendSMSCashLack_2" statementType="CALLABLE">
+		{ call sp_if_SendSMSCashLack('004') }
+	</select>
+	
+	<select id="sp_job_nice_short_cash_config" statementType="CALLABLE">
+		{ call sp_job_nice_short_cash_config }
+	</select>
+	
+	<select id="sp_phs_push_messages" statementType="CALLABLE">
+		{ call sp_phs_push_messages }
+	</select>
+	
+	<select id="sp_su_multireport_all_1" statementType="CALLABLE">
+		{ call sp_su_multireport_day_01 }
+	</select>
+	
+	<select id="sp_su_multireport_all_2" statementType="CALLABLE">
+		{ call sp_su_multireport_day_02 }
+	</select>
+	
+	<select id="sp_su_multireport_all_3" statementType="CALLABLE">
+		{ call sp_su_multireport_day_03 }
+	</select>
+	
+	<select id="sp_su_multireport_all_4" statementType="CALLABLE">
+		{ call sp_su_multireport_day_04 }
+	</select>
+	
+	<select id="sp_su_multireport_all_5" statementType="CALLABLE">
+		{ call sp_su_multireport_day_05 }
+	</select>
+	
+	<select id="sp_su_multireport_all_6" statementType="CALLABLE">
+		{ call sp_su_multireport_day_06 }
+	</select>
+	
+	<select id="sp_update_site" statementType="CALLABLE">
+		{ call sp_update_site }
+	</select>
+	
+	<select id="sp_fn_nice_ts_insert" statementType="CALLABLE">
+		{ call sp_fn_nice_ts_insert }
+	</select>
+	
+	<select id="sp_fn_ktis_close" parameterType="map" statementType="CALLABLE">
+		{ call sp_fn_ktis_close(#{cond0}, #{cond1}, #{cond2}, #{cond3}, #{cond4},#{v_RtnOut,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT}) }
+	</select>
+
+    <insert id="sp_ct_month_use_status_003_1">
+    <![CDATA[
+		-- 1. 003 브랜드제휴 월건수 및 수수료
+		insert into t_ct_use_status_monthly (
+		YEAR_MON, ORG_CD, BRANCH_CD, MAC_NO, SET_TYPE, SET_DATE, USE_DAY, MONTH_FEE, BOOTH_TYPE
+		, USE_CNT_TOTAL_WITHDRAW, USE_CNT_TOTAL_TRANSFER, USE_CNT_TOTAL_DEPOSIT	, USE_CNT_TOTAL_SUM
+		, USE_CNT_SAME_WITHDRAW	, USE_CNT_SAME_TRANSFER	, USE_CNT_SAME_DEPOSIT	, USE_CNT_SAME_SUM
+		, USE_CNT_DIFF_WITHDRAW	, USE_CNT_DIFF_TRANSFER	, USE_CNT_DIFF_DEPOSIT	, USE_CNT_DIFF_SUM
+		, BANKBOOK_UPDATE_CNT, EARNED_FEE_IBK, EARNED_FEE_VAN
+		, ORG_SEND_YN, INSERT_UID, INSERT_DATE, UPDATE_UID, UPDATE_DATE, BRANCH_NM /* , SEQ */
+		)
+		select 
+		  cnt.year_mon																							--YEAR_MON              
+		  ,nvl(SST.BRAND_org_cd,'003')                                                                                     --ORG_CD                
+		  ,nvl(SST.mng_branch_cd,'0784')                                                                                     --branch_CD              
+		  ,cnt.mac_no                                                                                           --MAC_NO                
+		  ,nvl(SST.set_type,'99')                                                                                         --SET_TYPE              
+		  ,SITE.open_date                                                                                       --SET_DATE              
+		  ,case when to_char(last_day(sysdate-30),'yyyymmdd')-site.open_date >= 31                               --USE_DAY               
+		        THEN  to_char(last_day(sysdate-30),'dd')                                                        
+		        ELSE TO_CHAR(to_char(last_day(sysdate-30),'yyyymmdd') - site.open_date)                         
+		  END USE_DAY                                                                                          
+		  ,SST.MONTH_FEE                                                                                        --MONTH_FEE              
+		  ,SST.booth_type                                                                                       --BOOTH_TYPE             
+		  ,nvl(kbTimeDealCnt,0) + nvl(kbOtDealCnt,0)                            -- 자행인출건수                  
+		      + nvl(otherTimeDealCnt,0) + nvl(otherOtDealCnt,0)                 -- 타행인출건수       			--USE_CNT_TOTAL_WITHDRAW
+		  ,kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt      -- 자행이체건수                  
+		      +otheraTimeDealCnt+otheraOtDealCnt                                -- 타행이체건수                 --USE_CNT_TOTAL_TRANSFER 
+		  , nvl(CNT.DEPOCNT,0)                                                                                  --USE_CNT_TOTAL_DEPOSIT   
+		  , kbTimeDealCnt + kbOtDealCnt                                         -- 자행인출건수                   
+		      +otherTimeDealCnt+otherOtDealCnt                                  -- 타행인출건수                   
+		      +kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt  -- 자행이체건수                   
+		      +otheraTimeDealCnt+otheraOtDealCnt                                -- 타행이체건수                   
+		      +nvl(CNT.DEPOCNT,0)                                                  -- 자행입금건수              --USE_CNT_TOTAL_SUM       
+		  , kbTimeDealCnt + kbOtDealCnt 									--자행인출건수                        --USE_CNT_SAME_WITHDRAW   
+		  , kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt --자행이체건수                        --USE_CNT_SAME_TRANSFER   
+		  , nvl(CNT.DEPOCNT,0) 												--자행입금건수                        --USE_CNT_SAME_DEPOSIT    
+		  , kbTimeDealCnt + kbOtDealCnt                                         -- 자행인출건수                
+		    + kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt   -- 자행이체건수                
+		    + nvl(CNT.DEPOcnt,0)                                          --자행총건수     				      -- 자행입금건수 --USE_CNT_SAME_SUM                
+		  , otherTimeDealCnt+otherOtDealCnt 								--타행인출건수     				    --USE_CNT_DIFF_WITHDRAW      
+		  , otheraTimeDealCnt+otheraOtDealCnt 								--타행이체건수  			            --USE_CNT_DIFF_TRANSFER      
+		  , 0 																--타행입금건수                        --USE_CNT_DIFF_DEPOSIT       
+		  , otherTimeDealCnt+otherOtDealCnt+ otheraTimeDealCnt+otheraOtDealCnt --타행총건수                       --USE_CNT_DIFF_SUM           
+		  , nvl(CNT.BOOKcnt,0) 												--통장정리건수                        --BANKBOOK_UPDATE_CNT        
+		  , kbTimeBankFee+kbOtBankFee+kbajTimeBankFee+kbajOtBankFee+kbatTimeBankFee+kbatOtBankFee --자행수수료,  --EARNED_FEE_IBK              
+		    ,( (otherTimeCustFee + otherOtCustFee)                                                                           
+		        -(otherTimeBankFee + otherOtBankFee) )                                                                      
+		        + ( (otheraTimeCustFee + otheraOtCustFee)                                                                                     
+		        -(otheraTimeBankFee + otheraOtBankFee) )                                                        
+		        + (cashsTimeCustFee + cashsOtCustFee                                                            
+		        + cashsTimeBankFee + cashsOtBankFee) --타행수수료                                                 --EARNED_FEE_VAN  
+		    , '0' -- org_send_yn                                                                                --ORG_SEND_YN     
+		    , '1215003' --insert_uid                                                                            --INSERT_UID      
+		    , sysdate  -- insert_date                                                                           --INSERT_DATE     
+		    , '' --update_uid                                                                                   --UPDATE_UID      
+		    , sysdate  -- update_date                                                                                --UPDATE_DATE     
+		    , '' -- branch_nm                                                                                    --branch_NM        
+		    /*,''                                                                                                 --SEQ  */
+		from
+		    (
+		        select
+		          substr(dsum.deal_date,1,6) year_mon
+		          ,DSUM.mac_no
+		          ,sum(kb_time_deal_cnt) kbTimeDealCnt
+		          ,sum(kb_time_deal_amt) kbTimeDealAmt
+		          ,sum(kb_time_cust_fee) kbTimeCustFee
+		          ,-sum(kb_time_bank_fee) kbTimeBankFee
+		          ,sum(kb_ot_deal_cnt) kbOtDealCnt
+		          ,sum(kb_ot_deal_amt) kbOtDealAmt
+		          ,sum(kb_ot_cust_fee) kbOtCustFee
+		          ,-sum(kb_ot_bank_fee) kbOtBankFee
+		          ,sum(other_time_deal_cnt) otherTimeDealCnt
+		          ,sum(other_time_deal_amt) otherTimeDealAmt
+		          ,sum(other_time_cust_fee) otherTimeCustFee
+		          ,-sum(other_time_bank_fee) otherTimeBankFee
+		          ,sum(other_ot_deal_cnt) otherOtDealCnt
+		          ,sum(other_ot_deal_amt) otherOtDealAmt
+		          ,sum(other_ot_cust_fee) otherOtCustFee
+		          ,-sum(other_ot_bank_fee) otherOtBankFee
+		          ,sum(kbaj_time_deal_cnt) kbajTimeDealCnt
+		          ,sum(kbaj_time_deal_amt) kbajTimeDealAmt
+		          ,sum(kbaj_time_cust_fee) kbajTimeCustFee
+		          ,-sum(kbaj_time_bank_fee) kbajTimeBankFee
+		          ,sum(kbaj_ot_deal_cnt) kbajOtDealCnt
+		          ,sum(kbaj_ot_deal_amt) kbajOtDealAmt
+		          ,sum(kbaj_ot_cust_fee) kbajOtCustFee
+		          ,-sum(kbaj_ot_bank_fee) kbajOtBankFee
+		          ,sum(kbat_time_deal_cnt) kbatTimeDealCnt
+		          ,sum(kbat_time_deal_amt) kbatTimeDealAmt
+		          ,sum(kbat_time_cust_fee) kbatTimeCustFee
+		          ,-sum(kbat_time_bank_fee) kbatTimeBankFee
+		          ,sum(kbat_ot_deal_cnt) kbatOtDealCnt
+		          ,sum(kbat_ot_deal_amt) kbatOtDealAmt
+		          ,sum(kbat_ot_cust_fee) kbatOtCustFee
+		          ,-sum(kbat_ot_bank_fee) kbatOtBankFee
+		          ,sum(othera_time_deal_cnt) otheraTimeDealCnt
+		          ,sum(othera_time_deal_amt) otheraTimeDealAmt
+		          ,sum(othera_time_cust_fee) otheraTimeCustFee
+		          ,-sum(othera_time_bank_fee) otheraTimeBankFee
+		          ,sum(othera_ot_deal_cnt) otheraOtDealCnt
+		          ,sum(othera_ot_deal_amt) otheraOtDealAmt
+		          ,sum(othera_ot_cust_fee) otheraOtCustFee
+		          ,-sum(othera_ot_bank_fee) otheraOtBankFee
+		          ,sum(cashs_time_deal_cnt + kbcashs_time_deal_cnt) cashsTimeDealCnt
+		          ,sum(cashs_time_deal_amt + kbcashs_time_deal_amt) cashsTimeDealAmt
+		          ,sum(cashs_time_cust_fee + kbcashs_time_cust_fee) cashsTimeCustFee
+		          ,sum(cashs_time_bank_fee + kbcashs_time_bank_fee) cashsTimeBankFee
+		          ,sum(cashs_ot_deal_cnt + kbcashs_ot_deal_cnt) cashsOtDealCnt
+		          ,sum(cashs_ot_deal_amt + kbcashs_ot_deal_amt) cashsOtDealAmt
+		          ,sum(cashs_ot_cust_fee + kbcashs_ot_cust_fee) cashsOtCustFee
+		          ,sum(cashs_ot_bank_fee + kbcashs_ot_bank_fee) cashsOtBankFee
+		          ,sum(DEPO.time_deal_cnt+DEPO.ot_deal_cnt+DEPO.night_deal_cnt) DEPOcnt 
+		          ,sum(BOOK.time_deal_cnt+BOOK.ot_deal_cnt+BOOK.night_deal_cnt) BOOKcnt
+		      from t_fn_ibk_brand_dsum DSUM
+		          ,T_FN_NICE_MAC_ORG_DSUM DEPO
+		          ,T_FN_NICE_MAC_ORG_DSUM BOOK
+		      where DSUM.deal_date between TO_CHAR(SYSDATE-25,'YYYYMM')||'01' AND TO_CHAR(LAST_DAY(SYSDATE-25),'YYYYMMDD')
+		      and DSUM.mac_no in
+		        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and branch_cd = '9600' and join_cd = '003')
+		      AND DSUM.DEAL_DATE = DEPO.DEAL_DATE(+)
+		      AND DSUM.MAC_NO = DEPO.MAC_NO(+)
+		      AND DEPO.ORG_CD(+) = '003'
+		      AND DEPO.DEAL_TYPE(+) = '1'
+		      AND DEPO.DEAL_STATUS(+) = '0'
+		      AND DSUM.DEAL_DATE = BOOK.DEAL_DATE(+)
+		      AND DSUM.MAC_NO = BOOK.MAC_NO(+)
+		      AND BOOK.ORG_CD(+) = '003'
+		      AND BOOK.DEAL_TYPE(+) = '3'
+		      AND BOOK.DEAL_CLSS(+) = '1004'
+		      AND BOOK.DEAL_STATUS(+) = '0'
+		     group by substr(dsum.deal_date,1,6), DSUM.mac_no
+		    ) cnt
+		    , T_CM_MAC			MAC
+		    , T_CM_SITE_STATE 	SST
+		    , T_CM_SITE     	SITE
+		where
+		 cnt.mac_no = MAC.mac_no
+		 AND MAC.ORG_CD = '096' AND MAC.branch_CD = '9600'
+		 AND MAC.MAC_MODEL <> '7000'					-- 키오스크 제외
+		 AND MAC.ORG_CD = SITE.ORG_CD
+		 AND MAC.branch_CD = SITE.branch_CD
+		 AND MAC.SITE_CD = SITE.SITE_CD
+		 AND mac.ORG_CD = SST.ORG_CD(+)
+		 AND mac.branch_CD = SST.branch_CD(+)
+		 AND mac.mac_no = SST.mac_no(+)
+		  and sst.org_Cd(+) = '096' and sst.branch_cd(+) = '9600'
+	]]>
+    </insert>
+    
+    <insert id="sp_ct_month_use_status_003_2">
+    <![CDATA[
+    	--2. 0BK 경륜장 가상기기(0000) 구하기
+		insert into t_ct_use_status_monthly (
+		YEAR_MON, ORG_CD, BRANCH_CD, MAC_NO, SET_TYPE, SET_DATE, USE_DAY, MONTH_FEE, BOOTH_TYPE
+		, USE_CNT_TOTAL_WITHDRAW, USE_CNT_TOTAL_TRANSFER, USE_CNT_TOTAL_DEPOSIT	, USE_CNT_TOTAL_SUM
+		, USE_CNT_SAME_WITHDRAW	, USE_CNT_SAME_TRANSFER	, USE_CNT_SAME_DEPOSIT	, USE_CNT_SAME_SUM
+		, USE_CNT_DIFF_WITHDRAW	, USE_CNT_DIFF_TRANSFER	, USE_CNT_DIFF_DEPOSIT	, USE_CNT_DIFF_SUM
+		, BANKBOOK_UPDATE_CNT, EARNED_FEE_IBK, EARNED_FEE_VAN
+		, ORG_SEND_YN, INSERT_UID, INSERT_DATE, UPDATE_UID, UPDATE_DATE, BRANCH_NM  /*, SEQ */
+		)
+		select 
+		  cnt.year_mon                                      --YEAR_MON              
+		  ,'003'                                                                                          --ORG_CD                
+		  ,'0000'                                                                                         --branch_CD              
+		  ,'0000'                                                                                             --MAC_NO                
+		  ,'99'                                                                                             --SET_TYPE              
+		  ,'20130801'                                                                                       --SET_DATE              
+		  , to_char(last_day(sysdate-25),'dd')                                                      --USE_DAY               
+		  ,'0' mONTH_FEE                                                                                        --MONTH_FEE              
+		  ,'2' booth_type                                                                                       --BOOTH_TYPE             
+		  ,sum(nvl(kbTimeDealCnt,0) + nvl(kbOtDealCnt,0)                            -- 자행인출건수                  
+		      + nvl(otherTimeDealCnt,0) + nvl(otherOtDealCnt,0))                 -- 타행인출건수                  인출총건수                          --USE_CNT_TOTAL_WITHDRAW
+		                                      
+		  ,sum(kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt      -- 자행이체건수                  
+		      +otheraTimeDealCnt+otheraOtDealCnt)                                -- 타행이체건수                  이체총건수                         --USE_CNT_TOTAL_TRANSFER 
+		                                      
+		  , sum(nvl(CNT.DEPOCNT,0))                                         --입금총건수                          --USE_CNT_TOTAL_DEPOSIT                                               
+		                                      
+		  , sum(kbTimeDealCnt + kbOtDealCnt                                         -- 자행인출건수                   
+		      +otherTimeDealCnt+otherOtDealCnt                                  -- 타행인출건수                   
+		      +kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt  -- 자행이체건수                   
+		      +otheraTimeDealCnt+otheraOtDealCnt                                -- 타행이체건수                   
+		      +nvl(CNT.DEPOCNT,0) )                                                 -- 자행입금건수                   총합계                           --USE_CNT_TOTAL_SUM       
+		                                      
+		  , sum(kbTimeDealCnt + kbOtDealCnt)                  --자행인출건수                        --USE_CNT_SAME_WITHDRAW   
+		  , sum(kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt) --자행이체건수                        --USE_CNT_SAME_TRANSFER   
+		  , sum(nvl(CNT.DEPOCNT,0))                         --자행입금건수                        --USE_CNT_SAME_DEPOSIT    
+		  , sum(kbTimeDealCnt + kbOtDealCnt                                         -- 자행인출건수                
+		    + kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt   -- 자행이체건수                
+		    + nvl(CNT.DEPOcnt,0))                                                -- 자행입금건수                자행총건수                   --USE_CNT_SAME_SUM                                              
+		  , sum(otherTimeDealCnt+otherOtDealCnt)                --타행인출건수                --USE_CNT_DIFF_WITHDRAW      
+		  , sum(otheraTimeDealCnt+otheraOtDealCnt)                --타행이체건수                    --USE_CNT_DIFF_TRANSFER      
+		  , 0                                 --타행입금건수                        --USE_CNT_DIFF_DEPOSIT       
+		  , sum(otherTimeDealCnt+otherOtDealCnt+ otheraTimeDealCnt+otheraOtDealCnt) --타행총건수                       --USE_CNT_DIFF_SUM           
+		  , sum(nvl(CNT.BOOKcnt,0))                         --통장정리건수                        --BANKBOOK_UPDATE_CNT        
+		  --cashsTimeDealCnt+cashsOtDealCnt 현금서비스건수_당타행구분안됨,                                                  
+		  --kbTimeDealCnt + kbOtDealCnt+ kbajTimeDealCnt + kbajOtDealCnt+kbatTimeDealCnt + kbatOtDealCnt                    
+		  --+otherTimeDealCnt+otherOtDealCnt+otheraTimeDealCnt+otheraOtDealCnt+cashsTimeDealCnt+cashsOtDealCnt              
+		  --거래총건수,                                                                                                       
+		  --kbTimeBankFee+kbajTimeBankFee+kbatTimeBankFee 자행시간내수수료,                                               
+		  --kbOtBankFee+kbajOtBankFee+kbatOtBankFee 자행시간외수수료,                                                     
+		  , sum(kbTimeBankFee+kbOtBankFee+kbajTimeBankFee+kbajOtBankFee+kbatTimeBankFee+kbatOtBankFee) --자행수수료  --EARNED_FEE_IBK              
+		  , sum( ( (otherTimeCustFee + otherOtCustFee)                                                                           
+		        -(otherTimeBankFee + otherOtBankFee) )                                                                      
+		        + ( (otheraTimeCustFee + otheraOtCustFee)                                                                                     
+		        -(otheraTimeBankFee + otheraOtBankFee) )                                                        
+		        + (cashsTimeCustFee + cashsOtCustFee                                                            
+		        + cashsTimeBankFee + cashsOtBankFee) ) --타행수수료                                                 --EARNED_FEE_VAN  
+		    , '0' -- org_send_yn                                                                                --ORG_SEND_YN     
+		    , '1215003' --insert_uid                                                                            --INSERT_UID      
+		    , sysdate  -- insert_date                                                                           --INSERT_DATE     
+		    , '' --update_uid                                                                                   --UPDATE_UID      
+		    , sysdate  -- update_date                                                                                --UPDATE_DATE     
+		    , '' -- branch_nm                                                                                    --branch_NM        
+		/*    ,''                                                                                                 --SEQ             */
+		    /*
+		    ( (otherTimeCustFee + otherOtCustFee)
+		        -(otherTimeBankFee + otherOtBankFee) )
+		        + ( (otheraTimeCustFee + otheraOtCustFee)
+		        -(otheraTimeBankFee + otheraOtBankFee) )
+		        + (cashsTimeCustFee + cashsOtCustFee
+		        + cashsTimeBankFee + cashsOtBankFee)
+		        +kbTimeBankFee+kbOtBankFee+kbajTimeBankFee+kbajOtBankFee+kbatTimeBankFee+kbatOtBankFee 수수료총합
+		    */
+		   
+		from
+		    (
+		        select
+		          substr(dsum.deal_date,1,6) year_mon
+		          ,DSUM.mac_no
+		          ,sum(kb_time_deal_cnt) kbTimeDealCnt
+		          ,sum(kb_time_deal_amt) kbTimeDealAmt
+		          ,sum(kb_time_cust_fee) kbTimeCustFee
+		          ,-sum(kb_time_bank_fee) kbTimeBankFee
+		          ,sum(kb_ot_deal_cnt) kbOtDealCnt
+		          ,sum(kb_ot_deal_amt) kbOtDealAmt
+		          ,sum(kb_ot_cust_fee) kbOtCustFee
+		          ,-sum(kb_ot_bank_fee) kbOtBankFee
+		          ,sum(other_time_deal_cnt) otherTimeDealCnt
+		          ,sum(other_time_deal_amt) otherTimeDealAmt
+		          ,sum(other_time_cust_fee) otherTimeCustFee
+		          ,-sum(other_time_bank_fee) otherTimeBankFee
+		          ,sum(other_ot_deal_cnt) otherOtDealCnt
+		          ,sum(other_ot_deal_amt) otherOtDealAmt
+		          ,sum(other_ot_cust_fee) otherOtCustFee
+		          ,-sum(other_ot_bank_fee) otherOtBankFee
+		          ,sum(kbaj_time_deal_cnt) kbajTimeDealCnt
+		          ,sum(kbaj_time_deal_amt) kbajTimeDealAmt
+		          ,sum(kbaj_time_cust_fee) kbajTimeCustFee
+		          ,-sum(kbaj_time_bank_fee) kbajTimeBankFee
+		          ,sum(kbaj_ot_deal_cnt) kbajOtDealCnt
+		          ,sum(kbaj_ot_deal_amt) kbajOtDealAmt
+		          ,sum(kbaj_ot_cust_fee) kbajOtCustFee
+		          ,-sum(kbaj_ot_bank_fee) kbajOtBankFee
+		          ,sum(kbat_time_deal_cnt) kbatTimeDealCnt
+		          ,sum(kbat_time_deal_amt) kbatTimeDealAmt
+		          ,sum(kbat_time_cust_fee) kbatTimeCustFee
+		          ,-sum(kbat_time_bank_fee) kbatTimeBankFee
+		          ,sum(kbat_ot_deal_cnt) kbatOtDealCnt
+		          ,sum(kbat_ot_deal_amt) kbatOtDealAmt
+		          ,sum(kbat_ot_cust_fee) kbatOtCustFee
+		          ,-sum(kbat_ot_bank_fee) kbatOtBankFee
+		          ,sum(othera_time_deal_cnt) otheraTimeDealCnt
+		          ,sum(othera_time_deal_amt) otheraTimeDealAmt
+		          ,sum(othera_time_cust_fee) otheraTimeCustFee
+		          ,-sum(othera_time_bank_fee) otheraTimeBankFee
+		          ,sum(othera_ot_deal_cnt) otheraOtDealCnt
+		          ,sum(othera_ot_deal_amt) otheraOtDealAmt
+		          ,sum(othera_ot_cust_fee) otheraOtCustFee
+		          ,-sum(othera_ot_bank_fee) otheraOtBankFee
+		          ,sum(cashs_time_deal_cnt + kbcashs_time_deal_cnt) cashsTimeDealCnt
+		          ,sum(cashs_time_deal_amt + kbcashs_time_deal_amt) cashsTimeDealAmt
+		          ,sum(cashs_time_cust_fee + kbcashs_time_cust_fee) cashsTimeCustFee
+		          ,sum(cashs_time_bank_fee + kbcashs_time_bank_fee) cashsTimeBankFee
+		          ,sum(cashs_ot_deal_cnt + kbcashs_ot_deal_cnt) cashsOtDealCnt
+		          ,sum(cashs_ot_deal_amt + kbcashs_ot_deal_amt) cashsOtDealAmt
+		          ,sum(cashs_ot_cust_fee + kbcashs_ot_cust_fee) cashsOtCustFee
+		          ,sum(cashs_ot_bank_fee + kbcashs_ot_bank_fee) cashsOtBankFee
+		          ,sum(DEPO.time_deal_cnt+DEPO.ot_deal_cnt+DEPO.night_deal_cnt) DEPOcnt 
+		          ,sum(BOOK.time_deal_cnt+BOOK.ot_deal_cnt+BOOK.night_deal_cnt) BOOKcnt
+		      from t_fn_ibk_brand_dsum DSUM
+		          ,T_FN_NICE_MAC_ORG_DSUM DEPO
+		          ,T_FN_NICE_MAC_ORG_DSUM BOOK
+		      where DSUM.deal_date between TO_CHAR(SYSDATE-25,'YYYYMM')||'01' AND TO_CHAR(LAST_DAY(SYSDATE-25),'YYYYMMDD')
+		      and DSUM.mac_no in
+		        ( select mac_no from t_ct_nice_mac where org_Cd = '096' and branch_cd = '9600' and join_cd = '0BK')
+		      AND DSUM.DEAL_DATE = DEPO.DEAL_DATE(+)
+		      AND DSUM.MAC_NO = DEPO.MAC_NO(+)
+		      AND DEPO.ORG_CD(+) = '003'
+		      AND DEPO.DEAL_TYPE(+) = '1'
+		      AND DEPO.DEAL_STATUS(+) = '0'
+		      AND DSUM.DEAL_DATE = BOOK.DEAL_DATE(+)
+		      AND DSUM.MAC_NO = BOOK.MAC_NO(+)
+		      AND BOOK.ORG_CD(+) = '003'
+		      AND BOOK.DEAL_TYPE(+) = '3'
+		      AND BOOK.DEAL_CLSS(+) = '1004'
+		      AND BOOK.DEAL_STATUS(+) = '0'
+		     group by substr(dsum.deal_date,1,6), dsum.mac_no
+		    ) cnt
+		   
+		  group by cnt.year_mon
+    ]]>
+    </insert>
+    
+    <update id="sp_cm_password_change_1">
+    <![CDATA[
+		-- 신규사원 비밀번호 암호화(매일 07시 실행)
+		UPDATE T_CM_MEMBER
+		SET PASS_WORD = SHA1_HASH(member_id), --사번 암호화로 변경
+		    UPDATE_UID = '0000000'
+		WHERE UPDATE_UID = '9999999'
+    ]]>
+    </update>
+    
+    <update id="sp_cm_password_change_2">
+    <![CDATA[
+		-- 직원의 소속 MIS 기준으로 일괄변경(2005년9월13일부터 시행)
+		update t_cm_member member
+		set dept_cd = (select mis.dept_cd 
+						from t_cm_dept_mis mis 
+						where mis.dept_code = member.mis_org_cd	),
+		    office_cd = (select mis.office_cd 
+						from t_cm_dept_mis mis 
+						where mis.dept_code = member.mis_org_cd	),
+		    team_cd = (select mis.team_cd 
+						from t_cm_dept_mis mis 
+						where mis.dept_code = member.mis_org_cd	),
+			update_date = sysdate,
+			update_uid = 'misdept'								 
+		where member.member_type = '1100' 
+		  and member.use_type = '0'
+		  and member.retire_yn = '0' 
+		  and member.mis_org_cd not in ('JLHL00','JPIL00','JPJR00','JPLPBA','JPLPBC','JPJDBA')
+    ]]>
+    </update>
+    
+    <update id="sp_cm_password_change_3">
+    <![CDATA[
+		-- 강서사업팀 CMS 직원의 소속 변경
+		update t_cm_member member
+		set dept_cd = '15',
+			update_date = sysdate,
+			update_uid = 'misdept'								 
+		where member.member_type = '1200' 
+		  and member.use_type = '0'
+		  and member.retire_yn = '0'
+		  and substr(member.mis_org_cd,1,3) = 'YDC'
+		  and member.dept_cd is null
+		  and member.enter_date > '20091201'
+    ]]>
+    </update>
+    
+    <delete id="sp_cm_password_change_4">
+    <![CDATA[
+		delete from t_fn_nice_notend 
+		where NOTEND_DATE = to_char(sysdate-1,'yyyymmdd')
+    ]]>
+    </delete>
+    
+    <insert id="sp_cm_password_change_5">
+    <![CDATA[
+	     insert into t_fn_nice_notend
+	     select to_char(sysdate-1,'yyyymmdd'), 
+	            b.dept_cd, 
+	            b.office_cd, 
+	            nvl(a.amt,0) amt, 
+	            'SYSTEM', 
+	            SYSDATE, 
+	            nvl(a.cnt,0) cnt
+	      from
+	          (SELECT dept_cd, office_cd, count(notend_date) cnt, sum(deal_amt) amt
+	             FROM t_fn_notend 
+	            WHERE notend_date >= to_char(sysdate-16,'YYYYMMDD')
+	            AND owner_org_cd = '096'
+	            AND process_yn = '0'
+	            group by dept_cd, office_cd) a,
+	          (select dept_cd, office_cd
+	             from t_cm_office
+	            where enable_yn='1'
+	            and dept_cd < '20') b
+	      where b.dept_cd = a.dept_cd(+)
+	      and b.office_cd = a.office_cd(+)
+    ]]>
+    </insert>
+    
+    <delete id="sp_cm_password_change_6">
+    <![CDATA[
+		--20101221 황도영 수정함, 정희성씨 확인받음 
+		--자금관련 지사코드 reUpdate 
+		--사무소  일반직원 7001, 7130
+		--사무소장         5000, 6000
+		--사업부장(자금) 1001
+		update t_cm_member
+		set dept_cd = case when dept_cd='10' then '05'
+		                   when dept_cd='11' then '06'
+		                   when dept_cd='13' then '07'
+		                   when dept_cd='14' then '08'
+		                   when dept_cd='15' then '09'
+				   else dept_cd
+		              end,
+		    update_date = sysdate,
+		    update_uid = 'fundC' 	      
+		where fn_right in ('6000','7130','5000','7001','1001')
+		and   member_type = '1100' 
+		and   retire_yn ='0'
+    ]]>
+    </delete>
+    
+    <update id="t_ct_error_mng_003_brand_temp">
+    <![CDATA[
+		UPDATE
+		    t_ct_error_basic
+		SET
+		    org_send_yn = '9' ,
+		    update_date = sysdate ,
+		    update_uid = 'batch'
+		WHERE
+		    (
+		        error_no, create_date
+		    )
+		    IN
+		    (
+		        SELECT
+		            a.error_no,
+		            a.create_date
+		        FROM
+		            t_ct_error_basic a,
+		            t_ct_error_txn b
+		        WHERE
+		            a.error_no = b.error_no
+		        AND a.create_date = b.create_date
+		        AND a.org_cd = '096'
+		        AND a.branch_cd = '9600'
+		        AND a.org_send_yn IN ('1', '2', '5')
+		        AND b.finish_time IS NOT NULL
+		        AND a.create_time = b.finish_time
+		    )
+    ]]>
+    </update>
+    
+    
+    
+    
+    <select id="sp_batch_error_etc_delete" statementType="CALLABLE">
+		{ call sp_batch_error_etc_delete }
+	</select>
+	
+	<select id="sp_check_photo_carry" statementType="CALLABLE">
+		{ call sp_check_photo_carry }
+	</select>
+	
+	<select id="sp_cm_cash_wc_insert" statementType="CALLABLE">
+		{ call sp_cm_cash_wc_insert }
+	</select>
+	
+	<select id="sp_cm_elecsign_retire" statementType="CALLABLE">
+		{ call sp_cm_elecsign_retire }
+	</select>
+	
+	<select id="sp_cm_pkg_day" statementType="CALLABLE">
+		{ call sp_cm_pkg_day }
+	</select>
+	
+	<select id="sp_ct_linefault_status" statementType="CALLABLE">
+		{ call sp_ct_linefault_status }
+	</select>
+	
+	<select id="sp_ct_lock_histoy_backup" statementType="CALLABLE">
+		{ call sp_ct_lock_histoy_backup }
+	</select>
+	
+	<select id="sp_ct_lockserver_verify" statementType="CALLABLE">
+		{ call sp_ct_lockserver_verify }
+	</select>
+	
+	<select id="sp_ct_t_ct_trade_confirm_init" statementType="CALLABLE">
+		{ call sp_ct_t_ct_trade_confirm_init }
+	</select>
+	
+	<select id="sp_fn_adjustment_carry" statementType="CALLABLE">
+		{ call sp_fn_adjustment_carry }
+	</select>
+	
+	<select id="sp_fn_create_notend_member" statementType="CALLABLE">
+		{ call sp_fn_create_notend_member }
+	</select>
+	
+	<select id="sp_fn_emart_ticket" statementType="CALLABLE">
+		{ call sp_fn_emart_ticket(to_char(sysdate-1, 'yyyymmdd')) }
+	</select>
+	
+	<select id="sp_fn_make_nodeal_result_his" statementType="CALLABLE">
+		{ call sp_fn_make_nodeal_result_his }
+	</select>
+	
+	<select id="sp_fn_notend_fee" statementType="CALLABLE">
+		{ call sp_fn_notend_fee }
+	</select>
+	
+	<select id="sp_fn_onnuri_dsum" statementType="CALLABLE">
+		{ call sp_fn_onnuri_dsum }
+	</select>
+	
+	<select id="sp_fn_presafe_history" statementType="CALLABLE">
+		{ call sp_fn_presafe_history }
+	</select>
+	
+	<select id="sp_if_sendsmsktiserror" statementType="CALLABLE">
+		{ call sp_if_sendsmsktiserror('0TR') }
+	</select>
+	
+	<select id="sp_job_arrival_est_time" statementType="CALLABLE">
+		{ call sp_job_arrival_est_time }
+	</select>
+	
+	<select id="sp_job_autosend_push" statementType="CALLABLE">
+		{ call sp_job_autosend_push }
+	</select>
+	
+	<select id="sp_job_board_list_notice" statementType="CALLABLE">
+		{ call sp_job_board_list_notice }
+	</select>
+	
+	<select id="sp_job_fn_sendplan_update_0ki" statementType="CALLABLE">
+		{ call sp_job_fn_sendplan_update_0ki }
+	</select>
+	
+	<select id="sp_job_schedule_mng_notice" statementType="CALLABLE">
+		{ call sp_job_schedule_mng_notice }
+	</select>
+	
+	<select id="sp_job_t_ct_as_unfinish" statementType="CALLABLE">
+		{ call sp_job_t_ct_as_unfinish }
+	</select>
+	
+	<select id="sp_job_t_ct_autosend_mac" statementType="CALLABLE">
+		{ call sp_job_t_ct_autosend_mac }
+	</select>
+	
+	<select id="sp_job_t_ct_delay_monitoring" statementType="CALLABLE">
+		{ call sp_job_t_ct_delay_monitoring }
+	</select>
+	
+	<select id="sp_job_t_ct_error_mng" statementType="CALLABLE">
+		{ call sp_job_t_ct_error_mng }
+	</select>
+	
+	<select id="sp_job_t_ct_error_mng_guard" statementType="CALLABLE">
+		{ call sp_job_t_ct_error_mng_guard }
+	</select>
+	
+	<select id="sp_job_t_ct_error_open_check" statementType="CALLABLE">
+		{ call sp_job_t_ct_error_open_check }
+	</select>
+	
+	<select id="sp_job_t_cv_position" statementType="CALLABLE">
+		{ call sp_job_t_cv_position }
+	</select>
+	
+	<select id="sp_job_t_emart_monitoring" statementType="CALLABLE">
+		{ call sp_job_t_emart_monitoring }
+	</select>
+	
+	<select id="sp_job_t_fn_sendplan_schedule" statementType="CALLABLE">
+		{ call sp_job_t_fn_sendplan_schedule }
+	</select>
+	
+	<select id="sp_job_t_short_cash_mng" statementType="CALLABLE">
+		{ call sp_job_t_short_cash_mng }
+	</select>
+	
+	<select id="sp_rc_info_delete" statementType="CALLABLE">
+		{ call sp_rc_info_delete }
+	</select>
+	
+	
+	<select id="sp_fn_forcast_data_dsum_base_1" statementType="CALLABLE">
+		{ call sp_fn_forcast_data_dsum(TO_CHAR(SYSDATE+1,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_fn_forcast_data_dsum_base_2" statementType="CALLABLE">
+		{ call sp_fn_forcast_data_dsum_atm(TO_CHAR(SYSDATE+1,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_fn_forcast_inout_center" statementType="CALLABLE">
+		{ call sp_fn_forcast_inout_center(TO_CHAR(SYSDATE,'YYYYMMDD')) }
+	</select>
+	
+	<select id="sp_ct_check_alert_emartpos" statementType="CALLABLE">
+		{ call sp_ct_check_alert_emartpos }
+	</select>
+	
+	<select id="sp_fn_day_close_kiosk" statementType="CALLABLE">
+		{ call sp_fn_day_close_kiosk('0HP') }
+	</select>
+	
+	<select id="sp_fn_kb_van_demand" statementType="CALLABLE">
+		{ call sp_fn_kb_van_demand }
+	</select>
+	
+	<select id="sp_fn_voucher_macstock" statementType="CALLABLE">
+		{ call sp_fn_voucher_macstock }
+	</select>
+	
+	<select id="sp_fn_voucher_officestock" statementType="CALLABLE">
+		{ call sp_fn_voucher_officestock }
+	</select>
+	
+	<select id="sp_insert_nice_lock_time" statementType="CALLABLE">
+		{ call sp_insert_nice_lock_time }
+	</select>
+	
+	<select id="sp_job_tb_phs_push_svc_user" statementType="CALLABLE">
+		{ call sp_job_tb_phs_push_svc_user }
+	</select>
+	
+	<select id="sp_if_get_lost_no" statementType="CALLABLE">
+		{ call sp_if_get_lost_no }
+	</select>
+	
+</mapper>
