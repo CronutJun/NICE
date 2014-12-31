@@ -12,27 +12,25 @@ package com.nicetcm.nibsplus.broker.ams.services;
  * @since   2014.08.18
  */
 
-import java.util.Date;
-
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
-import com.nicetcm.nibsplus.broker.common.MsgParser;
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerLib;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerTransaction;
-import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
+import com.nicetcm.nibsplus.broker.common.MsgParser;
 
 public abstract class InMsgHandlerImpl implements InMsgHandler {
 
     @Autowired protected SqlSession                   sqlSession;
     @Autowired protected DataSourceTransactionManager amsTX;
 
-    @Autowired protected CommonPackImpl               comPack;
+    @Autowired protected CommonPack                   comPack;
 
     @Override
-    public void inMsgHandle(AMSBrokerData safeData, MsgParser parsed, AMSBrokerReqJob reqJob, String fileLoc) throws Exception {
+    public final void inMsgHandle(AMSBrokerData safeData, MsgParser parsed, AMSBrokerReqJob reqJob, String fileLoc) throws Exception {
 
         safeData.setTXS(amsTX.getTransaction( AMSBrokerTransaction.defAMSTX ));
         safeData.setSysDate( AMSBrokerLib.getSysDate() );

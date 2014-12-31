@@ -5,25 +5,35 @@ package com.nicetcm.nibsplus.broker.ams.jmx;
  *
  * AMSBrokerManager
  *
- *  AMSBroker 서버의 관리 ( 셧다운 및 기타 자원관리 ) 
+ *  AMSBroker 서버의 관리 ( 셧다운 및 기타 자원관리 )
  *
  *
  * @author  K.D.J
  * @since   2014.09.05
  */
 
-import javax.management.*;
+import javax.management.AttributeChangeNotification;
+import javax.management.MBeanNotificationInfo;
+import javax.management.Notification;
+import javax.management.NotificationBroadcasterSupport;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerClassLoader;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerShutdown;
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerSpringMain;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 public class AMSBrokerManager extends NotificationBroadcasterSupport implements AMSBrokerManagerMBean {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerManager.class);
-    
+
     private long sequenceNumber = 1;
     private int RMIResTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
 
@@ -44,16 +54,172 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
     }
 
     @Override
+    public String hotSwapBean(String beanClassName) {
+        String beanName = "";
+        String retMsg = "";
+
+        try {
+            logger.warn("Bean Class Name : {}", beanClassName);
+
+            AMSBrokerClassLoader classLoader = new AMSBrokerClassLoader();
+            Class<?> changeClass = classLoader.loadClass(beanClassName);
+
+            if( changeClass.isAnnotationPresent(org.springframework.stereotype.Component.class) ) {
+                logger.warn("Component annotation is present");
+                beanName = ((org.springframework.stereotype.Component)changeClass
+                               .getAnnotation(org.springframework.stereotype.Component.class)).value();
+            }
+            else if( changeClass.isAnnotationPresent(org.springframework.stereotype.Service.class) ) {
+                logger.warn("Service annotation is present");
+                beanName = ((org.springframework.stereotype.Service)changeClass
+                               .getAnnotation(org.springframework.stereotype.Service.class)).value();
+            }
+            else if( changeClass.isAnnotationPresent(org.springframework.stereotype.Repository.class) ) {
+                logger.warn("Repository annotation is present");
+                beanName = ((org.springframework.stereotype.Repository)changeClass
+                               .getAnnotation(org.springframework.stereotype.Repository.class)).value();
+            }
+            else if( changeClass.isAnnotationPresent(org.springframework.stereotype.Controller.class) ) {
+                logger.warn("Controller annotation is present");
+                beanName = ((org.springframework.stereotype.Controller)changeClass
+                               .getAnnotation(org.springframework.stereotype.Controller.class)).value();
+            }
+            if( beanName == null || beanName.length() == 0 ) {
+                if( changeClass.getName().lastIndexOf(".") >= 0 )
+                    beanName = changeClass.getName().substring(changeClass.getName().lastIndexOf(".")+1);
+                else
+                    beanName = changeClass.getName();
+            }
+            Object changedInstance = null;
+            try {
+                changedInstance = AMSBrokerSpringMain.sprCtx.getBean(beanName);
+            }
+            catch( org.springframework.beans.factory.NoSuchBeanDefinitionException e ) {
+                beanName = beanName.substring(0,1).toLowerCase() + beanName.substring(1);
+                try { changedInstance = AMSBrokerSpringMain.sprCtx.getBean(beanName); } catch ( Exception se ) {}
+            }
+            logger.warn("bean {} is {}", beanName, changedInstance);
+
+            if( changedInstance != null ) {
+                logger.warn("Going to destroyBean: {}", beanClassName );
+                ((BeanDefinitionRegistry)AMSBrokerSpringMain.sprCtx.getBeanFactory()).removeBeanDefinition(beanName);
+                retMsg = "Successfully Swaped";
+            }
+
+            logger.warn("Going to registerBean: {}", beanClassName );
+            GenericBeanDefinition beanDef = new GenericBeanDefinition();
+            beanDef.setBeanClass(changeClass);
+            beanDef.setLazyInit(false);
+            beanDef.setAbstract(false);
+            beanDef.setAutowireCandidate(true);
+            beanDef.setScope(BeanDefinition.SCOPE_SINGLETON);
+            ((BeanDefinitionRegistry)AMSBrokerSpringMain.sprCtx.getBeanFactory()).registerBeanDefinition(beanName, beanDef);
+
+            changedInstance = AMSBrokerSpringMain.sprCtx.getBean(beanName);
+            logger.warn("Is there {}? {}", beanName, changedInstance);
+
+            //beanFactory = MsgBrokerSpringMain.sprCtx.getBean(AutowireCapableBeanFactory.class);
+
+            if( retMsg.length() == 0 )
+                return "Succcessfully Registered.";
+            else
+                return retMsg;
+        }
+        catch( Exception e ) {
+            logger.error("hotSwapBean exception is raised: {}", e.getMessage() );
+            return e.getMessage();
+        }
+    }
+
+    @Override
+    public String setLogLevel(String logLevel) {
+        try {
+            if( logLevel == null ) return "please set the log level.";
+            if( logLevel.equals("ALL") ) {
+                LogManager.getRootLogger().setLevel(Level.ALL);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.ALL);
+                LogManager.getLogger("com.bogogt").setLevel(Level.ALL);
+                LogManager.getLogger("java.sql").setLevel(Level.ALL);
+                LogManager.getLogger("org.springframework").setLevel(Level.ALL);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.ALL);
+            }
+            else if( logLevel.equals("TRACE") ) {
+                LogManager.getRootLogger().setLevel(Level.TRACE);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.TRACE);
+                LogManager.getLogger("com.bogogt").setLevel(Level.TRACE);
+                LogManager.getLogger("java.sql").setLevel(Level.TRACE);
+                LogManager.getLogger("org.springframework").setLevel(Level.TRACE);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.TRACE);
+            }
+            else if( logLevel.equals("DEBUG") ) {
+                LogManager.getRootLogger().setLevel(Level.DEBUG);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.DEBUG);
+                LogManager.getLogger("com.bogogt").setLevel(Level.DEBUG);
+                LogManager.getLogger("java.sql").setLevel(Level.DEBUG);
+                LogManager.getLogger("org.springframework").setLevel(Level.DEBUG);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.DEBUG);
+            }
+            else if( logLevel.equals("INFO") ) {
+                LogManager.getRootLogger().setLevel(Level.INFO);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.INFO);
+                LogManager.getLogger("com.bogogt").setLevel(Level.INFO);
+                LogManager.getLogger("java.sql").setLevel(Level.INFO);
+                LogManager.getLogger("org.springframework").setLevel(Level.INFO);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.INFO);
+            }
+            else if( logLevel.equals("WARN") ) {
+                LogManager.getRootLogger().setLevel(Level.WARN);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.WARN);
+                LogManager.getLogger("com.bogogt").setLevel(Level.WARN);
+                LogManager.getLogger("java.sql").setLevel(Level.WARN);
+                LogManager.getLogger("org.springframework").setLevel(Level.WARN);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.WARN);
+            }
+            else if( logLevel.equals("ERROR") ) {
+                LogManager.getRootLogger().setLevel(Level.ERROR);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.ERROR);
+                LogManager.getLogger("com.bogogt").setLevel(Level.ERROR);
+                LogManager.getLogger("java.sql").setLevel(Level.ERROR);
+                LogManager.getLogger("org.springframework").setLevel(Level.ERROR);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.ERROR);
+            }
+            else if( logLevel.equals("FATAL") ) {
+                LogManager.getRootLogger().setLevel(Level.FATAL);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.FATAL);
+                LogManager.getLogger("com.bogogt").setLevel(Level.FATAL);
+                LogManager.getLogger("java.sql").setLevel(Level.FATAL);
+                LogManager.getLogger("org.springframework").setLevel(Level.FATAL);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.FATAL);
+            }
+            else if( logLevel.equals("OFF") ) {
+                LogManager.getRootLogger().setLevel(Level.OFF);
+                LogManager.getLogger("com.nicetcm.nibsplus").setLevel(Level.OFF);
+                LogManager.getLogger("com.bogogt").setLevel(Level.OFF);
+                LogManager.getLogger("java.sql").setLevel(Level.OFF);
+                LogManager.getLogger("org.springframework").setLevel(Level.OFF);
+                LogManager.getLogger("org.apache.activemq").setLevel(Level.OFF);
+            }
+            else return String.format("Invalid log level %s", logLevel);
+
+            return "change succeed";
+        }
+        catch( Exception e ) {
+            logger.error("setLogLevel exception is raised: {}", e.getMessage() );
+            return "Fail!";
+        }
+    }
+
+    @Override
     public int getRMIResTimeout() {
         return RMIResTimeout;
     }
-    
+
     @Override
     public void setRMIResTimeout(int timeout) {
         int oldTimeout = RMIResTimeout;
         RMIResTimeout  = timeout;
         // 실제 반영 해야 함... 아직 안했다.
-        
+
         Notification n =  new AttributeChangeNotification(this,
                                                           sequenceNumber++,
                                                           System.currentTimeMillis(),
@@ -62,10 +228,10 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                                                           "int",
                                                           oldTimeout,
                                                           this.RMIResTimeout);
-         
+
         sendNotification(n);
     }
-    
+
     @Override
     public MBeanNotificationInfo[] getNotificationInfo() {
         String[] types = new String[] {

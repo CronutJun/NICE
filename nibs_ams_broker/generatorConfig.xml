@@ -6,11 +6,11 @@
       <property name="searchString" value="Example$" />
       <property name="replaceString" value="Spec" />
     </plugin>
-    <jdbcConnection driverClass="com.ibm.db2.jcc.DB2Driver" connectionURL="jdbc:db2://10.3.28.63:4892/infodb" userId="nadm" password="nadm" />
+    <jdbcConnection driverClass="com.ibm.db2.jcc.DB2Driver" connectionURL="jdbc:db2://10.3.28.63:4892/operdb" userId="msgb" password="nibsmsgb" />
     <javaModelGenerator targetPackage="com.nicetcm.nibsplus.broker.ams.model" targetProject="nibs_ams_broker" />
     <sqlMapGenerator targetPackage="com.nicetcm.nibsplus.broker.ams.mapper" targetProject="nibs_ams_broker" />
     <javaClientGenerator targetPackage="com.nicetcm.nibsplus.broker.ams.mapper" targetProject="nibs_ams_broker" type="ANNOTATEDMAPPER" />
-    <table schema="in" tableName="t_pm_pgm_ver" >
+    <table schema="ams" tableName="t_jm_file" >
       <!-- <columnOverride column="as_seq" property="AsSeq" /> -->
     </table>
   </context>

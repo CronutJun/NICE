@@ -16,39 +16,37 @@ import java.io.File;
 import java.util.Scanner;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Component;
 
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerConst;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerLib;
-import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
 import com.nicetcm.nibsplus.broker.ams.mapper.TCmMacMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TCmSiteMapper;
-import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgMapper;
-import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgHisMapper;
-import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvMapper;
-import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvHisMapper;
-import com.nicetcm.nibsplus.broker.ams.mapper.TRmFileMapper;
-import com.nicetcm.nibsplus.broker.ams.mapper.TRmFileHisMapper;
 import com.nicetcm.nibsplus.broker.ams.mapper.TJmTrxMapper;
-import com.nicetcm.nibsplus.broker.ams.model.TCmMacKey;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmFileHisMapper;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmFileMapper;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvHisMapper;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmMacEnvMapper;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgHisMapper;
+import com.nicetcm.nibsplus.broker.ams.mapper.TRmMsgMapper;
 import com.nicetcm.nibsplus.broker.ams.model.TCmMac;
-import com.nicetcm.nibsplus.broker.ams.model.TCmSiteKey;
+import com.nicetcm.nibsplus.broker.ams.model.TCmMacKey;
 import com.nicetcm.nibsplus.broker.ams.model.TCmSite;
+import com.nicetcm.nibsplus.broker.ams.model.TCmSiteKey;
+import com.nicetcm.nibsplus.broker.ams.model.TJmTrx;
 import com.nicetcm.nibsplus.broker.ams.model.TRmFile;
 import com.nicetcm.nibsplus.broker.ams.model.TRmFileHis;
-import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
-import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
-import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnv;
 import com.nicetcm.nibsplus.broker.ams.model.TRmMacEnvHis;
-import com.nicetcm.nibsplus.broker.ams.model.TJmTrx;
+import com.nicetcm.nibsplus.broker.ams.model.TRmMsg;
+import com.nicetcm.nibsplus.broker.ams.model.TRmMsgHis;
+import com.nicetcm.nibsplus.broker.ams.model.TRmTrx;
 import com.nicetcm.nibsplus.broker.common.MsgParser;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 
 @Component
 public class CommonPackImpl implements CommonPack {

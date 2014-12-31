@@ -38,11 +38,15 @@ public class AMSBrokerRMIServer {
         }
         catch(java.rmi.RemoteException e) {
             logger.error("Exception occurred during processing incoming method call");
-            e.printStackTrace();
+            logger.error("Error raised. Message = {}", e.getMessage() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
         }
         catch (Exception e) {
             logger.error("Server exception: " + e.toString());
-            e.printStackTrace();
+            logger.error("Error raised. Message = {}", e.getMessage() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
         }
     }
 
@@ -53,7 +57,9 @@ public class AMSBrokerRMIServer {
             logger.debug("registry unbound");
         }
         catch( Exception e ) {
-            e.printStackTrace();
+            logger.error("Error raised. Message = {}", e.getMessage() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
         }
     }
 }

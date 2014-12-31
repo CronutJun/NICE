@@ -128,7 +128,9 @@ public class AMSBrokerMain extends Thread {
             initSched.initSchedule(safeData);
         }
         catch( Exception e ) {
-            e.printStackTrace();
+            logger.error("Error raised. Message = {}", e.getMessage() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
         }
     }
 
