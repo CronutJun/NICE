@@ -303,7 +303,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                 .andBranchCdEqualTo(parsed.getString("brch_cd"))
                 .andSiteCdEqualTo(parsed.getString("site_cd"))
                 .andBaseDateEqualTo(parsed.getString("arrival_date"))
-                .andStartTimeGreaterThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
+                .andStartTimeLessThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
                 .andFinishTimeIsNull()
                 .andStartTimeIsNotNull();
 
@@ -328,7 +328,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                     for(TFnKebCheck tFnKebCheck : tFnKebCheckList) {
 
                         TFnKebCheck updateTFnKebCheck = new TFnKebCheck();
-                        updateTFnKebCheck.setFinishTime(parsed.getString("arrival_time").substring(0, 4));
+                        updateTFnKebCheck.setArrivalTime(parsed.getString("arrival_time").substring(0, 4));
 
                         TFnKebCheckSpec tFnKebCheckSpec2 = new TFnKebCheckSpec();
                         tFnKebCheckSpec2.createCriteria()
@@ -420,7 +420,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
             .andSiteCdEqualTo(parsed.getString("site_cd"))
             .andSendDateEqualTo(parsed.getString("arrival_date"))
-            .andStartTimeGreaterThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
+            .andStartTimeLessThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
             .andFinishTimeIsNull()
             .andStartTimeIsNotNull();
 
@@ -445,7 +445,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                 for(TFnOnsiteAmt tFnOnsiteAmt : tFnOnsiteAmtList) {
 
                     TFnOnsiteAmt updateTFnOnsiteAmt = new TFnOnsiteAmt();
-                    updateTFnOnsiteAmt.setFinishTime(parsed.getString("arrival_time").substring(0, 4));
+                    updateTFnOnsiteAmt.setArrivalTime(parsed.getString("arrival_time").substring(0, 4));
 
                     TFnOnsiteAmtSpec tFnOnsiteAmtSpec2 = new TFnOnsiteAmtSpec();
                     tFnOnsiteAmtSpec2.createCriteria()
@@ -534,7 +534,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
             .andSiteCdEqualTo(parsed.getString("site_cd"))
             .andSendDateEqualTo(parsed.getString("arrival_date"))
-            .andStartTimeGreaterThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
+            .andStartTimeLessThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
             .andArrivalTimeIsNull()
             .andCompleteTimeIsNull()
             .andSendTypeEqualTo("2")
@@ -780,7 +780,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
                 .andBranchCdEqualTo(parsed.getString("brch_cd"))
                 .andSiteCdEqualTo(parsed.getString("site_cd"))
                 .andBaseDateEqualTo(parsed.getString("arrival_date"))
-                .andStartTimeGreaterThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
+                .andStartTimeLessThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
                 .andFinishTimeIsNull()
                 .andStartTimeIsNotNull();
 
@@ -897,7 +897,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
             .andSiteCdEqualTo(parsed.getString("site_cd"))
             .andSendDateEqualTo(parsed.getString("arrival_date"))
-            .andStartTimeGreaterThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
+            .andStartTimeLessThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
             .andFinishTimeIsNull()
             .andStartTimeIsNotNull();
 
@@ -1011,7 +1011,7 @@ public class In01000161Impl extends InMsgHandlerImpl {
             .andBranchCdEqualTo(parsed.getString("brch_cd"))
             .andSiteCdEqualTo(parsed.getString("site_cd"))
             .andSendDateEqualTo(parsed.getString("arrival_date"))
-            .andStartTimeGreaterThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
+            .andStartTimeLessThanOrEqualTo(parsed.getString("arrival_time").substring(0, 4))
             .andArrivalTimeIsNull()
             .andCompleteTimeIsNull()
             .andSendTypeEqualTo("2")
