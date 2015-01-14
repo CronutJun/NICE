@@ -54,11 +54,11 @@ public class Out21005012Impl implements OutMsgHandler {
             }
         }
         catch( Exception e ) {
-            logger.debug( "T_RM_FILE select error : {}", e.getLocalizedMessage() );
+            logger.warn( "T_RM_FILE select error : {}", e.getLocalizedMessage() );
             throw e;
         }
         //File f = new File("D:\\CronutWorks\\NICE\\Documents\\Design\\05. AMS\\ams_server_src.zip");
-        logger.debug( "File Name = {}", String.format("%s%s%s", ROOT_FILE_PATH, rmFile.getFilePath(), rmFile.getFileNm()) );
+        logger.warn( "File Name = {}", String.format("%s%s%s", ROOT_FILE_PATH, rmFile.getFilePath(), rmFile.getFileNm()) );
         File f = new File(String.format("%s%s%s", ROOT_FILE_PATH, rmFile.getFilePath(), rmFile.getFileNm()));
         FileInputStream fIn = new FileInputStream(f);
 

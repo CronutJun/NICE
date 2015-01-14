@@ -52,8 +52,8 @@ public class AnsMsgHandlerImpl implements AnsMsgHandler {
         safeData.setMsgDate( AMSBrokerLib.getMsgDate(safeData.getSysDate()) );
         safeData.setMsgTime( AMSBrokerLib.getMsgTime(safeData.getSysDate()) );
         try {
-            logger.debug("Start ansMsgHandle");
-            logger.debug( "TrxCd = {}, ActCd = {}", reqJob.getTrxCd(), reqJob.getActCd() );
+            logger.warn("Start ansMsgHandle");
+            logger.warn( "TrxCd = {}, ActCd = {}", reqJob.getTrxCd(), reqJob.getActCd() );
 
             TRmMsgKey msgKey = new TRmMsgKey();
             TRmMsgHis msgHis = new TRmMsgHis();

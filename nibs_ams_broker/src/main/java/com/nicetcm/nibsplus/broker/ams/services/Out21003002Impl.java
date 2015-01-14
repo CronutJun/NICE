@@ -39,10 +39,10 @@ public class Out21003002Impl implements OutMsgHandler {
               .setInt   ( "FieldCount",               reqJob.getEnvValues().size() );
 
         RMIEnvValue envValue;
-        logger.debug( "envValues size = {}", reqJob.getEnvValues().size() );
+        logger.warn( "envValues size = {}", reqJob.getEnvValues().size() );
         for( int i = 0; i < reqJob.getEnvValues().size(); i++ ) {
             envValue = reqJob.getEnvValues().get(i);
-            logger.debug("FieldID = {}", envValue.getEnvId());
+            logger.warn("FieldID = {}", envValue.getEnvId());
             outMsg.addRow( "FD" );
             outMsg.setString( String.format("FD[%d].FieldID",   i), envValue.getEnvId() )
                   .setInt   ( String.format("FD[%d].FieldLen",  i), envValue.getEnvValue().length() )

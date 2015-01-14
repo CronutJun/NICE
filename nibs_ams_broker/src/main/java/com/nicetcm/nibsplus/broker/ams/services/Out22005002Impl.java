@@ -37,7 +37,7 @@ public class Out22005002Impl implements OutMsgHandler {
         File f = new File(String.format("%sams_server_src.zip", TEMP_FILE_PATH) );
         FileInputStream fIn = new FileInputStream(f);
 
-        logger.debug("reqJob = {}", reqJob.getFileName() );
+        logger.warn("reqJob = {}", reqJob.getFileName() );
         reqInfo.getMsg().position(0);
         outMsg.setString( "CM._AOCMsgCode",           msg.getMsgCd())
               .setString( "CM._AOCServiceCode",       msg.getSvcCd())

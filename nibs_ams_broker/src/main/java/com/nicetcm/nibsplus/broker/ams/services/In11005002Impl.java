@@ -33,6 +33,6 @@ public class In11005002Impl extends InMsgHandlerImpl {
         // parsed.getString("_APVersion") 정보 이후의 DB를 검색하여 기기버전 이후의 최초버전을 선택하여 내려보낸다.
         // 내려보낼 수 없는 상황이면.. reqJob.setFileName("N/A")를 셋하고 out22005002Impl에서 응답처리토록 한다.
         reqJob.setFileName("Test.zip");
-        logger.debug("reqJob FileName = {}", reqJob.getFileName());
+        logger.warn("reqJob FileName = {}", reqJob.getFileName());
     }
 }

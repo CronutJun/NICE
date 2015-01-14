@@ -83,7 +83,7 @@ public class InitSchedulerImpl implements InitScheduler {
                                                                               updsSched.getDeployDate().substring(0, 4))) )
                                     .build();
                 AMSBrokerMain.getScheduler().scheduleJob( updJob, updTrig );
-                logger.info("Job is successfully scheduled [Group = {}, Version = {}, deployDate = {}, deployTime = {}",
+                logger.warn("Job is successfully scheduled [Group = {}, Version = {}, deployDate = {}, deployTime = {}",
                             updsSched.getGrpCd(), updsSched.getVerId(), updsSched.getDeployDate(), updsSched.getDeployTime());
             }
             /**
@@ -118,7 +118,7 @@ public class InitSchedulerImpl implements InitScheduler {
             amsTX.commit(safeData.getTXS());
         }
         catch( Exception e ) {
-            logger.debug("InitScheduler has error [{}]", e.getMessage() );
+            logger.warn("InitScheduler has error [{}]", e.getMessage() );
             amsTX.rollback(safeData.getTXS());
             throw e;
         }

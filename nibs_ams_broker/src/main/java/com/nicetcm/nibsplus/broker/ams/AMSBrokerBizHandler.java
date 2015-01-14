@@ -21,26 +21,26 @@ public class AMSBrokerBizHandler {
 
     public void classifyMessage(ChannelHandlerContext ctx, Object msg, MsgParser parsed, AMSBrokerReqJob reqJob, byte[] remain, boolean beContinue) throws Exception {
 
-        logger.debug("remain bytes = " + remain.length + ", befBeContinue = " + befBeContinue + ", beContinue = " + beContinue);
+        logger.warn("remain bytes = " + remain.length + ", befBeContinue = " + befBeContinue + ", beContinue = " + beContinue);
         String fileName = String.format( "%stmp_%s_in", TEMP_FILE_PATH,  Thread.currentThread().getId() );
         if( (!befBeContinue) && (beContinue) ) {
-            logger.debug("file open");
+            logger.warn("file open");
             reqJob.setfOut(new FileOutputStream(fileName));
 
         }
         if( remain.length > 0 && reqJob.getfOut() != null) {
             reqJob.getfOut().write(remain);
-            logger.debug("file write length : " + remain.length);
+            logger.warn("file write length : " + remain.length);
         }
 
         if( (befBeContinue) && (!beContinue) ) {
             reqJob.getfOut().flush();
             reqJob.getfOut().close();
             reqJob.setfOut( null );
-            logger.debug("file close");
+            logger.warn("file close");
         }
         if( !beContinue ) {
-            logger.debug("resonse is " + parsed.getResponseInfo().getType()
+            logger.warn("resonse is " + parsed.getResponseInfo().getType()
                     +    ", code is " + parsed.getResponseInfo().getCode()
                     +    ", schema is " +  parsed.getResponseInfo().getSchema() );
             File tg = new File(fileName);
@@ -58,9 +58,9 @@ public class AMSBrokerBizHandler {
             finally {
                 if( tg.exists() ) {
                     if( tg.delete() )
-                        logger.debug("Successful delete temporary file");
+                        logger.warn("Successful delete temporary file");
                     else
-                        logger.debug("Failed delete temporary file");
+                        logger.warn("Failed delete temporary file");
                 }
             }
         }

@@ -72,7 +72,7 @@ public class AMSBrokerReqJob {
             e.getValue().getConsumer().interrupt();
             macMap.remove(e.getKey());
         }
-        logger.debug("MAC request listener stopped.");
+        logger.warn("MAC request listener stopped.");
     }
 
     private static BlockingQueue<AMSBrokerReqJob> getQueue(String macNo) throws Exception {
@@ -101,10 +101,10 @@ public class AMSBrokerReqJob {
     }
 
     public void requestJob() throws Exception {
-        logger.debug("requestJob");
+        logger.warn("requestJob");
         BlockingQueue<AMSBrokerReqJob> reqQue = getQueue( this.macNo );
         reqQue.put( this );
-        logger.debug("requestJob OK");
+        logger.warn("requestJob OK");
     }
 
     public BlockingQueue<ByteBuffer> getAns() {

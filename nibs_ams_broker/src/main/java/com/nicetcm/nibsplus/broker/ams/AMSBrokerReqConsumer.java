@@ -43,19 +43,19 @@ public class AMSBrokerReqConsumer extends Thread {
 
     public void run()  {
 
-        logger.debug("Listen Start");
+        logger.warn("Listen Start");
         AMSBrokerReqJob reqJob = null;
 
         for( ; ; ) {
             try {
-                logger.debug("before take");
+                logger.warn("before take");
                 reqJob = listenQueue.take();
-                logger.debug("after take");
+                logger.warn("after take");
                 acceptJob( reqJob );
             }
             catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                logger.debug("Thread [{}] is interrupted", this.getName() );
+                logger.warn("Thread [{}] is interrupted", this.getName() );
                 break;
             }
             catch( Exception e ) {
@@ -69,11 +69,11 @@ public class AMSBrokerReqConsumer extends Thread {
 
     private void acceptJob(AMSBrokerReqJob reqJob) throws Exception {
         try {
-            logger.debug("acceptJob");
+            logger.warn("acceptJob");
             AMSBrokerReqInfo reqInfo = new AMSBrokerReqInfo();
 
             reqMsg.reqMsgHandle( amsSafeData, reqJob, reqInfo );
-            logger.debug("after reqMsgHandle, reqJob timeout = {}", reqJob.getTimeOut() );
+            logger.warn("after reqMsgHandle, reqJob timeout = {}", reqJob.getTimeOut() );
 
             try {
                 AMSBrokerClient client = AMSBrokerClient.getInstance( reqInfo.getDestIP(), reqInfo.getDestPort(), reqJob );
@@ -84,7 +84,7 @@ public class AMSBrokerReqConsumer extends Thread {
                     reqJob.getAns().put(rslt);
             }
             catch( AMSBrokerTimeoutException te) {
-                logger.debug("timeout error");
+                logger.warn("timeout error");
                 ansMsg.ansMsgHandle( amsSafeData, reqJob, null, "3" );
                 if( reqJob.getIsBlocking() ) {
                     ByteBuffer ret = ByteBuffer.allocateDirect(3);
@@ -94,7 +94,7 @@ public class AMSBrokerReqConsumer extends Thread {
                 }
             }
             catch( Exception e ) {
-                logger.debug(e.getMessage());
+                logger.warn(e.getMessage());
                 ByteBuffer err = ByteBuffer.allocateDirect(e.getMessage().length());
                 err.position(0);
                 err.put(e.getMessage().getBytes());
@@ -105,7 +105,7 @@ public class AMSBrokerReqConsumer extends Thread {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             if( reqJob.getIsBlocking() )
                 reqJob.getAns().put(ByteBuffer.allocateDirect(1));
             throw e;

@@ -143,7 +143,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             waitBlocking( reqJob );
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -175,7 +175,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -208,7 +208,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             waitBlocking( reqJob );
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -241,7 +241,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -274,7 +274,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             waitBlocking( reqJob );
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -307,7 +307,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -340,7 +340,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
 
@@ -376,7 +376,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
 
@@ -408,7 +408,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -441,7 +441,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -472,7 +472,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -505,7 +505,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -535,7 +535,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -567,7 +567,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -597,7 +597,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -629,7 +629,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -661,7 +661,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -695,7 +695,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -727,7 +727,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -761,7 +761,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -793,7 +793,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -827,7 +827,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -864,7 +864,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             waitBlocking( reqJob );
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -885,7 +885,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqSFileUpToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String fileDate, String fileType ) throws Exception {
-        logger.debug("start reqSFileUpToMac");
+        logger.warn("start reqSFileUpToMac");
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate ( trxDate );
@@ -899,7 +899,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -920,7 +920,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqSFileUpToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String fileDate, String fileType ) throws Exception {
-        logger.debug("start reqSFileUpToMacs");
+        logger.warn("start reqSFileUpToMacs");
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
@@ -936,7 +936,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -959,7 +959,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqSFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String createDate, String fileSeq, String fileType, String fileName ) throws Exception {
-        logger.debug("start reqSFileDownToMac");
+        logger.warn("start reqSFileDownToMac");
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate       ( trxDate );
@@ -975,7 +975,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -998,7 +998,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqSFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String createDate, String fileSeq, String fileType, String fileName ) throws Exception {
-        logger.debug("start reqSFileDownToMacs");
+        logger.warn("start reqSFileDownToMacs");
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
@@ -1016,7 +1016,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -1037,7 +1037,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqGFileUpToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String filePath, String fileName ) throws Exception {
-        logger.debug("start reqGFileUpToMac");
+        logger.warn("start reqGFileUpToMac");
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
             reqJob.setTrxDate( trxDate );
@@ -1051,7 +1051,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -1072,7 +1072,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqGFileUpToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String filePath, String fileName ) throws Exception {
-        logger.debug("start reqGFileUpToMacs");
+        logger.warn("start reqGFileUpToMacs");
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
@@ -1088,7 +1088,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -1111,7 +1111,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqGFileDownToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String createDate, String fileSeq, String filePath, String fileName ) throws Exception {
-        logger.debug("start reqGFileDownToMac");
+        logger.warn("start reqGFileDownToMac");
         try {
             if( createDate == null || createDate.length() == 0 ) {
                 throw new Exception("createDate is required.");
@@ -1133,7 +1133,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.requestJob();
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }
@@ -1156,7 +1156,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
      * @throws Exception
      */
     public void reqGFileDownToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String createDate, String fileSeq, String filePath, String fileName ) throws Exception {
-        logger.debug("start reqGFileDownToMacs");
+        logger.warn("start reqGFileDownToMacs");
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
@@ -1174,7 +1174,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             }
         }
         catch( Exception e ) {
-            logger.debug(e.getMessage());
+            logger.warn(e.getMessage());
             throw e;
         }
     }

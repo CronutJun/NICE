@@ -47,7 +47,7 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
     @Override
     public void rcvMsgHandle(AMSBrokerData safeData, MsgParser parsed, TRmTrx trx, TRmMsg msg) throws Exception {
 
-        logger.debug("Start...");
+        logger.warn("Start...");
         safeData.setSysDate( AMSBrokerLib.getSysDate() );
 
         safeData.setTXS( amsTX.getTransaction( AMSBrokerTransaction.defAMSTX ));
@@ -117,7 +117,7 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
             byte[] read = new byte[parsed.getMessage().limit()];
             parsed.getMessage().position(0);
             parsed.getMessage().get(read);
-            logger.debug(new String(read));
+            logger.warn(new String(read));
 
             msgHis.setMsgCtx( new String(read) );
 
@@ -127,7 +127,7 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
         }
         catch( Exception e ) {
             amsTX.rollback(safeData.getTXS());
-            logger.debug("rcvMsgHandle raise error [{}]", e.getMessage() );
+            logger.warn("rcvMsgHandle raise error [{}]", e.getMessage() );
             throw e;
         }
     }

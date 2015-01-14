@@ -95,19 +95,19 @@ public class AMSBrokerClient {
 
             // Start the client.
             ChannelFuture f = b.connect(host, port).sync();
-            logger.debug("channel opened = " + f.channel().isOpen());
-            logger.debug("data size = " + data.limit());
+            logger.warn("channel opened = " + f.channel().isOpen());
+            logger.warn("data size = " + data.limit());
             byte[] read = new byte[data.limit()];
             data.position(0);
             data.get(read);
-            logger.debug(new String(read));
+            logger.warn(new String(read));
             //for(byte a: read)
-            // logger.debug(String.format("%x", a) );
+            // logger.warn(String.format("%x", a) );
 
             data.position(0);
             reqBuf = f.channel().alloc().buffer(data.limit());
             reqBuf.writeBytes(data);
-            logger.debug("going to send");
+            logger.warn("going to send");
             f.channel().writeAndFlush(reqBuf);
             while ( strm != null && strm.available() > 0 ) {
                 read = strm.available() > MsgCommon.READ_BUF_SIZE ? new byte[MsgCommon.READ_BUF_SIZE]
@@ -115,7 +115,7 @@ public class AMSBrokerClient {
                 strm.read(read);
                 reqBuf = f.channel().alloc().buffer(read.length);
                 reqBuf.writeBytes(read);
-                logger.debug("Send File size = " + read.length);
+                logger.warn("Send File size = " + read.length);
                 f.channel().writeAndFlush(reqBuf);
             }
             if( strm != null )
@@ -143,8 +143,8 @@ public class AMSBrokerClient {
 
             f.channel().close().sync();
             //f.channel().closeFuture().sync();
-            logger.debug("answer count = " + ans.size());
-            logger.debug("channel opened = " + f.channel().isOpen());
+            logger.warn("answer count = " + ans.size());
+            logger.warn("channel opened = " + f.channel().isOpen());
 
 
             // Wait until the connection is closed.

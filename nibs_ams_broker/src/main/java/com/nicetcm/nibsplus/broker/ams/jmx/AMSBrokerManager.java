@@ -141,7 +141,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                 LogManager.getLogger("com.bogogt").setLevel(Level.ALL);
                 LogManager.getLogger("java.sql").setLevel(Level.ALL);
                 LogManager.getLogger("org.springframework").setLevel(Level.ALL);
-                LogManager.getLogger("org.apache.activemq").setLevel(Level.ALL);
+                LogManager.getLogger("org.apache").setLevel(Level.ALL);
             }
             else if( logLevel.equals("TRACE") ) {
                 LogManager.getRootLogger().setLevel(Level.TRACE);
@@ -149,7 +149,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                 LogManager.getLogger("com.bogogt").setLevel(Level.TRACE);
                 LogManager.getLogger("java.sql").setLevel(Level.TRACE);
                 LogManager.getLogger("org.springframework").setLevel(Level.TRACE);
-                LogManager.getLogger("org.apache.activemq").setLevel(Level.TRACE);
+                LogManager.getLogger("org.apache").setLevel(Level.TRACE);
             }
             else if( logLevel.equals("DEBUG") ) {
                 LogManager.getRootLogger().setLevel(Level.DEBUG);
@@ -157,7 +157,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                 LogManager.getLogger("com.bogogt").setLevel(Level.DEBUG);
                 LogManager.getLogger("java.sql").setLevel(Level.DEBUG);
                 LogManager.getLogger("org.springframework").setLevel(Level.DEBUG);
-                LogManager.getLogger("org.apache.activemq").setLevel(Level.DEBUG);
+                LogManager.getLogger("org.apache").setLevel(Level.DEBUG);
             }
             else if( logLevel.equals("INFO") ) {
                 LogManager.getRootLogger().setLevel(Level.INFO);
@@ -165,7 +165,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                 LogManager.getLogger("com.bogogt").setLevel(Level.INFO);
                 LogManager.getLogger("java.sql").setLevel(Level.INFO);
                 LogManager.getLogger("org.springframework").setLevel(Level.INFO);
-                LogManager.getLogger("org.apache.activemq").setLevel(Level.INFO);
+                LogManager.getLogger("org.apache").setLevel(Level.INFO);
             }
             else if( logLevel.equals("WARN") ) {
                 LogManager.getRootLogger().setLevel(Level.WARN);
@@ -173,7 +173,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                 LogManager.getLogger("com.bogogt").setLevel(Level.WARN);
                 LogManager.getLogger("java.sql").setLevel(Level.WARN);
                 LogManager.getLogger("org.springframework").setLevel(Level.WARN);
-                LogManager.getLogger("org.apache.activemq").setLevel(Level.WARN);
+                LogManager.getLogger("org.apache").setLevel(Level.WARN);
             }
             else if( logLevel.equals("ERROR") ) {
                 LogManager.getRootLogger().setLevel(Level.ERROR);
@@ -181,7 +181,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                 LogManager.getLogger("com.bogogt").setLevel(Level.ERROR);
                 LogManager.getLogger("java.sql").setLevel(Level.ERROR);
                 LogManager.getLogger("org.springframework").setLevel(Level.ERROR);
-                LogManager.getLogger("org.apache.activemq").setLevel(Level.ERROR);
+                LogManager.getLogger("org.apache").setLevel(Level.ERROR);
             }
             else if( logLevel.equals("FATAL") ) {
                 LogManager.getRootLogger().setLevel(Level.FATAL);
@@ -189,7 +189,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                 LogManager.getLogger("com.bogogt").setLevel(Level.FATAL);
                 LogManager.getLogger("java.sql").setLevel(Level.FATAL);
                 LogManager.getLogger("org.springframework").setLevel(Level.FATAL);
-                LogManager.getLogger("org.apache.activemq").setLevel(Level.FATAL);
+                LogManager.getLogger("org.apache").setLevel(Level.FATAL);
             }
             else if( logLevel.equals("OFF") ) {
                 LogManager.getRootLogger().setLevel(Level.OFF);
@@ -197,7 +197,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                 LogManager.getLogger("com.bogogt").setLevel(Level.OFF);
                 LogManager.getLogger("java.sql").setLevel(Level.OFF);
                 LogManager.getLogger("org.springframework").setLevel(Level.OFF);
-                LogManager.getLogger("org.apache.activemq").setLevel(Level.OFF);
+                LogManager.getLogger("org.apache").setLevel(Level.OFF);
             }
             else return String.format("Invalid log level %s", logLevel);
 

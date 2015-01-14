@@ -106,13 +106,13 @@ public class RespAckNakHandlerImpl implements RespAckNakHandler {
                         outPsr.setString( "CM._AOCRespCode", "000" );
                     else
                         outPsr.setString( "CM._AOCRespCode", "009" );
-                    logger.debug("Message Length = "  + outPsr.getMessageLength());
-                    logger.debug("Last Position = "   + outPsr.lastPosition());
+                    logger.warn("Message Length = "  + outPsr.getMessageLength());
+                    logger.warn("Last Position = "   + outPsr.lastPosition());
                     reqInfo.getMsg().limit(outPsr.lastPosition());
                     read = new byte[reqInfo.getMsg().limit()];
                     reqInfo.getMsg().position(0);
                     reqInfo.getMsg().get(read);
-                    logger.debug(new String(read));
+                    logger.warn(new String(read));
                 }
                 finally {
                     outPsr.clearMessage();
@@ -121,7 +121,7 @@ public class RespAckNakHandlerImpl implements RespAckNakHandler {
             else {
                 throw new Exception("Response Type is Invalid [" + outPsr.getResponseInfo().getType() + "]" );
             }
-            logger.debug(new String(read));
+            logger.warn(new String(read));
 
             if( ackNak.equals("9") ) {
                 msgHis.setMsgCtx( new String(read) );
@@ -142,7 +142,7 @@ public class RespAckNakHandlerImpl implements RespAckNakHandler {
                 reqInfo.getStrm().read(read);
                 retBuf = ctx.alloc().buffer(read.length);
                 retBuf.writeBytes(read);
-                logger.debug("Send File size = " + read.length);
+                logger.warn("Send File size = " + read.length);
                 ctx.writeAndFlush(retBuf);
             }
             if( reqInfo.getStrm() != null )

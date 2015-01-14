@@ -55,7 +55,7 @@ public class FileSaverImpl implements FileSaver {
         String fileName = null;
 
         try {
-            logger.debug( "Service Code = {}", parsed.getString("CM._AOCServiceCode") );
+            logger.warn( "Service Code = {}", parsed.getString("CM._AOCServiceCode") );
             /**
              * 특정파일 업로드
              */
@@ -124,7 +124,7 @@ public class FileSaverImpl implements FileSaver {
             return fileName;
         }
         catch( Exception e ) {
-            logger.debug("fileSaver has error [{}]", e.getMessage() );
+            logger.warn("fileSaver has error [{}]", e.getMessage() );
             amsTX.rollback(safeData.getTXS());
             throw e;
         }

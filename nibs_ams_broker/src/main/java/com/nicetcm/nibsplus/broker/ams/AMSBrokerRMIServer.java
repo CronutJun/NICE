@@ -23,7 +23,7 @@ public class AMSBrokerRMIServer {
     public void bind() {
 
         try {
-            logger.debug("Going to bind..");
+            logger.warn("Going to bind..");
             remoteObj = new AMSBrokerRMIImpl();
 
             stub = (AMSBrokerRMI)UnicastRemoteObject.exportObject(remoteObj, Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
@@ -31,10 +31,10 @@ public class AMSBrokerRMIServer {
             LocateRegistry.createRegistry(Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
             // Bind the remote object's stub in the registry
             registry = LocateRegistry.getRegistry(Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.port")));
-            logger.debug("rebind");
+            logger.warn("rebind");
             registry.rebind("AMSBrokerRMI", stub);
            //java.rmi.Naming.rebind("rmi://localhost:1099/AMSBrokerRMI", remoteObj);
-            logger.debug("AMSBrokerRMI Remote Object bound to the registry and ready to service incoming client calls...");
+            logger.warn("AMSBrokerRMI Remote Object bound to the registry and ready to service incoming client calls...");
         }
         catch(java.rmi.RemoteException e) {
             logger.error("Exception occurred during processing incoming method call");
@@ -54,7 +54,7 @@ public class AMSBrokerRMIServer {
         try {
             registry.unbind("AMSBrokerRMI");
             UnicastRemoteObject.unexportObject(remoteObj, true);
-            logger.debug("registry unbound");
+            logger.warn("registry unbound");
         }
         catch( Exception e ) {
             logger.error("Error raised. Message = {}", e.getMessage() );

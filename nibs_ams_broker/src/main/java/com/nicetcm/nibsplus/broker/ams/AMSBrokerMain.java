@@ -62,7 +62,7 @@ public class AMSBrokerMain extends Thread {
         this.jobName = job;
         this.setName(job);
         if( jobName.equals("SERVER") ) {
-            logger.debug("properties = " + MsgCommon.msgProps.getProperty("schema_path"));
+            logger.warn("properties = " + MsgCommon.msgProps.getProperty("schema_path"));
             svr = AMSBrokerServer.getServer(Integer.parseInt(MsgCommon.msgProps.getProperty("ams.port")));
         }
         else if( jobName.equals("RMI") ) {
@@ -73,7 +73,7 @@ public class AMSBrokerMain extends Thread {
                 sched = new StdSchedulerFactory().getScheduler();
             }
             catch( SchedulerException se ) {
-                logger.debug( "Schedule Exception: {}", se.getMessage() );
+                logger.warn( "Schedule Exception: {}", se.getMessage() );
             }
         }
     }
@@ -84,7 +84,7 @@ public class AMSBrokerMain extends Thread {
             try {
                 registerMBean();
                 svr.run();
-                logger.debug("Soket server going to stop..");
+                logger.warn("Soket server going to stop..");
             }
             catch( Exception err) {
                 err.printStackTrace();
@@ -160,17 +160,17 @@ public class AMSBrokerMain extends Thread {
             err.printStackTrace();
         }
 
-        AMSBrokerMain svr   = new AMSBrokerMain("SERVER");
-        AMSBrokerMain rmi   = new AMSBrokerMain("RMI");
-        AMSBrokerMain sched = new AMSBrokerMain("SCHEDULE");
+        AMSBrokerMain svrT   = new AMSBrokerMain("SERVER");
+        AMSBrokerMain rmiT   = new AMSBrokerMain("RMI");
+        AMSBrokerMain schedT = new AMSBrokerMain("SCHEDULE");
 
         AMSBrokerSpringMain.sprCtx.register(AMSBrokerAppConfig.class);
         //AMSBrokerSpringMain.sprCtx.scan("com.nicetcm.nibsplus.broker.ams.services"); AppConfig @ComponentScan으로 대체
         AMSBrokerSpringMain.sprCtx.refresh();
 
-        svr.start();
-        rmi.start();
-        sched.start();
+        svrT.start();
+        rmiT.start();
+        schedT.start();
     }
 
     private static void startJMXConnectorServer() throws Exception {
@@ -179,8 +179,8 @@ public class AMSBrokerMain extends Thread {
         final int rmiServerPort   = rmiRegistryPort - 1;
         final String hostname     = System.getProperty("java.rmi.server.hostname","localhost");
 
-        logger.debug("registry port  = {}", rmiRegistryPort);
-        logger.debug("rmiServer port = {} ", rmiServerPort);
+        logger.warn("registry port  = {}", rmiRegistryPort);
+        logger.warn("rmiServer port = {} ", rmiServerPort);
 
         LocateRegistry.createRegistry(rmiRegistryPort);
 
@@ -198,8 +198,8 @@ public class AMSBrokerMain extends Thread {
                                                 rmiServerPort + "/jndi/rmi://" + hostname + ":" +
                                                 rmiRegistryPort + "/jmxrmi");
 
-        logger.debug("Local Connection URL: {}", url);
-        logger.debug("Creating RMI connector server");
+        logger.warn("Local Connection URL: {}", url);
+        logger.warn("Creating RMI connector server");
         cs = JMXConnectorServerFactory.newJMXConnectorServer(url, env, mbs);
         cs.start();
 

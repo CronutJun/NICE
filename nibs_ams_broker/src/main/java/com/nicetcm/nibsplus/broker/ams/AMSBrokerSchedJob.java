@@ -27,7 +27,7 @@ public class AMSBrokerSchedJob implements Job {
 
     @Override
     public void execute(JobExecutionContext arg0) throws JobExecutionException {
-        logger.debug("Job Executed.[{}, {}, {}, {}................", arg0.getJobDetail().getKey().getGroup(),
+        logger.warn("Job Executed.[{}, {}, {}, {}................", arg0.getJobDetail().getKey().getGroup(),
                                                                      arg0.getJobDetail().getKey().getName(),
                                                                      arg0.getTrigger().getKey().getGroup(),
                                                                      arg0.getTrigger().getKey().getName() );

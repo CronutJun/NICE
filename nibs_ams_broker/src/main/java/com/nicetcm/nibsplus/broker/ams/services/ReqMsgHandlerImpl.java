@@ -61,7 +61,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
         safeData.setMsgDate( AMSBrokerLib.getMsgDate(safeData.getSysDate()) );
         safeData.setMsgTime( AMSBrokerLib.getMsgTime(safeData.getSysDate()) );
         try {
-            logger.debug("Start reqMsgHandle");
+            logger.warn("Start reqMsgHandle");
             TRmMacEnvKey macEnvKey = new TRmMacEnv();
             macEnvKey.setOrgCd   ( NICE_ORG_CD );
             macEnvKey.setBranchCd( NICE_BR_CD  );
@@ -74,7 +74,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             reqInfo.setDestPort( Integer.parseInt(rslt.getIpPort()) );
             //reqInfo.setDestIP("10.3.28.114");
             //reqInfo.setDestPort(33001);
-            logger.debug( "TrxCd = {}, ActCd = {}", reqJob.getTrxCd(), reqJob.getActCd() );
+            logger.warn( "TrxCd = {}, ActCd = {}", reqJob.getTrxCd(), reqJob.getActCd() );
 
             TRmMsg msg       = new TRmMsg();
             TRmMsgHis msgHis = new TRmMsgHis();
@@ -244,17 +244,17 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                                         .newMessage(reqInfo.getMsg());
             try {
 
-                logger.debug("Going to call outbound Handler..");
+                logger.warn("Going to call outbound Handler..");
                 outMsg.outMsgHandle(msgPsr, safeData, reqJob, reqInfo, msg);
-                logger.debug("Call outbound Handler successfully..");
+                logger.warn("Call outbound Handler successfully..");
 
-                logger.debug("Message Length = "  + msgPsr.getMessageLength());
-                logger.debug("Last Position = "   + msgPsr.lastPosition());
+                logger.warn("Message Length = "  + msgPsr.getMessageLength());
+                logger.warn("Last Position = "   + msgPsr.lastPosition());
                 reqInfo.getMsg().limit(msgPsr.lastPosition());
                 byte[] read = new byte[reqInfo.getMsg().limit()];
                 reqInfo.getMsg().position(0);
                 reqInfo.getMsg().get(read);
-                logger.debug(new String(read));
+                logger.warn(new String(read));
 
                 msgHis.setMsgCtx( new String(read) );
             }
@@ -278,7 +278,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             amsTX.commit(safeData.getTXS());
         }
         catch( Exception e ) {
-            logger.debug("reqMsgHandle has error [{}]", e.getMessage() );
+            logger.warn("reqMsgHandle has error [{}]", e.getMessage() );
             amsTX.rollback(safeData.getTXS());
             throw e;
         }

@@ -13,6 +13,7 @@ package com.nicetcm.nibsplus.broker.ams;
  */
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.RejectedExecutionException;
@@ -40,12 +41,14 @@ public class AMSBrokerSchedWorkGroup {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerSchedWorkGroup.class);
 
-    private static final ExecutorService svc = new ThreadPoolExecutor(0,
-                                                      Integer.parseInt(MsgCommon.msgProps.getProperty("schedule.max.concurrent.thread",
-                                                                                                      AMSBrokerConst.MAX_CONCURRENT_THREAD)),
-                                                      60L, TimeUnit.SECONDS,
-                                                      new SynchronousQueue<Runnable>(),
-                                                      new BlockingQueuePut());
+//    private static final ExecutorService svc = new ThreadPoolExecutor(0,
+//                                                      Integer.parseInt(MsgCommon.msgProps.getProperty("schedule.max.concurrent.thread",
+//                                                                                                      AMSBrokerConst.MAX_CONCURRENT_THREAD)),
+//                                                      60L, TimeUnit.SECONDS,
+//                                                      new SynchronousQueue<Runnable>(),
+//                                                      new BlockingQueuePut());
+    private static final ExecutorService svc = Executors.newFixedThreadPool(Integer.parseInt(MsgCommon.msgProps.getProperty("schedule.max.concurrent.thread",
+                                                                                                      AMSBrokerConst.MAX_CONCURRENT_THREAD)));
 
     private static AMSBrokerSchedWorkGroup schedGrp = null;
 

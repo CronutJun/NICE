@@ -26,15 +26,15 @@ public class AMSBrokerServer {
     public static AMSBrokerServer getServer(int Port) {
         if( sockServer == null )
             sockServer = new AMSBrokerServer( Port );
-        
+
         return sockServer;
     }
-    
+
     public static AMSBrokerServer getServer() {
-        
+
         return sockServer;
     }
-    
+
     private AMSBrokerServer(int port) {
         this.port = port;
 
@@ -70,7 +70,7 @@ public class AMSBrokerServer {
             workerGroup.shutdownGracefully();
         }
         catch( Exception e ) {
-            logger.debug("Server Close Exception: {}", e.getMessage() );
+            logger.warn("Server Close Exception: {}", e.getMessage() );
         }
     }
 }

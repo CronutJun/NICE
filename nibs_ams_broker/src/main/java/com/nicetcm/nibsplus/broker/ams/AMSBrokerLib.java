@@ -130,7 +130,7 @@ public class AMSBrokerLib {
               String fileName = ze.getName();
               File newFile = new File(outputFolder + File.separator + fileName);
 
-              logger.debug("file unzip : "+ newFile.getAbsoluteFile());
+              logger.warn("file unzip : "+ newFile.getAbsoluteFile());
 
                //create all non exists folders
                //else you will hit FileNotFoundException for compressed folder
@@ -150,11 +150,11 @@ public class AMSBrokerLib {
            zis.closeEntry();
            zis.close();
 
-           logger.debug("Done");
+           logger.warn("Done");
 
         }
         catch( Exception e ) {
-            logger.debug("unzip has Exception : {}", e.getMessage() );
+            logger.warn("unzip has Exception : {}", e.getMessage() );
         }
     }
 }

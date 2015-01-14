@@ -54,7 +54,7 @@ public class Out21005004Impl implements OutMsgHandler {
             }
         }
         catch( Exception e ) {
-            logger.debug( "T_RM_FILE select error : {}", e.getLocalizedMessage() );
+            logger.warn( "T_RM_FILE select error : {}", e.getLocalizedMessage() );
             throw e;
         }
         //File f = new File("D:\\CronutWorks\\NICE\\Documents\\Design\\05. AMS\\ams_server_src.zip");

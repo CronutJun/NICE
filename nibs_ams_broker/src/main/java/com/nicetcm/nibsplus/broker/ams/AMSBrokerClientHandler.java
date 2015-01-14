@@ -82,22 +82,22 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
         }
 
         try {
-            logger.debug("================================================================");
-            logger.debug("Channel Read - ByteBuf = {}", msg);
-            logger.debug("Thread ID = " + Thread.currentThread().getId());
-            logger.debug("className      = " + msg.getClass().getName());
-            logger.debug("capacity       = " + buf.capacity());
-            logger.debug("readableBytes  = " + buf.readableBytes());
-            logger.debug("readerIndex    = {}", buf.readerIndex() );
-            logger.debug("readable       = {}", buf.isReadable() );
-            logger.debug("isContinue     = " + isContinue);
-            logger.debug("================================================================");
+            logger.warn("================================================================");
+            logger.warn("Channel Read - ByteBuf = {}", msg);
+            logger.warn("Thread ID = " + Thread.currentThread().getId());
+            logger.warn("className      = " + msg.getClass().getName());
+            logger.warn("capacity       = " + buf.capacity());
+            logger.warn("readableBytes  = " + buf.readableBytes());
+            logger.warn("readerIndex    = {}", buf.readerIndex() );
+            logger.warn("readable       = {}", buf.isReadable() );
+            logger.warn("isContinue     = " + isContinue);
+            logger.warn("================================================================");
 
 
             if( !isContinue) {
                 //byte tData[] = new byte[buf.readableBytes()];
                 //buf.readBytes(tData);
-                //logger.debug("data = {}", new String(tData));
+                //logger.warn("data = {}", new String(tData));
                 //buf.resetReaderIndex();
                 /**
                  * 선두의 전체 전문길이 정보가 들어오기를 대기한다.
@@ -111,13 +111,13 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 buf.markReaderIndex();
 
                 buf.readBytes(bMsgLen);
-                logger.debug("First 9 Bytes = " + new String(bMsgLen));
+                logger.warn("First 9 Bytes = " + new String(bMsgLen));
                 iMsgLen = Integer.parseInt(new String(bMsgLen)) + AMSBrokerConst.MSG_LEN_INFO_LEN;
 
                 /**
                  *  전문타입 정보 대기
                  */
-                logger.debug("readableBytes#1  = " + buf.readableBytes());
+                logger.warn("readableBytes#1  = " + buf.readableBytes());
                 if( buf.readableBytes() < 8 ) {
                     waitBuf = ByteBuffer.allocateDirect(buf.readableBytes());
                     buf.readBytes(waitBuf);
@@ -127,8 +127,8 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 buf.readBytes(bMsgType);
 
                 msgPsr = MsgParser.getInstance(MsgCommon.msgProps.getProperty("schema_path") + new String(bMsgType) + ".json");
-                logger.debug("readableBytes#2  = " + buf.readableBytes() + ", schema_length = " + msgPsr.getSchemaLength());
-                logger.debug("msgPsr's response type = {}", msgPsr.getResponseInfo().getType());
+                logger.warn("readableBytes#2  = " + buf.readableBytes() + ", schema_length = " + msgPsr.getSchemaLength());
+                logger.warn("msgPsr's response type = {}", msgPsr.getResponseInfo().getType());
                 buf.resetReaderIndex();
                 /**
                  *  전문파싱 완료 대기
@@ -146,7 +146,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                     byte[] bytes = new byte[wrkBuf.capacity()];
                     wrkBuf.position(0);
                     wrkBuf.get(bytes);
-                    logger.debug("parse data = {}", new String(bytes));
+                    logger.warn("parse data = {}", new String(bytes));
                     wrkBuf.position(0);
                     msgPsr.parseMessage(wrkBuf);
                 }
@@ -163,7 +163,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
 
                 if( iMsgLen > msgPsr.getMessageLength() ) {
                     isContinue = true;
-                    logger.debug("Continue set msgPsr length = " + msgPsr.getMessageLength());
+                    logger.warn("Continue set msgPsr length = " + msgPsr.getMessageLength());
                 }
 
                 /**
@@ -178,7 +178,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 }
             }
             else {
-                logger.debug("Continue.. msgPsr length = " + msgPsr.getMessageLength());
+                logger.warn("Continue.. msgPsr length = " + msgPsr.getMessageLength());
                 wrkBuf = ByteBuffer.allocateDirect(buf.readableBytes());
                 buf.readBytes(wrkBuf);
                 wrkBuf.position(0);
@@ -186,7 +186,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 wrkBuf.get(remainBytes);
 
                 iRemain = iRemain - wrkBuf.capacity();
-                logger.debug("iRemain = " + iRemain);
+                logger.warn("iRemain = " + iRemain);
 
                 if( iRemain <= 0 ) isContinue = false;
 
@@ -198,7 +198,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
             }
         }
         catch( Exception e ) {
-            logger.debug("read Exception: {}", e.getMessage());
+            logger.warn("read Exception: {}", e.getMessage());
             ans.put(new AMSBrokerClientQData(false, buf));
             throw e;
         }

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 public class AMSBrokerShutdown extends Thread {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerShutdown.class);
+    private static boolean isRun = false;
 
     public AMSBrokerShutdown() {
         this.setName("SHUTDOWN");
@@ -25,17 +26,22 @@ public class AMSBrokerShutdown extends Thread {
 
     public void run()  {
         try {
+
+            if( !isRun ) isRun = true;
+            else return;
+
             logger.warn("Start RMI shutdown..");
             AMSBrokerMain.getRMI().unbind();
             logger.warn("RMI stopped.");
-            logger.warn("Start listen of requesting to MAC shutdown.");
+            logger.warn("Start listening of request to MAC shutdown.");
             AMSBrokerReqJob.stopListenerAll();
-            logger.warn("listen of requesting to MAC is stopped.");
+            logger.warn("listening of request to MAC is stopped.");
             logger.warn("Start thread group of schedule shutdown.");
             AMSBrokerSchedWorkGroup.getInstance().shutdownNow();
             logger.warn("Thread group of schedule is stopped.");
             logger.warn("Start scheduler shutdown.");
-            AMSBrokerMain.getScheduler().shutdown();
+            AMSBrokerMain.getScheduler().shutdown(true);
+            Thread.sleep(1000);
             logger.warn("Scheduler stopped.");
             logger.warn("Start server socket shutdown.");
             AMSBrokerServer.getServer().close();
@@ -53,7 +59,9 @@ public class AMSBrokerShutdown extends Thread {
             }
         }
         catch( Exception e ) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
         }
     }
 }

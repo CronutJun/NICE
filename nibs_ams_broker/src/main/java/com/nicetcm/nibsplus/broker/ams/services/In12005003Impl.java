@@ -45,12 +45,12 @@ public class In12005003Impl extends InMsgHandlerImpl {
 
         try {
             if( fileLoc == null || fileLoc.length() == 0 ) {
-                logger.debug("There's no journal data. skip file processing..");
+                logger.warn("There's no journal data. skip file processing..");
                 return;
             }
             File zipFile = new File(fileLoc);
             if( !zipFile.exists() ) {
-                logger.debug("There's no journal data. skip file processing..");
+                logger.warn("There's no journal data. skip file processing..");
                 return;
             }
             TJmFile jmFileOrg = new TJmFile();
@@ -59,26 +59,31 @@ public class In12005003Impl extends InMsgHandlerImpl {
             jmFileOrg.setOrgCd      ( NICE_ORG_CD );
             jmFileOrg.setBranchCd   ( NICE_BR_CD );
             jmFileOrg.setFileName   ( zipFile.getName() );
+            jmFileOrg.setInsertDate ( null );
+            jmFileOrg.setInsertUid  ( null );
+            jmFileOrg.setUpdateDate ( safeData.getSysDate() );
+            jmFileOrg.setUpdateUid  ( "BROKER" );
+            jmFileOrg.setFileCl     ( parsed.getString("_AOCUpFileType") );
             jmFileOrg.setZipFileName( "ORG" );
-            jmFileOrg.setInsertDate ( safeData.getSysDate() );
-            jmFileOrg.setInsertUid  ( "BROKER" );
             jmFileOrg.setFilePath   ( zipFile.getPath().substring(ROOT_FILE_PATH.length(), zipFile.getPath().length() - zipFile.getName().length()) );
             try {
-                if( fileMap.updateByPrimaryKey( jmFileOrg ) == 0 ) {
+                if( fileMap.updateByPrimaryKeySelective( jmFileOrg ) == 0 ) {
                     try {
-                        fileMap.insert( jmFileOrg );
+                        jmFileOrg.setInsertDate ( safeData.getSysDate() );
+                        jmFileOrg.setInsertUid  ( "BROKER" );
+                        fileMap.insertSelective( jmFileOrg );
                     }
                     catch( Exception e ) {
-                        logger.debug("T_JM_FILE ORG INSERT ERROR: {}", e.getLocalizedMessage() );
+                        logger.warn("T_JM_FILE ORG INSERT ERROR: {}", e.getLocalizedMessage() );
                         throw e;
                     }
                 }
             }
             catch( Exception e ) {
-                logger.debug("T_JM_FILE ORG UPDATE ERROR: {}", e.getLocalizedMessage() );
+                logger.warn("T_JM_FILE ORG UPDATE ERROR: {}", e.getLocalizedMessage() );
                 throw e;
             }
-            logger.debug("File Location = {}", fileLoc);
+            logger.warn("File Location = {}", fileLoc);
             String journalPath = String.format("%s%s%s/%s/",
                                                ROOT_FILE_PATH,
                                                JOURNAL_FILE_PATH,
@@ -91,17 +96,17 @@ public class In12005003Impl extends InMsgHandlerImpl {
                                            parsed.getString("CM._SSTNo").substring(2)
                                           );
 
-            logger.debug("Journal Path = {}, Thread id = {}", journalPath, Thread.currentThread().getId());
+            logger.warn("Journal Path = {}, Thread id = {}", journalPath, Thread.currentThread().getId());
             String extractDirNm = String.format( "tmp_%s_ext", Thread.currentThread().getId());
             String extractDir   = String.format( "%s%s", TEMP_FILE_PATH, extractDirNm );
-            logger.debug("extract Loc = {}", extractDir);
+            logger.warn("extract Loc = {}", extractDir);
             try {
                 AMSBrokerLib.unZip(fileLoc, extractDir);
                 File[] paths = new File(extractDir).listFiles();
                 File dirImg  = new File(String.format("%simages",journalPath));
                 File dirJnl  = new File(String.format("%s",      journalPath));
                 for( File path: paths ) {
-                    logger.debug("Extracted file: {}", path.getName());
+                    logger.warn("Extracted file: {}", path.getName());
                     /**
                      * JPG파일은 저널폴더로 이동
                      */
@@ -116,23 +121,28 @@ public class In12005003Impl extends InMsgHandlerImpl {
                         jmFile.setOrgCd      ( NICE_ORG_CD );
                         jmFile.setBranchCd   ( NICE_BR_CD );
                         jmFile.setFileName   ( path.getName() );
+                        jmFile.setInsertDate ( null );
+                        jmFile.setInsertUid  ( null );
+                        jmFile.setUpdateDate ( safeData.getSysDate() );
+                        jmFile.setUpdateUid  ( "BROKER" );
+                        jmFile.setFileCl     ( parsed.getString("_AOCUpFileType") );
                         jmFile.setZipFileName( jmFileOrg.getFileName() );
-                        jmFile.setInsertDate ( safeData.getSysDate() );
-                        jmFile.setInsertUid  ( "BROKER" );
                         jmFile.setFilePath   ( String.format("%simages/", jnlPath) );
                         try {
-                            if( fileMap.updateByPrimaryKey( jmFile ) == 0 ) {
+                            if( fileMap.updateByPrimaryKeySelective( jmFile ) == 0 ) {
                                 try {
-                                    fileMap.insert( jmFile );
+                                    jmFile.setInsertDate ( safeData.getSysDate() );
+                                    jmFile.setInsertUid  ( "BROKER" );
+                                    fileMap.insertSelective( jmFile );
                                 }
                                 catch( Exception e ) {
-                                    logger.debug("T_JM_FILE INSERT ERROR: {}", e.getLocalizedMessage() );
+                                    logger.warn("T_JM_FILE INSERT ERROR: {}", e.getLocalizedMessage() );
                                     throw e;
                                 }
                             }
                         }
                         catch( Exception e ) {
-                            logger.debug("T_JM_FILE UPDATE ERROR: {}", e.getLocalizedMessage() );
+                            logger.warn("T_JM_FILE UPDATE ERROR: {}", e.getLocalizedMessage() );
                             throw e;
                         }
                     }
@@ -141,7 +151,7 @@ public class In12005003Impl extends InMsgHandlerImpl {
                      */
                     if( path.isFile() && path.getName().matches("(?i).*\\.jnl") ) {
                         File exist = new File(String.format("%s/%s", dirJnl, path.getName()));
-                        logger.debug("jnl File = {}", exist );
+                        logger.warn("jnl File = {}", exist );
                         if( exist.exists() )
                             FileUtils.forceDelete(exist);
                         FileUtils.moveFileToDirectory(path, dirJnl, true);
@@ -151,23 +161,28 @@ public class In12005003Impl extends InMsgHandlerImpl {
                         jmFile.setOrgCd      ( NICE_ORG_CD );
                         jmFile.setBranchCd   ( NICE_BR_CD );
                         jmFile.setFileName   ( path.getName() );
+                        jmFile.setInsertDate ( null );
+                        jmFile.setInsertUid  ( null );
+                        jmFile.setUpdateDate ( safeData.getSysDate() );
+                        jmFile.setUpdateUid  ( "BROKER" );
+                        jmFile.setFileCl     ( parsed.getString("_AOCUpFileType") );
                         jmFile.setZipFileName( jmFileOrg.getFileName() );
-                        jmFile.setInsertDate ( safeData.getSysDate() );
-                        jmFile.setInsertUid  ( "BROKER" );
                         jmFile.setFilePath   ( String.format("%s", jnlPath) );
                         try {
-                            if( fileMap.updateByPrimaryKey( jmFile ) == 0 ) {
+                            if( fileMap.updateByPrimaryKeySelective( jmFile ) == 0 ) {
                                 try {
-                                    fileMap.insert( jmFile );
+                                    jmFile.setInsertDate ( safeData.getSysDate() );
+                                    jmFile.setInsertUid  ( "BROKER" );
+                                    fileMap.insertSelective( jmFile );
                                 }
                                 catch( Exception e ) {
-                                    logger.debug("T_JM_FILE INSERT ERROR: {}", e.getLocalizedMessage() );
+                                    logger.warn("T_JM_FILE INSERT ERROR: {}", e.getLocalizedMessage() );
                                     throw e;
                                 }
                             }
                         }
                         catch( Exception e ) {
-                            logger.debug("T_JM_FILE UPDATE ERROR: {}", e.getLocalizedMessage() );
+                            logger.warn("T_JM_FILE UPDATE ERROR: {}", e.getLocalizedMessage() );
                             throw e;
                         }
                     }
@@ -187,7 +202,7 @@ public class In12005003Impl extends InMsgHandlerImpl {
             }
         }
         catch( Exception e ) {
-            logger.debug("In12005003Impl has error :  {} ", e.getMessage());
+            logger.warn("In12005003Impl has error :  {} ", e.getMessage());
             throw e;
         }
     }

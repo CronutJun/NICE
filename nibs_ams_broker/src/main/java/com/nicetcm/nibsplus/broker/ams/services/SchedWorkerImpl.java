@@ -47,7 +47,7 @@ public class SchedWorkerImpl implements SchedWorker {
     @Autowired protected SqlSession                   sqlSession;
     @Autowired protected DataSourceTransactionManager amsTX;
 
-    @Autowired protected CommonPackImpl               comPack;
+    @Autowired protected CommonPack                   comPack;
 
     @Autowired private   TRmMacEnvMapper              macEnvMap;
     @Autowired private   TPmUpdsMacMapper             updsMacMap;
@@ -56,7 +56,7 @@ public class SchedWorkerImpl implements SchedWorker {
     @Override
     public void doWork(AMSBrokerData safeData, String workType, String grpCd, String mkrCd, String modelCd, String verId) throws Exception {
 
-        logger.info("**********************{} SCHEDULE BEGIN *********************************", workType);
+        logger.warn("**********************{} SCHEDULE BEGIN *********************************", workType);
 
         safeData.setTXS(amsTX.getTransaction( AMSBrokerTransaction.defAMSTX ));
         safeData.setSysDate( AMSBrokerLib.getSysDate() );
@@ -138,12 +138,12 @@ public class SchedWorkerImpl implements SchedWorker {
                 }
             }
             amsTX.commit(safeData.getTXS());
-            logger.info("**********************{} SCHEDULE IS SUCCESSFULLY END ******************************", workType);
+            logger.warn("**********************{} SCHEDULE IS SUCCESSFULLY END ******************************", workType);
 
         }
         catch( Exception e ) {
             amsTX.rollback(safeData.getTXS());
-            logger.error("**********************{} SCHEDULE ERROR  ******************************", workType);
+            logger.warn("**********************{} SCHEDULE ERROR  ******************************", workType);
             throw e;
         }
     }

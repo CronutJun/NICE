@@ -450,7 +450,7 @@ public class CommonPackImpl implements CommonPack {
             try {
                 scan.useDelimiter(",");
 
-                logger.debug("Begin parsing");
+                logger.warn("Begin parsing");
                 String macTrxDate = null, macTrxTime = null, macTrxCl = null, macNo = null, num = null, str = null;
                 TJmTrx jmTrx = new TJmTrx();
 
@@ -542,7 +542,7 @@ public class CommonPackImpl implements CommonPack {
                     jmTrx.setEtc3        ( scan.next() );
                     jmTrx.setEtc4        ( scan.next() );
                     jmTrx.setEtc5        ( scan.nextLine().replaceAll(",", "") );
-                    logger.debug("Data = {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
+                    logger.warn("Data = {},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}",
                             macTrxDate, macTrxTime, macTrxCl, macNo,
                             jmTrx.getOrgCd(), jmTrx.getBranchCd(), jmTrx.getTrxOrgCd(), jmTrx.getTrxSeqNo(), jmTrx.getTrxMdCd(),
                             jmTrx.getTrxAcctNo(), jmTrx.getTrsfAcctNo(), jmTrx.getTrxAmt(), jmTrx.getTrxFee(),
@@ -559,13 +559,13 @@ public class CommonPackImpl implements CommonPack {
                                 jmTrxMap.insert( jmTrx );
                             }
                             catch( Exception e ) {
-                                logger.debug("T_JM_TRX INSERT ERROR [{}]", e.getLocalizedMessage());
+                                logger.warn("T_JM_TRX INSERT ERROR [{}]", e.getLocalizedMessage());
                                 throw e;
                             }
                         }
                     }
                     catch( Exception e ) {
-                        logger.debug("T_JM_TRX UPDATE ERROR [{}]", e.getLocalizedMessage());
+                        logger.warn("T_JM_TRX UPDATE ERROR [{}]", e.getLocalizedMessage());
                         throw e;
                     }
                 }
@@ -575,7 +575,7 @@ public class CommonPackImpl implements CommonPack {
             }
         }
         catch ( Exception e ) {
-            logger.debug("parseCSV has error : {}", e.getMessage() );
+            logger.warn("parseCSV has error : {}", e.getMessage() );
             throw e;
         }
     }
