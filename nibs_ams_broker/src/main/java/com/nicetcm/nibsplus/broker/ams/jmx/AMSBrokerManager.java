@@ -26,16 +26,18 @@ import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerClassLoader;
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerShutdown;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerSpringMain;
+import com.nicetcm.nibsplus.broker.ams.services.InitScheduler;
 import com.nicetcm.nibsplus.broker.common.MsgCommon;
+import com.nicetcm.nibsplus.broker.common.MsgParser;
 
 public class AMSBrokerManager extends NotificationBroadcasterSupport implements AMSBrokerManagerMBean {
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerManager.class);
 
     private long sequenceNumber = 1;
-    private int RMIResTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
 
     @Override
     public String shutdownServer(String operation) {
@@ -49,8 +51,8 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
     }
 
     @Override
-    public void reloadSchema() {
-        // Not implemented yet.
+    public void reloadSchema() throws Exception {
+        MsgParser.clearSchemas();
     }
 
     @Override
@@ -211,14 +213,14 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
 
     @Override
     public int getRMIResTimeout() {
-        return RMIResTimeout;
+
+        return Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
     }
 
     @Override
     public void setRMIResTimeout(int timeout) {
-        int oldTimeout = RMIResTimeout;
-        RMIResTimeout  = timeout;
-        // 실제 반영 해야 함... 아직 안했다.
+        int oldTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
+        MsgCommon.msgProps.setProperty("rmi.response.timeout", Integer.toString(timeout) );
 
         Notification n =  new AttributeChangeNotification(this,
                                                           sequenceNumber++,
@@ -227,7 +229,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                                                           "RMIResTimeout",
                                                           "int",
                                                           oldTimeout,
-                                                          this.RMIResTimeout);
+                                                          Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0")));
 
         sendNotification(n);
     }
@@ -242,4 +244,38 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
         MBeanNotificationInfo info = new MBeanNotificationInfo(types, name, description);
         return new MBeanNotificationInfo[] { info };
     }
+
+    @Override
+    public String getJournalUploadTime() {
+        return MsgCommon.msgProps.getProperty("schedule.journal.upload.time", "030000");
+    }
+
+    @Override
+    public void setJournalUploadTime(String uploadTime) {
+        String oldTime = MsgCommon.msgProps.getProperty("schedule.journal.upload.time", "030000");
+        MsgCommon.msgProps.setProperty("schedule.journal.upload.time", uploadTime );
+
+        Notification n =  new AttributeChangeNotification(this,
+                                                          sequenceNumber++,
+                                                          System.currentTimeMillis(),
+                                                          "Journal Upload time is changed",
+                                                          "JournalUploadTime",
+                                                          "String",
+                                                          oldTime,
+                                                          MsgCommon.msgProps.getProperty("schedule.journal.upload.time", "030000"));
+
+        sendNotification(n);
+
+        AMSBrokerData safeData = new AMSBrokerData();
+        InitScheduler initSched = (InitScheduler)AMSBrokerSpringMain.sprCtx.getBean("initScheduler");
+        try {
+            initSched.initSchedule(safeData, "J");
+        }
+        catch( Exception e ) {
+            logger.error("Error raised. Message = {}", e.getMessage() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
+        }
+    }
+
 }

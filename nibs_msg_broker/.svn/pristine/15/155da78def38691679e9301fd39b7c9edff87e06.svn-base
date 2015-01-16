@@ -1,6 +1,6 @@
 {
   "consumers" : [
-     { "name" : "0500.0110",                     "kname" : "일괄 장애, 개국(복구), 상태",  "parallels" : 32, "size_per_paralles" : 10, "msg_para_pos" : 113, "msg_para_len" : 12 },
+     { "name" : "0500.0110",                     "kname" : "일괄 장애, 개국(복구), 상태" },
      { "name" : "0500.0111",                     "kname" : "정산기 장애 상태"            },
      { "name" : "0500.0120",                     "kname" : "농협 장애, 개국, 상태"       },
      { "name" : "0500.0150",                     "kname" : "KIOSK장애, 개국, 상태"       },

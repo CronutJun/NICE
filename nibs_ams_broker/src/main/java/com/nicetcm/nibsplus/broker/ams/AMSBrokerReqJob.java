@@ -17,9 +17,12 @@ import java.util.ArrayList;
 import java.nio.ByteBuffer;
 import java.io.FileOutputStream;
 import java.io.FileInputStream;
+
+import com.nicetcm.nibsplus.broker.ams.rmi.AMSBrokerTimeoutException;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqRegInfo;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqIniInfo;
 import com.nicetcm.nibsplus.broker.ams.rmi.RMIEnvValue;
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +108,27 @@ public class AMSBrokerReqJob {
         BlockingQueue<AMSBrokerReqJob> reqQue = getQueue( this.macNo );
         reqQue.put( this );
         logger.warn("requestJob OK");
+        try {
+            if( !isBlocking ) return;
+
+            logger.warn("requestJob is going to wait answer.");
+            String defTimeOut = MsgCommon.msgProps.getProperty("rmi.response.timeout");
+            if( defTimeOut == null )
+                defTimeOut = "60";
+            ByteBuffer rslt = ans.poll(Integer.parseInt(defTimeOut), TimeUnit.SECONDS);
+            if( rslt == null ) {
+                throw new AMSBrokerTimeoutException("timeout");
+            }
+            else if( rslt.capacity() == 3 ) { // TMO
+                throw new AMSBrokerTimeoutException("timeout by app");
+            }
+            else if( rslt.capacity() == 1 ) {
+                throw new Exception("Error while request information");
+            }
+        }
+        catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public BlockingQueue<ByteBuffer> getAns() {

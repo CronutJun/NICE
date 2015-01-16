@@ -96,12 +96,6 @@ public class SchedWorkerImpl implements SchedWorker {
                         logger.error("Raised error while doing schedule work (PGM Updates) : {}", e.getMessage());
                     }
                 }
-                try {
-                    AMSBrokerSchedWorkGroup.getInstance().shutdown();
-                }
-                catch( Exception e ) {
-                    logger.error("Raised error while shutdown Updates schedule thread : {}", e.getMessage());
-                }
             }
             /**
              * 저널업로드 스케쥴
@@ -129,12 +123,6 @@ public class SchedWorkerImpl implements SchedWorker {
                     catch( Exception e ) {
                         logger.error("Raised error while doing schedule work (Journal upload) : {}", e.getMessage());
                     }
-                }
-                try {
-                    AMSBrokerSchedWorkGroup.getInstance().shutdown();
-                }
-                catch( Exception e ) {
-                    logger.error("Raised error while shutdown Journal schedule thread : {}", e.getMessage());
                 }
             }
             amsTX.commit(safeData.getTXS());

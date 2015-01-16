@@ -49,7 +49,7 @@ public class InitSchedulerImpl implements InitScheduler {
     @Autowired private   TPmUpdsSchedMapper           updsSchedMap;
 
     @Override
-    public void initSchedule( AMSBrokerData safeData ) throws Exception {
+    public void initSchedule( AMSBrokerData safeData, String type ) throws Exception {
 
         safeData.setSysDate( AMSBrokerLib.getSysDate() );
 
@@ -61,58 +61,62 @@ public class InitSchedulerImpl implements InitScheduler {
             /**
              * 배포스케쥴 초기화
              */
-            TPmUpdsSchedSpec updsSchedSpec = new TPmUpdsSchedSpec();
-            updsSchedSpec.createCriteria().andDeployDateGreaterThanOrEqualTo(safeData.getMsgDate())
-                                          .andDeployTimeGreaterThanOrEqualTo(safeData.getMsgTime());
-            List<TPmUpdsSched> updsScheds = updsSchedMap.selectBySpec(updsSchedSpec);
-            for( TPmUpdsSched updsSched: updsScheds ) {
-                AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey(updsSched.getVerId(), updsSched.getGrpCd()) );
+            if( type.equals("U") || type.equals("A") ) {
+                TPmUpdsSchedSpec updsSchedSpec = new TPmUpdsSchedSpec();
+                updsSchedSpec.createCriteria().andDeployDateGreaterThanOrEqualTo(safeData.getMsgDate())
+                                              .andDeployTimeGreaterThanOrEqualTo(safeData.getMsgTime());
+                List<TPmUpdsSched> updsScheds = updsSchedMap.selectBySpec(updsSchedSpec);
+                for( TPmUpdsSched updsSched: updsScheds ) {
+                    AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey(updsSched.getVerId(), updsSched.getGrpCd()) );
 
-                JobDetail updJob = newJob(AMSBrokerSchedJob.class)
-                                 .withIdentity("UPDATES",  String.format("%-4.4s%-4.4s", updsSched.getMkrCd(), updsSched.getModelCd()))
-                                 .build();
+                    JobDetail updJob = newJob(AMSBrokerSchedJob.class)
+                                     .withIdentity("UPDATES",  String.format("%-4.4s%-4.4s", updsSched.getMkrCd(), updsSched.getModelCd()))
+                                     .build();
 
-                CronTrigger updTrig = newTrigger()
-                                    .withIdentity( updsSched.getVerId(), updsSched.getGrpCd() )
-                                    .withSchedule( cronSchedule(String.format("%s %s %s %s %s ? %s",
-                                                                              updsSched.getDeployTime().substring(4),
-                                                                              updsSched.getDeployTime().substring(2, 4),
-                                                                              updsSched.getDeployTime().substring(0, 2),
-                                                                              updsSched.getDeployDate().substring(6),
-                                                                              updsSched.getDeployDate().substring(4, 6),
-                                                                              updsSched.getDeployDate().substring(0, 4))) )
-                                    .build();
-                AMSBrokerMain.getScheduler().scheduleJob( updJob, updTrig );
-                logger.warn("Job is successfully scheduled [Group = {}, Version = {}, deployDate = {}, deployTime = {}",
-                            updsSched.getGrpCd(), updsSched.getVerId(), updsSched.getDeployDate(), updsSched.getDeployTime());
+                    CronTrigger updTrig = newTrigger()
+                                        .withIdentity( updsSched.getVerId(), updsSched.getGrpCd() )
+                                        .withSchedule( cronSchedule(String.format("%s %s %s %s %s ? %s",
+                                                                                  updsSched.getDeployTime().substring(4),
+                                                                                  updsSched.getDeployTime().substring(2, 4),
+                                                                                  updsSched.getDeployTime().substring(0, 2),
+                                                                                  updsSched.getDeployDate().substring(6),
+                                                                                  updsSched.getDeployDate().substring(4, 6),
+                                                                                  updsSched.getDeployDate().substring(0, 4))) )
+                                        .build();
+                    AMSBrokerMain.getScheduler().scheduleJob( updJob, updTrig );
+                    logger.warn("Job is successfully scheduled [Group = {}, Version = {}, deployDate = {}, deployTime = {}",
+                                updsSched.getGrpCd(), updsSched.getVerId(), updsSched.getDeployDate(), updsSched.getDeployTime());
+                }
             }
             /**
              * 저널스케쥴 초기화
              */
-            String uploadTime = MsgCommon.msgProps.getProperty("schedule.journal.upload.time");
-            if( uploadTime != null && uploadTime.length() == 6 ) {
-                AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey("JOURNAL", "JOURNAL") );
+            if( type.equals("J") || type.equals("A") ) {
+                String uploadTime = MsgCommon.msgProps.getProperty("schedule.journal.upload.time");
+                if( uploadTime != null && uploadTime.length() == 6 ) {
+                    AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey("JOURNAL", "JOURNAL") );
 
-                JobDetail jnlJob = newJob(AMSBrokerSchedJob.class)
-                                 .withIdentity("JOURNAL",  "JOURNAL")
-                                 .build();
+                    JobDetail jnlJob = newJob(AMSBrokerSchedJob.class)
+                                     .withIdentity("JOURNAL",  "JOURNAL")
+                                     .build();
 
-                CronTrigger jnlTrig = newTrigger()
-                                    .withIdentity( "JOURNAL", "JOURNAL" )
-                                    .withSchedule( cronSchedule(String.format("%s %s %s %s %s ?",
-                                                                              uploadTime.substring(4),
-                                                                              uploadTime.substring(2, 4),
-                                                                              uploadTime.substring(0, 2),
-                                                                              "*",
-                                                                              "*")) )
-                                    .build();
-                AMSBrokerMain.getScheduler().scheduleJob( jnlJob, jnlTrig );
-                logger.info("Job is successfully scheduled [uploadTime = {}]", String.format("%s %s %s %s %s ?",
-                                                                                        uploadTime.substring(4),
-                                                                                        uploadTime.substring(2, 4),
-                                                                                        uploadTime.substring(0, 2),
-                                                                                        "*",
-                                                                                        "*"));
+                    CronTrigger jnlTrig = newTrigger()
+                                        .withIdentity( "JOURNAL", "JOURNAL" )
+                                        .withSchedule( cronSchedule(String.format("%s %s %s %s %s ?",
+                                                                                  uploadTime.substring(4),
+                                                                                  uploadTime.substring(2, 4),
+                                                                                  uploadTime.substring(0, 2),
+                                                                                  "*",
+                                                                                  "*")) )
+                                        .build();
+                    AMSBrokerMain.getScheduler().scheduleJob( jnlJob, jnlTrig );
+                    logger.info("Job is successfully scheduled [uploadTime = {}]", String.format("%s %s %s %s %s ?",
+                                                                                            uploadTime.substring(4),
+                                                                                            uploadTime.substring(2, 4),
+                                                                                            uploadTime.substring(0, 2),
+                                                                                            "*",
+                                                                                            "*"));
+                }
             }
 
             amsTX.commit(safeData.getTXS());

@@ -1,0 +1,42 @@
+##
+# remove MsgBroker logs
+##
+AGO=$((15+30*24)) # Calculate 30days ago
+BASE_DT=`TZ=KST+$AGO date +%Y%m%d`
+echo "Going to remove directory before $BASE_DT"
+cd /share1/nibs_log
+for LST in `ls -1| grep "20[0-9][0-9][0-1][0-9][0-3][0-9]"` ; do
+  if [[ "$LST" < "$BASE_DT" ]] ; then
+    rm -Rf $LST
+    echo "Directory $LST is removed"
+  fi
+done
+
+##
+# remove batch logs
+##
+echo "Going to remove directory of batch before $BASE_DT"
+cd /share1/nibs_log/batch
+for LST in `ls -1| grep "20[0-9][0-9][0-1][0-9][0-3][0-9]"` ; do
+  if [[ "$LST" < "$BASE_DT" ]] ; then
+    rm -Rf $LST
+    echo "Directory $LST is removed"
+  fi
+done
+
+##
+# remove was logs
+##
+echo "Going to remove WAS logs..."
+cd /infowas/waslog
+find ./ -mmin +43200 -exec rm -Rf {} \;
+
+##
+# remove jennifer logs
+##
+
+echo "Going to remove Jennifer logs..."
+cd /infowas/jennifer/logs
+find ./ -mmin +43200 -exec rm -Rf {} \;
+
+echo "done."

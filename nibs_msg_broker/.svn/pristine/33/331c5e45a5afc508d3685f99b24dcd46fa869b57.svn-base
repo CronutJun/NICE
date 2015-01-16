@@ -64,7 +64,7 @@
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR,
                    OP.T_CT_ERROR     ERR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 3), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
                AND MNG.org_cd = '0WC'
                AND MNG.arrival_time IS NOT NULL
                AND MNG.send_time IS NOT NULL
@@ -109,7 +109,7 @@
                    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 15), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 15), 'YYYYMMDD'))
                AND MNG.org_cd = '039'
                AND MNG.arrival_time IS NOT NULL
                /* AND MNG.send_time IS NOT NULL */
@@ -159,7 +159,7 @@
                    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 15), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 15), 'YYYYMMDD'))
                AND MNG.org_cd = '020'
                AND MNG.arrival_time IS NOT NULL
                /* AND MNG.send_time IS NOT NULL */
@@ -207,7 +207,7 @@
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR,
                    OP.T_CT_ERROR     ERR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 3), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
                AND MNG.org_cd = '035'
                AND MNG.arrival_time IS NOT NULL
                AND MNG.send_time IS NOT NULL
@@ -250,7 +250,7 @@
                    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 15), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 15), 'YYYYMMDD'))
                AND MNG.org_cd = '011'
                AND MNG.arrival_time IS NOT NULL
                AND MNG.format_type = '21'
@@ -301,7 +301,7 @@
           FROM OP.T_CT_ERROR_MNG MNG,
                OP.T_CM_MEMBER      MBR,
                OP.T_CT_ERROR       ERR
-         WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 3), 'YYYYMMDD')
+         WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
            AND MNG.org_cd = '031'
            AND MNG.arrival_time IS NOT NULL
            AND MNG.send_time IS NOT NULL
@@ -343,7 +343,7 @@
                    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 10), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 10), 'YYYYMMDD'))
                AND MNG.org_cd = '088'
                AND MNG.arrival_time IS NOT NULL
                /* AND MNG.send_time IS NOT NULL */
@@ -422,7 +422,7 @@
                    '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 15), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 15), 'YYYYMMDD'))
                AND MNG.org_cd = '032'
                AND MNG.arrival_time IS NOT NULL
                /* AND MNG.send_time IS NOT NULL */
@@ -472,7 +472,7 @@
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR,
                    OP.T_CT_ERROR     ERR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 3), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
                AND MNG.org_cd = '081'
                AND MNG.arrival_time IS NOT NULL
                AND MNG.send_time IS NOT NULL
@@ -514,7 +514,7 @@
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR,
                    OP.T_CT_ERROR     ERR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 3), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
                AND MNG.org_cd = '005'
                AND MNG.send_time IS NOT NULL
                AND (   (   nvl(MNG.org_send_yn, '0') = '0'
@@ -564,7 +564,7 @@
               FROM OP.T_CT_ERROR_MNG MNG,
                    OP.T_CM_MEMBER    MBR,
                    OP.T_CT_ERROR     ERR
-             WHERE MNG.CREATE_DATE > TO_CHAR((SYSDATE - 3), 'YYYYMMDD')
+             WHERE MNG.CREATE_DATE > TO_NUMBER(TO_CHAR((SYSDATE - 3), 'YYYYMMDD'))
                AND MNG.org_cd = '003'
                AND MNG.arrival_time IS NOT NULL
                AND MNG.send_time IS NOT NULL
@@ -616,7 +616,7 @@
 		          OR NVL(mng.ERROR_STATUS, '0' ) = '7000'
 		        )
 		        */
-		AND mng.CREATE_DATE > TO_CHAR( SYSDATE-3, 'YYYYMMDD' )
+		AND mng.CREATE_DATE > TO_NUMBER(TO_CHAR( SYSDATE-3, 'YYYYMMDD' ))
 		and      nvl(site.alarm, '0') = '1' 
 		and		mng.org_cd = site.org_cd
 		and 	mng.branch_cd = site.branch_cd

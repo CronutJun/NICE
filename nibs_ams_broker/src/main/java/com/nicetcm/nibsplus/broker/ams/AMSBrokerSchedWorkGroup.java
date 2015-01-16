@@ -69,6 +69,9 @@ public class AMSBrokerSchedWorkGroup {
 
     public void shutdown() throws Exception {
         svc.shutdown();
+        while (!svc.awaitTermination(2, TimeUnit.SECONDS)) {
+            logger.warn("Awaiting completion of threads. Thread count = {}", Thread.getAllStackTraces().keySet().size() );
+        }
     }
 
     public void shutdownNow() throws Exception {

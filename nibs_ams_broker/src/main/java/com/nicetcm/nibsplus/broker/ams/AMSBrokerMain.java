@@ -125,7 +125,7 @@ public class AMSBrokerMain extends Thread {
         AMSBrokerData safeData = new AMSBrokerData();
         InitScheduler initSched = (InitScheduler)AMSBrokerSpringMain.sprCtx.getBean("initScheduler");
         try {
-            initSched.initSchedule(safeData);
+            initSched.initSchedule(safeData, "A");
         }
         catch( Exception e ) {
             logger.error("Error raised. Message = {}", e.getMessage() );

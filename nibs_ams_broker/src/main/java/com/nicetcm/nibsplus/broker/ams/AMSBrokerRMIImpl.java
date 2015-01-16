@@ -58,29 +58,6 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         }
     }
 
-    private void waitBlocking( AMSBrokerReqJob reqJob ) throws Exception {
-
-        try {
-            String defTimeOut = MsgCommon.msgProps.getProperty("rmi.response.timeout");
-            if( defTimeOut == null )
-                defTimeOut = "60";
-            ByteBuffer rslt = reqJob.getAns().poll(Integer.parseInt(defTimeOut), TimeUnit.SECONDS);
-            if( rslt == null ) {
-                throw new AMSBrokerTimeoutException("RMI timeout");
-            }
-            else if( rslt.capacity() == 3 ) {
-                throw new AMSBrokerTimeoutException("timeout");
-            }
-            else if( rslt.capacity() == 1 ) {
-                throw new Exception("Error while request information");
-            }
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
-    }
-
     /**
      * makeUpdatesSchedule
      *
@@ -140,7 +117,6 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setTrxUid ( trxUid );
             reqJob.setTimeOut( timeOut );
             reqJob.requestJob();
-            waitBlocking( reqJob );
         }
         catch( Exception e ) {
             logger.warn(e.getMessage());
@@ -205,7 +181,6 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setReqRegInfo( reqRegInfo );
             reqJob.setTimeOut   ( timeOut );
             reqJob.requestJob();
-            waitBlocking( reqJob );
         }
         catch( Exception e ) {
             logger.warn(e.getMessage());
@@ -271,7 +246,6 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setReqIniInfo( reqIniInfo );
             reqJob.setTimeOut   ( timeOut );
             reqJob.requestJob();
-            waitBlocking( reqJob );
         }
         catch( Exception e ) {
             logger.warn(e.getMessage());
@@ -861,7 +835,6 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setArrivalTime( arrivalTime );
             reqJob.setTimeOut    ( 10 );
             reqJob.requestJob();
-            waitBlocking( reqJob );
         }
         catch( Exception e ) {
             logger.warn(e.getMessage());
