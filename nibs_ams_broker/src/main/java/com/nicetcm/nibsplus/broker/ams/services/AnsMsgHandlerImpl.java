@@ -73,6 +73,10 @@ public class AnsMsgHandlerImpl implements AnsMsgHandler {
                 byte[] bBrchCd   = new byte[8];
                 byte[] read      = new byte[rsltMsg.limit()];
 
+                rsltMsg.position(0);
+                rsltMsg.get(read);
+                logger.warn("MSG = [{}]", new String(read));
+
                 rsltMsg.position(9);
                 rsltMsg.get(bMsgCd);
                 rsltMsg.get(bSvcCd);
@@ -89,9 +93,6 @@ public class AnsMsgHandlerImpl implements AnsMsgHandler {
                 msg.setMacSerNo( new String(bMacSerNo).trim() );
                 msg.setOrgCd( AMSBrokerConst.NICE_ORG_CD );
                 msg.setBranchCd( AMSBrokerConst.NICE_BR_CD );
-
-                rsltMsg.position(0);
-                rsltMsg.get(read);
 
                 msgHis.setMsgCtx( new String(read) );
             }

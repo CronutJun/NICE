@@ -112,9 +112,7 @@ public class AMSBrokerReqJob {
             if( !isBlocking ) return;
 
             logger.warn("requestJob is going to wait answer.");
-            String defTimeOut = MsgCommon.msgProps.getProperty("rmi.response.timeout");
-            if( defTimeOut == null )
-                defTimeOut = "60";
+            String defTimeOut = MsgCommon.msgProps.getProperty("rmi.response.timeout", "60");
             ByteBuffer rslt = ans.poll(Integer.parseInt(defTimeOut), TimeUnit.SECONDS);
             if( rslt == null ) {
                 throw new AMSBrokerTimeoutException("timeout");

@@ -6,6 +6,8 @@ public interface AMSBrokerManagerMBean {
     public void reloadSchema() throws Exception;
     public String hotSwapBean(String beanClassName);
     public String setLogLevel(String logLevel);
+    public int getAMSReqDefTimeout();
+    public void setAMSReqDefTimeout(int timeout);
     public int getRMIResTimeout();
     public void setRMIResTimeout(int timeout);
     public String getJournalUploadTime();

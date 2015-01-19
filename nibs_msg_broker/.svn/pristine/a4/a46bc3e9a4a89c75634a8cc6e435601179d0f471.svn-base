@@ -53,17 +53,6 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
             try {
-                /**
-                 * You have to set 'Q' to third of msg_type when you need to Inbound RMI call
-                 */
-                byte[] bMsgType = msgPsr.getBytes("CM.msg_type");
-                if( bMsgType[2] == 'Q' ) {
-                    bMsgType[2] = '0';
-                    msgPsr.setBytes( "CM.msg_type", bMsgType );
-                    MsgBrokerConsumer.putDataToCon( msgPsr, null );
-                    respMsg = null;
-                    return respMsg;
-                }
                 logger.warn("Getting trans_seq_no..");
 
                 TransactionStatus txs = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
@@ -175,16 +164,6 @@ public class MsgBrokerRMIImpl implements MsgBrokerRMI {
         MsgParser msgPsr = MsgParser.getInstance(ret.QNm).parseMessage(ret.buf);
         try {
             try {
-                /**
-                 * You have to set 'Q' to third of msg_type when you need to Inbound RMI call
-                 */
-                byte[] bMsgType = msgPsr.getBytes("CM.msg_type");
-                if( bMsgType[2] == 'Q' ) {
-                    bMsgType[2] = '0';
-                    msgPsr.setBytes( "CM.msg_type", bMsgType );
-                    MsgBrokerConsumer.putDataToCon( msgPsr, null );
-                    return;
-                }
                 TransactionStatus txs = msgTX.getTransaction( MsgBrokerTransaction.defMSGTX );
                 try {
                     TMisc misc = new TMisc();

@@ -37,7 +37,9 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
 
     private static final Logger logger = LoggerFactory.getLogger(AMSBrokerManager.class);
 
-    private long sequenceNumber = 1;
+    private long seqNumAMS = 1;
+    private long seqNumRMI = 1;
+    private long seqNumJNL = 1;
 
     @Override
     public String shutdownServer(String operation) {
@@ -212,24 +214,47 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
     }
 
     @Override
+    public int getAMSReqDefTimeout() {
+
+        return Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.defTimeout", "180"));
+    }
+
+    @Override
+    public void setAMSReqDefTimeout(int timeout) {
+        int oldTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.defTimeout", "180"));
+        MsgCommon.msgProps.setProperty("ams.req.defTimeout", Integer.toString(timeout) );
+
+        Notification n =  new AttributeChangeNotification(this,
+                                                          seqNumAMS++,
+                                                          System.currentTimeMillis(),
+                                                          "AMS Request default timeout changed",
+                                                          "AMSReqDefTimeout",
+                                                          "int",
+                                                          oldTimeout,
+                                                          Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.defTimeout", "180")));
+
+        sendNotification(n);
+    }
+
+    @Override
     public int getRMIResTimeout() {
 
-        return Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
+        return Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "185"));
     }
 
     @Override
     public void setRMIResTimeout(int timeout) {
-        int oldTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0"));
+        int oldTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "185"));
         MsgCommon.msgProps.setProperty("rmi.response.timeout", Integer.toString(timeout) );
 
         Notification n =  new AttributeChangeNotification(this,
-                                                          sequenceNumber++,
+                                                          seqNumRMI++,
                                                           System.currentTimeMillis(),
                                                           "RMI Response timeout changed",
                                                           "RMIResTimeout",
                                                           "int",
                                                           oldTimeout,
-                                                          Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "0")));
+                                                          Integer.parseInt(MsgCommon.msgProps.getProperty("rmi.response.timeout", "185")));
 
         sendNotification(n);
     }
@@ -256,7 +281,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
         MsgCommon.msgProps.setProperty("schedule.journal.upload.time", uploadTime );
 
         Notification n =  new AttributeChangeNotification(this,
-                                                          sequenceNumber++,
+                                                          seqNumJNL++,
                                                           System.currentTimeMillis(),
                                                           "Journal Upload time is changed",
                                                           "JournalUploadTime",
