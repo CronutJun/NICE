@@ -38,6 +38,7 @@ import com.nicetcm.nibsplus.broker.ams.model.TPmUpdsMac;
 import com.nicetcm.nibsplus.broker.ams.model.TPmUpdsMacSpec;
 import com.nicetcm.nibsplus.broker.ams.model.TPmPgmVer;
 import com.nicetcm.nibsplus.broker.ams.model.TPmPgmVerKey;
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 @Service("schedWorker")
 public class SchedWorkerImpl implements SchedWorker {
@@ -89,7 +90,7 @@ public class SchedWorkerImpl implements SchedWorker {
                         reqJob.setFileType      ( "9" );
                         reqJob.setFileCreateDate( pgmVer.getCreateDate() );
                         reqJob.setFileSeq       ( pgmVer.getFileSeq()    );
-                        reqJob.setTimeOut       ( 60 );
+                        reqJob.setTimeOut       ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
                         AMSBrokerSchedWorkGroup.getInstance().execute(new AMSBrokerSchedWorker(reqJob));
                     }
                     catch( Exception e ) {
@@ -116,7 +117,7 @@ public class SchedWorkerImpl implements SchedWorker {
                     reqJob.setFileDate( AMSBrokerLib.getMsgDate(-1) ); // 전일자로 요청 해야 함.
                     //reqJob.setFileDate( "20140901" );
                     reqJob.setFileType( "1" );
-                    reqJob.setTimeOut ( 60 );
+                    reqJob.setTimeOut ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
                     try {
                         AMSBrokerSchedWorkGroup.getInstance().execute(new AMSBrokerSchedWorker(reqJob));
                     }

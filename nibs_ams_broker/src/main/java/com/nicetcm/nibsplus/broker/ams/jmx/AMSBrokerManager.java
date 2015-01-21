@@ -216,13 +216,13 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
     @Override
     public int getAMSReqDefTimeout() {
 
-        return Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.defTimeout", "180"));
+        return Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180"));
     }
 
     @Override
     public void setAMSReqDefTimeout(int timeout) {
-        int oldTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.defTimeout", "180"));
-        MsgCommon.msgProps.setProperty("ams.req.defTimeout", Integer.toString(timeout) );
+        int oldTimeout = Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180"));
+        MsgCommon.msgProps.setProperty("ams.req.timeout", Integer.toString(timeout) );
 
         Notification n =  new AttributeChangeNotification(this,
                                                           seqNumAMS++,
@@ -231,7 +231,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                                                           "AMSReqDefTimeout",
                                                           "int",
                                                           oldTimeout,
-                                                          Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.defTimeout", "180")));
+                                                          Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")));
 
         sendNotification(n);
     }

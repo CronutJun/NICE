@@ -1,6 +1,6 @@
 {
-   "name" : "03001340",                    "kname" : "자금반환청구",
-   "response" : { "code" : "03001340",     "type" : "SELF" },
+   "name" : "03001341",                    "kname" : "자금반환청구",
+   "response" : { "code" : "03001341",     "type" : "SELF" },
    "columns" : [
       { "name" : "CM",						"kname" : "공통헤더",               	"type" : "INC", "include" : "comm_msg_header.json" },
       { "name" : "req_type"					"kname" : "청구구분",               	"type" : "AN",  "length"  : 1   },

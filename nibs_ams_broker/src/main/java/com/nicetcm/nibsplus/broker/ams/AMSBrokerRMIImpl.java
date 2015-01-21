@@ -868,7 +868,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setTrxUid  ( trxUid );
             reqJob.setFileDate( fileDate );
             reqJob.setFileType( fileType );
-            reqJob.setTimeOut ( 120 );
+            reqJob.setTimeOut ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -904,7 +904,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                 reqJob.setTrxUid  ( trxUid );
                 reqJob.setFileDate( fileDate );
                 reqJob.setFileType( fileType );
-                reqJob.setTimeOut ( 60 );
+                reqJob.setTimeOut ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
                 reqJob.requestJob();
             }
         }
@@ -944,7 +944,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setFileSeq       ( fileSeq );
             reqJob.setFileType      ( fileType );
             reqJob.setFileName      ( fileName );
-            reqJob.setTimeOut       ( 60 );
+            reqJob.setTimeOut       ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -984,7 +984,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                 reqJob.setFileSeq       ( fileSeq );
                 reqJob.setFileType      ( fileType );
                 reqJob.setFileName      ( fileName );
-                reqJob.setTimeOut       ( 60 );
+                reqJob.setTimeOut       ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
                 reqJob.requestJob();
             }
         }
@@ -1020,7 +1020,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setTrxUid  ( trxUid );
             reqJob.setFilePath( filePath );
             reqJob.setFileName( fileName );
-            reqJob.setTimeOut ( 60 );
+            reqJob.setTimeOut ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -1056,7 +1056,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                 reqJob.setTrxUid  ( trxUid );
                 reqJob.setFilePath( filePath );
                 reqJob.setFileName( fileName );
-                reqJob.setTimeOut ( 30 );
+                reqJob.setTimeOut ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
                 reqJob.requestJob();
             }
         }
@@ -1102,7 +1102,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setFileSeq       ( fileSeq );
             reqJob.setFilePath      ( filePath );
             reqJob.setFileName      ( fileName );
-            reqJob.setTimeOut       ( 30 );
+            reqJob.setTimeOut       ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -1142,7 +1142,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                 reqJob.setFileSeq       ( fileSeq );
                 reqJob.setFilePath      ( filePath );
                 reqJob.setFileName      ( fileName );
-                reqJob.setTimeOut       ( 60 );
+                reqJob.setTimeOut       ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
                 reqJob.requestJob();
             }
         }
