@@ -1,0 +1,11 @@
+echo "====================================="
+echo "     PID  CP COMMAND"
+echo "-------------------------------------"
+GET_TIME=`date +%H%M%S`
+while [[ "$GET_TIME" < "120000" ]]
+do
+   ps -e -o pid,cpu,command|awk '/     PID  CP COMMAND/ {while ( getline > 0 ) {if( $2 == 0 ) continue; printf "%s\n", $0}}'|sort -k 2nr
+   echo "----------------------------$GET_TIME---"
+   sleep 3
+   GET_TIME=`date +%H%M%S`
+done

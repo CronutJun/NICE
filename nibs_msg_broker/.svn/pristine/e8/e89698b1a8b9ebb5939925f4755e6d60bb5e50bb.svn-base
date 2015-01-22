@@ -22,10 +22,10 @@ import com.nicetcm.nibsplus.broker.msg.model.TCmGoodsApply;
  * @version 1.0
  * @see
  */
-@Service("in04001400")
-public class In04001400Impl extends InMsgHandlerImpl {
+@Service("in04101400")
+public class In04101400Impl extends InMsgHandlerImpl {
 
-    private static final Logger logger = LoggerFactory.getLogger(In04001400Impl.class);
+    private static final Logger logger = LoggerFactory.getLogger(In04101400Impl.class);
 
     @Autowired private StoredProcMapper splMap;
 

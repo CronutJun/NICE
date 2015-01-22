@@ -1,0 +1,17 @@
+function clean_up {
+   cat /share1/nibs_log/cputrace.log|awk '/---------/ { getline; print $0}'|sort -k2nr
+   exit
+}
+
+trap clean_up SIGHUP SIGINT SIGTERM
+echo "====================================="
+echo "     PID  CP COMMAND"
+echo "-------------------------------------"
+GET_TIME=`date +%H%M%S`
+while [[ "$GET_TIME" < "160000" ]]
+do
+   ps -e -o pid,cpu,command|awk '/     PID  CP COMMAND/ {while ( getline > 0 ) {if( $2 == 0 ) continue; printf "%s\n", $0}}'|sort -k 2nr
+   echo "----------------------------$GET_TIME---"
+   sleep 3
+   GET_TIME=`date +%H%M%S`
+done
