@@ -32,6 +32,8 @@ public class AMSBrokerLib {
 
     public static String ROOT_FILE_PATH;
     public static String TEMP_FILE_PATH;
+    public static int FILE_RETRY_COUNT;
+    public static int FILE_MD5_RETRY_COUNT;
 
     /**
      * 현재날짜를 구한다.

@@ -153,6 +153,8 @@ public class AMSBrokerMain extends Thread {
             MsgCommon.READ_BUF_SIZE = Integer.parseInt(MsgCommon.msgProps.getProperty("read_buf_size"));
             AMSBrokerLib.ROOT_FILE_PATH  = MsgCommon.msgProps.getProperty("root.file.path", "");
             AMSBrokerLib.TEMP_FILE_PATH  = MsgCommon.msgProps.getProperty("temp.file.path", "");
+            AMSBrokerLib.FILE_RETRY_COUNT = Integer.parseInt(MsgCommon.msgProps.getProperty("file.retry.count", "3"));
+            AMSBrokerLib.FILE_MD5_RETRY_COUNT = Integer.parseInt(MsgCommon.msgProps.getProperty("file.md5.retry.count", "3"));
 
             startJMXConnectorServer();
         }

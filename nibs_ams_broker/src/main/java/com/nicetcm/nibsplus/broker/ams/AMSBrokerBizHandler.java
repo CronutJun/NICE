@@ -21,51 +21,59 @@ public class AMSBrokerBizHandler {
 
     public void classifyMessage(ChannelHandlerContext ctx, Object msg, MsgParser parsed, AMSBrokerReqJob reqJob, byte[] remain, boolean beContinue) throws Exception {
 
-        logger.warn("remain bytes = " + remain.length + ", befBeContinue = " + befBeContinue + ", beContinue = " + beContinue);
-        String fileName = String.format( "%stmp_%s_in", TEMP_FILE_PATH,  Thread.currentThread().getId() );
-        if( (!befBeContinue) && (beContinue) ) {
-            logger.warn("file open");
-            reqJob.setfOut(new FileOutputStream(fileName));
-
-        }
-        if( remain.length > 0 && reqJob.getfOut() != null) {
-            reqJob.getfOut().write(remain);
-            logger.warn("file write length : " + remain.length);
-        }
-
-        if( (befBeContinue) && (!beContinue) ) {
-            reqJob.getfOut().flush();
-            reqJob.getfOut().close();
-            reqJob.setfOut( null );
-            logger.warn("file close");
-        }
-        if( !beContinue ) {
-            logger.warn("resonse is " + parsed.getResponseInfo().getType()
-                    +    ", code is " + parsed.getResponseInfo().getCode()
-                    +    ", schema is " +  parsed.getResponseInfo().getSchema() );
-            File tg = new File(fileName);
-            if( tg.exists() && tg.length() == 0) fileName = "";
-            if( !tg.exists() ) fileName = "";
-            try {
-                if( tg.exists() ) {
-                    FileSaver file = (FileSaver)AMSBrokerSpringMain.sprCtx.getBean("fileSaver");
-                    fileName = file.tempFileToClassify(amsSafeData, parsed, reqJob, fileName);
-                }
-                InMsgHandler bizBranch = (InMsgHandler)AMSBrokerSpringMain
-                        .sprCtx.getBean("in" + parsed.getString("CM._AOCMsgCode") + parsed.getString("CM._AOCServiceCode"));
-                bizBranch.inMsgHandle(amsSafeData, parsed, reqJob, fileName);
+        try {
+            logger.warn("remain bytes = " + remain.length + ", befBeContinue = " + befBeContinue + ", beContinue = " + beContinue);
+            String classifiedFileName = "";
+            if( (!befBeContinue) && (beContinue) ) {
+                logger.warn("file open");
+                if( reqJob.getTempFileName() == null )
+                    reqJob.setTempFileName( String.format("%stmp_%s_in", TEMP_FILE_PATH,  Thread.currentThread().getId()) );
+                reqJob.setfOut(new FileOutputStream(reqJob.getTempFileName(), true));
             }
-            finally {
-                if( tg.exists() ) {
-                    if( tg.delete() )
-                        logger.warn("Successful delete temporary file");
-                    else
-                        logger.warn("Failed delete temporary file");
+            if( remain.length > 0 && reqJob.getfOut() != null) {
+                reqJob.getfOut().write(remain);
+                if( reqJob.getComplete() != null )
+                    reqJob.getComplete().update( remain, 0, remain.length );
+                reqJob.initRetryCount();
+                logger.warn("file write length : " + remain.length);
+            }
+
+            if( (befBeContinue) && (!beContinue) ) {
+                reqJob.getfOut().flush();
+                reqJob.getfOut().close();
+                reqJob.setfOut( null );
+                logger.warn("file close");
+            }
+            if( !beContinue ) {
+                logger.warn("resonse is "   + parsed.getResponseInfo().getType()
+                        +    ", code is "   + parsed.getResponseInfo().getCode()
+                        +    ", schema is " + parsed.getResponseInfo().getSchema() );
+                File tg = new File(reqJob.getTempFileName());
+                if( tg.exists() && tg.length() == 0) reqJob.setTempFileName("");
+                if( !tg.exists() ) reqJob.setTempFileName("");
+                try {
+                    if( tg.exists() ) {
+                        FileSaver file = (FileSaver)AMSBrokerSpringMain.sprCtx.getBean("fileSaver");
+                        classifiedFileName = file.tempFileToClassify(amsSafeData, parsed, reqJob, reqJob.getTempFileName());
+                    }
+                    InMsgHandler bizBranch = (InMsgHandler)AMSBrokerSpringMain
+                            .sprCtx.getBean("in" + parsed.getString("CM._AOCMsgCode") + parsed.getString("CM._AOCServiceCode"));
+                    bizBranch.inMsgHandle( amsSafeData, parsed, reqJob, classifiedFileName );
+                }
+                finally {
+                    if( tg.exists() ) {
+                        if( tg.delete() )
+                            logger.warn("Successful delete temporary file");
+                        else
+                            logger.warn("Failed delete temporary file");
+                    }
                 }
             }
-        }
 
-        befBeContinue = beContinue;
+        }
+        finally {
+            befBeContinue = beContinue;
+        }
     }
 
 }

@@ -1,0 +1,8 @@
+{
+   "response" : { "code" : "1200500A",     "type" : "JSON",         "schema" : "1200500A.json" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",           "type" : "INC", "include" : "comm_ams_header.json" },
+      { "name" : "_AOCDownFileType",       "kname" : "파일 타입",          "type" : "AN",  "length" : 1 },
+      { "name" : "_AOCDownFilePathName",   "kname" : "파일 이름(패스포함)","type" : "AN",  "length" : 260, "enc_charset" : "MS949" }
+   ]
+}

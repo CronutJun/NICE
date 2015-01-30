@@ -11,21 +11,27 @@ package com.nicetcm.nibsplus.broker.ams;
  * @since   2014.08.18
  */
 
-import java.util.concurrent.*;
-import java.util.Map;
-import java.util.ArrayList;
-import java.nio.ByteBuffer;
-import java.io.FileOutputStream;
 import java.io.FileInputStream;
-
-import com.nicetcm.nibsplus.broker.ams.rmi.AMSBrokerTimeoutException;
-import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqRegInfo;
-import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqIniInfo;
-import com.nicetcm.nibsplus.broker.ams.rmi.RMIEnvValue;
-import com.nicetcm.nibsplus.broker.common.MsgCommon;
+import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.nicetcm.nibsplus.broker.ams.rmi.AMSBrokerTimeoutException;
+import com.nicetcm.nibsplus.broker.ams.rmi.RMIEnvValue;
+import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqIniInfo;
+import com.nicetcm.nibsplus.broker.ams.rmi.RMIReqRegInfo;
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 public class AMSBrokerReqJob {
 
@@ -37,6 +43,12 @@ public class AMSBrokerReqJob {
     private final boolean isBlocking;
     private final BlockingQueue<ByteBuffer> ans;
 
+    private MessageDigest complete;
+    private int retryCount = 0;
+    private String tempFileName = null;
+    private long tempFilePos = 0;
+    private boolean md5Result = true;
+
     private String trxDate;
     private String trxNo;
     private String trxCd;
@@ -47,6 +59,8 @@ public class AMSBrokerReqJob {
     private RMIReqRegInfo reqRegInfo;
     private RMIReqIniInfo reqIniInfo;
     private RMIEnvValue envValue;
+
+
     private ArrayList<RMIEnvValue> envValues;
     private String devCd;
     private String empId;
@@ -100,6 +114,12 @@ public class AMSBrokerReqJob {
         if( isBlocking )
             this.ans = new LinkedBlockingQueue<ByteBuffer>();
         else this.ans = null;
+        try {
+            this.complete = MessageDigest.getInstance("MD5");
+        }
+        catch( NoSuchAlgorithmException e ) {
+            this.complete = null;
+        }
 
     }
 
@@ -203,6 +223,56 @@ public class AMSBrokerReqJob {
 
     public boolean getIsBlocking() {
         return isBlocking;
+    }
+
+    public MessageDigest getComplete() {
+        return complete;
+    }
+
+    public String getMD5Checksum() {
+
+        String result = "";
+
+        for( byte b : getComplete().digest() ) {
+            result += Integer.toString( ( b & 0xff ) + 0x100, 16).substring( 1 );
+        }
+        return result;
+    }
+
+    public int getRetryCount() {
+        return retryCount;
+    }
+
+    public void addRetryCount() {
+        retryCount++;
+    }
+
+    public void initRetryCount() {
+        retryCount = 0;
+    }
+
+    public String getTempFileName() {
+        return tempFileName;
+    }
+
+    public void setTempFileName(String tempFileName) {
+        this.tempFileName = tempFileName;
+    }
+
+    public long getTempFilePos() {
+        return tempFilePos;
+    }
+
+    public void setTempFilePos(long tempFilePos) {
+        this.tempFilePos = tempFilePos;
+    }
+
+    public boolean isMD5Result() {
+        return md5Result;
+    }
+
+    public void setMD5Result(boolean md5Result) {
+        this.md5Result = md5Result;
     }
 
     public RMIReqRegInfo getReqRegInfo() {

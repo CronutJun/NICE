@@ -329,7 +329,7 @@ public interface AMSBrokerRMI extends Remote {
      */
     public void reqDevCollectToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String devCd ) throws Exception;
 
-    /**
+   /**
      * reqDevReturnToMac
      *
      * 단독기기 대상 장치 반환 예약
@@ -360,6 +360,40 @@ public interface AMSBrokerRMI extends Remote {
      * @throws Exception
      */
     public void reqDevReturnToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs, String devCd ) throws Exception;
+
+    /**
+     * reqExeGFileToMac
+     *
+     * 단독기기 대상 일반파일 실행 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macNo     대상기기번호
+     * @param gFilePath 일반파일PATH+명
+     * @param showType  실행모드 - 백그라운드 실행("00"), 포그라운드("05") 실행
+     * @throws Exception
+     */
+    public void reqExeGFileToMac( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, String macNo, String gFilePath, String showType ) throws Exception;
+
+    /**
+     * reqExeGFileToMacs
+     *
+     * 복수기기 대상 일반파일 실행 요청
+     *
+     * @param trxDate   거래일
+     * @param trxNo     거래번호
+     * @param trxCd     거래코드
+     * @param actCd     실행코드
+     * @param trxUid    거래처리자코드
+     * @param macs      대상기번집합
+     * @param gFilePath 일반파일PATH+명
+     * @param showType  실행모드 - 백그라운드 실행("00"), 포그라운드("05") 실행
+     * @throws Exception
+     */
+    public void reqExeGFileToMacs( String trxDate, String trxNo, String trxCd, String actCd, String trxUid, ArrayList<String> macs,  String gFilePath, String showType ) throws Exception;
 
     /**
      * reqCallNoticeToMac

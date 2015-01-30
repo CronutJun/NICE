@@ -219,6 +219,15 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                 msg.setSvcCd( SVC_CD_DWL_GEN );
             }
             /**
+             * 일반파일 실행
+             */
+            else if( reqJob.getTrxCd().equals(TRX_CD_EXE_GFL)
+                  &&  reqJob.getActCd().equals(ACT_CD_EXEC ) ) {
+                msg.setMsgType( BIZ_CL_RC );
+                msg.setMsgCd( MSG_CD_REQ );
+                msg.setSvcCd( SVC_CD_EXE_GFL );
+            }
+            /**
              * 배포(특정)파일 다운로드 요청
              */
             else if( reqJob.getTrxCd().equals(TRX_CD_UPL_DWL)

@@ -1,0 +1,9 @@
+{
+   "response" : { "code" : "1200500A",     "type" : "JSON",         "schema" : "1200500A.json" },
+   "columns" : [
+      { "name" : "CM",                     "kname" : "공통헤더",           "type" : "INC", "include" : "comm_ams_header.json" },
+      { "name" : "_AOCReDownFilePathName", "kname" : "파일 이름(패스포함)","type" : "AN",  "length" : 260, "enc_charset" : "MS949" },
+      { "name" : "_AOCReDownFileSize",     "kname" : "파일 크기",          "type" : "N",   "length" : 9 },
+      { "name" : "_AOCReDownFileWritePos", "kname" : "파일쓰기위치",       "type" : "N",   "length" : 9 }
+   ]
+}

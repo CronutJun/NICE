@@ -93,7 +93,7 @@ public class InitSchedulerImpl implements InitScheduler {
              */
             if( type.equals("J") || type.equals("A") ) {
                 String uploadTime = MsgCommon.msgProps.getProperty("schedule.journal.upload.time");
-                if( uploadTime != null && uploadTime.length() == 6 ) {
+                if( uploadTime != null && uploadTime.length() == 6 && !uploadTime.equals("000000") ) {
                     AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey("JOURNAL", "JOURNAL") );
 
                     JobDetail jnlJob = newJob(AMSBrokerSchedJob.class)
