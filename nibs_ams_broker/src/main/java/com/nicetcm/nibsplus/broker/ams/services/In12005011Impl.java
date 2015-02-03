@@ -1,5 +1,20 @@
 package com.nicetcm.nibsplus.broker.ams.services;
 
+/**
+ * Copyright 2014 The NIBS+ Project
+ *
+ * In12005011Impl
+ *
+ *  일반파일 업로드 처리
+ *
+ *
+ * @author  K.D.J
+ * @since   2015.02.02
+ */
+
+
+import java.io.File;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -22,7 +37,26 @@ public class In12005011Impl extends InMsgHandlerImpl {
 
     @Override
     public void inMsgBizProc(AMSBrokerData safeData, MsgParser parsed, AMSBrokerReqJob reqJob, String fileLoc) throws Exception {
-
+        try {
+            if( fileLoc == null || fileLoc.length() == 0 ) {
+                logger.warn("There's no general file. skip file processing..");
+                return;
+            }
+            File genFile = new File(fileLoc);
+            if( !genFile.exists() ) {
+                logger.warn("There's no general file. skip file processing..");
+                return;
+            }
+            if( !parsed.getString("_AOCUpFileMD5").equals(reqJob.getUpMD5Checksum()) ) {
+                logger.warn("ATM MD5 = {}, AOC MD5 = {} is not equal", parsed.getString("_AOCUpFileMD5"), reqJob.getUpMD5Checksum() );
+                reqJob.setUpMD5Result(false);
+                return;
+            }
+        }
+        catch( Exception e ) {
+            logger.warn("In12005011Impl has error :  {} ", e.getMessage());
+            throw e;
+        }
     }
 
 }

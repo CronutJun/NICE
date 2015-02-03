@@ -2,8 +2,10 @@
    "response" : { "code" : "12005004",     "type" : "COMMON",         "schema" : "comm_ams_header.json" },
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",           "type" : "INC", "include" : "comm_ams_header.json" },
+      { "name" : "_AOCDownCmdType",        "kname" : "0: 파일다운로드, 1: 기기 다운파일 정보조회",         "type" : "AN",   "length" : 1  },
       { "name" : "_AOCDownFileType",       "kname" : "파일 종류(9:PGM)",   "type" : "AN",  "length" : 1 },
       { "name" : "_AOCDownFileName",       "kname" : "파일 이름",          "type" : "AN",  "length" : 260, "enc_charset" : "MS949" },
-      { "name" : "_AOCDownFileSize",       "kname" : "파일 크기",          "type" : "N",   "length" : 9 }
+      { "name" : "_AOCDownFileSize",       "kname" : "파일 크기",          "type" : "N",   "length" : 9 },
+      { "name" : "_AOCDownFileWritePos",   "kname" : "파일 쓰기 위치",     "type" : "N",   "length" : 9 }
    ]
 }

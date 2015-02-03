@@ -109,10 +109,14 @@ public class AMSBrokerClient {
             reqBuf.writeBytes(data);
             logger.warn("going to send");
             f.channel().writeAndFlush(reqBuf);
+            if( reqJob.getDownComplete() != null )
+                reqJob.getDownComplete().reset();
             while ( strm != null && strm.available() > 0 ) {
                 read = strm.available() > MsgCommon.READ_BUF_SIZE ? new byte[MsgCommon.READ_BUF_SIZE]
                      : new byte[strm.available()];
                 strm.read(read);
+                if( reqJob.getDownComplete() != null )
+                    reqJob.getDownComplete().update( read, 0, read.length );
                 reqBuf = f.channel().alloc().buffer(read.length);
                 reqBuf.writeBytes(read);
                 logger.warn("Send File size = " + read.length);

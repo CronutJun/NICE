@@ -81,13 +81,29 @@ public class AMSBrokerReqConsumer extends Thread {
                 AMSBrokerClient client = AMSBrokerClient.getInstance( reqInfo.getDestIP(), reqInfo.getDestPort(), reqJob );
                 ByteBuffer rslt = client.outboundCall( reqInfo.getMsg(), reqInfo.getStrm(), reqJob.getTimeOut() );
 
-                ansMsg.ansMsgHandle( amsSafeData, reqJob, rslt, "9" );
-                if( !reqJob.isMD5Result() && reqJob.getRetryCount() < AMSBrokerLib.FILE_MD5_RETRY_COUNT ) {
-                    reqJob.setTempFileName(null);
-                    reqJob.setTempFilePos(0);
-                    reqJob.setMD5Result(true);
-                    acceptJob( reqJob );
-                    return;
+                if( reqJob.isUpMD5Result() )
+                    ansMsg.ansMsgHandle( amsSafeData, reqJob, rslt, "9" );
+                else if( reqJob.getUpMD5RetryCount() < AMSBrokerLib.FILE_MD5_RETRY_COUNT ) {
+                    String errMsg = "";
+                    if( reqJob.getUpMD5RetryCount() < AMSBrokerLib.FILE_MD5_RETRY_COUNT ) {
+                        reqJob.addUpMD5RetryCount();
+                        errMsg = String.format("MD5 해쉬 불일치. 재시도 [%d]회", reqJob.getUpMD5RetryCount());
+                    }
+                    else {
+                        errMsg = "MD5 해쉬 불일치. 송신종료.";
+                    }
+                    ByteBuffer err = ByteBuffer.allocateDirect(errMsg.getBytes().length);
+                    err.position(0);
+                    err.put(errMsg.getBytes());
+                    ansMsg.ansMsgHandle( amsSafeData, reqJob, err, "5" );
+                    if( reqJob.getUpMD5RetryCount() < AMSBrokerLib.FILE_MD5_RETRY_COUNT ) {
+                        reqJob.getUpComplete().reset();
+                        reqJob.setTempFileName(null);
+                        reqJob.setTempFilePos(0);
+                        reqJob.setUpMD5Result(true);
+                        acceptJob( reqJob );
+                        return;
+                    }
                 }
                 if( reqJob.getIsBlocking() )
                     reqJob.getAns().put(rslt);
@@ -95,9 +111,9 @@ public class AMSBrokerReqConsumer extends Thread {
             catch( AMSBrokerTimeoutException te) {
                 logger.warn("timeout error");
                 String errMsg = "";
-                if( reqJob.getRetryCount() < AMSBrokerLib.FILE_RETRY_COUNT ) {
-                    reqJob.addRetryCount();
-                    errMsg = String.format("시간초과 발생. 재시도 [%d]회", reqJob.getRetryCount());
+                if( reqJob.getUpFileRetryCount() < AMSBrokerLib.FILE_RETRY_COUNT ) {
+                    reqJob.addUpFileRetryCount();
+                    errMsg = String.format("시간초과 발생. 재시도 [%d]회", reqJob.getUpFileRetryCount());
                 }
                 else {
                     errMsg = "시간초과 발생. 송신종료.";
@@ -107,7 +123,8 @@ public class AMSBrokerReqConsumer extends Thread {
                 err.put(errMsg.getBytes());
                 ansMsg.ansMsgHandle( amsSafeData, reqJob, err, "3" );
                 /** 재 시도 */
-                if( reqJob.getRetryCount() <= AMSBrokerLib.FILE_RETRY_COUNT ) {
+                if( reqJob.getUpFileRetryCount() <= AMSBrokerLib.FILE_RETRY_COUNT ) {
+                    reqJob.getUpComplete().reset();
                     File tg = new File(reqJob.getTempFileName());
                     if( tg.exists() ) {
                         reqJob.setTempFilePos(FileUtils.sizeOf(tg));

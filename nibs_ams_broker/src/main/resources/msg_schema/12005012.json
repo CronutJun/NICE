@@ -1,6 +1,7 @@
 {
    "columns" : [
       { "name" : "CM",                     "kname" : "공통헤더",           "type" : "INC", "include" : "comm_ams_header.json" },
+      { "name" : "_AOCCurDownFileSize",    "kname" : "현재파일크기",       "type" : "N",   "length" : 9  },
       { "name" : "_AOCDownFileMD5",        "kname" : "MD5해쉬 밸류",       "type" : "AN",  "length" : 32 }
    ]
 }

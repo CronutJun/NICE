@@ -92,10 +92,10 @@ public class InitSchedulerImpl implements InitScheduler {
              * 저널스케쥴 초기화
              */
             if( type.equals("J") || type.equals("A") ) {
+                AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey("JOURNAL", "JOURNAL") );
+
                 String uploadTime = MsgCommon.msgProps.getProperty("schedule.journal.upload.time");
                 if( uploadTime != null && uploadTime.length() == 6 && !uploadTime.equals("000000") ) {
-                    AMSBrokerMain.getScheduler().unscheduleJob( TriggerKey.triggerKey("JOURNAL", "JOURNAL") );
-
                     JobDetail jnlJob = newJob(AMSBrokerSchedJob.class)
                                      .withIdentity("JOURNAL",  "JOURNAL")
                                      .build();

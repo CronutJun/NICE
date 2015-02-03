@@ -11,8 +11,10 @@ package com.nicetcm.nibsplus.broker.ams;
  * @since   2014.08.18
  */
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -43,11 +45,17 @@ public class AMSBrokerReqJob {
     private final boolean isBlocking;
     private final BlockingQueue<ByteBuffer> ans;
 
-    private MessageDigest complete;
-    private int retryCount = 0;
+    private String downCmdType = "0";
+    private MessageDigest upComplete;
+    private MessageDigest downComplete;
+    private int upFileRetryCount = 0;
+    private int upMD5RetryCount = 0;
+    private int downFileRetryCount = 0;
+    private int downMD5RetryCount = 0;
     private String tempFileName = null;
     private long tempFilePos = 0;
-    private boolean md5Result = true;
+    private boolean upMD5Result = true;
+    private boolean downMD5Result = true;
 
     private String trxDate;
     private String trxNo;
@@ -115,10 +123,16 @@ public class AMSBrokerReqJob {
             this.ans = new LinkedBlockingQueue<ByteBuffer>();
         else this.ans = null;
         try {
-            this.complete = MessageDigest.getInstance("MD5");
+            this.upComplete = MessageDigest.getInstance("MD5");
         }
         catch( NoSuchAlgorithmException e ) {
-            this.complete = null;
+            this.upComplete = null;
+        }
+        try {
+            this.downComplete = MessageDigest.getInstance("MD5");
+        }
+        catch( NoSuchAlgorithmException e ) {
+            this.downComplete = null;
         }
 
     }
@@ -225,30 +239,88 @@ public class AMSBrokerReqJob {
         return isBlocking;
     }
 
-    public MessageDigest getComplete() {
-        return complete;
+    public String getDownCmdType() {
+        return downCmdType;
     }
 
-    public String getMD5Checksum() {
+    public void setDownCmdType(String downCmdType) {
+        this.downCmdType = downCmdType;
+    }
+
+    public MessageDigest getUpComplete() {
+        return upComplete;
+    }
+
+    public MessageDigest getDownComplete() {
+        return downComplete;
+    }
+
+    public String getUpMD5Checksum() {
 
         String result = "";
 
-        for( byte b : getComplete().digest() ) {
+        for( byte b : getUpComplete().digest() ) {
             result += Integer.toString( ( b & 0xff ) + 0x100, 16).substring( 1 );
         }
         return result;
     }
 
-    public int getRetryCount() {
-        return retryCount;
+    public String getDownMD5Checksum() {
+
+        String result = "";
+
+        for( byte b : getDownComplete().digest() ) {
+            result += Integer.toString( ( b & 0xff ) + 0x100, 16).substring( 1 );
+        }
+        return result;
     }
 
-    public void addRetryCount() {
-        retryCount++;
+    public int getUpFileRetryCount() {
+        return upFileRetryCount;
     }
 
-    public void initRetryCount() {
-        retryCount = 0;
+    public void addUpFileRetryCount() {
+        upFileRetryCount++;
+    }
+
+    public void initUpFileRetryCount() {
+        upFileRetryCount = 0;
+    }
+
+    public int getDownFileRetryCount() {
+        return downFileRetryCount;
+    }
+
+    public void addDownFileRetryCount() {
+        downFileRetryCount++;
+    }
+
+    public void initDownFileRetryCount() {
+        downFileRetryCount = 0;
+    }
+
+    public int getUpMD5RetryCount() {
+        return upMD5RetryCount;
+    }
+
+    public void addUpMD5RetryCount() {
+        upMD5RetryCount++;
+    }
+
+    public void initUpMD5RetryCount() {
+        upMD5RetryCount = 0;
+    }
+
+    public int getDownMD5RetryCount() {
+        return downMD5RetryCount;
+    }
+
+    public void addDownMD5RetryCount() {
+        downMD5RetryCount++;
+    }
+
+    public void initDownMD5RetryCount() {
+        downMD5RetryCount = 0;
     }
 
     public String getTempFileName() {
@@ -259,6 +331,31 @@ public class AMSBrokerReqJob {
         this.tempFileName = tempFileName;
     }
 
+    public void chkTempFile() {
+
+        File chkFile = new File(this.tempFileName);
+        if( chkFile.exists() && this.upComplete != null )
+        try {
+            InputStream fis =  new FileInputStream(chkFile);
+
+            byte[] buffer = new byte[10240];
+            int numRead;
+
+            do {
+                numRead = fis.read(buffer);
+                if (numRead > 0) {
+                    this.upComplete.update(buffer, 0, numRead);
+                }
+            } while (numRead != -1);
+
+            fis.close();
+        }
+        catch( Exception e ) {
+            logger.warn( "chkTempFileName has error. {}", e.getMessage() );
+        }
+
+    }
+
     public long getTempFilePos() {
         return tempFilePos;
     }
@@ -267,12 +364,20 @@ public class AMSBrokerReqJob {
         this.tempFilePos = tempFilePos;
     }
 
-    public boolean isMD5Result() {
-        return md5Result;
+    public boolean isUpMD5Result() {
+        return upMD5Result;
     }
 
-    public void setMD5Result(boolean md5Result) {
-        this.md5Result = md5Result;
+    public void setUpMD5Result(boolean upMD5Result) {
+        this.upMD5Result = upMD5Result;
+    }
+
+    public boolean isDownMD5Result() {
+        return downMD5Result;
+    }
+
+    public void setDownMD5Result(boolean downMD5Result) {
+        this.downMD5Result = downMD5Result;
     }
 
     public RMIReqRegInfo getReqRegInfo() {

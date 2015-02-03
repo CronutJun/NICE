@@ -62,8 +62,8 @@ public class Out21005004Impl implements OutMsgHandler {
         FileInputStream fIn = new FileInputStream(f);
 
         reqInfo.getMsg().position(0);
-        outMsg.setString( "CM._AOCMsgCode",           msg.getMsgCd())
-              .setString( "CM._AOCServiceCode",       msg.getSvcCd())
+        outMsg.setString( "CM._AOCMsgCode",           msg.getMsgCd() )
+              .setString( "CM._AOCServiceCode",       msg.getSvcCd() )
               .setString( "CM._AOCMsgSendDate",       safeData.getMsgDate() )
               .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
               .setLong  ( "CM._AOCMsgLen",            (f.length() + outMsg.getMessageLength()) - 9 )
