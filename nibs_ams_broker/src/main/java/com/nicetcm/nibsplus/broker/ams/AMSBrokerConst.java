@@ -58,6 +58,7 @@ public class AMSBrokerConst {
     public static final String TRX_CD_UPL_DWL         = "720108";
     public static final String TRX_CD_EXE_GFL         = "720109";
     public static final String TRX_CD_JNL_UPL         = "720302";
+    public static final String TRX_CD_MAN_CLS         = "720901";
 
     public static final String ACT_CD_GEN_UPL         = "100";
     public static final String ACT_CD_GEN_DWL         = "110";

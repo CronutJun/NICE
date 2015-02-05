@@ -74,6 +74,7 @@ public class AMSBrokerReqConsumer extends Thread {
             logger.warn("acceptJob");
             AMSBrokerReqInfo reqInfo = new AMSBrokerReqInfo();
 
+            reqJob.setReceiveAns(false);
             reqMsg.reqMsgHandle( amsSafeData, reqJob, reqInfo );
             logger.warn("after reqMsgHandle, reqJob timeout = {}", reqJob.getTimeOut() );
 
@@ -81,16 +82,39 @@ public class AMSBrokerReqConsumer extends Thread {
                 AMSBrokerClient client = AMSBrokerClient.getInstance( reqInfo.getDestIP(), reqInfo.getDestPort(), reqJob );
                 ByteBuffer rslt = client.outboundCall( reqInfo.getMsg(), reqInfo.getStrm(), reqJob.getTimeOut() );
 
+                if( !reqJob.isDownMD5Result() ) {
+                    if( reqJob.getDownMD5RetryCount() < AMSBrokerLib.FILE_MD5_RETRY_COUNT ) {
+                        String errMsg = "";
+                        if( reqJob.getDownMD5RetryCount() < AMSBrokerLib.FILE_MD5_RETRY_COUNT ) {
+                            reqJob.addDownMD5RetryCount();
+                            errMsg = String.format("다운로드 MD5 해쉬 불일치. 재시도 [%d]회", reqJob.getDownMD5RetryCount());
+                        }
+                        else {
+                            errMsg = "다운로드 MD5 해쉬 불일치. 송신종료.";
+                        }
+                        ByteBuffer err = ByteBuffer.allocateDirect(errMsg.getBytes().length);
+                        err.position(0);
+                        err.put(errMsg.getBytes());
+                        ansMsg.ansMsgHandle( amsSafeData, reqJob, err, "5" );
+                        if( reqJob.getDownMD5RetryCount() < AMSBrokerLib.FILE_MD5_RETRY_COUNT ) {
+                            reqJob.getDownComplete().reset();
+                            reqJob.setDownMD5Result(true);
+                            acceptJob( reqJob );
+                            return;
+                        }
+                    }
+                }
+
                 if( reqJob.isUpMD5Result() )
                     ansMsg.ansMsgHandle( amsSafeData, reqJob, rslt, "9" );
                 else if( reqJob.getUpMD5RetryCount() < AMSBrokerLib.FILE_MD5_RETRY_COUNT ) {
                     String errMsg = "";
                     if( reqJob.getUpMD5RetryCount() < AMSBrokerLib.FILE_MD5_RETRY_COUNT ) {
                         reqJob.addUpMD5RetryCount();
-                        errMsg = String.format("MD5 해쉬 불일치. 재시도 [%d]회", reqJob.getUpMD5RetryCount());
+                        errMsg = String.format("업로드 MD5 해쉬 불일치. 재시도 [%d]회", reqJob.getUpMD5RetryCount());
                     }
                     else {
-                        errMsg = "MD5 해쉬 불일치. 송신종료.";
+                        errMsg = "업로드 MD5 해쉬 불일치. 송신종료.";
                     }
                     ByteBuffer err = ByteBuffer.allocateDirect(errMsg.getBytes().length);
                     err.position(0);
@@ -111,29 +135,49 @@ public class AMSBrokerReqConsumer extends Thread {
             catch( AMSBrokerTimeoutException te) {
                 logger.warn("timeout error");
                 String errMsg = "";
-                if( reqJob.getUpFileRetryCount() < AMSBrokerLib.FILE_RETRY_COUNT ) {
-                    reqJob.addUpFileRetryCount();
-                    errMsg = String.format("시간초과 발생. 재시도 [%d]회", reqJob.getUpFileRetryCount());
+                if( !reqJob.isReceiveAns() ) {
+                    if( reqJob.getDownFileRetryCount() < AMSBrokerLib.FILE_RETRY_COUNT ) {
+                        reqJob.addDownFileRetryCount();
+                        errMsg = String.format("다운로드 시간초과 발생. 재시도 [%d]회", reqJob.getDownFileRetryCount());
+                    }
+                    else {
+                        errMsg = "다운로드 시간초과 발생. 송신종료.";
+                    }
                 }
                 else {
-                    errMsg = "시간초과 발생. 송신종료.";
+                    if( reqJob.getUpFileRetryCount() < AMSBrokerLib.FILE_RETRY_COUNT ) {
+                        reqJob.addUpFileRetryCount();
+                        errMsg = String.format("업로드 시간초과 발생. 재시도 [%d]회", reqJob.getUpFileRetryCount());
+                    }
+                    else {
+                        errMsg = "업로드 시간초과 발생. 송신종료.";
+                    }
                 }
                 ByteBuffer err = ByteBuffer.allocateDirect(errMsg.getBytes().length);
                 err.position(0);
                 err.put(errMsg.getBytes());
                 ansMsg.ansMsgHandle( amsSafeData, reqJob, err, "3" );
                 /** 재 시도 */
-                if( reqJob.getUpFileRetryCount() <= AMSBrokerLib.FILE_RETRY_COUNT ) {
-                    reqJob.getUpComplete().reset();
-                    File tg = new File(reqJob.getTempFileName());
-                    if( tg.exists() ) {
-                        reqJob.setTempFilePos(FileUtils.sizeOf(tg));
+                if( !reqJob.isReceiveAns() ) {
+                    if( reqJob.getDownFileRetryCount() <= AMSBrokerLib.FILE_RETRY_COUNT ) {
+                        reqJob.getDownComplete().reset();
+                        acceptJob( reqJob );
+                        return;
                     }
-                    else {
-                        reqJob.setTempFilePos(0);
+                }
+                else {
+                    if( reqJob.getUpFileRetryCount() <= AMSBrokerLib.FILE_RETRY_COUNT ) {
+                        reqJob.getUpComplete().reset();
+                        File tg = new File(reqJob.getTempFileName());
+                        if( tg.exists() ) {
+                            reqJob.setTempFilePos(FileUtils.sizeOf(tg));
+                        }
+                        else {
+                            reqJob.setTempFilePos(0);
+                        }
+                        acceptJob( reqJob );
+                        return;
                     }
-                    acceptJob( reqJob );
-                    return;
                 }
                 if( reqJob.getIsBlocking() ) {
                     ByteBuffer ret = ByteBuffer.allocateDirect(3);

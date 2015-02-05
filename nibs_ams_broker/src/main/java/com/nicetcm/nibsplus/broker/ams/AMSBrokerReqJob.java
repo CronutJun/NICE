@@ -45,7 +45,10 @@ public class AMSBrokerReqJob {
     private final boolean isBlocking;
     private final BlockingQueue<ByteBuffer> ans;
 
+    private boolean receiveAns = false;
+
     private String downCmdType = "0";
+    private long downWritePos = 0;
     private MessageDigest upComplete;
     private MessageDigest downComplete;
     private int upFileRetryCount = 0;
@@ -239,12 +242,32 @@ public class AMSBrokerReqJob {
         return isBlocking;
     }
 
+    /**
+     * 요청응답 수신 여부
+     * @return
+     */
+    public boolean isReceiveAns() {
+        return receiveAns;
+    }
+
+    public void setReceiveAns(boolean receiveAns) {
+        this.receiveAns = receiveAns;
+    }
+
     public String getDownCmdType() {
         return downCmdType;
     }
 
     public void setDownCmdType(String downCmdType) {
         this.downCmdType = downCmdType;
+    }
+
+    public long getDownWritePos() {
+        return downWritePos;
+    }
+
+    public void setDownWritePos(long downWritePos) {
+        this.downWritePos = downWritePos;
     }
 
     public MessageDigest getUpComplete() {

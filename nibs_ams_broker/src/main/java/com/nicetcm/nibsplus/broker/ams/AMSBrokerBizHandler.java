@@ -58,6 +58,7 @@ public class AMSBrokerBizHandler {
                             FileSaver file = (FileSaver)AMSBrokerSpringMain.sprCtx.getBean("fileSaver");
                             classifiedFileName = file.tempFileToClassify(amsSafeData, parsed, reqJob, reqJob.getTempFileName());
                         }
+                        reqJob.setReceiveAns(true);
                         InMsgHandler bizBranch = (InMsgHandler)AMSBrokerSpringMain
                                 .sprCtx.getBean("in" + parsed.getString("CM._AOCMsgCode") + parsed.getString("CM._AOCServiceCode"));
                         bizBranch.inMsgHandle( amsSafeData, parsed, reqJob, classifiedFileName );

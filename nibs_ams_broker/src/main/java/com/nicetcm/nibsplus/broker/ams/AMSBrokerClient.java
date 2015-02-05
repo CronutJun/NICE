@@ -101,26 +101,36 @@ public class AMSBrokerClient {
             data.position(0);
             data.get(read);
             logger.warn(new String(read));
-            //for(byte a: read)
-            // logger.warn(String.format("%x", a) );
 
             data.position(0);
             reqBuf = f.channel().alloc().buffer(data.limit());
             reqBuf.writeBytes(data);
             logger.warn("going to send");
             f.channel().writeAndFlush(reqBuf);
+
             if( reqJob.getDownComplete() != null )
                 reqJob.getDownComplete().reset();
+
+            long tot = 0;
+            int  limit = 0;
             while ( strm != null && strm.available() > 0 ) {
-                read = strm.available() > MsgCommon.READ_BUF_SIZE ? new byte[MsgCommon.READ_BUF_SIZE]
-                     : new byte[strm.available()];
-                strm.read(read);
+
+                limit = strm.available() > MsgCommon.READ_BUF_SIZE ? MsgCommon.READ_BUF_SIZE : strm.available();
+                if( tot < reqJob.getDownWritePos() && (tot + limit) > reqJob.getDownWritePos() )
+                    limit = (int)(reqJob.getDownWritePos() - tot);
+                read = new byte[limit];
+                tot += strm.read(read);
+
                 if( reqJob.getDownComplete() != null )
                     reqJob.getDownComplete().update( read, 0, read.length );
-                reqBuf = f.channel().alloc().buffer(read.length);
-                reqBuf.writeBytes(read);
-                logger.warn("Send File size = " + read.length);
-                f.channel().writeAndFlush(reqBuf);
+
+                if( tot > reqJob.getDownWritePos() ) {
+                    reqBuf = f.channel().alloc().buffer(read.length);
+                    reqBuf.writeBytes(read);
+                    logger.warn("Send File size = " + read.length);
+                    f.channel().writeAndFlush(reqBuf);
+                }
+
             }
             if( strm != null )
                 strm.close();
