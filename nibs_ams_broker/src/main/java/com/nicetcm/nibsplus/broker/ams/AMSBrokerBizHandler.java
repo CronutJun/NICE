@@ -26,8 +26,19 @@ public class AMSBrokerBizHandler {
             String classifiedFileName = "";
             if( (!befBeContinue) && (beContinue) ) {
                 logger.warn("file open");
-                if( reqJob.getTempFileName() == null )
+                if( reqJob.getUpComplete() != null )
+                    reqJob.getUpComplete().reset();
+
+                if( reqJob.getTempFileName() == null ) {
                     reqJob.setTempFileName( String.format("%stmp_%s_in", TEMP_FILE_PATH,  Thread.currentThread().getId()) );
+                    File tg = new File(reqJob.getTempFileName());
+                    if( tg.exists() ) {
+                        if( tg.delete() )
+                            logger.warn("Successful force delete temporary file");
+                        else
+                            logger.warn("Failed force delete temporary file");
+                    }
+                }
                 reqJob.chkTempFile();
                 reqJob.setfOut(new FileOutputStream(reqJob.getTempFileName(), true));
             }
@@ -36,6 +47,14 @@ public class AMSBrokerBizHandler {
                 if( reqJob.getUpComplete() != null )
                     reqJob.getUpComplete().update( remain, 0, remain.length );
                 //reqJob.initRetryCount();
+                String hexData = "";
+                int m = 0;
+                for( byte b: remain ) {
+                    hexData = String.format("%s%02x ", hexData, b);
+                    m++;
+                    if( (m % 16) == 0 ) hexData += "\n";
+                }
+                logger.warn("[HEXDATA] = {}", hexData);
                 logger.warn("file write length : " + remain.length);
             }
 

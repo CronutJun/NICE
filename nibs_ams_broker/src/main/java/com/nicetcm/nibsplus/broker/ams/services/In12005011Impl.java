@@ -48,10 +48,14 @@ public class In12005011Impl extends InMsgHandlerImpl {
                 return;
             }
             if( !parsed.getString("_AOCUpFileMD5").equals(reqJob.getUpMD5Checksum()) ) {
-                logger.warn("ATM MD5 = {}, AOC MD5 = {} is not equal", parsed.getString("_AOCUpFileMD5"), reqJob.getUpMD5Checksum() );
+                logger.warn("ATM MD5 = {}, AOC MD5 = {} is not same", parsed.getString("_AOCUpFileMD5"), reqJob.getUpMD5Checksum() );
                 reqJob.setUpMD5Result(false);
                 return;
             }
+            else {
+                logger.warn("ATM MD5 = {}, AOC MD5 = {} is same", parsed.getString("_AOCUpFileMD5"), reqJob.getUpMD5Checksum() );
+            }
+
         }
         catch( Exception e ) {
             logger.warn("In12005011Impl has error :  {} ", e.getMessage());

@@ -143,7 +143,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                     wrkBuf = ByteBuffer.allocateDirect(buf.readableBytes());
                     buf.readBytes(wrkBuf);
 
-                    byte[] bytes = new byte[wrkBuf.capacity()];
+                    byte[] bytes = new byte[wrkBuf.limit()];
                     wrkBuf.position(0);
                     wrkBuf.get(bytes);
                     logger.warn("parse data = {}", new String(bytes));
@@ -156,9 +156,9 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                     throw err;
                 }
 
-                iRemain = iMsgLen - wrkBuf.capacity();
+                iRemain = iMsgLen - wrkBuf.limit();
 
-                remainBytes = new byte[wrkBuf.capacity() - msgPsr.getMessageLength()];
+                remainBytes = new byte[wrkBuf.limit() - msgPsr.getMessageLength()];
                 wrkBuf.get(remainBytes);
 
                 if( iMsgLen > msgPsr.getMessageLength() ) {
@@ -182,10 +182,10 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 wrkBuf = ByteBuffer.allocateDirect(buf.readableBytes());
                 buf.readBytes(wrkBuf);
                 wrkBuf.position(0);
-                remainBytes = new byte[wrkBuf.capacity() - wrkBuf.position()];
+                remainBytes = new byte[wrkBuf.limit() - wrkBuf.position()];
                 wrkBuf.get(remainBytes);
 
-                iRemain = iRemain - wrkBuf.capacity();
+                iRemain = iRemain - wrkBuf.limit();
                 logger.warn("iRemain = " + iRemain);
 
                 if( iRemain <= 0 ) isContinue = false;
