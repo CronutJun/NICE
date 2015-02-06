@@ -155,6 +155,7 @@ public class AMSBrokerMain extends Thread {
             AMSBrokerLib.TEMP_FILE_PATH  = MsgCommon.msgProps.getProperty("temp.file.path", "");
             AMSBrokerLib.FILE_RETRY_COUNT = Integer.parseInt(MsgCommon.msgProps.getProperty("file.retry.count", "3"));
             AMSBrokerLib.FILE_MD5_RETRY_COUNT = Integer.parseInt(MsgCommon.msgProps.getProperty("file.md5.retry.count", "3"));
+            AMSBrokerLib.HEX_DUMP = Boolean.parseBoolean(MsgCommon.msgProps.getProperty("hexdump", "false"));
 
             startJMXConnectorServer();
         }

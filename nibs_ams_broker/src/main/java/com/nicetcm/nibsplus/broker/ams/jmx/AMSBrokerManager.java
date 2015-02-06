@@ -27,6 +27,7 @@ import org.springframework.beans.factory.support.GenericBeanDefinition;
 
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerClassLoader;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
+import com.nicetcm.nibsplus.broker.ams.AMSBrokerLib;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerShutdown;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerSpringMain;
 import com.nicetcm.nibsplus.broker.ams.services.InitScheduler;
@@ -40,6 +41,7 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
     private long seqNumAMS = 1;
     private long seqNumRMI = 1;
     private long seqNumJNL = 1;
+    private long seqNumHEX = 1;
 
     @Override
     public String shutdownServer(String operation) {
@@ -302,5 +304,29 @@ public class AMSBrokerManager extends NotificationBroadcasterSupport implements 
                 logger.error(se.toString());
         }
     }
+
+    @Override
+    public boolean getHexDump() {
+        return AMSBrokerLib.HEX_DUMP;
+    }
+
+    @Override
+    public void setHexDump(boolean hexDump) {
+        boolean oldHexDump = AMSBrokerLib.HEX_DUMP;
+
+        AMSBrokerLib.HEX_DUMP = hexDump;
+
+        Notification n =  new AttributeChangeNotification(this,
+                                                          seqNumHEX++,
+                                                          System.currentTimeMillis(),
+                                                          "Hex Dump is changed",
+                                                          "HexDump",
+                                                          "boolean",
+                                                          oldHexDump,
+                                                          AMSBrokerLib.HEX_DUMP);
+
+        sendNotification(n);
+    }
+
 
 }

@@ -34,6 +34,7 @@ public class AMSBrokerLib {
     public static String TEMP_FILE_PATH;
     public static int FILE_RETRY_COUNT;
     public static int FILE_MD5_RETRY_COUNT;
+    public static boolean HEX_DUMP;
 
     /**
      * 현재날짜를 구한다.

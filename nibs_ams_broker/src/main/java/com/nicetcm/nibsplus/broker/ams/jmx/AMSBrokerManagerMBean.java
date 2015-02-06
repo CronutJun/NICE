@@ -12,4 +12,6 @@ public interface AMSBrokerManagerMBean {
     public void setRMIResTimeout(int timeout);
     public String getJournalUploadTime();
     public void setJournalUploadTime(String uploadTime);
+    public boolean getHexDump();
+    public void setHexDump(boolean hexDump);
 }
