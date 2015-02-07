@@ -53,9 +53,11 @@ public class AMSBrokerBizHandler {
                     for( byte b: remain ) {
                         hexData = String.format("%s%02x ", hexData, b);
                         m++;
-                        if( (m % 16) == 0 ) hexData += "\n";
+                        if( (m % 16) == 0 ) {
+                            logger.warn("[HEXDATA] = {}", hexData);
+                            hexData = "";
+                        }
                     }
-                    logger.warn("[HEXDATA] = {}", hexData);
                 }
                 logger.warn("file write length : " + remain.length);
             }
