@@ -160,4 +160,21 @@ public class AMSBrokerLib {
             logger.warn("unzip has Exception : {}", e.getMessage() );
         }
     }
+
+    public static void printHexData( byte[] data ) {
+        if( AMSBrokerLib.HEX_DUMP ) {
+            String hexData = "";
+            int m = 0;
+            for( byte b: data ) {
+                hexData = String.format("%s%02X ", hexData, b);
+                m++;
+                if( (m % 16) == 0 ) {
+                    logger.warn("[HEXDATA] = {}", hexData);
+                    hexData = "";
+                }
+            }
+            if( hexData.length() > 0 )
+                logger.warn("[HEXDATA] = {}", hexData);
+        }
+    }
 }

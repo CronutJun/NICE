@@ -47,18 +47,7 @@ public class AMSBrokerBizHandler {
                 if( reqJob.getUpComplete() != null )
                     reqJob.getUpComplete().update( remain, 0, remain.length );
                 //reqJob.initRetryCount();
-                if( AMSBrokerLib.HEX_DUMP ) {
-                    String hexData = "";
-                    int m = 0;
-                    for( byte b: remain ) {
-                        hexData = String.format("%s%02x ", hexData, b);
-                        m++;
-                        if( (m % 16) == 0 ) {
-                            logger.warn("[HEXDATA] = {}", hexData);
-                            hexData = "";
-                        }
-                    }
-                }
+                AMSBrokerLib.printHexData( remain );
                 logger.warn("file write length : " + remain.length);
             }
 
