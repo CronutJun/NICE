@@ -12,21 +12,8 @@ package com.nicetcm.nibsplus.broker.ams;
  */
 
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.nio.ByteBuffer;
-import java.io.InputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.nicetcm.nibsplus.broker.common.MsgCommon;
-import com.nicetcm.nibsplus.broker.ams.rmi.AMSBrokerTimeoutException;
-
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -34,7 +21,21 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.buffer.ByteBuf;
+import io.netty.handler.timeout.IdleStateHandler;
+
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.nicetcm.nibsplus.broker.ams.rmi.AMSBrokerTimeoutException;
+import com.nicetcm.nibsplus.broker.common.MsgCommon;
 
 public class AMSBrokerClient {
 
@@ -47,6 +48,7 @@ public class AMSBrokerClient {
     private final BlockingQueue<AMSBrokerClientQData> ans;
     private ByteBuf reqBuf;
     private AMSBrokerReqJob reqJob;
+    private int idleTimeOut;
 
     public static AMSBrokerClient getInstance(String host, int port, AMSBrokerReqJob reqJob) {
 
@@ -81,6 +83,9 @@ public class AMSBrokerClient {
         ByteBuffer ret = null;
         EventLoopGroup group = new NioEventLoopGroup();
         try {
+            String defTimeOut = MsgCommon.msgProps.getProperty("ams.req.timeout", "180");
+            this.idleTimeOut = timeOut == 0 ? Integer.parseInt(defTimeOut) : timeOut;
+
             Bootstrap b = new Bootstrap();
             b.group(group)
              .channel(NioSocketChannel.class)
@@ -88,8 +93,9 @@ public class AMSBrokerClient {
              .handler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
-                     ch.pipeline().addLast(
-                             new AMSBrokerClientHandler(reqJob, ans));
+                     ch.pipeline().addLast(new AMSBrokerClientHandler(reqJob, ans))
+                                  .addLast("idleStateHandler", new IdleStateHandler(idleTimeOut, idleTimeOut, 0))
+                                  .addLast("amsBrokerStateHandler", new AMSBrokerStateHandler(reqJob, ans));
                  }
              });
 
@@ -135,13 +141,20 @@ public class AMSBrokerClient {
             if( strm != null )
                 strm.close();
 
-            String defTimeOut = MsgCommon.msgProps.getProperty("ams.req.timeout", "180");
             for (;;) {
                 try {
-                    lstRslt = ans.poll(timeOut == 0 ? Integer.parseInt(defTimeOut) : timeOut, TimeUnit.SECONDS);
+                    /** lstRslt = ans.poll(idleTimeOut+5, TimeUnit.SECONDS);*/
+                    lstRslt = ans.take();
                     if( lstRslt == null ) {
                         if( reqJob.getfOut() != null )
                             reqJob.getfOut().close();
+                        f.channel().close().sync();
+                        throw new AMSBrokerTimeoutException("timeout");
+                    }
+                    if( lstRslt.isTimeout() ) {
+                        if( reqJob.getfOut() != null )
+                            reqJob.getfOut().close();
+                        f.channel().close().sync();
                         throw new AMSBrokerTimeoutException("timeout");
                     }
                     if( fstRslt == null )

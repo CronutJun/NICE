@@ -53,13 +53,14 @@ public class In12005003Impl extends InMsgHandlerImpl {
                 logger.warn("There's no journal data. skip file processing..");
                 return;
             }
-            if( !parsed.getString("_AOCUpFileMD5").equals(reqJob.getUpMD5Checksum()) ) {
-                logger.warn("ATM MD5 = {}, AOC MD5 = {} is not same", parsed.getString("_AOCUpFileMD5"), reqJob.getUpMD5Checksum() );
+            String checkSum = reqJob.getUpMD5Checksum();
+            if( !parsed.getString("_AOCUpFileMD5").equals(checkSum) ) {
+                logger.warn("ATM MD5 = {}, AOC MD5 = {} is not same", parsed.getString("_AOCUpFileMD5"), checkSum );
                 reqJob.setUpMD5Result(false);
                 return;
             }
             else {
-                logger.warn("ATM MD5 = {}, AOC MD5 = {} is same", parsed.getString("_AOCUpFileMD5"), reqJob.getUpMD5Checksum() );
+                logger.warn("ATM MD5 = {}, AOC MD5 = {} is same", parsed.getString("_AOCUpFileMD5"), checkSum );
             }
             TJmFile jmFileOrg = new TJmFile();
             jmFileOrg.setMacTrxDate ( parsed.getString("_AOCUpFileDate") );

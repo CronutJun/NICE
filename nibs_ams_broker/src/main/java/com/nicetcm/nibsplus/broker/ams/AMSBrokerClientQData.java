@@ -17,15 +17,21 @@ import io.netty.buffer.ByteBuf;
 public class AMSBrokerClientQData {
 
     private boolean isContinue;
+    private boolean isTimeout;
     private ByteBuf clientData;
 
-    public AMSBrokerClientQData( boolean isContinue, ByteBuf clientData ) {
+    public AMSBrokerClientQData( boolean isContinue, boolean isTimeout, ByteBuf clientData ) {
         this.isContinue = isContinue;
+        this.isTimeout  = isTimeout;
         this.clientData = clientData;
     }
 
     public boolean isContinue() {
         return isContinue;
+    }
+
+    public boolean isTimeout() {
+        return isTimeout;
     }
 
     public ByteBuf getClientData() {

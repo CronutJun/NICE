@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ABSTRACT_JOB">
+	
+	
+	<select id="selectJobUseYn" parameterType="com.nicetcm.nibsplus.scheduler.common.AbstractJobVO" resultType="String">
+		select 
+			USE_YN 
+		from 
+			T_CM_SCHEDULE
+		WHERE 
+			QUARTZ_NODE_NAME = #{quartzNodeName} AND
+			JOB_GROUP = #{jobGroup} AND
+			JOB_NAME = #{jobName}
+	</select>
+
+</mapper>

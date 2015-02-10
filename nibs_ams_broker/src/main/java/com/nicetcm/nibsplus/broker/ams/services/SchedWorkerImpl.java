@@ -90,6 +90,7 @@ public class SchedWorkerImpl implements SchedWorker {
                         reqJob.setFileType      ( "9" );
                         reqJob.setFileCreateDate( pgmVer.getCreateDate() );
                         reqJob.setFileSeq       ( pgmVer.getFileSeq()    );
+                        reqJob.setFileVersion   ( pgmVer.getVerId()      );
                         reqJob.setTimeOut       ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
                         AMSBrokerSchedWorkGroup.getInstance().execute(new AMSBrokerSchedWorker(reqJob));
                     }

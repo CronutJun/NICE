@@ -172,7 +172,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 Thread.currentThread().setName(String.format("<T>%s-C-%s:%s", msgPsr.getString("CM._SSTNo").substring(2), Thread.currentThread().getId(), AMSBrokerMain.serverNo));
 
                 biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
-                ans.put(new AMSBrokerClientQData(isContinue, buf));
+                ans.put(new AMSBrokerClientQData(isContinue, false, buf));
                 if( !isContinue ) {
                     msgPsr.clearMessage();
                 }
@@ -191,7 +191,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 if( iRemain <= 0 ) isContinue = false;
 
                 biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
-                ans.put(new AMSBrokerClientQData(isContinue, buf));
+                ans.put(new AMSBrokerClientQData(isContinue, false, buf));
                 if( !isContinue ) {
                     msgPsr.clearMessage();
                 }
@@ -199,7 +199,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
         }
         catch( Exception e ) {
             logger.warn("read Exception: {}", e.getMessage());
-            ans.put(new AMSBrokerClientQData(false, buf));
+            ans.put(new AMSBrokerClientQData(false, false, buf));
             throw e;
         }
     }

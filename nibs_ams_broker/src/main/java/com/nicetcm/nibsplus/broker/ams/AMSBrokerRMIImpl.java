@@ -88,7 +88,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                                                                       deployDate.substring(0, 4))) )
                             .build();
         AMSBrokerMain.getScheduler().scheduleJob( updJob, updTrig );
-        logger.info("Job is successfully scheduled [Group = {}, Version = {}, deployDate = {}, deployTime = {}",
+        logger.warn("Job is successfully scheduled [Group = {}, Version = {}, deployDate = {}, deployTime = {}",
                     grpCd, verId, deployDate, deployTime);
     }
 

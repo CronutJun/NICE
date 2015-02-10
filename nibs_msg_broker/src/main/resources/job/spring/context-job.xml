@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:lang="http://www.springframework.org/schema/lang" xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans classpath:/org/springframework/beans/factory/xml/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/tool classpath:/org/springframework/beans/factory/xml/spring-tool-3.2.xsd
+       http://www.springframework.org/schema/aop classpath:/org/springframework/aop/config/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/context classpath:/org/springframework/context/config/spring-context-3.2.xsd
+       http://www.springframework.org/schema/lang classpath:/org/springframework/scripting/config/spring-lang-3.2.xsd
+       http://www.springframework.org/schema/tx classpath:/org/springframework/transaction/config/spring-tx-3.2.xsd">
+    <!-- 환경설정파일 로딩 -->
+
+    <!-- 개발자 Local-PC 환경 -->
+    <beans profile="">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/org_send/properties/context-orgsend.local.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+    	<bean id="msgBrokerConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/uat/msg.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+    </beans>
+
+    <!-- DEV 환경 -->
+    <beans profile="dev">
+    	<bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/org_send/properties/context-orgsend.dev.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+    	<bean id="msgBrokerConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/dev/msg.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+    </beans>
+
+    <!-- STAGE1 환경 -->
+    <beans profile="stage1">
+        <bean id="config" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+            <property name="locations">
+                <list>
+                    <value>classpath:/org_send/properties/context-orgsend.stage.properties</value>
+                </list>
+            </property>
+        </bean>
+    	<bean id="msgBrokerConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    		<property name="locations">
+    			<list>
+    				<value>classpath:/stage1/msg.properties</value>
+    			</list>
+    		</property>
+   		</bean>
+    </beans>
+
+    <beans>
+    	<bean id="msgLogger" class="com.nicetcm.nibsplus.orgsend.common.MsgLogger">
+    		<property name="logPath"><value>#{config['log.path']}</value></property>
+    	</bean>
+
+        <!-- OP DB Connection Pool 설정 -->
+        <bean id="dataSource_operdb_Job" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+            <property name="driverClassName"><value>#{config['jdbc.class']}</value></property>
+            <property name="url"><value>#{config['jdbc.url']}</value></property>
+            <property name="username"><value>#{config['jdbc.username']}</value></property>
+            <property name="password"><value>#{config['jdbc.password']}</value></property>
+            <property name="initialSize" value="5"/>
+            <property name="maxActive" value="30"/>
+            <property name="maxIdle" value="5"/>
+            <property name="maxWait" value="30000"/>
+            <property name="validationQuery" value="SELECT 1 FROM DUAL"/>
+            <property name="testOnBorrow" value="true"/>
+            <property name="testOnReturn" value="false"/>
+            <property name="testWhileIdle" value="true"/>
+            <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+        </bean>
+
+        <!-- OP DB Logging -->
+        <bean id="dataSource_OP_JOB" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+            <constructor-arg ref="dataSource_operdb_Job" />
+            <property name="logFormatter">
+                <bean class="net.sf.log4jdbc.tools.Log4JdbcCustomFormatter">
+                    <property name="loggingType" value="MULTI_LINE" />
+                </bean>
+            </property>
+        </bean>
+
+        <!-- OP Mybatis SQL Mapper -->
+        <bean id="sqlSessionFactory_OP_JOB" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
+            <property name="dataSource" ref="dataSource_OP_JOB"></property>
+            <property name="configLocation" value="classpath:/job/mybatis/mybatis-config.xml"></property>
+            <property name="mapperLocations" value="classpath:/job/sqlmap/**/*.xml"></property>
+        </bean>
+		
+    </beans>
+</beans>

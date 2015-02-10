@@ -1,3 +1,0 @@
-echo "     Pid Command          Inuse      Pin     Pgsp  Virtual 64-bit Mthrd  16MB"
-#svmon -Pt15 | perl -e 'while(<>){print if($.==2||$&&&!$s++);$.=0 if(/^-+$/)}'
-svmon -P|awk '/     Pid Command          Inuse      Pin     Pgsp  Virtual 64-bit Mthrd  16MB/ {getline; print $0}'|sort -r -k 5

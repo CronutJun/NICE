@@ -83,6 +83,7 @@ public class AMSBrokerReqJob {
     private String fileType;
     private String filePath;
     private String fileName;
+    private String fileVersion;
     private FileInputStream fIn;
     private FileOutputStream fOut;
     private int timeOut;
@@ -513,6 +514,14 @@ public class AMSBrokerReqJob {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getFileVersion() {
+        return fileVersion;
+    }
+
+    public void setFileVersion(String fileVersion) {
+        this.fileVersion = fileVersion;
     }
 
     public FileInputStream getfIn() {

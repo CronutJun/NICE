@@ -161,6 +161,7 @@ public class AMSBrokerReqConsumer extends Thread {
                 if( !reqJob.isReceiveAns() ) {
                     if( reqJob.getDownFileRetryCount() <= AMSBrokerLib.FILE_RETRY_COUNT ) {
                         reqJob.getDownComplete().reset();
+                        reqJob.setDownCmdType("1");
                         acceptJob( reqJob );
                         return;
                     }
