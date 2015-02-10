@@ -143,8 +143,7 @@ public class AMSBrokerClient {
 
             for (;;) {
                 try {
-                    /** lstRslt = ans.poll(idleTimeOut+5, TimeUnit.SECONDS);*/
-                    lstRslt = ans.take();
+                    lstRslt = ans.poll(3600, TimeUnit.SECONDS);
                     if( lstRslt == null ) {
                         if( reqJob.getfOut() != null )
                             reqJob.getfOut().close();
@@ -157,10 +156,17 @@ public class AMSBrokerClient {
                         f.channel().close().sync();
                         throw new AMSBrokerTimeoutException("timeout");
                     }
+                    if( lstRslt.isError() ) {
+                        if( reqJob.getfOut() != null )
+                            reqJob.getfOut().close();
+                        f.channel().close().sync();
+                        throw new Exception("Exception is raised at socket channel");
+                    }
                     if( fstRslt == null )
                         fstRslt = lstRslt;
 
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                 }
                 // 필요하다면 바로 밑에 콜백함수를 사용하여 이벤트 처리(Read)할 수 있다.

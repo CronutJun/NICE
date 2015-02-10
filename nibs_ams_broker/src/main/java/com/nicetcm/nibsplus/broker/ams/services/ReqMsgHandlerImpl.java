@@ -267,6 +267,10 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
 
                 msgHis.setMsgCtx( new String(read) );
             }
+            catch( Exception e ) {
+                msg.setMsgSts("5");
+                msgHis.setMsgCtx( e.getMessage() );
+            }
             finally {
                 msgPsr.clearMessage();
             }
@@ -285,6 +289,11 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             reqJob.setOrgMsgSeq( msg.getMsgSeq() );
 
             amsTX.commit(safeData.getTXS());
+
+            if( "5".equals(msg.getMsgSts()) ) {
+                safeData.setTXS( amsTX.getTransaction( AMSBrokerTransaction.defAMSTX ));
+                throw new Exception(msgHis.getMsgCtx());
+            }
         }
         catch( Exception e ) {
             logger.warn("reqMsgHandle has error [{}]", e.getMessage() );

@@ -22,9 +22,9 @@ public class AMSBrokerStateHandler extends ChannelDuplexHandler {
         if (evt instanceof IdleStateEvent) {
             IdleStateEvent e = (IdleStateEvent) evt;
             if (e.state() == IdleState.READER_IDLE) {
-                ans.put(new AMSBrokerClientQData(false, true, null));
+                ans.put(new AMSBrokerClientQData(false, true, false, null));
             } else if (e.state() == IdleState.WRITER_IDLE) {
-                ans.put(new AMSBrokerClientQData(false, true, null));
+                ans.put(new AMSBrokerClientQData(false, true, false, null));
             }
         }
     }

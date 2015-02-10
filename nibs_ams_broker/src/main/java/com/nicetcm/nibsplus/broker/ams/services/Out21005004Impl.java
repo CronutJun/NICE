@@ -81,12 +81,12 @@ public class Out21005004Impl implements OutMsgHandler {
                 if( !rslt.get(0).getVerId().equals(reqJob.getFileVersion()) ) {
                     throw new Exception("[VER]다운로드 버전 미등록");
                 }
-                for( TPmPgmVer ver: rslt ) {
-                    logger.warn("[VERSION INFO] Version = {}, MasterYN = {}, DependencyVer = {}", ver.getVerId(), ver.getMasterYn(), ver.getDepVerId());
-                    if( ver.getDepVerId() != null && env.getApVer().compareTo( ver.getDepVerId() ) < 0 ) {
-                        throw new Exception("[VER]종속 버전 설치 후 진행 [" + ver.getDepVerId() + "]");
-                    }
-                }
+//                for( TPmPgmVer ver: rslt ) {
+//                    logger.warn("[VERSION INFO] Version = {}, MasterYN = {}, DependencyVer = {}", ver.getVerId(), ver.getMasterYn(), ver.getDepVerId());
+//                    if( ver.getDepVerId() != null && env.getApVer().compareTo( ver.getDepVerId() ) < 0 ) {
+//                        throw new Exception("[VER]종속 버전 설치 후 진행 [" + ver.getDepVerId() + "]");
+//                    }
+//                }
             }
             catch( Exception e ) {
                 throw e;

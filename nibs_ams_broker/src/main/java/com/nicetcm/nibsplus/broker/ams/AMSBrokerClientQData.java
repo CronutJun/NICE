@@ -18,11 +18,13 @@ public class AMSBrokerClientQData {
 
     private boolean isContinue;
     private boolean isTimeout;
+    private boolean isError;
     private ByteBuf clientData;
 
-    public AMSBrokerClientQData( boolean isContinue, boolean isTimeout, ByteBuf clientData ) {
+    public AMSBrokerClientQData( boolean isContinue, boolean isTimeout, boolean isError, ByteBuf clientData ) {
         this.isContinue = isContinue;
         this.isTimeout  = isTimeout;
+        this.isError    = isError;
         this.clientData = clientData;
     }
 
@@ -32,6 +34,10 @@ public class AMSBrokerClientQData {
 
     public boolean isTimeout() {
         return isTimeout;
+    }
+
+    public boolean isError() {
+        return isError;
     }
 
     public ByteBuf getClientData() {

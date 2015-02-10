@@ -172,7 +172,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 Thread.currentThread().setName(String.format("<T>%s-C-%s:%s", msgPsr.getString("CM._SSTNo").substring(2), Thread.currentThread().getId(), AMSBrokerMain.serverNo));
 
                 biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
-                ans.put(new AMSBrokerClientQData(isContinue, false, buf));
+                ans.put(new AMSBrokerClientQData(isContinue, false, false, buf));
                 if( !isContinue ) {
                     msgPsr.clearMessage();
                 }
@@ -191,7 +191,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 if( iRemain <= 0 ) isContinue = false;
 
                 biz.classifyMessage(ctx,  msg, msgPsr, reqJob, remainBytes, isContinue);
-                ans.put(new AMSBrokerClientQData(isContinue, false, buf));
+                ans.put(new AMSBrokerClientQData(isContinue, false, false, buf));
                 if( !isContinue ) {
                     msgPsr.clearMessage();
                 }
@@ -199,7 +199,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
         }
         catch( Exception e ) {
             logger.warn("read Exception: {}", e.getMessage());
-            ans.put(new AMSBrokerClientQData(false, false, buf));
+            ans.put(new AMSBrokerClientQData(false, false, true, buf));
             throw e;
         }
     }
@@ -213,7 +213,10 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         // Close the connection when an exception is raised.
-        logger.warn("Unexpected exception from downstream.", cause);
-        ctx.close();
+        logger.warn("Unexpected exception from downstream.", cause.getMessage() );
+        try {
+            ans.put(new AMSBrokerClientQData(false, false, true, null));
+        }
+        catch( Exception e ) {}
     }
 }
