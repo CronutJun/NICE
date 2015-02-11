@@ -206,8 +206,18 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+       logger.warn("ChannelReadComplete.");
        ctx.flush();
-       //ctx.close();
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+       logger.warn("ChannelInactive.********************, isContinue = {}", isContinue);
+       if( isContinue )
+       try {
+           ans.put(new AMSBrokerClientQData(false, true, false, null));
+       }
+       catch( Exception e ) {}
     }
 
     @Override
