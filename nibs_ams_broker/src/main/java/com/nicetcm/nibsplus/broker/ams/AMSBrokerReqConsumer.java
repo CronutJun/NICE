@@ -15,6 +15,7 @@ package com.nicetcm.nibsplus.broker.ams;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -48,24 +49,39 @@ public class AMSBrokerReqConsumer extends Thread {
         logger.warn("Listen Start");
         AMSBrokerReqJob reqJob = null;
 
-        for( ; ; ) {
-            try {
-                logger.warn("before take");
-                reqJob = listenQueue.take();
-                logger.warn("after take");
-                acceptJob( reqJob );
+        try {
+            for( ; ; ) {
+                try {
+                    logger.warn("[CONSUMER]before consume");
+                    /** reqJob = listenQueue.take();*/
+                    reqJob = listenQueue.poll(60, TimeUnit.SECONDS);
+                    if( reqJob == null ) {
+                        logger.warn("[CONSUMER]time out.");
+                        break;
+                    }
+                    else {
+                        logger.warn("[CONSUMER]after consume");
+                        acceptJob( reqJob );
+                    }
+                }
+                catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.warn("Thread [{}] is interrupted", this.getName() );
+                    break;
+                }
+                catch( Exception e ) {
+                    logger.error("Consumer raise error. {}", e.getMessage() );
+                    logger.error("              Class = {}", e.getClass().getName() );
+                    for( StackTraceElement se: e.getStackTrace() )
+                        logger.error(se.toString());
+                }
             }
-            catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                logger.warn("Thread [{}] is interrupted", this.getName() );
-                break;
-            }
-            catch( Exception e ) {
-                logger.error("Consumer raise error. {}", e.getMessage() );
-                logger.error("              Class = {}", e.getClass().getName() );
-                for( StackTraceElement se: e.getStackTrace() )
-                    logger.error(se.toString());
-            }
+            AMSBrokerReqJob.removeListenerInfo( this.macNo );
+        }
+        catch( Exception e ) {
+            logger.error("Consumer raise error. {}", e.getMessage() );
+            for( StackTraceElement se: e.getStackTrace() )
+                logger.error(se.toString());
         }
     }
 

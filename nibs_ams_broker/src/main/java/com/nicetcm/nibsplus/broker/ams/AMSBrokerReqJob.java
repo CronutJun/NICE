@@ -88,6 +88,12 @@ public class AMSBrokerReqJob {
     private FileOutputStream fOut;
     private int timeOut;
 
+    public static void removeListenerInfo(String macNo) throws Exception {
+        if( macMap.containsKey(macNo) ) {
+            macMap.remove( macNo );
+        }
+    }
+
     public static void stopListener(String macNo) throws Exception {
         if( macMap.containsKey(macNo) ) {
             macMap.get(macNo).getConsumer().interrupt();
