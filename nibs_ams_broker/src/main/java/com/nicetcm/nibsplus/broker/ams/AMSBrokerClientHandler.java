@@ -163,7 +163,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
 
                 if( iMsgLen > msgPsr.getMessageLength() ) {
                     isContinue = true;
-                    logger.warn("Continue set msgPsr length = " + msgPsr.getMessageLength());
+                    logger.warn("Continue set msgPsr length = {}, iMsgLen = {}, iRemain = {}",  msgPsr.getMessageLength(), iMsgLen, iRemain);
                 }
 
                 /**
@@ -178,7 +178,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
                 }
             }
             else {
-                logger.warn("Continue.. msgPsr length = " + msgPsr.getMessageLength());
+                logger.warn("Continue.. msgPsr length = {}, iMsgLen = {}, iRemain = {}", msgPsr.getMessageLength(), iMsgLen, iRemain);
                 wrkBuf = ByteBuffer.allocateDirect(buf.readableBytes());
                 buf.readBytes(wrkBuf);
                 wrkBuf.position(0);

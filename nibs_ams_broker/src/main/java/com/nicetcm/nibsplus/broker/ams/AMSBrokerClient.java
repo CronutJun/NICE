@@ -93,9 +93,9 @@ public class AMSBrokerClient {
              .handler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
-                     ch.pipeline().addLast(new AMSBrokerClientHandler(reqJob, ans))
-                                  .addLast("idleStateHandler", new IdleStateHandler(idleTimeOut, idleTimeOut, 0))
-                                  .addLast("amsBrokerStateHandler", new AMSBrokerStateHandler(reqJob, ans));
+                     ch.pipeline().addLast( new AMSBrokerClientHandler(reqJob, ans) );
+                     ch.pipeline().addLast( "idleStateHandler",     new IdleStateHandler(idleTimeOut, idleTimeOut, 0) );
+                     ch.pipeline().addLast( "amsBrokerStateHandler", new AMSBrokerStateHandler(reqJob, ans) );
                  }
              });
 
@@ -143,7 +143,7 @@ public class AMSBrokerClient {
 
             for (;;) {
                 try {
-                    lstRslt = ans.poll(3600, TimeUnit.SECONDS);
+                    lstRslt = ans.poll(1800, TimeUnit.SECONDS);
                     if( lstRslt == null ) {
                         if( reqJob.getfOut() != null )
                             reqJob.getfOut().close();

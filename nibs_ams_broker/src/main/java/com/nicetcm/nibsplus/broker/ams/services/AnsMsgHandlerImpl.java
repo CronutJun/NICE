@@ -96,7 +96,7 @@ public class AnsMsgHandlerImpl implements AnsMsgHandler {
 
                 msgHis.setMsgCtx( new String(read) );
             }
-            else if( rsltMsg != null && ansSts.equals("5") ) {
+            else if( rsltMsg != null && !ansSts.equals("9") ) {
                 byte[] read      = new byte[rsltMsg.limit()];
 
                 rsltMsg.position(0);

@@ -47,7 +47,7 @@ public class AMSBrokerReqJob {
 
     private boolean receiveAns = false;
 
-    private String downCmdType = "0";
+    private String downCmdType = "U"; /** 'U' - Upload, '0' - Download, '1' - Inquiry, '2' - Download continue */
     private long downWritePos = 0;
     private MessageDigest upComplete;
     private MessageDigest downComplete;

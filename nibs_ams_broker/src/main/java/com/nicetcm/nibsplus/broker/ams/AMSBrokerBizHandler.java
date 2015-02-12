@@ -42,6 +42,7 @@ public class AMSBrokerBizHandler {
                 reqJob.chkTempFile();
                 reqJob.setfOut(new FileOutputStream(reqJob.getTempFileName(), true));
             }
+            logger.warn("TEMPORARY FILE NAME = [{}]", reqJob.getTempFileName());
             if( remain.length > 0 && reqJob.getfOut() != null) {
                 reqJob.getfOut().write(remain);
                 if( reqJob.getUpComplete() != null )

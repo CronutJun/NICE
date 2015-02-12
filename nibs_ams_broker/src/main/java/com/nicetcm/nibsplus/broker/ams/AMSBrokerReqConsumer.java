@@ -151,9 +151,9 @@ public class AMSBrokerReqConsumer extends Thread {
             catch( AMSBrokerTimeoutException te) {
                 logger.warn("timeout error");
                 String errMsg = "";
-                if( !reqJob.isReceiveAns() ) {
-                    if( reqJob.getDownFileRetryCount() < AMSBrokerLib.FILE_RETRY_COUNT ) {
-                        reqJob.addDownFileRetryCount();
+                if( !reqJob.getDownCmdType().equals("U") ) {
+                    reqJob.addDownFileRetryCount();
+                    if( reqJob.getDownFileRetryCount() <= AMSBrokerLib.FILE_RETRY_COUNT ) {
                         errMsg = String.format("다운로드 시간초과 발생. 재시도 [%d]회", reqJob.getDownFileRetryCount());
                     }
                     else {
@@ -161,8 +161,8 @@ public class AMSBrokerReqConsumer extends Thread {
                     }
                 }
                 else {
-                    if( reqJob.getUpFileRetryCount() < AMSBrokerLib.FILE_RETRY_COUNT ) {
-                        reqJob.addUpFileRetryCount();
+                    reqJob.addUpFileRetryCount();
+                    if( reqJob.getUpFileRetryCount() <= AMSBrokerLib.FILE_RETRY_COUNT ) {
                         errMsg = String.format("업로드 시간초과 발생. 재시도 [%d]회", reqJob.getUpFileRetryCount());
                     }
                     else {
@@ -174,7 +174,7 @@ public class AMSBrokerReqConsumer extends Thread {
                 err.put(errMsg.getBytes());
                 ansMsg.ansMsgHandle( amsSafeData, reqJob, err, "3" );
                 /** 재 시도 */
-                if( !reqJob.isReceiveAns() ) {
+                if( !reqJob.getDownCmdType().equals("U") ) {
                     if( reqJob.getDownFileRetryCount() <= AMSBrokerLib.FILE_RETRY_COUNT ) {
                         reqJob.getDownComplete().reset();
                         reqJob.setDownCmdType("1");
@@ -187,9 +187,11 @@ public class AMSBrokerReqConsumer extends Thread {
                         reqJob.getUpComplete().reset();
                         File tg = new File(reqJob.getTempFileName());
                         if( tg.exists() ) {
+                            logger.warn("Retry temp file = {}, size = {}", tg.getAbsolutePath(), FileUtils.sizeOf(tg));
                             reqJob.setTempFilePos(FileUtils.sizeOf(tg));
                         }
                         else {
+                            logger.warn("Retry temp file notfound. file = {}", reqJob.getTempFileName());
                             reqJob.setTempFilePos(0);
                         }
                         acceptJob( reqJob );
