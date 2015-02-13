@@ -45,6 +45,8 @@ public class AMSBrokerReqJob {
     private final boolean isBlocking;
     private final BlockingQueue<ByteBuffer> ans;
 
+    private boolean writeNeeded = false; /** Write, Read timeout check */
+    private boolean readNeeded = false;  /** Write, Read timeout check */
     private boolean receiveAns = false;
 
     private String downCmdType = "U"; /** 'U' - Upload, '0' - Download, '1' - Inquiry, '2' - Download continue */
@@ -247,6 +249,30 @@ public class AMSBrokerReqJob {
 
     public boolean getIsBlocking() {
         return isBlocking;
+    }
+
+    /**
+     * 쓰기 시간초과 체크여부
+     * @return
+     */
+    public boolean isWriteNeeded() {
+        return writeNeeded;
+    }
+
+    public void setWriteNeeded(boolean writeNeeded) {
+        this.writeNeeded = writeNeeded;
+    }
+
+    /**
+     * 읽기 시간초과 체크여부
+     * @return
+     */
+    public boolean isReadNeeded() {
+        return readNeeded;
+    }
+
+    public void setReadNeeded(boolean readNeeded) {
+        this.readNeeded = readNeeded;
     }
 
     /**

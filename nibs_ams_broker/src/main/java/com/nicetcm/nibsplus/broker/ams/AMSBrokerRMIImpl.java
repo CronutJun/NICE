@@ -1010,6 +1010,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
             reqJob.setTrxCd         ( trxCd );
             reqJob.setActCd         ( actCd );
             reqJob.setTrxUid        ( trxUid );
+            reqJob.setDownCmdType   ( "0" );
             reqJob.setFileCreateDate( createDate );
             reqJob.setFileSeq       ( fileSeq );
             reqJob.setFileType      ( fileType );
@@ -1050,6 +1051,7 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
                 reqJob.setTrxCd         ( trxCd );
                 reqJob.setActCd         ( actCd );
                 reqJob.setTrxUid        ( trxUid );
+                reqJob.setDownCmdType   ( "0" );
                 reqJob.setFileCreateDate( createDate );
                 reqJob.setFileSeq       ( fileSeq );
                 reqJob.setFileType      ( fileType );

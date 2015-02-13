@@ -87,6 +87,7 @@ public class SchedWorkerImpl implements SchedWorker {
                         reqJob.setTrxCd         ( TRX_CD_UPL_DWL );
                         reqJob.setActCd         ( ACT_CD_SPC_DWL );
                         reqJob.setTrxUid        ( "SCHEDULE" );
+                        reqJob.setDownCmdType   ( "0" );
                         reqJob.setFileType      ( "9" );
                         reqJob.setFileCreateDate( pgmVer.getCreateDate() );
                         reqJob.setFileSeq       ( pgmVer.getFileSeq()    );

@@ -17,6 +17,8 @@ import java.util.concurrent.BlockingQueue;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +62,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) {
         //ctx.writeAndFlush(firstMessage);
+        reqJob.setWriteNeeded(true);
     }
 
     @Override
@@ -67,6 +70,9 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
         ByteBuf buf;
 
         Thread.currentThread().setName(String.format("<T>%s-C-%s:%s", reqJob.getMacNo(), Thread.currentThread().getId(), AMSBrokerMain.serverNo));
+
+        reqJob.setWriteNeeded(false);
+        reqJob.setReadNeeded(true);
 
         if( waitBuf != null && waitBuf.capacity() > 0 ) {
             buf = ctx.alloc().buffer( ((ByteBuf)msg).capacity() + waitBuf.capacity() );
@@ -213,6 +219,8 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
        logger.warn("ChannelInactive.********************, isContinue = {}", isContinue);
+       reqJob.setWriteNeeded(false);
+       reqJob.setReadNeeded(false);
        if( isContinue )
        try {
            ans.put(new AMSBrokerClientQData(false, true, false, null));
@@ -229,4 +237,22 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
         }
         catch( Exception e ) {}
     }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent e = (IdleStateEvent) evt;
+            if (e.state() == IdleState.READER_IDLE) {
+                logger.warn("READ timeout is fired.");
+                if( reqJob.isReadNeeded() )
+                    ans.put(new AMSBrokerClientQData(false, true, false, null));
+            }
+            else if (e.state() == IdleState.WRITER_IDLE) {
+                logger.warn("WRITE timeout is fired.");
+                if( reqJob.isWriteNeeded() )
+                    ans.put(new AMSBrokerClientQData(false, true, false, null));
+            }
+        }
+    }
+
 }

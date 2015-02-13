@@ -23,6 +23,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
 
 import static com.nicetcm.nibsplus.broker.ams.AMSBrokerConst.*;
+
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqInfo;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerReqJob;
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
@@ -253,7 +254,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                                         .newMessage(reqInfo.getMsg());
             try {
 
-                logger.warn("Going to call outbound Handler..");
+                logger.warn("Going to call outbound Handler..{}", String.format("out%s%s", msg.getMsgCd(), msg.getSvcCd()));
                 outMsg.outMsgHandle(msgPsr, safeData, reqJob, reqInfo, msg);
                 logger.warn("Call outbound Handler successfully..");
 
@@ -270,6 +271,8 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
             catch( Exception e ) {
                 msg.setMsgSts("5");
                 msgHis.setMsgCtx( e.getMessage() );
+                for( StackTraceElement se: e.getStackTrace() )
+                    logger.error(se.toString());
             }
             finally {
                 msgPsr.clearMessage();

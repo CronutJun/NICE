@@ -35,18 +35,29 @@ public class Out21003002Impl implements OutMsgHandler {
               .setString( "CM._AOCServiceCode",       msg.getSvcCd())
               .setString( "CM._AOCMsgSendDate",       safeData.getMsgDate() )
               .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
-              .setString( "CM._AOCTranNo",            msg.getMsgSeq() )
-              .setInt   ( "FieldCount",               reqJob.getEnvValues().size() );
+              .setString( "CM._AOCTranNo",            msg.getMsgSeq() );
+        if( reqJob.getEnvValues() != null ) {
+            outMsg.setInt   ( "FieldCount",               reqJob.getEnvValues().size() );
 
-        RMIEnvValue envValue;
-        logger.warn( "envValues size = {}", reqJob.getEnvValues().size() );
-        for( int i = 0; i < reqJob.getEnvValues().size(); i++ ) {
-            envValue = reqJob.getEnvValues().get(i);
-            logger.warn("FieldID = {}", envValue.getEnvId());
+            RMIEnvValue envValue;
+            logger.warn( "envValues size = {}", reqJob.getEnvValues().size() );
+            for( int i = 0; i < reqJob.getEnvValues().size(); i++ ) {
+                envValue = reqJob.getEnvValues().get(i);
+                logger.warn("FieldID = {}", envValue.getEnvId());
+                outMsg.addRow( "FD" );
+                outMsg.setString( String.format("FD[%d].FieldID",   i), envValue.getEnvId() )
+                      .setInt   ( String.format("FD[%d].FieldLen",  i), envValue.getEnvValue().length() )
+                      .setString( String.format("FD[%d].FieldData", i), envValue.getEnvValue() );
+            }
+        }
+        else {
+            RMIEnvValue envValue = reqJob.getEnvValue();
+
+            outMsg.setInt   ( "FieldCount",               1 );
             outMsg.addRow( "FD" );
-            outMsg.setString( String.format("FD[%d].FieldID",   i), envValue.getEnvId() )
-                  .setInt   ( String.format("FD[%d].FieldLen",  i), envValue.getEnvValue().length() )
-                  .setString( String.format("FD[%d].FieldData", i), envValue.getEnvValue() );
+            outMsg.setString( String.format("FD[%d].FieldID",   0), envValue.getEnvId() )
+                  .setInt   ( String.format("FD[%d].FieldLen",  0), envValue.getEnvValue().length() )
+                  .setString( String.format("FD[%d].FieldData", 0), envValue.getEnvValue() );
         }
         outMsg.syncMessage();
         outMsg.getCurrentThrData().isLive = true;

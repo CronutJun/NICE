@@ -93,9 +93,11 @@ public class AMSBrokerClient {
              .handler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
-                     ch.pipeline().addLast( new AMSBrokerClientHandler(reqJob, ans) );
                      ch.pipeline().addLast( "idleStateHandler",     new IdleStateHandler(idleTimeOut, idleTimeOut, 0) );
-                     ch.pipeline().addLast( "amsBrokerStateHandler", new AMSBrokerStateHandler(reqJob, ans) );
+                     ch.pipeline().addLast( new AMSBrokerClientHandler(reqJob, ans) );
+//                     ch.pipeline().addLast( new AMSBrokerClientHandler(reqJob, ans) );
+//                     ch.pipeline().addLast( "idleStateHandler",     new IdleStateHandler(idleTimeOut, idleTimeOut, 0) );
+//                     ch.pipeline().addLast( "amsBrokerStateHandler", new AMSBrokerStateHandler(reqJob, ans) );
                  }
              });
 

@@ -86,7 +86,7 @@
             <property name="url"><value>#{config['jdbc.url']}</value></property>
             <property name="username"><value>#{config['jdbc.username']}</value></property>
             <property name="password"><value>#{config['jdbc.password']}</value></property>
-            <property name="initialSize" value="10"/>
+            <property name="initialSize" value="5"/>
             <property name="maxActive" value="20"/>
             <property name="maxIdle" value="20"/>
             <property name="maxWait" value="600000"/>
@@ -111,8 +111,12 @@
         <bean id="sqlSessionFactory_OP" class="com.nicetcm.nibsplus.util.RefreshableSqlSessionFactoryBean">
             <property name="dataSource" ref="dataSource_OP"></property>
             <property name="configLocation" value="classpath:/org_send/mybatis/mybatis-config.xml"></property>
-            <property name="mapperLocations" value="classpath:/org_send/sqlmap/**/*.xml"></property>
+            <property name="mapperLocations">
+            	<list>
+            		<value>classpath:/org_send/sqlmap/**/*.xml</value>
+            		<value>classpath:/job/sqlmap/**/*.xml</value>
+            	</list>
+            </property>
         </bean>
-
     </beans>
 </beans>

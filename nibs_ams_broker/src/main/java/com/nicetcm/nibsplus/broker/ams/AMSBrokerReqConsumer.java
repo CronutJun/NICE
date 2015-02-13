@@ -225,10 +225,12 @@ public class AMSBrokerReqConsumer extends Thread {
             logger.warn(e.getMessage());
             if( reqJob.getIsBlocking() )
                 reqJob.getAns().put(ByteBuffer.allocateDirect(1));
-            File tg = new File(reqJob.getTempFileName());
-            if( tg.exists() ) {
-                if( tg.delete() )
-                    logger.warn("Successful delete temporary file");
+            if( reqJob.getTempFileName() != null && reqJob.getTempFileName().length() > 0 ) {
+                File tg = new File(reqJob.getTempFileName());
+                if( tg.exists() ) {
+                    if( tg.delete() )
+                        logger.warn("Successful delete temporary file");
+                }
             }
             throw e;
         }
