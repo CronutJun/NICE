@@ -44,7 +44,8 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
     private MsgParser  msgPsr;
     private ByteBuffer waitBuf = null;
     private ByteBuffer wrkBuf;
-    private boolean   isContinue = false;
+    private boolean   isContinue  = false;
+    private boolean   readTimeoutMutex = false;
 
     private AMSBrokerBizHandler biz = new AMSBrokerBizHandler();
 
@@ -221,11 +222,14 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
        logger.warn("ChannelInactive.********************, isContinue = {}", isContinue);
        reqJob.setWriteNeeded(false);
        reqJob.setReadNeeded(false);
-       if( isContinue )
+       if( isContinue && !readTimeoutMutex )
        try {
            ans.put(new AMSBrokerClientQData(false, true, false, null));
        }
        catch( Exception e ) {}
+
+       readTimeoutMutex = false;
+
     }
 
     @Override
@@ -244,6 +248,7 @@ public class AMSBrokerClientHandler extends ChannelInboundHandlerAdapter {
             IdleStateEvent e = (IdleStateEvent) evt;
             if (e.state() == IdleState.READER_IDLE) {
                 logger.warn("READ timeout is fired.");
+                readTimeoutMutex = true;
                 if( reqJob.isReadNeeded() )
                     ans.put(new AMSBrokerClientQData(false, true, false, null));
             }
