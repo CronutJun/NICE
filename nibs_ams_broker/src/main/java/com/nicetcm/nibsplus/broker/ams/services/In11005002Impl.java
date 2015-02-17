@@ -71,7 +71,7 @@ public class In11005002Impl extends InMsgHandlerImpl {
             pgmVerSpec.createCriteria().andMkrCdEqualTo             ( env.getMkrCd() )
                                        .andModelCdEqualTo           ( env.getModelCd() )
                                        .andVerIdGreaterThan         ( parsed.getString("_APVersion") );
-            pgmVerSpec.setOrderByClause( "VER_ID DESC, SORT_ID DESC" );
+            pgmVerSpec.setOrderByClause( "VER_ID ASC, SORT_ID ASC" );
             List<TPmPgmVer> rslt = pgmVerMap.selectBySpec( pgmVerSpec );
             if( rslt.size() == 0 ) {
                 reqJob.setFileName("N/A");
