@@ -117,7 +117,7 @@ public class RcvMsgHandlerImpl implements RcvMsgHandler {
             byte[] read = new byte[parsed.getMessage().limit()];
             parsed.getMessage().position(0);
             parsed.getMessage().get(read);
-            logger.warn(new String(read));
+            logger.error("I-MSG = [{}]", new String(read));
 
             msgHis.setMsgCtx( new String(read) );
 

@@ -264,7 +264,7 @@ public class ReqMsgHandlerImpl implements ReqMsgHandler {
                 byte[] read = new byte[reqInfo.getMsg().limit()];
                 reqInfo.getMsg().position(0);
                 reqInfo.getMsg().get(read);
-                logger.warn(new String(read));
+                logger.error("O-MSG = [{}]", new String(read));
 
                 msgHis.setMsgCtx( new String(read) );
             }

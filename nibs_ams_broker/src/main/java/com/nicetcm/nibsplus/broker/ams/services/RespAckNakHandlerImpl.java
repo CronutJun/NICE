@@ -121,7 +121,7 @@ public class RespAckNakHandlerImpl implements RespAckNakHandler {
             else {
                 throw new Exception("Response Type is Invalid [" + outPsr.getResponseInfo().getType() + "]" );
             }
-            logger.warn(new String(read));
+            logger.error("O-MSG = [{}]",new String(read));
 
             if( ackNak.equals("9") ) {
                 msgHis.setMsgCtx( new String(read) );

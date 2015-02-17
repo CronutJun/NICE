@@ -75,7 +75,7 @@ public class AnsMsgHandlerImpl implements AnsMsgHandler {
 
                 rsltMsg.position(0);
                 rsltMsg.get(read);
-                logger.warn("MSG = [{}]", new String(read));
+                logger.error("I-MSG = [{}]", new String(read));
 
                 rsltMsg.position(9);
                 rsltMsg.get(bMsgCd);
