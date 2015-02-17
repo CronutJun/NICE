@@ -112,7 +112,17 @@ public class RespAckNakHandlerImpl implements RespAckNakHandler {
                     read = new byte[reqInfo.getMsg().limit()];
                     reqInfo.getMsg().position(0);
                     reqInfo.getMsg().get(read);
-                    logger.warn(new String(read));
+                }
+                catch( Exception e ) {
+                    outPsr.setString( "CM._AOCRespCode", "009" );
+                    logger.warn("Message Length = "  + outPsr.getMessageLength());
+                    logger.warn("Last Position = "   + outPsr.lastPosition());
+                    reqInfo.getMsg().limit(outPsr.lastPosition());
+                    read = new byte[reqInfo.getMsg().limit()];
+                    reqInfo.getMsg().position(0);
+                    reqInfo.getMsg().get(read);
+                    errMessage = e.getMessage();
+                    ackNak = "5";
                 }
                 finally {
                     outPsr.clearMessage();

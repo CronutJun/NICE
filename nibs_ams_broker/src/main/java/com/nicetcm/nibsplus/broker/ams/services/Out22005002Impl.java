@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import static com.nicetcm.nibsplus.broker.ams.AMSBrokerLib.ROOT_FILE_PATH;
 import static com.nicetcm.nibsplus.broker.ams.AMSBrokerLib.TEMP_FILE_PATH;
 
 import com.nicetcm.nibsplus.broker.ams.AMSBrokerData;
@@ -34,7 +35,11 @@ public class Out22005002Impl implements OutMsgHandler {
 
     @Override
     public void outMsgHandle(MsgParser outMsg, AMSBrokerData safeData, AMSBrokerReqJob reqJob, AMSBrokerReqInfo reqInfo, TRmMsg msg) throws Exception {
-        File f = new File(String.format("%sams_server_src.zip", TEMP_FILE_PATH) );
+
+        if( "N/A".equals(reqJob.getFileName()) ) {
+            throw new Exception("다운로드할 버전 없슴.");
+        }
+        File f = new File(String.format("%s%s%s", ROOT_FILE_PATH, reqJob.getFilePath(), reqJob.getFileName()) );
         FileInputStream fIn = new FileInputStream(f);
 
         logger.warn("reqJob = {}", reqJob.getFileName() );
@@ -45,8 +50,8 @@ public class Out22005002Impl implements OutMsgHandler {
               .setString( "CM._AOCMsgSendTime",       safeData.getMsgTime() )
               .setLong  ( "CM._AOCMsgLen",            (outMsg.getMessageLength() + f.length()) - 9 )
               .setString( "CM._AOCTranNo",            msg.getMsgSeq() )
-              .setString( "_AOCDownFileType",         "9"                  )
-              .setString( "_AOCDownFileName",         reqJob.getFileName() )
+              .setString( "_AOCDownFileType",         "9"                     )
+              .setString( "_AOCDownFileName",         reqJob.getFileOrgName() )
               .setLong  ( "_AOCDownFileSize",         f.length()  )
               .syncMessage();
 

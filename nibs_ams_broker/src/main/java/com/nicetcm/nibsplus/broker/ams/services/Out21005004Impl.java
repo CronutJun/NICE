@@ -111,7 +111,6 @@ public class Out21005004Impl implements OutMsgHandler {
         }
 
         if( "0".equals(reqJob.getDownCmdType()) || "2".equals(reqJob.getDownCmdType()) ) {
-            //File f = new File("D:\\CronutWorks\\NICE\\Documents\\Design\\05. AMS\\ams_server_src.zip");
             File f = new File(String.format("%s%s%s", ROOT_FILE_PATH, rmFile.getFilePath(), rmFile.getFileNm()));
             FileInputStream fIn = new FileInputStream(f);
 

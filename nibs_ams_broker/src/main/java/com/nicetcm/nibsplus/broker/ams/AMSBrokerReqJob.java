@@ -85,6 +85,7 @@ public class AMSBrokerReqJob {
     private String fileType;
     private String filePath;
     private String fileName;
+    private String fileOrgName;
     private String fileVersion;
     private FileInputStream fIn;
     private FileOutputStream fOut;
@@ -546,6 +547,14 @@ public class AMSBrokerReqJob {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getFileOrgName() {
+        return fileOrgName;
+    }
+
+    public void setFileOrgName(String fileOrgName) {
+        this.fileOrgName = fileOrgName;
     }
 
     public String getFileVersion() {
