@@ -218,6 +218,8 @@ public class AMSBrokerServerHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         // Close the connection when an exception is raised.
         logger.warn("Unexpected exception from downstream. {}", cause.getMessage() );
+        for( StackTraceElement se: cause.getStackTrace() )
+            logger.warn(se.toString());
         ctx.close();
     }
 
