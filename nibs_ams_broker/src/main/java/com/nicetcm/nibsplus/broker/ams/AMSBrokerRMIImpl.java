@@ -1085,14 +1085,15 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         logger.warn("start reqGFileUpToMac");
         try {
             AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
-            reqJob.setTrxDate( trxDate );
-            reqJob.setTrxNo   ( trxNo );
-            reqJob.setTrxCd   ( trxCd );
-            reqJob.setActCd   ( actCd );
-            reqJob.setTrxUid  ( trxUid );
-            reqJob.setFilePath( filePath );
-            reqJob.setFileName( fileName );
-            reqJob.setTimeOut ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
+            reqJob.setTrxDate    ( trxDate );
+            reqJob.setTrxNo      ( trxNo );
+            reqJob.setTrxCd      ( trxCd );
+            reqJob.setActCd      ( actCd );
+            reqJob.setTrxUid     ( trxUid );
+            reqJob.setDownCmdType( "0" );
+            reqJob.setFilePath   ( filePath );
+            reqJob.setFileName   ( fileName );
+            reqJob.setTimeOut    ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
             reqJob.requestJob();
         }
         catch( Exception e ) {
@@ -1121,14 +1122,15 @@ public class AMSBrokerRMIImpl implements AMSBrokerRMI {
         try {
             for( String macNo: macs ) {
                 AMSBrokerReqJob reqJob = new AMSBrokerReqJob(macNo, false);
-                reqJob.setTrxDate( trxDate );
-                reqJob.setTrxNo   ( trxNo );
-                reqJob.setTrxCd   ( trxCd );
-                reqJob.setActCd   ( actCd );
-                reqJob.setTrxUid  ( trxUid );
-                reqJob.setFilePath( filePath );
-                reqJob.setFileName( fileName );
-                reqJob.setTimeOut ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
+                reqJob.setTrxDate    ( trxDate );
+                reqJob.setTrxNo      ( trxNo );
+                reqJob.setTrxCd      ( trxCd );
+                reqJob.setActCd      ( actCd );
+                reqJob.setTrxUid     ( trxUid );
+                reqJob.setDownCmdType( "0" );
+                reqJob.setFilePath   ( filePath );
+                reqJob.setFileName   ( fileName );
+                reqJob.setTimeOut    ( Integer.parseInt(MsgCommon.msgProps.getProperty("ams.req.timeout", "180")) );
                 reqJob.requestJob();
             }
         }
